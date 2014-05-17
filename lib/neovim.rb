@@ -1,4 +1,2 @@
 require "neovim/version"
-
-module Neovim
-end
+require "neovim/stream"
