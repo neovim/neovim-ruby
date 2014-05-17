@@ -3,11 +3,15 @@ require "neovim/stream"
 
 module Neovim
   describe Stream do
-    context "domain sockets" do
-      let(:socket_path) { "/tmp/neovim.sock" }
+    describe "using a UNIX domain socket" do
+      let(:socket_path) do
+        ENV.fetch("NEOVIM_LISTEN_ADDRESS", "/tmp/neovim.sock")
+      end
 
       before do
-        raise("Neovim isn't running on #{socket_path}") unless File.socket?(socket_path)
+        unless File.socket?(socket_path)
+          raise("Neovim isn't running. Run it with `NEOVIM_LISTEN_ADDRESS=#{socket_path} nvim`")
+        end
       end
 
       it "writes data and reads responses" do
