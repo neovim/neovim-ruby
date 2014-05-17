@@ -1,3 +1,5 @@
+require "msgpack"
+
 module Neovim
   class RPC
     attr_reader :response
