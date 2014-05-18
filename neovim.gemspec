@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "neovim/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "neovim-ruby"
+  spec.name          = "neovim"
   spec.version       = Neovim::VERSION
   spec.authors       = ["Alex Genco"]
   spec.email         = ["alexgenco@gmail.com"]
