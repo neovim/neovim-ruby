@@ -6,8 +6,7 @@ module Neovim
   Remote = Struct.new(:vim, :handle)
 
   def self.discover_api(stream)
-    data = [0, 0, 0, []]
-    response = RPC.new(data, stream).response
+    response = RPC.new([0, 0, 0, []], stream).response
     api = MessagePack.unpack(response[3])
 
     const_set("Vim", Class.new)
@@ -23,9 +22,10 @@ module Neovim
       klass.class_eval do
         define_method(method_name) do |*args|
           response = RPC.new([0, 0, func["id"], args], stream).response
+          return_type = func["return_type"]
 
-          if api["classes"].include?(func["return_type"])
-            raise "Can't return a #{func["return_type"]} yet."
+          if api["classes"].include?(return_type)
+            raise "Can't return a #{return_type} yet."
           else
             response[3]
           end
