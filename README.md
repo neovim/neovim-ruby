@@ -1,4 +1,4 @@
-# Neovim::Ruby
+# Neovim Ruby
 
 TODO: Write a gem description
 
