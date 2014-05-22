@@ -55,7 +55,7 @@ module Neovim
         pending "raises 'Segmentation fault: 11'"
 
         client = Client.new(socket_path)
-        expect(client.evaluate('ihello:w')).to be_nil
+        expect(client.evaluate("ihello")).to be_nil
       end
     end
   end
