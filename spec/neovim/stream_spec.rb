@@ -1,4 +1,5 @@
 require "helper"
+require "msgpack"
 require "neovim/stream"
 
 module Neovim
@@ -16,8 +17,12 @@ module Neovim
 
       it "writes data and reads responses" do
         stream = Stream.new(socket_path, nil)
-        stream.write("hello")
-        stream.read.should respond_to(:to_str)
+        message = MessagePack.pack([0, 0, 0, []])
+        stream.write(message)
+        response = MessagePack.unpack(stream.read)
+
+        expect(response).to respond_to(:to_ary)
+        expect(response.size).to eq(4)
       end
     end
   end

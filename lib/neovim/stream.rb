@@ -2,10 +2,9 @@ require "libuv"
 
 module Neovim
   class Stream
-    def initialize(address, port, loop=::Libuv::Loop.default)
-      @connected = false
-      @loop = loop
-      create_uv_stream(address, port, loop)
+    def initialize(address, port)
+      @loop = ::Libuv::Loop.default
+      create_uv_stream(address, port, @loop)
     end
 
     def read
