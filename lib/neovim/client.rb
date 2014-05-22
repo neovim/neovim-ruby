@@ -13,8 +13,8 @@ module Neovim
       rpc_response(36, msg)
     end
 
-    def set_option(option, arg)
-      rpc_response(34, option, arg)
+    def set_option(option, value)
+      rpc_response(34, option, value)
     end
 
     def command(cmd)
