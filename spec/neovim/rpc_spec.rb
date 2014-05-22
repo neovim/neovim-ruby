@@ -25,9 +25,11 @@ module Neovim
     end
 
     it "raises an exception if an error is returned" do
-      error_response = [0, 0, 3, nil]
+      error_response = [0, 0, "error message", nil]
       stream.stub(:read).and_return(MessagePack.pack(error_response))
-      expect { RPC.new(message, stream) }.to raise_error(Neovim::RPC::Error)
+      expect {
+        RPC.new(message, stream)
+      }.to raise_error(Neovim::RPC::Error, "error message")
     end
   end
 end

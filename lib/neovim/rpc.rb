@@ -16,7 +16,9 @@ module Neovim
       stream.write(MessagePack.pack(data))
 
       MessagePack.unpack(stream.read).tap do |payload|
-        raise Error if payload[2]
+        if error_msg = payload[2]
+          raise Error.new(error_msg)
+        end
       end
     end
   end
