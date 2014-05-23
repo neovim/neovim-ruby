@@ -27,6 +27,16 @@ module Neovim
       end
     end
 
+    describe "#error" do
+      it "prints an error message to neovim" do
+        pending "Nothing is in place to allow us to test this yet"
+      end
+
+      it "returns nil on success" do
+        expect(client.error("error\n")).to be_nil
+      end
+    end
+
     describe "#set_option" do
       it "sets the provided option" do
         pending "Nothing is in place to allow us to test this yet"

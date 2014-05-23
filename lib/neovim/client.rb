@@ -15,6 +15,10 @@ module Neovim
       rpc_response(36, msg)
     end
 
+    def error(msg)
+      rpc_response(35, msg)
+    end
+
     def set_option(option, value)
       rpc_response(34, option, value)
     end
