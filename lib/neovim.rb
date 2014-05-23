@@ -3,6 +3,8 @@ require "neovim/client"
 require "neovim/stream"
 require "neovim/rpc"
 require "neovim/variable"
+require "neovim/option"
+require "neovim/buffer"
 
 module Neovim
   Remote = Struct.new(:vim, :handle)
