@@ -1,5 +1,6 @@
 require "neovim/stream"
 require "neovim/rpc"
+require "neovim/variable"
 
 module Neovim
   class Client
@@ -25,7 +26,33 @@ module Neovim
       rpc_response(23, expr)
     end
 
-    private
+    def push_keys(keys)
+      rpc_response(21, keys)
+    end
+
+    def strwidth(str)
+      rpc_response(24, str)
+    end
+
+    def runtime_paths
+      rpc_response(25)
+    end
+
+    def change_directory(dir)
+      rpc_response(26, dir)
+    end
+
+    def current_line
+      rpc_response(27)
+    end
+
+    def current_line=(line)
+      rpc_response(29, line)
+    end
+
+    def variable(var)
+      Variable.new(var, self)
+    end
 
     def rpc_response(func_id, *args)
       data = [0, @req_id += 1, func_id, args]
