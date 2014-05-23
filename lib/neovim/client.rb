@@ -1,6 +1,7 @@
 require "neovim/stream"
 require "neovim/rpc"
 require "neovim/variable"
+require "neovim/option"
 
 module Neovim
   class Client
@@ -50,8 +51,12 @@ module Neovim
       rpc_response(29, line)
     end
 
-    def variable(var)
-      Variable.new(var, self)
+    def variable(name)
+      Variable.new(name, self)
+    end
+
+    def option(name)
+      Option.new(name, self)
     end
 
     def rpc_response(func_id, *args)

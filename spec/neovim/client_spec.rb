@@ -150,5 +150,12 @@ module Neovim
         expect(variable.value).to eq(0)
       end
     end
+
+    describe "#option" do
+      it "returns an option" do
+        variable = client.option("hlsearch")
+        expect(variable.name).to eq("hlsearch")
+      end
+    end
   end
 end
