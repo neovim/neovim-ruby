@@ -11,11 +11,11 @@ module Neovim
         end
 
         def self.getter_func_id
-          30
+          31
         end
 
         def self.setter_func_id
-          31
+          32
         end
       end
 
@@ -25,7 +25,7 @@ module Neovim
         end
 
         def self.getter_func_id
-          32
+          33
         end
 
         def self.setter_func_id

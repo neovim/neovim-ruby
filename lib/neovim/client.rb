@@ -16,19 +16,19 @@ module Neovim
     end
 
     def error(msg)
-      rpc_response(35, msg)
+      rpc_response(37, msg)
     end
 
     def set_option(option, value)
-      rpc_response(34, option, value)
+      rpc_response(35, option, value)
     end
 
     def command(cmd)
-      rpc_response(22, cmd)
+      rpc_response(23, cmd)
     end
 
     def evaluate(expr)
-      rpc_response(23, expr)
+      rpc_response(24, expr)
     end
 
     def push_keys(keys)
@@ -36,23 +36,23 @@ module Neovim
     end
 
     def strwidth(str)
-      rpc_response(24, str)
+      rpc_response(25, str)
     end
 
     def runtime_paths
-      rpc_response(25)
+      rpc_response(26)
     end
 
     def change_directory(dir)
-      rpc_response(26, dir)
+      rpc_response(27, dir)
     end
 
     def current_line
-      rpc_response(27)
+      rpc_response(28)
     end
 
     def current_line=(line)
-      rpc_response(29, line)
+      rpc_response(30, line)
     end
 
     def variable(name)
