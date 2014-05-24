@@ -40,7 +40,7 @@ module Neovim
     def create_uv_stream(address, port, loop)
       raise("TCP not supported yet") if port
 
-      ::Libuv::Pipe.new(loop, true).connect(address) do |pipe|
+      loop.pipe.connect(address) do |pipe|
         @connected = true
         @uv = pipe
       end
