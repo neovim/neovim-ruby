@@ -1,3 +1,4 @@
+# coding: utf-8
 require "helper"
 require "neovim/client"
 
@@ -14,85 +15,58 @@ module Neovim
         raise("Neovim isn't running. Run it with `NEOVIM_LISTEN_ADDRESS=#{socket_path} nvim`")
       end
 
+      client.option("background").value = "dark"
       client.current_line = ""
     end
 
     describe "#message" do
       it "prints a message to neovim" do
-        pending "Nothing is in place to allow us to test this yet"
-      end
-
-      it "returns nil on success" do
-        expect(client.message("test\n")).to be_nil
+        client.message("This is a message")
+        pending "Still deciding how to test this (also it doesn't work)"
       end
     end
 
     describe "#error" do
       it "prints an error message to neovim" do
-        pending "Nothing is in place to allow us to test this yet"
-      end
-
-      it "returns nil on success" do
-        expect(client.error("error\n")).to be_nil
+        client.error("This is an error message")
+        pending "Still deciding how to test this (also it doesn't work)"
       end
     end
 
     describe "#set_option" do
       it "sets the provided option" do
-        pending "Nothing is in place to allow us to test this yet"
-      end
-
-      it "returns nil on success" do
-        expect(client.set_option("background", "light")).to be_nil
+        expect {
+          client.set_option("background", "light")
+        }.to change { client.option("background").value }.from("dark").to("light")
       end
     end
 
     describe "#command" do
       it "runs the provided command" do
-        pending "Nothing is in place to allow us to test this yet"
-      end
-
-      it "returns nil on success" do
-        expect(client.command('echo "Hello"')).to be_nil
+        expect {
+          client.command("set background=light")
+        }.to change { client.option("background").value }.from("dark").to("light")
       end
     end
 
     describe "#evaluate" do
       it "evaluates the provided vim expression" do
-        pending "Nothing is in place to allow us to test this yet"
-      end
+        client.command("let g:v1 = \"a\"")
+        client.command("let g:v2 = [1, 2]")
 
-      it "returns nil on success" do
-        pending "raises 'Segmentation fault: 11'"
-        expect(client.evaluate("ihello")).to be_nil
+        expect(client.evaluate("g:")).to eq("v1" => "a", "v2" => [1, 2])
       end
     end
 
     describe "#push_keys" do
-      it "pushes the provided keys" do
-        pending "Nothing is in place to allow us to test this yet"
-      end
-
-      it "returns nil on success" do
-        pending "raises 'Abort trap: 6'"
-        expect(client.push_keys("ihello")).to be_nil
-      end
-    end
-
-    describe "#push_keys" do
-      it "pushes the provided keys" do
-        pending "Nothing is in place to allow us to test this yet"
-      end
-
-      it "returns nil on success" do
-        pending "raises 'Abort trap: 6'"
-        expect(client.push_keys("ihello")).to be_nil
+      it "pushes keys" do
+        pending "This just blows up, punting for now."
       end
     end
 
     describe "#strwidth" do
       it "returns the string cell width" do
-        expect(client.strwidth("string")).to eq(6)
+        expect(client.strwidth("テスト")).to eq(6)
       end
     end
 
@@ -104,12 +78,7 @@ module Neovim
 
     describe "#change_directory" do
       it "changes the neovim working directory" do
-        pending "Nothing is in place to allow us to test this yet"
-      end
-
-      it "returns nil on success" do
-        pending "This fails every time for some reason"
-        expect(client.change_directory("..")).to be_nil
+        pending "Still deciding how to test this"
       end
 
       it "raises an exception on failure" do
@@ -125,8 +94,14 @@ module Neovim
         expect(client.current_line).to eq("New content")
       end
 
-      it "returns the content" do
+      it "returns the new content" do
         expect(client.current_line = "New content").to eq("New content")
+      end
+
+      it "empties the line" do
+        client.current_line = "New content"
+        client.current_line = ""
+        expect(client.current_line).to eq("")
       end
     end
 
@@ -138,12 +113,6 @@ module Neovim
       it "returns the contents of the line" do
         client.current_line = "New content"
         expect(client.current_line).to eq("New content")
-      end
-    end
-
-    describe "#delete_current_line" do
-      it "deletes the current line" do
-        pending "Need control over multiple lines to test this"
       end
     end
 
@@ -163,8 +132,9 @@ module Neovim
 
     describe "#option" do
       it "returns an option" do
-        variable = client.option("hlsearch")
-        expect(variable.name).to eq("hlsearch")
+        option = client.option("hlsearch")
+        expect(option.name).to eq("hlsearch")
+        expect(option.value).to eq(false)
       end
     end
   end
