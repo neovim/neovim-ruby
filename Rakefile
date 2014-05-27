@@ -5,8 +5,14 @@ task :discover_api do
   require "neovim"
   require "yaml"
 
-  socket_path = ENV["NEOVIM_LISTEN_ADDRESS"] || "/tmp/neovim.sock"
-
-  stream = Neovim::Stream.new(socket_path, nil)
+  stream = Neovim::Stream.new("/tmp/neovim.sock", nil)
   puts YAML.dump(Neovim.discover_api(stream))
+end
+
+namespace :remote do
+  desc "Listen for signals to restart the remote process"
+  task :listen do
+    require File.expand_path("../spec/support/remote.rb", __FILE__)
+    Remote.new("/tmp/neovim.sock").listen
+  end
 end
