@@ -2,18 +2,8 @@ require "helper"
 require "neovim/client"
 
 module Neovim
-  describe Variable do
-    let(:client) { Client.new(socket_path) }
-
-    let(:socket_path) do
-      ENV.fetch("NEOVIM_LISTEN_ADDRESS", "/tmp/neovim.sock")
-    end
-
-    before do
-      unless File.socket?(socket_path)
-        raise("Neovim isn't running. Run it with `NEOVIM_LISTEN_ADDRESS=#{socket_path} nvim`")
-      end
-    end
+  describe Variable, :remote => true do
+    let(:client) { Client.new("/tmp/neovim.sock") }
 
     it "sets a global variable" do
       variable = Variable.new("g:test_var", client)

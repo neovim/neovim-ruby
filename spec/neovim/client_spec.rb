@@ -3,41 +3,20 @@ require "helper"
 require "neovim/client"
 
 module Neovim
-  describe Client do
-    let(:client) { Client.new(socket_path) }
-
-    let(:socket_path) do
-      ENV.fetch("NEOVIM_LISTEN_ADDRESS", "/tmp/neovim.sock")
-    end
-
-    before do
-      unless File.socket?(socket_path)
-        raise("Neovim isn't running. Run it with `NEOVIM_LISTEN_ADDRESS=#{socket_path} nvim`")
-      end
-
-      client.option("background").value = "dark"
-      client.current_line = ""
-    end
+  describe Client, :remote => true do
+    let(:client) { Client.new("/tmp/neovim.sock") }
 
     describe "#message" do
       it "prints a message to neovim" do
-        client.message("This is a message")
         pending "Still deciding how to test this (also it doesn't work)"
+        client.message("This is a message")
       end
     end
 
     describe "#error" do
       it "prints an error message to neovim" do
-        client.error("This is an error message")
         pending "Still deciding how to test this (also it doesn't work)"
-      end
-    end
-
-    describe "#set_option" do
-      it "sets the provided option" do
-        expect {
-          client.set_option("background", "light")
-        }.to change { client.option("background").value }.from("dark").to("light")
+        client.error("This is an error message")
       end
     end
 

@@ -3,21 +3,9 @@ require "neovim/buffer"
 require "neovim/client"
 
 module Neovim
-  describe Buffer do
-    let(:client) { Client.new(socket_path) }
+  describe Buffer, :remote => true do
+    let(:client) { Client.new("/tmp/neovim.sock") }
     let(:buffer) { Buffer.new(2, client) } # I don't know why it has to be 2
-
-    let(:socket_path) do
-      ENV.fetch("NEOVIM_LISTEN_ADDRESS", "/tmp/neovim.sock")
-    end
-
-    before do
-      unless File.socket?(socket_path)
-        raise("Neovim isn't running. Run it with `NEOVIM_LISTEN_ADDRESS=#{socket_path} nvim`")
-      end
-
-      buffer.lines[0..-1] = []
-    end
 
     describe "#length" do
       it "returns the length of the buffer" do

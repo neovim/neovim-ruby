@@ -5,38 +5,38 @@ class Remote
 
   def restart
     Process.kill(:USR1, pid("remote"))
-    Process.wait(pid("neovim"))
-  rescue Errno::ECHILD
-  end
-
-  def shutdown
-    Process.kill(:TERM, pid("remote"))
-    Process.wait(pid("remote"))
-  rescue Errno::ECHILD
   end
 
   def listen
     trap_signals
 
     env = {"NEOVIM_LISTEN_ADDRESS" => @socket_path}
-    cmd = "redir! >#{pidfile("neovim")} | echo getpid() | redir END"
+    cmd = "redir! >#{pidfile("neovim")} | echo getpid() | redir END | set noswapfile"
 
     File.write(pidfile("remote"), $$.to_s)
     neovim_pid = spawn(env, "nvim -c '#{cmd}'")
-    Process.wait(neovim_pid)
+
+    begin
+      Process.wait(neovim_pid)
+    rescue Errno::ECHILD
+    end
   end
 
   def trap_signals
     trap(:USR1) {
-      Process.kill(:KILL, pid("neovim"))
-      File.delete(@socket_path)
+      begin
+        neovim_pid = pid("neovim")
+        Process.kill(:KILL, neovim_pid)
+        Process.wait(neovim_pid)
+      rescue Errno::ECHILD
+      end
+
+      begin
+        File.delete(@socket_path)
+      rescue Errno::ENOENT
+      end
 
       listen
-    }
-
-    trap(:TERM) {
-      Process.kill(:KILL, pid("neovim"))
-      File.delete(@socket_path)
     }
   end
 

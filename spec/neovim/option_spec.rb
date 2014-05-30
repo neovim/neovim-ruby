@@ -3,24 +3,12 @@ require "neovim/client"
 require "neovim/option"
 
 module Neovim
-  describe Option do
-    let(:client) { Client.new(socket_path) }
-
-    let(:socket_path) do
-      ENV.fetch("NEOVIM_LISTEN_ADDRESS", "/tmp/neovim.sock")
-    end
-
-    before do
-      unless File.socket?(socket_path)
-        raise("Neovim isn't running. Run it with `NEOVIM_LISTEN_ADDRESS=#{socket_path} nvim`")
-      end
-      Option.new("hlsearch", client).value = true
-      Option.new("shell", client).value = "/bin/bash"
-    end
+  describe Option, :remote => true do
+    let(:client) { Client.new("/tmp/neovim.sock") }
 
     it "returns the value of a boolean option" do
       option = Option.new("hlsearch", client)
-      expect(option.value).to eq(true)
+      expect(option.value).to eq(false)
     end
 
     it "changes the value of a boolean option" do
