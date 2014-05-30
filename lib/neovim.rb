@@ -6,11 +6,13 @@ require "neovim/variable"
 require "neovim/option"
 require "neovim/buffer"
 
+require "msgpack"
+
 module Neovim
   Remote = Struct.new(:vim, :handle)
 
   def self.discover_api(stream)
     response = RPC.new([0, 0, 0, []], stream).response
-    MessagePack.unpack(response[3])
+    MessagePack.unpack(response[3][1])
   end
 end
