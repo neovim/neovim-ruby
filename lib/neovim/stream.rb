@@ -2,18 +2,18 @@ require "libuv"
 
 module Neovim
   class Stream
+    class Timeout < RuntimeError; end
+
     def initialize(address, port)
-      @loop = ::Libuv::Loop.default
-      create_uv_stream(address, port, @loop)
+      @loop = ::Libuv::Loop.new
+      @timer = create_timer
+
+      create_uv_stream(address, port)
     end
 
     def read
       run_until { @connected }
       @data = nil
-
-      @uv.progress do |data|
-        @data = data
-      end
 
       @uv.start_read
       run_until { @data }
@@ -37,19 +37,29 @@ module Neovim
 
     private
 
-    def create_uv_stream(address, port, loop)
+    def create_uv_stream(address, port)
       raise("TCP not supported yet") if port
 
-      loop.pipe.connect(address) do |pipe|
-        @connected = true
+      @loop.pipe.connect(address) do |pipe|
+        pipe.progress { |data| @data = data }
+
         @uv = pipe
+        @connected = true
       end
     end
 
-    def run_until(&condition)
-      until result = condition.call
-        @loop.run(:UV_RUN_ONCE)
+    def create_timer
+      @loop.timer do
+        @timeout = true
+        @loop.stop
       end
+    end
+
+    def run_until(timeout=1000, &condition)
+      @timer.start(timeout)
+      @loop.run(:UV_RUN_ONCE) until condition.call || @timeout
+      @timer.stop
+      raise Timeout.new("Timeout of #{timeout}ms exceeded.") if @timeout
     end
   end
 end
