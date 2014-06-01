@@ -9,10 +9,10 @@ task :discover_api do
   puts YAML.dump(Neovim.discover_api(stream))
 end
 
-namespace :remote do
-  desc "Listen for signals to restart the remote process"
-  task :listen do
-    require File.expand_path("../spec/support/remote.rb", __FILE__)
-    Remote.new("/tmp/neovim.sock").listen
-  end
+desc "Start a Neovim instance to run the test suite against"
+task :nvim do
+  env = {"NEOVIM_LISTEN_ADDRESS" => "/tmp/neovim.sock"}
+  neovim_pid = spawn(env, "nvim -u NONE")
+  _, status = Process.waitpid2(neovim_pid)
+  exit(status)
 end
