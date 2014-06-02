@@ -16,6 +16,10 @@ module Neovim
       Lines.new(@index, @client)
     end
 
+    def lines=(lines)
+      Lines.new(@index, @client)[0..-1] = lines
+    end
+
     def variable(name)
       scope = Scope::Buffer.new(@index)
       Variable.new(name, scope, @client)
@@ -36,14 +40,28 @@ module Neovim
       end
     end
 
+    def [](index)
+      if index.is_a?(Range)
+        start, finish = index.first, index.last
+        @client.rpc_response(:buffer_get_slice, @buffer_index, start, finish, true, true)
+      else
+        @client.rpc_response(:buffer_get_line, @buffer_index, index)
+      end
+    end
+
     def []=(index, content)
       if index.is_a?(Range)
         start, finish = index.first, index.last
         @client.rpc_response(:buffer_set_slice, @buffer_index, start, finish, true, true, content)
       else
-        start, finish = index, index + 1
-        @client.rpc_response(:buffer_set_slice, @buffer_index, start, finish, true, true, [content])
+        @client.rpc_response(:buffer_set_line, @buffer_index, index, content)
       end
+    end
+
+    def delete_at(index)
+      line = self[index]
+      @client.rpc_response(:buffer_del_line, @buffer_index, index)
+      line
     end
   end
 end
