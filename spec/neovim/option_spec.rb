@@ -1,6 +1,4 @@
 require "helper"
-require "neovim/client"
-require "neovim/option"
 
 module Neovim
   describe Option, :remote => true do

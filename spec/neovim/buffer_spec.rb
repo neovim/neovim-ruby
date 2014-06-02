@@ -1,6 +1,4 @@
 require "helper"
-require "neovim/buffer"
-require "neovim/client"
 
 module Neovim
   describe Buffer, :remote => true do

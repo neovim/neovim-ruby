@@ -1,8 +1,4 @@
 require "helper"
-require "neovim/client"
-require "neovim/buffer"
-require "neovim/scope"
-require "neovim/variable"
 
 module Neovim
   describe Variable, :remote => true do

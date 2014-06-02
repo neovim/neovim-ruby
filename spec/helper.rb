@@ -1,6 +1,7 @@
 require "rubygems"
 require "bundler/setup"
 require "rspec/autorun"
+require "neovim"
 
 RSpec.shared_examples "Requiring a remote Neovim process", :remote => true do
   before do

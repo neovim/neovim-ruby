@@ -1,6 +1,4 @@
 require "helper"
-require "msgpack"
-require "neovim/rpc"
 
 module Neovim
   describe RPC do

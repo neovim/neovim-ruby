@@ -1,6 +1,4 @@
 require "helper"
-require "msgpack"
-require "neovim/stream"
 
 module Neovim
   describe Stream, :remote => true do

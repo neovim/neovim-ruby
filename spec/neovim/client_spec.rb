@@ -1,6 +1,5 @@
 # coding: utf-8
 require "helper"
-require "neovim/client"
 
 module Neovim
   describe Client, :remote => true do
