@@ -30,6 +30,10 @@ module Neovim
       rpc_response(:vim_command, cmd)
     end
 
+    def commands(*cmds)
+      rpc_response(:vim_command, cmds.join(" | "))
+    end
+
     def evaluate(expr)
       rpc_response(:vim_eval, expr)
     end

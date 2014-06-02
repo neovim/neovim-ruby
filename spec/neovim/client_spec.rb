@@ -28,6 +28,18 @@ module Neovim
       end
     end
 
+    describe "#commands" do
+      it "runs a series of commands" do
+        expect(client.option("hlsearch").value).to be_false
+        expect(client.option("history").value).to eq(0)
+
+        client.commands("set hlsearch", "set history=10")
+
+        expect(client.option("hlsearch").value).to be_true
+        expect(client.option("history").value).to eq(10)
+      end
+    end
+
     describe "#evaluate" do
       it "evaluates the provided vim expression" do
         client.command("let g:v1 = \"a\"")
