@@ -109,13 +109,15 @@ module Neovim
 
     describe "#variable" do
       it "returns a global variable" do
-        variable = client.variable("g:test_var")
+        variable = client.variable("test_var")
         expect(variable.name).to eq("test_var")
         expect(variable.value).to be_nil
       end
+    end
 
+    describe "#builtin_variable" do
       it "returns a builtin variable" do
-        variable = client.variable("v:beval_col")
+        variable = client.builtin_variable("beval_col")
         expect(variable.name).to eq("beval_col")
         expect(variable.value).to eq(0)
       end

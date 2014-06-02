@@ -1,3 +1,6 @@
+require "neovim/variable"
+require "neovim/scope"
+
 module Neovim
   class Buffer
     def initialize(index, client)
@@ -11,6 +14,11 @@ module Neovim
 
     def lines
       Lines.new(@index, @client)
+    end
+
+    def variable(name)
+      scope = Scope::Buffer.new(@index)
+      Variable.new(name, scope, @client)
     end
   end
 

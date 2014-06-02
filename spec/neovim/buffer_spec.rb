@@ -28,5 +28,13 @@ module Neovim
         expect(buffer.lines.to_a).to eq(["first line", "second line"])
       end
     end
+
+    describe "#variable" do
+      it "returns a buffer local variable" do
+        variable = buffer.variable("test_var")
+        expect(variable.name).to eq("test_var")
+        expect(variable.value).to be_nil
+      end
+    end
   end
 end

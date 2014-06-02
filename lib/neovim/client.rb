@@ -1,6 +1,7 @@
 require "neovim/stream"
 require "neovim/rpc"
 require "neovim/variable"
+require "neovim/scope"
 require "neovim/option"
 
 require "msgpack"
@@ -63,7 +64,13 @@ module Neovim
     end
 
     def variable(name)
-      Variable.new(name, self)
+      scope = Scope::Global.new
+      Variable.new(name, scope, self)
+    end
+
+    def builtin_variable(name)
+      scope = Scope::Builtin.new
+      Variable.new(name, scope, self)
     end
 
     def option(name)
