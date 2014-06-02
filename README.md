@@ -1,12 +1,14 @@
 # Neovim Ruby
 
-TODO: Write a gem description
+Ruby bindings for [Neovim](https://github.com/neovim/neovim).
+
+*Warning*: This project is currently incomplete and unstable. It likely doesn't support any platform besides OS X.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'neovim'
+    gem "neovim"
 
 And then execute:
 
@@ -18,7 +20,37 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+First, make sure you have [installed the latest version of Neovim](https://github.com/neovim/neovim/wiki/Installing). Start it up with
+
+```sh
+NEOVIM_LISTEN_ADDRESS=/tmp/neovim.sock nvim
+```
+
+Then in your Ruby file, require `neovim` and instantiate a `Client` to manipulate your Neovim instance:
+
+```ruby
+require "neovim"
+
+client = Neovim::Client.new("/tmp/neovim.sock")
+
+# Execute an ex command
+client.command('echo "hello"')
+
+# Set a global variable
+var = client.variable("var1")
+var.value = 12
+
+# Manipulate buffers
+buff = client.current_buffer
+buff.lines = ["first line", "second line"]
+buff.lines[0] # => "first line"
+```
+
+See source files for more functionality. New features are being added frequently.
+
+## Running tests
+
+Many of the tests require an active instance of Neovim to run against. Boot one up with `rake nvim`. In a separate terminal, you should now be able to run the tests with `bundle exec rspec`.
 
 ## Contributing
 
