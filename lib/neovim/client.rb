@@ -55,6 +55,11 @@ module Neovim
       rpc_response(:vim_change_directory, dir)
     end
 
+    def current_buffer
+      index = rpc_response(:vim_get_current_buffer)
+      Buffer.new(index, self)
+    end
+
     def current_line
       rpc_response(:vim_get_current_line)
     end

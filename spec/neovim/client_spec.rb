@@ -78,6 +78,13 @@ module Neovim
       end
     end
 
+    describe "#current_buffer" do
+      it "returns a buffer" do
+        buffer = client.current_buffer
+        expect(buffer).to be_a(Buffer)
+      end
+    end
+
     describe "#current_line=" do
       it "sets the content of the current line" do
         client.current_line = "New content"
