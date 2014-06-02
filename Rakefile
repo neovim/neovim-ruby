@@ -14,7 +14,7 @@ end
 desc "Start a Neovim instance to run the test suite against"
 task :nvim do
   env = {"NEOVIM_LISTEN_ADDRESS" => "/tmp/neovim.sock"}
-  neovim_pid = spawn(env, "nvim -u NONE")
+  neovim_pid = spawn(env, "nvim -u NONE -c 'set noswapfile'")
   _, status = Process.waitpid2(neovim_pid)
   exit(status.exitstatus || -1)
 end
