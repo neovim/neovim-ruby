@@ -46,7 +46,7 @@ buff.lines = ["first line", "second line"]
 buff.lines[0] # => "first line"
 ```
 
-See source files for more functionality. New features are being added frequently.
+See source files and tests for more functionality. New features are being added frequently.
 
 ## Running tests
 
