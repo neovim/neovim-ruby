@@ -1,12 +1,14 @@
 require "bundler/gem_tasks"
 
-desc "Show the Neovim message pack API in YAML format"
+desc "Pretty print the Neovim message pack API"
 task :discover_api do
   require "neovim"
-  require "yaml"
+  require "msgpack"
+  require "pp"
 
   stream = Neovim::Stream.new("/tmp/neovim.sock", nil)
-  puts YAML.dump(Neovim.discover_api(stream))
+  response = Neovim::RPC.new([0, 0, 0, []], stream).response
+  pp MessagePack.unpack(response[3][1])
 end
 
 desc "Start a Neovim instance to run the test suite against"
