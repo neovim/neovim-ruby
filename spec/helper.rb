@@ -9,7 +9,7 @@ RSpec.shared_examples "Remote Neovim process", :remote => true do
       "for var in keys(g:) | " +
       "  exec \"unlet g:\".var | " +
       "endfor | " +
-      "enew!"
+      "normal ggdG"
     )
   end
 end
