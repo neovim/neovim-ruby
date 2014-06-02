@@ -10,12 +10,12 @@ module Neovim
           /^(g:|[^:]+$)/
         end
 
-        def self.getter_func_id
-          31
+        def self.getter_method_name
+          :vim_get_var
         end
 
-        def self.setter_func_id
-          32
+        def self.setter_method_name
+          :vim_set_var
         end
       end
 
@@ -24,11 +24,11 @@ module Neovim
           /^v:/
         end
 
-        def self.getter_func_id
-          33
+        def self.getter_method_name
+          :vim_get_vvar
         end
 
-        def self.setter_func_id
+        def self.setter_method_name
           raise Error.new("Can't set builtin variables")
         end
       end
@@ -54,7 +54,7 @@ module Neovim
     def value=(val)
       return val if @value == val
 
-      @client.rpc_response(@scope.setter_func_id, @name, val)
+      @client.rpc_response(@scope.setter_method_name, @name, val)
       @value = val
     end
 
@@ -62,7 +62,7 @@ module Neovim
 
     def fetch_value
       begin
-        @client.rpc_response(@scope.getter_func_id, @name)
+        @client.rpc_response(@scope.getter_method_name, @name)
       rescue RPC::Error
         nil
       end

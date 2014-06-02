@@ -23,8 +23,8 @@ module Neovim
     describe "#command" do
       it "runs the provided command" do
         expect {
-          client.command("set background=light")
-        }.to change { client.option("background").value }.from("dark").to("light")
+          client.command("set hlsearch")
+        }.to change { client.option("hlsearch").value }.from(false).to(true)
       end
     end
 

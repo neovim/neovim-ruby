@@ -9,7 +9,7 @@ module Neovim
     end
 
     def value=(val)
-      @client.rpc_response(35, @name, val)
+      @client.rpc_response(:vim_set_option, @name, val)
       @value = val
     end
 
@@ -17,7 +17,7 @@ module Neovim
 
     def fetch_value
       begin
-        @client.rpc_response(34, @name)
+        @client.rpc_response(:vim_get_option, @name)
       rescue RPC::Error
         nil
       end
