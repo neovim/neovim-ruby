@@ -16,11 +16,7 @@ module Neovim
     private
 
     def fetch_value
-      begin
-        @client.rpc_response(:vim_get_option, @name)
-      rescue RPC::Error
-        nil
-      end
+      @client.rpc_response(:vim_get_option, @name)
     end
   end
 end
