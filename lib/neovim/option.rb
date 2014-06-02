@@ -1,22 +1,27 @@
 module Neovim
   class Option
-    attr_reader :name, :value
+    attr_reader :name, :value, :scope
 
-    def initialize(name, client)
+    def initialize(name, scope, client)
       @name = name
+      @scope = scope
       @client = client
       @value = fetch_value
     end
 
     def value=(val)
-      @client.rpc_response(:vim_set_option, @name, val)
+      return val if @value == val
+      args = @scope.rpc_args + [@name, val]
+
+      @client.rpc_response(@scope.set_option_method, *args)
       @value = val
     end
 
     private
 
     def fetch_value
-      @client.rpc_response(:vim_get_option, @name)
+      args = @scope.rpc_args + [@name]
+      @client.rpc_response(@scope.get_option_method, *args)
     end
   end
 end

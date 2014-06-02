@@ -24,6 +24,11 @@ module Neovim
       scope = Scope::Buffer.new(@index)
       Variable.new(name, scope, @client)
     end
+
+    def option(name)
+      scope = Scope::Buffer.new(@index)
+      Option.new(name, scope, @client)
+    end
   end
 
   class Lines

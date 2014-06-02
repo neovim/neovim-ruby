@@ -50,10 +50,23 @@ module Neovim
     end
 
     describe "#variable" do
-      it "returns a buffer local variable" do
+      it "reads a buffer local variable" do
         variable = buffer.variable("test_var")
+
+        expect(variable).to be_a(Variable)
         expect(variable.name).to eq("test_var")
-        expect(variable.value).to be_nil
+        expect(variable.scope).to be_a(Scope::Buffer)
+      end
+    end
+
+    describe "#option" do
+      it "reads a buffer local option" do
+        pending "https://github.com/neovim/neovim/issues/796"
+        option = buffer.option("hlsearch")
+
+        expect(option).to be_a(Option)
+        expect(option.name).to eq("hlsearch")
+        expect(option.scope).to be_a(Scope::Buffer)
       end
     end
   end

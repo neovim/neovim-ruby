@@ -10,6 +10,9 @@ RSpec.shared_examples "Requiring a remote Neovim process", :remote => true do
       "set all&",
       "for var in keys(g:)",
       "  exec \"unlet g:\" . var",
+      "endfor",
+      "for var in keys(b:)",
+      "  exec \"unlet b:\" . var",
       "endfor"
     )
   end

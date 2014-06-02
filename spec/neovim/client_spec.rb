@@ -109,24 +109,30 @@ module Neovim
     describe "#variable" do
       it "returns a global variable" do
         variable = client.variable("test_var")
+
+        expect(variable).to be_a(Variable)
         expect(variable.name).to eq("test_var")
-        expect(variable.value).to be_nil
+        expect(variable.scope).to be_a(Scope::Global)
       end
     end
 
     describe "#builtin_variable" do
       it "returns a builtin variable" do
         variable = client.builtin_variable("beval_col")
+
+        expect(variable).to be_a(Variable)
         expect(variable.name).to eq("beval_col")
-        expect(variable.value).to eq(0)
+        expect(variable.scope).to be_a(Scope::Builtin)
       end
     end
 
     describe "#option" do
       it "returns an option" do
         option = client.option("hlsearch")
+
+        expect(option).to be_a(Option)
         expect(option.name).to eq("hlsearch")
-        expect(option.value).to eq(false)
+        expect(option.scope).to be_a(Scope::Global)
       end
     end
   end

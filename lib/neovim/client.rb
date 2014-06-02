@@ -74,7 +74,8 @@ module Neovim
     end
 
     def option(name)
-      Option.new(name, self)
+      scope = Scope::Global.new
+      Option.new(name, scope, self)
     end
 
     def rpc_response(method_name, *args)
