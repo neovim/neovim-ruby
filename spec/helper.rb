@@ -8,6 +8,7 @@ RSpec.shared_examples "Requiring a remote Neovim process", :remote => true do
     Neovim::Client.new("/tmp/neovim.sock").commands(
       "1,$d",
       "set all&",
+      "set noswapfile",
       "for var in keys(g:)",
       "  exec \"unlet g:\" . var",
       "endfor",
