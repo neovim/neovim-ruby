@@ -22,6 +22,10 @@ module Neovim
           cursor.line = 50
         }.to raise_error(RPC::Error, /outside buffer/i)
       end
+
+      it "returns the new line" do
+        expect(cursor.line = 2).to eq(2)
+      end
     end
 
     describe "#column=" do
@@ -35,6 +39,10 @@ module Neovim
         cursor.column = 50
         expect(cursor.column).to eq("first".size - 1)
         expect(window.cursor.column).to eq("first".size - 1)
+      end
+
+      it "returns the new column" do
+        expect(cursor.column = 50).to eq(50)
       end
     end
   end

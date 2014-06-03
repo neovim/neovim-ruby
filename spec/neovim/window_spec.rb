@@ -21,5 +21,21 @@ module Neovim
         expect(cursor.column).to eq(0)
       end
     end
+
+    describe "#cursor=" do
+      before do
+        window.buffer.lines = ["first", "second", "third"]
+      end
+
+      it "sets the line and column number for the cursor" do
+        expect {
+          window.cursor = [2, 2]
+        }.to change { [window.cursor.line, window.cursor.column] }.to([2, 2])
+      end
+
+      it "returns the new coordinates" do
+        expect(window.cursor = [2, 2]).to eq([2, 2])
+      end
+    end
   end
 end

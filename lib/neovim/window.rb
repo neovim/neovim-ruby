@@ -13,7 +13,13 @@ module Neovim
     end
 
     def cursor
-      Cursor.new(@index, @client)
+      @cursor ||= Cursor.new(@index, @client)
+    end
+
+    def cursor=(coords)
+      @client.rpc_response(:window_set_cursor, @index, coords)
+      @cursor = nil
+      coords
     end
   end
 end
