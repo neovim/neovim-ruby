@@ -61,11 +61,10 @@ module Neovim
 
     describe "#option" do
       it "reads a buffer local option" do
-        pending "https://github.com/neovim/neovim/issues/796"
-        option = buffer.option("hlsearch")
+        option = buffer.option("expandtab")
 
         expect(option).to be_a(Option)
-        expect(option.name).to eq("hlsearch")
+        expect(option.name).to eq("expandtab")
         expect(option.scope).to be_a(Scope::Buffer)
       end
     end
