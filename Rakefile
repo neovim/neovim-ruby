@@ -1,4 +1,8 @@
 require "bundler/gem_tasks"
+require "rspec/core/rake_task"
+
+RSpec::Core::RakeTask.new(:spec)
+task :default => :spec
 
 desc "Pretty print the Neovim message pack API"
 task :discover_api do
