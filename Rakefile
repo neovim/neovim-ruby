@@ -22,7 +22,7 @@ namespace :neovim do
 
     FileUtils.rm_f("/tmp/neovim.sock")
     env = {"NEOVIM_LISTEN_ADDRESS" => "/tmp/neovim.sock"}
-    neovim_pid = spawn(env, "nvim -u NONE")
+    neovim_pid = spawn(env, "nvim -u NONE -N")
     _, status = Process.waitpid2(neovim_pid)
     exit(status.exitstatus || -1)
   end

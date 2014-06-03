@@ -29,13 +29,14 @@ module Neovim
 
     describe "#commands" do
       it "runs a series of commands" do
+        before_history = client.option("history").value
         expect(client.option("hlsearch").value).to be_false
-        expect(client.option("history").value).to eq(0)
+        expect(before_history).to be > 0
 
-        client.commands("set hlsearch", "set history=10")
+        client.commands("set hlsearch", "set history+=10")
 
         expect(client.option("hlsearch").value).to be_true
-        expect(client.option("history").value).to eq(10)
+        expect(client.option("history").value).to eq(before_history + 10)
       end
     end
 
