@@ -78,6 +78,14 @@ module Neovim
       end
     end
 
+    describe "#buffers" do
+      it "returns all buffers" do
+        buffers = client.buffers
+        expect(buffers.size).to eq(1)
+        expect(buffers.first).to be_a(Buffer)
+      end
+    end
+
     describe "#current_buffer" do
       it "returns a buffer" do
         buffer = client.current_buffer

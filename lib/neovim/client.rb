@@ -55,6 +55,12 @@ module Neovim
       rpc_response(:vim_change_directory, dir)
     end
 
+    def buffers
+      rpc_response(:vim_get_buffers).map do |index|
+        Buffer.new(index, self)
+      end
+    end
+
     def current_buffer
       index = rpc_response(:vim_get_current_buffer)
       Buffer.new(index, self)
