@@ -3,6 +3,8 @@ require "neovim/scope"
 
 module Neovim
   class Buffer
+    attr_reader :index
+
     def initialize(index, client)
       @index = index
       @client = client
