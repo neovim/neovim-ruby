@@ -18,6 +18,9 @@ namespace :neovim do
 
   desc "Start a Neovim instance to run the test suite against"
   task :start do
+    require "fileutils"
+
+    FileUtils.rm_f("/tmp/neovim.sock")
     env = {"NEOVIM_LISTEN_ADDRESS" => "/tmp/neovim.sock"}
     neovim_pid = spawn(env, "nvim -u NONE")
     _, status = Process.waitpid2(neovim_pid)
