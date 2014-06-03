@@ -15,11 +15,11 @@ module Neovim
     end
 
     def lines
-      Lines.new(@index, @client)
+      @lines ||= Lines.new(@index, @client)
     end
 
-    def lines=(lines)
-      Lines.new(@index, @client)[0..-1] = lines
+    def lines=(lns)
+      lines[0..-1] = lns
     end
 
     def variable(name)
