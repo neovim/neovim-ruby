@@ -21,5 +21,25 @@ module Neovim
       @cursor = nil
       coords
     end
+
+    def height
+      @height ||= @client.rpc_response(:window_get_height, @index)
+    end
+
+    def height=(ht)
+      @client.rpc_response(:window_set_height, @index, ht)
+      @height = nil
+      ht
+    end
+
+    def width
+      @width ||= @client.rpc_response(:window_get_width, @index)
+    end
+
+    def width=(wt)
+      @client.rpc_response(:window_set_width, @index, wt)
+      @width = nil
+      wt
+    end
   end
 end

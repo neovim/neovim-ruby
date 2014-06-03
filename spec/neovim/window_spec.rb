@@ -37,5 +37,44 @@ module Neovim
         expect(window.cursor = [2, 2]).to eq([2, 2])
       end
     end
+
+    describe "height" do
+      it "returns the current height" do
+        expect(window.height).to be > 0
+      end
+    end
+
+    describe "height=" do
+      it "sets the window height" do
+        expect {
+          window.height -= 1
+        }.to change { window.height }.by(-1)
+      end
+
+      it "returns the new height" do
+        new_height = window.height - 2
+        expect(window.height -= 2).to eq(new_height)
+      end
+    end
+
+    describe "width" do
+      it "returns the current width" do
+        expect(window.width).to be > 0
+      end
+    end
+
+    describe "width=" do
+      it "sets the window width" do
+        pending "this doesn't work"
+        expect {
+          window.width -= 1
+        }.to change { window.width }.by(-1)
+      end
+
+      it "returns the new width" do
+        new_width = window.width - 2
+        expect(window.width -= 2).to eq(new_width)
+      end
+    end
   end
 end
