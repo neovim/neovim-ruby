@@ -68,6 +68,7 @@ module Neovim
 
     describe "#change_directory" do
       it "changes the neovim working directory" do
+        client.change_directory("..")
         pending "Still deciding how to test this"
       end
 

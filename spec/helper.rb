@@ -3,10 +3,13 @@ require "bundler/setup"
 require "rspec/autorun"
 require "neovim"
 
+working_directory = File.expand_path("../..", __FILE__)
+
 RSpec.shared_examples "Requiring a remote Neovim process", :remote => true do
   before do
     Neovim::Client.new("/tmp/neovim.sock").commands(
       "1,$d",
+      "cd #{working_directory}",
       "set all&",
       "set noswapfile",
       "for var in keys(g:)",
