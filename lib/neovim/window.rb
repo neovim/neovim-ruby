@@ -1,7 +1,7 @@
 module Neovim
-  Cursor = Struct.new(:line, :column)
-
   class Window
+    attr_reader :index
+
     def initialize(index, client)
       @index = index
       @client = client
@@ -13,8 +13,7 @@ module Neovim
     end
 
     def cursor
-      line, col = @client.rpc_response(:window_get_cursor, @index)
-      Cursor.new(line, col)
+      Cursor.new(@index, @client)
     end
   end
 end

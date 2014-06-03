@@ -14,7 +14,7 @@ module Neovim
     end
 
     describe "#cursor" do
-      it "returns a Cursor containing to the cursor position" do
+      it "returns a Cursor containing the cursor position" do
         cursor = window.cursor
         expect(cursor).to be_a(Cursor)
         expect(cursor.line).to eq(1)
