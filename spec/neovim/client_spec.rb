@@ -7,14 +7,14 @@ module Neovim
 
     describe "#message" do
       it "prints a message to neovim" do
-        pending "Still deciding how to test this (also it doesn't work)"
+        skip "Still deciding how to test this (also it doesn't work)"
         client.message("This is a message")
       end
     end
 
     describe "#error" do
       it "prints an error message to neovim" do
-        pending "Still deciding how to test this (also it doesn't work)"
+        skip "Still deciding how to test this (also it doesn't work)"
         client.error("This is an error message")
       end
     end
@@ -30,12 +30,12 @@ module Neovim
     describe "#commands" do
       it "runs a series of commands" do
         before_history = client.option("history").value
-        expect(client.option("hlsearch").value).to be_false
+        expect(client.option("hlsearch").value).to be(false)
         expect(before_history).to be > 0
 
         client.commands("set hlsearch", "set history+=10")
 
-        expect(client.option("hlsearch").value).to be_true
+        expect(client.option("hlsearch").value).to be(true)
         expect(client.option("history").value).to eq(before_history + 10)
       end
     end
@@ -51,7 +51,7 @@ module Neovim
 
     describe "#push_keys" do
       it "pushes keys" do
-        pending "This just blows up, punting for now."
+        skip "This just blows up, punting for now."
       end
     end
 
@@ -69,8 +69,8 @@ module Neovim
 
     describe "#change_directory" do
       it "changes the neovim working directory" do
+        skip "Still deciding how to test this"
         client.change_directory("..")
-        pending "Still deciding how to test this"
       end
 
       it "raises an exception on failure" do

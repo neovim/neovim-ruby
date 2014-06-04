@@ -65,7 +65,7 @@ module Neovim
 
     describe "width=" do
       it "sets the window width" do
-        pending "this doesn't work"
+        skip "this doesn't work"
         expect {
           window.width -= 1
         }.to change { window.width }.by(-1)

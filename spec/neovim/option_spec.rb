@@ -7,14 +7,14 @@ module Neovim
     shared_context "getters and setters" do
       it "reads an option" do
         option = Option.new(option_name, scope, client)
-        expect(option.value).to be_false
+        expect(option.value).to be(false)
       end
 
       it "sets an option" do
         option = Option.new(option_name, scope, client)
         option.value = false
-        expect(option.value).to be_false
-        expect(Option.new(option_name, scope, client).value).to be_false
+        expect(option.value).to be(false)
+        expect(Option.new(option_name, scope, client).value).to be(false)
       end
 
       it "raises an exception on invalid arguments" do
