@@ -1,6 +1,5 @@
 require "rubygems"
 require "bundler/setup"
-require "rspec/autorun"
 require "neovim"
 
 working_directory = File.expand_path("../..", __FILE__)
