@@ -106,5 +106,15 @@ module Neovim
         expect(window.position[1]).to be > 0
       end
     end
+
+    describe "#valid?" do
+      it "returns true" do
+        expect(window).to be_valid
+      end
+
+      it "returns false" do
+        pending "I don't know what this means"
+      end
+    end
   end
 end

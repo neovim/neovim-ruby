@@ -55,5 +55,9 @@ module Neovim
     def position
       @client.rpc_response(:window_get_position, @index)
     end
+
+    def valid?
+      @client.rpc_response(:window_is_valid, @index)
+    end
   end
 end
