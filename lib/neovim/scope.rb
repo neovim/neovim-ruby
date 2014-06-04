@@ -64,6 +64,24 @@ module Neovim
       end
     end
 
+    class Tabpage < Base
+      def get_variable_method
+        :tabpage_get_var
+      end
+
+      def set_variable_method
+        :tabpage_set_var
+      end
+
+      def get_option_method
+        raise Error.new("Options can't be tabpage scoped")
+      end
+
+      def set_option_method
+        raise Error.new("Options can't be tabpage scoped")
+      end
+    end
+
     class Builtin < Base
       def get_variable_method
         :vim_get_vvar
