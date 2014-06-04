@@ -26,4 +26,10 @@ namespace :neovim do
     _, status = Process.waitpid2(neovim_pid)
     exit(status.exitstatus || -1)
   end
+
+  desc "Update neovim installation to current master"
+  task :update do
+    sh "brew remove neovim && " +
+       "brew install --HEAD https://raw.github.com/neovim/neovim/master/neovim.rb"
+  end
 end
