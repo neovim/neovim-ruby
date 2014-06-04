@@ -21,6 +21,8 @@ RSpec.shared_examples "Requiring a remote Neovim process", :remote => true do
       "set all&",
       "vert resize",
       "resize",
+      "wincmd p",
+      "only",
       "set noswapfile",
       "for var in keys(g:)",
       "  exec \"unlet g:\" . var",

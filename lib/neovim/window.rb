@@ -51,5 +51,9 @@ module Neovim
       scope = Scope::Window.new(@index)
       Option.new(name, scope, @client)
     end
+
+    def position
+      @client.rpc_response(:window_get_position, @index)
+    end
   end
 end

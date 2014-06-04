@@ -96,5 +96,15 @@ module Neovim
         expect(option.scope).to be_a(Scope::Window)
       end
     end
+
+    describe "#position" do
+      it "returns the cursor position" do
+        expect(window.position).to eq([0, 0])
+        client.command("vsp")
+
+        expect(window.position[0]).to eq(0)
+        expect(window.position[1]).to be > 0
+      end
+    end
   end
 end
