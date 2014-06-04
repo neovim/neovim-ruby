@@ -41,5 +41,15 @@ module Neovim
       @width = nil
       wt
     end
+
+    def variable(name)
+      scope = Scope::Window.new(@index)
+      Variable.new(name, scope, @client)
+    end
+
+    def option(name)
+      scope = Scope::Window.new(@index)
+      Option.new(name, scope, @client)
+    end
   end
 end

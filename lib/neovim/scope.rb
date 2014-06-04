@@ -46,6 +46,24 @@ module Neovim
       end
     end
 
+    class Window < Base
+      def get_variable_method
+        :window_get_var
+      end
+
+      def set_variable_method
+        :window_set_var
+      end
+
+      def get_option_method
+        :window_get_option
+      end
+
+      def set_option_method
+        :window_set_option
+      end
+    end
+
     class Builtin < Base
       def get_variable_method
         :vim_get_vvar

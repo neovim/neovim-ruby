@@ -76,5 +76,25 @@ module Neovim
         expect(window.width -= 2).to eq(new_width)
       end
     end
+
+    describe "#variable" do
+      it "reads a window scoped variable" do
+        variable = window.variable("win_var")
+
+        expect(variable).to be_a(Variable)
+        expect(variable.name).to eq("win_var")
+        expect(variable.scope).to be_a(Scope::Window)
+      end
+    end
+
+    describe "#option" do
+      it "reads a window scoped option" do
+        option = window.option("list")
+
+        expect(option).to be_an(Option)
+        expect(option.name).to eq("list")
+        expect(option.scope).to be_a(Scope::Window)
+      end
+    end
   end
 end

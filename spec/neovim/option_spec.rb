@@ -36,5 +36,11 @@ module Neovim
       let(:option_name) { "expandtab" }
       include_context "getters and setters"
     end
+
+    describe "window scoped" do
+      let(:scope) { Scope::Window.new(1) }
+      let(:option_name) { "list" }
+      include_context "getters and setters"
+    end
   end
 end

@@ -38,6 +38,11 @@ module Neovim
       include_context "getters and setters"
     end
 
+    describe "window scoped" do
+      let(:scope) { Scope::Window.new(1) }
+      include_context "getters and setters"
+    end
+
     describe "builtin scoped" do
       it "reads a variable" do
         scope = Scope::Builtin.new
