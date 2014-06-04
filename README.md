@@ -50,7 +50,7 @@ See source files and tests for more functionality. New features are being added 
 
 ## Running tests
 
-Many of the tests require an active instance of Neovim to run against. Boot one up with `rake neovim:start`. In a separate terminal, you should now be able to run the tests with `rake`.
+Many of the tests require an active instance of Neovim to run against. Boot one up with `rake neovim:start`. In a separate terminal, you should now be able to run the tests with `bundle exec rake`.
 
 ## Contributing
 
