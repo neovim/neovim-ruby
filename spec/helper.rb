@@ -2,8 +2,6 @@ require "rubygems"
 require "bundler/setup"
 require "neovim"
 
-working_directory = File.expand_path("../..", __FILE__)
-
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
