@@ -18,13 +18,18 @@ namespace :neovim do
 
   desc "Start a Neovim instance to run the test suite against"
   task :start do
-    require "fileutils"
+    begin
+      File.delete("/tmp/neovim.sock")
+    rescue Errno::ENOENT
+    end
 
-    FileUtils.rm_f("/tmp/neovim.sock")
     env = {"NEOVIM_LISTEN_ADDRESS" => "/tmp/neovim.sock"}
-    neovim_pid = spawn(env, "nvim -u NONE -N")
-    _, status = Process.waitpid2(neovim_pid)
-    exit(status.exitstatus || -1)
+
+    loop do
+      neovim_pid = spawn(env, "nvim -u NONE -N")
+      _, status = Process.waitpid2(neovim_pid)
+      break if status.exitstatus == 0
+    end
   end
 
   desc "Update neovim installation to current master"

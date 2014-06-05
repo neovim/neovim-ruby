@@ -2,8 +2,6 @@ require "helper"
 
 module Neovim
   describe Variable, :remote => true do
-    let(:client) { Client.new("/tmp/neovim.sock") }
-
     shared_context "getters and setters" do
       it "reads a variable" do
         variable = Variable.new("buf_var", scope, client)

@@ -2,7 +2,6 @@ require "helper"
 
 module Neovim
   describe Window, :remote => true do
-    let(:client) { Client.new("/tmp/neovim.sock") }
     let(:window) { Window.new(1, client) }
 
     describe "#buffer" do

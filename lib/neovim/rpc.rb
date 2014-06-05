@@ -14,8 +14,9 @@ module Neovim
 
     def fetch_response(data, stream)
       stream.write(MessagePack.pack(data))
+      return nil unless response = stream.read
 
-      MessagePack.unpack(stream.read).tap do |payload|
+      MessagePack.unpack(response).tap do |payload|
         if error_msg = payload[2]
           raise Error.new(error_msg)
         end

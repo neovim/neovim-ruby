@@ -2,7 +2,6 @@ require "helper"
 
 module Neovim
   describe Buffer, :remote => true do
-    let(:client) { Client.new("/tmp/neovim.sock") }
     let(:buffer) { Buffer.new(2, client) } # I don't know why it has to be 2
 
     describe "#length" do

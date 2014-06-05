@@ -19,6 +19,8 @@ module Neovim
           data << @connection.read_nonblock(4096)
         rescue IO::WaitReadable
           break(data)
+        rescue EOFError
+          break(nil)
         end
       end
     end

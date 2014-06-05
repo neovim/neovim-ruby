@@ -92,7 +92,8 @@ module Neovim
     def rpc_response(method_name, *args)
       method_id = @method_lookup.fetch(method_name)
       data = [0, @req_id += 1, method_id, args]
-      RPC.new(data, @stream).response[3]
+      response = RPC.new(data, @stream).response
+      response.respond_to?(:to_ary) ? response[3] : response
     end
 
     private

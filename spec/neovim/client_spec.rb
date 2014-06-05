@@ -3,8 +3,6 @@ require "helper"
 
 module Neovim
   describe Client, :remote => true do
-    let(:client) { Client.new("/tmp/neovim.sock") }
-
     describe "#message" do
       it "prints a message to neovim" do
         skip "Still deciding how to test this (also it doesn't work)"

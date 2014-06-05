@@ -2,7 +2,6 @@ require "helper"
 
 module Neovim
   describe Cursor, :remote => true do
-    let(:client) { Client.new("/tmp/neovim.sock") }
     let(:window) { Window.new(1, client) }
     let(:cursor) { Cursor.new(window.index, client) }
 
