@@ -74,6 +74,21 @@ module Neovim
       rpc_response(:vim_set_current_line, line)
     end
 
+    def windows
+      rpc_response(:vim_get_windows).map do |window_index|
+        Window.new(window_index, self)
+      end
+    end
+
+    def current_window
+      window_index = rpc_response(:vim_get_current_window)
+      Window.new(window_index, self)
+    end
+
+    def current_window=(window_index)
+      rpc_response(:vim_set_current_window, window_index)
+    end
+
     def variable(name)
       scope = Scope::Global.new
       Variable.new(name, scope, self)

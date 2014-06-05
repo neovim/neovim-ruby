@@ -93,6 +93,17 @@ module Neovim
       end
     end
 
+    describe "#current_line" do
+      it "returns an empty string if the current line is empty" do
+        expect(client.current_line).to eq("")
+      end
+
+      it "returns the contents of the line" do
+        client.current_line = "New content"
+        expect(client.current_line).to eq("New content")
+      end
+    end
+
     describe "#current_line=" do
       it "sets the content of the current line" do
         client.current_line = "New content"
@@ -110,14 +121,33 @@ module Neovim
       end
     end
 
-    describe "#current_line" do
-      it "returns an empty string if the current line is empty" do
-        expect(client.current_line).to eq("")
+    describe "#windows" do
+      it "returns a list of windows" do
+        windows = client.windows
+        expect(windows.size).to eq(1)
+        expect(windows.first).to be_a(Window)
+      end
+    end
+
+    describe "#current_window" do
+      it "returns the current window" do
+        expect(client.current_window).to be_a(Window)
+      end
+    end
+
+    describe "#current_window=" do
+      it "sets the current window" do
+        client.command("vsp")
+        expect(client.current_window.index).not_to eq(1)
+        expect {
+          client.current_window = 1
+        }.to change { client.current_window.index }.to(1)
       end
 
-      it "returns the contents of the line" do
-        client.current_line = "New content"
-        expect(client.current_line).to eq("New content")
+      it "raises an exception for an invalid window index" do
+        expect {
+          client.current_window = 999
+        }.to raise_error(/invalid window id/i)
       end
     end
 
