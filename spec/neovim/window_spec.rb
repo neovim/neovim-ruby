@@ -113,7 +113,7 @@ module Neovim
       end
 
       it "returns false" do
-        pending "I don't know what this means"
+        skip "I don't know what this means"
       end
     end
   end
