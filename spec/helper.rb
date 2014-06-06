@@ -10,7 +10,7 @@ RSpec.configure do |config|
   config.order = :random
 end
 
-RSpec.shared_examples "Requiring a remote Neovim process", :remote => true do
+RSpec.shared_examples :remote => true do
   let!(:client) do
     begin
       Neovim::Client.new("/tmp/neovim.sock").command("cq")
