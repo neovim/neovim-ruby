@@ -14,13 +14,13 @@ RSpec.shared_examples :remote => true do
   let!(:client) do
     begin
       Neovim::Client.new("/tmp/neovim.sock").command("cq")
-    rescue Errno::ENOENT
+    rescue Errno::ENOENT, Errno::ECONNREFUSED
       retry
     end
 
     begin
       Neovim::Client.new("/tmp/neovim.sock")
-    rescue
+    rescue Errno::ENOENT, Errno::ECONNREFUSED, EOFError
       retry
     end
   end
