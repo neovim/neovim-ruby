@@ -50,7 +50,9 @@ See source files and tests for more functionality. New features are being added 
 
 ## Running tests
 
-Many of the tests require an active instance of Neovim to run against. Boot one up with `rake neovim:start`. In a separate terminal, you should now be able to run the tests with `bundle exec rake`.
+Many of the tests require a special instance of Neovim to run against. This Neovim instance will restart immediately when it exits with a non-zero status. This way, tests can kill it with `:cq` before each run and have it boot back up in a fresh state. See the Rakefile and spec/helper.rb for specific details on how this works.
+
+To start up a test Neovim instance, run `rake neovim:start`. In a separate terminal, you should now be able to run the tests with `bundle exec rake` or whatever.
 
 ## Contributing
 
