@@ -9,8 +9,8 @@ module Neovim
       @connection = UNIXSocket.new(address)
     end
 
-    def read
-      IO.select([@connection], nil, nil, 1) ||
+    def read(timeout=1)
+      IO.select([@connection], nil, nil, timeout) ||
         raise(Timeout, "Timeout waiting for socket to be readable")
 
       data = ""
@@ -23,8 +23,8 @@ module Neovim
       end
     end
 
-    def write(data)
-      IO.select(nil, [@connection], nil, 1) ||
+    def write(data, timeout=1)
+      IO.select(nil, [@connection], nil, timeout) ||
         raise(Timeout, "Timeout waiting for socket to be writable")
 
       @connection.write(data)

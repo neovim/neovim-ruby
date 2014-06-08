@@ -7,16 +7,20 @@ module Neovim
     attr_reader :response
 
     def initialize(data, stream)
-      @response = fetch_response(data, stream)
+      @data = data
+      @stream = stream
+      @stream.write(MessagePack.pack(@data))
+    end
+
+    def response
+      @response ||= fetch_response
     end
 
     private
 
-    def fetch_response(data, stream)
-      stream.write(MessagePack.pack(data))
-      return nil unless response = stream.read
-
-      MessagePack.unpack(response).tap do |payload|
+    def fetch_response
+      raw_response = @stream.read
+      MessagePack.unpack(raw_response).tap do |payload|
         if error_msg = payload[2]
           raise Error.new(error_msg)
         end

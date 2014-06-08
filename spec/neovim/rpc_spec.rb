@@ -26,7 +26,7 @@ module Neovim
       error_response = [0, 0, "error message", nil]
       expect(stream).to receive(:read).and_return(MessagePack.pack(error_response))
       expect {
-        RPC.new(message, stream)
+        RPC.new(message, stream).response
       }.to raise_error(Neovim::RPC::Error, "error message")
     end
   end

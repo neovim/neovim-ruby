@@ -14,9 +14,7 @@ module Neovim
       @req_id = 0
 
       @plugin_id, defs = discover_api
-      @method_lookup = defs["functions"].inject({}) do |acc, mdef|
-        acc.merge(mdef["name"].to_sym => mdef["id"])
-      end
+      @method_lookup = create_method_lookup(defs["functions"])
     end
 
     def message(msg)
@@ -28,15 +26,7 @@ module Neovim
     end
 
     def command(cmd)
-      begin
-        rpc_response(:vim_command, cmd)
-      rescue EOFError
-        # Neovim process was killed by command
-      end
-    end
-
-    def commands(*cmds)
-      rpc_response(:vim_command, cmds.join(" | "))
+      rpc_response(:vim_command, cmd)
     end
 
     def evaluate(expr)
@@ -124,17 +114,31 @@ module Neovim
     end
 
     def rpc_response(method_name, *args)
-      method_id = @method_lookup.fetch(method_name)
-      data = [0, @req_id += 1, method_id, args]
-      RPC.new(data, @stream).response[3]
+      begin
+        rpc(method_name, *args).response[3]
+      rescue EOFError
+        # Neovim was killed by the rpc
+      end
     end
 
     private
 
+    def rpc(method_name, *args)
+      method_id = @method_lookup.fetch(method_name)
+      data = [0, @req_id += 1, method_id, args]
+      RPC.new(data, @stream)
+    end
+
     def discover_api
-      response = RPC.new([0, 0, 0, []], @stream).response
-      plugin_id, encoded_api = response[3]
+      rpc_response = RPC.new([0, 0, 0, []], @stream).response
+      plugin_id, encoded_api = rpc_response[3]
       [plugin_id, MessagePack.unpack(encoded_api)]
+    end
+
+    def create_method_lookup(defs)
+      defs.inject({}) do |acc, mdef|
+        acc.merge(mdef["name"].to_sym => mdef["id"])
+      end
     end
   end
 end
