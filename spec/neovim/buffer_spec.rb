@@ -67,5 +67,43 @@ module Neovim
         expect(option.scope).to be_a(Scope::Buffer)
       end
     end
+
+    describe "#number" do
+      it "returns the buffer index" do
+        expect(buffer.number).to eq(1)
+      end
+    end
+
+    describe "#name" do
+      it "returns the buffer name" do
+        client.command("file buffer_abc")
+        expect(buffer.name).to match(/buffer_abc$/)
+      end
+    end
+
+    describe "#name=" do
+      it "sets the buffer name" do
+        buffer.name = "buffer_abc"
+        expect(buffer.name).to match(/buffer_abc$/)
+      end
+    end
+
+    describe "#valid?" do
+      it "returns true" do
+        expect(buffer).to be_valid
+      end
+
+      it "returns false" do
+        skip "I don't know what this means"
+      end
+    end
+
+    describe "#mark" do
+      it "returns the position of the provided mark" do
+        buffer.lines = ["one", "two", "three"]
+        client.command("normal jlma")
+        expect(buffer.mark("a")).to eq([2, 1])
+      end
+    end
   end
 end

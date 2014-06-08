@@ -31,6 +31,26 @@ module Neovim
       scope = Scope::Buffer.new(@index)
       Option.new(name, scope, @client)
     end
+
+    def number
+      @client.rpc_response(:buffer_get_number, @index)
+    end
+
+    def name
+      @client.rpc_response(:buffer_get_name, @index)
+    end
+
+    def name=(name)
+      @client.rpc_response(:buffer_set_name, @index, name)
+    end
+
+    def valid?
+      @client.rpc_response(:buffer_is_valid, @index)
+    end
+
+    def mark(name)
+      @client.rpc_response(:buffer_get_mark, @index, name)
+    end
   end
 
   class Lines
