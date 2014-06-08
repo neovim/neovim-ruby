@@ -7,6 +7,10 @@ module Neovim
       @client = client
     end
 
+    def ==(other)
+      @index == other.index
+    end
+
     def buffer
       buffer_index = @client.rpc_response(:window_get_buffer, @index)
       Buffer.new(buffer_index, @client)
@@ -54,6 +58,11 @@ module Neovim
 
     def position
       @client.rpc_response(:window_get_position, @index)
+    end
+
+    def tabpage
+      tabpage_index = @client.rpc_response(:window_get_tabpage, @index)
+      Tabpage.new(tabpage_index, @client)
     end
 
     def valid?

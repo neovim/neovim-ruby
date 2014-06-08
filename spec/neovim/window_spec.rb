@@ -106,6 +106,13 @@ module Neovim
       end
     end
 
+    describe "#tabpage" do
+      it "returns the tabpage the buffer is in" do
+        expect(window.tabpage).to be_a(Tabpage)
+        expect(window.tabpage.current_window).to eq(window)
+      end
+    end
+
     describe "#valid?" do
       it "returns true" do
         expect(window).to be_valid
