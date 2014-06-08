@@ -1,8 +1,14 @@
 module Neovim
   class Tabpage
+    attr_reader :index
+
     def initialize(index, client)
       @index = index
       @client = client
+    end
+
+    def ==(other)
+      @index == other.index
     end
 
     def windows

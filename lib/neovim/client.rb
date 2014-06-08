@@ -93,6 +93,21 @@ module Neovim
       rpc_response(:vim_set_current_window, window_index)
     end
 
+    def tabpages
+      rpc_response(:vim_get_tabpages).map do |tabpage_index|
+        Tabpage.new(tabpage_index, self)
+      end
+    end
+
+    def current_tabpage
+      tabpage_index = rpc_response(:vim_get_current_tabpage)
+      Tabpage.new(tabpage_index, self)
+    end
+
+    def current_tabpage=(tabpage_index)
+      rpc_response(:vim_set_current_tabpage, tabpage_index)
+    end
+
     def variable(name)
       scope = Scope::Global.new
       Variable.new(name, scope, self)

@@ -151,6 +151,37 @@ module Neovim
       end
     end
 
+    describe "#tabpages" do
+      it "returns tabpages" do
+        expect {
+          client.command("tabnew")
+        }.to change { client.tabpages.count }.from(1).to(2)
+
+        expect {
+          client.command("tabclose")
+        }.to change { client.tabpages.count }.from(2).to(1)
+      end
+    end
+
+    describe "#current_tabpage" do
+      it "returns the current tabpage" do
+        tabpage = client.current_tabpage
+        expect(tabpage).to be_a(Tabpage)
+        expect(tabpage).to eq(client.tabpages.first)
+      end
+    end
+
+    describe "#current_tabpage=" do
+      it "sets the current tabpage" do
+        initial_index = client.current_tabpage.index
+        client.command("tabnew")
+        expect(client.current_tabpage.index).to be > initial_index
+
+        client.current_tabpage = initial_index
+        expect(client.current_tabpage.index).to eq(initial_index)
+      end
+    end
+
     describe "#variable" do
       it "returns a global variable" do
         variable = client.variable("test_var")
