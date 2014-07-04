@@ -1,7 +1,6 @@
 require "rubygems"
 require "bundler/setup"
 require "neovim"
-require "timeout"
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
