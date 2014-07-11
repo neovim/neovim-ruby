@@ -34,7 +34,8 @@ namespace :neovim do
 
   desc "Update neovim installation to current master"
   task :update do
-    sh "brew remove neovim && " +
-       "brew install --HEAD https://raw.github.com/neovim/neovim/master/neovim.rb"
+    sh "which brew && " +
+       "brew update && " +
+       "brew install --HEAD neovim"
   end
 end
