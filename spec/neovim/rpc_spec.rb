@@ -6,28 +6,23 @@ module Neovim
     let(:response) { [0, 0, nil, nil] }
 
     let(:stream) do
-      double(:stream, read: MessagePack.pack(response), write: nil)
+      double(:stream).tap do |stream|
+        allow(stream).to receive(:write) { stream }
+      end
     end
 
-    it "encodes the data and writes it to the stream" do
-      packed_message = MessagePack.pack(message)
-      expect(stream).to receive(:write).with(packed_message)
-      RPC.new(message, stream)
-    end
-
-    it "reads from the stream and decodes the message" do
-      packed_response = MessagePack.pack(response)
-      expect(stream).to receive(:read).and_return(packed_response)
-      rpc = RPC.new(message, stream)
-      expect(rpc.response).to eq(response)
+    it "encodes the data, writes it to the stream, and decodes the response" do
+      expect(stream).to receive(:read) { MessagePack.pack(response) }
+      expect(RPC.new(stream).write(message)).to eq(response)
     end
 
     it "raises an exception if an error is returned" do
-      error_response = [0, 0, "error message", nil]
-      expect(stream).to receive(:read).and_return(MessagePack.pack(error_response))
+      error_response = MessagePack.pack([0, 0, "error message", nil])
+      expect(stream).to receive(:read) { error_response }
+
       expect {
-        RPC.new(message, stream).response
-      }.to raise_error(Neovim::RPC::Error, "error message")
+        RPC.new(stream).write(message)
+      }.to raise_error(Neovim::RPC::Error, /error message/)
     end
   end
 end

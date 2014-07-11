@@ -4,23 +4,15 @@ module Neovim
   class RPC
     class Error < RuntimeError; end
 
-    attr_reader :response
-
-    def initialize(data, stream)
-      @data = data
+    def initialize(stream)
       @stream = stream
-      @stream.write(MessagePack.pack(@data))
     end
 
-    def response
-      @response ||= fetch_response
-    end
+    def write(data)
+      packed_data = MessagePack.pack(data)
+      packed_response = @stream.write(packed_data).read
 
-    private
-
-    def fetch_response
-      raw_response = @stream.read
-      MessagePack.unpack(raw_response).tap do |payload|
+      MessagePack.unpack(packed_response).tap do |payload|
         if error_msg = payload[2]
           raise Error.new(error_msg)
         end

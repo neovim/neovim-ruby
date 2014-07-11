@@ -11,10 +11,15 @@ RSpec.configure do |config|
   config.order = :random
 end
 
-# This will raise if Neovim isn't running
-Neovim::Client.new("/tmp/neovim.sock")
-
 RSpec.shared_examples :remote => true do
+  before(:all) do
+    begin
+      Neovim::Client.new("/tmp/neovim.sock")
+    rescue Exception => e
+      raise("Failed to open /tmp/neovim.sock: #{e.message}")
+    end
+  end
+
   let!(:client) do
     begin
       Neovim::Client.new("/tmp/neovim.sock").command("cq")

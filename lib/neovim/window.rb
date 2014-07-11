@@ -12,7 +12,7 @@ module Neovim
     end
 
     def buffer
-      buffer_index = @client.rpc_response(:window_get_buffer, @index)
+      buffer_index = @client.rpc_send(:window_get_buffer, @index)
       Buffer.new(buffer_index, @client)
     end
 
@@ -21,27 +21,27 @@ module Neovim
     end
 
     def cursor=(coords)
-      @client.rpc_response(:window_set_cursor, @index, coords)
+      @client.rpc_send(:window_set_cursor, @index, coords)
       @cursor = nil
       coords
     end
 
     def height
-      @height ||= @client.rpc_response(:window_get_height, @index)
+      @height ||= @client.rpc_send(:window_get_height, @index)
     end
 
     def height=(ht)
-      @client.rpc_response(:window_set_height, @index, ht)
+      @client.rpc_send(:window_set_height, @index, ht)
       @height = nil
       ht
     end
 
     def width
-      @width ||= @client.rpc_response(:window_get_width, @index)
+      @width ||= @client.rpc_send(:window_get_width, @index)
     end
 
     def width=(wt)
-      @client.rpc_response(:window_set_width, @index, wt)
+      @client.rpc_send(:window_set_width, @index, wt)
       @width = nil
       wt
     end
@@ -57,16 +57,16 @@ module Neovim
     end
 
     def position
-      @client.rpc_response(:window_get_position, @index)
+      @client.rpc_send(:window_get_position, @index)
     end
 
     def tabpage
-      tabpage_index = @client.rpc_response(:window_get_tabpage, @index)
+      tabpage_index = @client.rpc_send(:window_get_tabpage, @index)
       Tabpage.new(tabpage_index, @client)
     end
 
     def valid?
-      @client.rpc_response(:window_is_valid, @index)
+      @client.rpc_send(:window_is_valid, @index)
     end
   end
 end

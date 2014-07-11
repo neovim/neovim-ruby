@@ -28,6 +28,7 @@ module Neovim
         raise(Timeout, "Timeout waiting for socket to be writable")
 
       @connection.write(data)
+      self
     end
   end
 end

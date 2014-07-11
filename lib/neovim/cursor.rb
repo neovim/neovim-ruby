@@ -6,21 +6,21 @@ module Neovim
     end
 
     def line
-      @line ||= @client.rpc_response(:window_get_cursor, @window_index)[0]
+      @line ||= @client.rpc_send(:window_get_cursor, @window_index)[0]
     end
 
     def line=(ln)
-      @client.rpc_response(:window_set_cursor, @window_index, [ln, column])
+      @client.rpc_send(:window_set_cursor, @window_index, [ln, column])
       @line = nil
       ln
     end
 
     def column
-      @column ||= @client.rpc_response(:window_get_cursor, @window_index)[1]
+      @column ||= @client.rpc_send(:window_get_cursor, @window_index)[1]
     end
 
     def column=(col)
-      @client.rpc_response(:window_set_cursor, @window_index, [line, col])
+      @client.rpc_send(:window_set_cursor, @window_index, [line, col])
       @column = nil
       col
     end

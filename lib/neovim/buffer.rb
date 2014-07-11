@@ -11,7 +11,7 @@ module Neovim
     end
 
     def length
-      @client.rpc_response(:buffer_get_length, @index)
+      @client.rpc_send(:buffer_get_length, @index)
     end
 
     def lines
@@ -33,23 +33,23 @@ module Neovim
     end
 
     def number
-      @client.rpc_response(:buffer_get_number, @index)
+      @client.rpc_send(:buffer_get_number, @index)
     end
 
     def name
-      @client.rpc_response(:buffer_get_name, @index)
+      @client.rpc_send(:buffer_get_name, @index)
     end
 
     def name=(name)
-      @client.rpc_response(:buffer_set_name, @index, name)
+      @client.rpc_send(:buffer_set_name, @index, name)
     end
 
     def valid?
-      @client.rpc_response(:buffer_is_valid, @index)
+      @client.rpc_send(:buffer_is_valid, @index)
     end
 
     def mark(name)
-      @client.rpc_response(:buffer_get_mark, @index, name)
+      @client.rpc_send(:buffer_get_mark, @index, name)
     end
   end
 
@@ -62,7 +62,7 @@ module Neovim
     end
 
     def each(&block)
-      @client.rpc_response(:buffer_get_slice, @buffer_index, 0, -1, true, true).each do |line|
+      @client.rpc_send(:buffer_get_slice, @buffer_index, 0, -1, true, true).each do |line|
         yield line
       end
     end
@@ -70,24 +70,24 @@ module Neovim
     def [](index)
       if index.is_a?(Range)
         start, finish = index.first, index.last
-        @client.rpc_response(:buffer_get_slice, @buffer_index, start, finish, true, true)
+        @client.rpc_send(:buffer_get_slice, @buffer_index, start, finish, true, true)
       else
-        @client.rpc_response(:buffer_get_line, @buffer_index, index)
+        @client.rpc_send(:buffer_get_line, @buffer_index, index)
       end
     end
 
     def []=(index, content)
       if index.is_a?(Range)
         start, finish = index.first, index.last
-        @client.rpc_response(:buffer_set_slice, @buffer_index, start, finish, true, true, content)
+        @client.rpc_send(:buffer_set_slice, @buffer_index, start, finish, true, true, content)
       else
-        @client.rpc_response(:buffer_set_line, @buffer_index, index, content)
+        @client.rpc_send(:buffer_set_line, @buffer_index, index, content)
       end
     end
 
     def delete_at(index)
       line = self[index]
-      @client.rpc_response(:buffer_del_line, @buffer_index, index)
+      @client.rpc_send(:buffer_del_line, @buffer_index, index)
       line
     end
   end

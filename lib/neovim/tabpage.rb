@@ -12,13 +12,13 @@ module Neovim
     end
 
     def windows
-      @client.rpc_response(:tabpage_get_windows, @index).map do |window_index|
+      @client.rpc_send(:tabpage_get_windows, @index).map do |window_index|
         Window.new(window_index, @client)
       end
     end
 
     def current_window
-      window_index = @client.rpc_response(:tabpage_get_window, @index)
+      window_index = @client.rpc_send(:tabpage_get_window, @index)
       Window.new(window_index, @client)
     end
 
@@ -33,7 +33,7 @@ module Neovim
     end
 
     def valid?
-      @client.rpc_response(:tabpage_is_valid, @index)
+      @client.rpc_send(:tabpage_is_valid, @index)
     end
   end
 end

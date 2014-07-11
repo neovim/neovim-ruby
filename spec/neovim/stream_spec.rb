@@ -6,9 +6,8 @@ module Neovim
       it "writes data and reads responses" do
         stream = Neovim::Stream.new("/tmp/neovim.sock", nil)
         message = MessagePack.pack([0, 0, 0, []])
-        stream.write(message)
 
-        response = stream.read
+        response = stream.write(message).read
         expect(response).to respond_to(:to_str)
         expect(response).not_to be_empty
 

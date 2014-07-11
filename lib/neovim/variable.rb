@@ -13,7 +13,7 @@ module Neovim
       return val if @value == val
       args = @scope.rpc_args + [@name, val]
 
-      @client.rpc_response(@scope.set_variable_method, *args)
+      @client.rpc_send(@scope.set_variable_method, *args)
       @value = val
     end
 
@@ -22,7 +22,7 @@ module Neovim
     def fetch_value
       begin
         args = @scope.rpc_args + [@name]
-        @client.rpc_response(@scope.get_variable_method, *args)
+        @client.rpc_send(@scope.get_variable_method, *args)
       rescue RPC::Error
         nil
       end
