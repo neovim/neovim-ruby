@@ -5,17 +5,6 @@ RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
 namespace :neovim do
-  desc "Pretty print the Neovim message pack API"
-  task :api do
-    require "neovim"
-    require "msgpack"
-    require "pp"
-
-    stream = Neovim::Stream.new("/tmp/neovim.sock", nil)
-    response = Neovim::RPC.new([0, 0, 0, []], stream).response
-    pp MessagePack.unpack(response[3][1])
-  end
-
   desc "Start a Neovim instance to run the test suite against"
   task :start do
     begin
