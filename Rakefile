@@ -15,7 +15,7 @@ namespace :neovim do
     env = {"NEOVIM_LISTEN_ADDRESS" => "/tmp/neovim.sock"}
 
     loop do
-      neovim_pid = spawn(env, "nvim -u NONE -N")
+      neovim_pid = spawn(env, "nvim -u NONE -i NONE -N")
       _, status = Process.waitpid2(neovim_pid)
       break if status.exitstatus == 0
     end
