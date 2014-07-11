@@ -12,14 +12,6 @@ RSpec.configure do |config|
 end
 
 RSpec.shared_examples :remote => true do
-  before(:all) do
-    begin
-      Neovim::Client.new("/tmp/neovim.sock")
-    rescue Exception => e
-      raise("Failed to open /tmp/neovim.sock: #{e.message}")
-    end
-  end
-
   let!(:client) do
     begin
       Neovim::Client.new("/tmp/neovim.sock").command("cq")
