@@ -1,5 +1,7 @@
 # Neovim Ruby
 
+![Travis](https://travis-ci.org/alexgenco/neovim-ruby.svg?branch=master)
+
 Ruby bindings for [Neovim](https://github.com/neovim/neovim).
 
 *Warning*: This project is currently incomplete and unstable. It likely doesn't support any platform besides OS X.
