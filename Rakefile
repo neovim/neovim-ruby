@@ -24,17 +24,16 @@ namespace :neovim do
     end
   end
 
-  desc "Install neovim"
+  desc "Install Neovim"
   task :install do
-    sh "git submodule update && " +
+    sh "git submodule update --init && " +
        "cd #{vendor} && " +
        "make"
   end
 
-  desc "Update neovim installation"
-  task :update do
-    sh "git submodule update && " +
-       "git submodule sync && " +
+  desc "Update Neovim installation"
+  task :update => [:install] do
+    sh "git submodule sync && " +
        "cd #{vendor} && " +
        "rm -rf build && " +
        "make"
