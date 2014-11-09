@@ -7,7 +7,6 @@ screen -S neovim -d -m bundle exec rake neovim:start
 bundle exec rspec spec
 TEST_STATUS=$?
 
-# This doesnt work for some reason
-# screen -S neovim -X process ":qa!"
+screen -X -S neovim quit
 
 exit $TEST_STATUS
