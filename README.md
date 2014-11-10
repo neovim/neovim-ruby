@@ -22,40 +22,6 @@ Or install it yourself as:
 
 ## Usage
 
-First, make sure you have [installed the latest version of Neovim](https://github.com/neovim/neovim/wiki/Installing). Start it up with
-
-```sh
-NEOVIM_LISTEN_ADDRESS=/tmp/neovim.sock nvim
-```
-
-Then in your Ruby file, require `neovim` and instantiate a `Client` to manipulate your Neovim instance:
-
-```ruby
-require "neovim"
-
-client = Neovim::Client.new("/tmp/neovim.sock")
-
-# Execute an ex command
-client.command('echo "hello"')
-
-# Set a global variable
-var = client.variable("var1")
-var.value = 12
-
-# Manipulate buffers
-buff = client.current_buffer
-buff.lines = ["first line", "second line"]
-buff.lines[0] # => "first line"
-```
-
-See source files and tests for more functionality.
-
-## Running tests
-
-Many of the tests require a special instance of Neovim to run against. This Neovim instance will restart immediately when it exits with a non-zero status. This way, tests can kill it with `:cq` before each run and have it boot back up in a fresh state. See the Rakefile and spec/helper.rb for specific details on how this works.
-
-To start up a test Neovim instance, run `rake neovim:start`. In a separate terminal, you should now be able to run the tests with `bundle exec rake` or whatever.
-
 ## Contributing
 
 1. Fork it (http://github.com/alexgenco/neovim-ruby/fork)
