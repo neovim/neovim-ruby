@@ -62,7 +62,7 @@ module Neovim
     end
 
     def each(&block)
-      @client.rpc_send(:buffer_get_slice, @buffer_index, 0, -1, true, true).each do |line|
+      @client.rpc_send(:buffer_get_line_slice, @buffer_index, 0, -1, true, true).each do |line|
         yield line
       end
     end
@@ -70,7 +70,7 @@ module Neovim
     def [](index)
       if index.is_a?(Range)
         start, finish = index.first, index.last
-        @client.rpc_send(:buffer_get_slice, @buffer_index, start, finish, true, true)
+        @client.rpc_send(:buffer_get_line_slice, @buffer_index, start, finish, true, true)
       else
         @client.rpc_send(:buffer_get_line, @buffer_index, index)
       end
@@ -79,7 +79,7 @@ module Neovim
     def []=(index, content)
       if index.is_a?(Range)
         start, finish = index.first, index.last
-        @client.rpc_send(:buffer_set_slice, @buffer_index, start, finish, true, true, content)
+        @client.rpc_send(:buffer_set_line_slice, @buffer_index, start, finish, true, true, content)
       else
         @client.rpc_send(:buffer_set_line, @buffer_index, index, content)
       end
