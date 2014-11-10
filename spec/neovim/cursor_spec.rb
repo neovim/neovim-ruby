@@ -2,8 +2,8 @@ require "helper"
 
 module Neovim
   describe Cursor, :remote => true do
-    let(:window) { Window.new(1, client) }
-    let(:cursor) { Cursor.new(window.index, client) }
+    let(:window) { Window.new(1, @client) }
+    let(:cursor) { Cursor.new(window.index, @client) }
 
     before do
       window.buffer.lines = ["first", "second", "third"]

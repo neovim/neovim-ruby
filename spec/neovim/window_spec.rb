@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   describe Window, :remote => true do
-    let(:window) { Window.new(1, client) }
+    let(:window) { Window.new(1, @client) }
 
     describe "#buffer" do
       it "returns window's current buffer" do
@@ -99,7 +99,7 @@ module Neovim
     describe "#position" do
       it "returns the cursor position" do
         expect(window.position).to eq([0, 0])
-        client.command("vsp")
+        @client.command("vsp")
 
         expect(window.position[0]).to eq(0)
         expect(window.position[1]).to be > 0

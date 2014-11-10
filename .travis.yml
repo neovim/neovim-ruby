@@ -1,9 +1,5 @@
 language: ruby
 
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -y libtool autoconf automake cmake libncurses5-dev g++ pkg-config screen
-
 rvm:
   - 1.9.3
   - 2.0.0
@@ -13,4 +9,9 @@ os:
   - linux
   - osx
 
-script: ./ci.sh
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y libtool autoconf automake cmake libncurses5-dev g++ pkg-config screen
+
+before_script:
+  - bundle exec rake neovim:install

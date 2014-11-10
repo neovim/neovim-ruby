@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   describe Buffer, :remote => true do
-    let(:buffer) { Buffer.new(2, client) } # I don't know why it has to be 2
+    let(:buffer) { Buffer.new(2, @client) } # I don't know why it has to be 2
 
     describe "#length" do
       it "returns the length of the buffer" do
@@ -76,7 +76,7 @@ module Neovim
 
     describe "#name" do
       it "returns the buffer name" do
-        client.command("file buffer_abc")
+        @client.command("file buffer_abc")
         expect(buffer.name).to match(/buffer_abc$/)
       end
     end
@@ -101,7 +101,7 @@ module Neovim
     describe "#mark" do
       it "returns the position of the provided mark" do
         buffer.lines = ["one", "two", "three"]
-        client.command("normal jlma")
+        @client.command("normal jlma")
         expect(buffer.mark("a")).to eq([2, 1])
       end
     end

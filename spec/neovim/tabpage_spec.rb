@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   describe Tabpage, :remote => true do
-    let(:tabpage) { Tabpage.new(3, client) }
+    let(:tabpage) { Tabpage.new(3, @client) }
 
     describe "#windows" do
       it "returns a list of windows" do

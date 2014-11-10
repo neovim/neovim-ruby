@@ -4,19 +4,19 @@ module Neovim
   describe Option, :remote => true do
     shared_context "getters and setters" do
       it "reads an option" do
-        option = Option.new(option_name, scope, client)
+        option = Option.new(option_name, scope, @client)
         expect(option.value).to be(false)
       end
 
       it "sets an option" do
-        option = Option.new(option_name, scope, client)
+        option = Option.new(option_name, scope, @client)
         option.value = false
         expect(option.value).to be(false)
-        expect(Option.new(option_name, scope, client).value).to be(false)
+        expect(Option.new(option_name, scope, @client).value).to be(false)
       end
 
       it "raises an exception on invalid arguments" do
-        option = Option.new(option_name, scope, client)
+        option = Option.new(option_name, scope, @client)
         expect {
           option.value = "what"
         }.to raise_error(Neovim::RPC::Error, /boolean/i)
