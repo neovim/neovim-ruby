@@ -1,28 +1,36 @@
 require "helper"
+require "msgpack"
 
 module Neovim
   describe RPC do
-    let(:message)  { [0, 0, 1, []] }
-    let(:response) { [0, 0, nil, nil] }
+    let(:stream) { StringIO.new }
+    let(:rpc)    { RPC.new(stream) }
 
-    let(:stream) do
-      double(:stream).tap do |stream|
-        allow(stream).to receive(:write) { stream }
+    describe "#send" do
+      it "encodes the data and writes it to the stream" do
+        message = MessagePack.pack([0, 0, :my_method, [1, "x"]])
+        expect(stream).to receive(:write).with(message)
+
+        rpc.send(:my_method, 1, "x")
       end
     end
 
-    it "encodes the data, writes it to the stream, and decodes the response" do
-      expect(stream).to receive(:read) { MessagePack.pack(response) }
-      expect(RPC.new(stream).write(message)).to eq(response)
-    end
+    describe "#response" do
+      it "decodes the response data and returns its value" do
+        response = MessagePack.pack([0, 0, nil, "response"])
+        expect(stream).to receive(:read).and_return(response)
 
-    it "raises an exception if an error is returned" do
-      error_response = MessagePack.pack([0, 0, "error message", nil])
-      expect(stream).to receive(:read) { error_response }
+        expect(rpc.response).to eq("response")
+      end
 
-      expect {
-        RPC.new(stream).write(message)
-      }.to raise_error(Neovim::RPC::Error, /error message/)
+      it "raises an exception if an error is returned" do
+        error_response = MessagePack.pack([0, 0, "error message", nil])
+        expect(stream).to receive(:read).and_return(error_response)
+
+        expect {
+          rpc.response
+        }.to raise_error(Neovim::RPC::Error, /error message/)
+      end
     end
   end
 end

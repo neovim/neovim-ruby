@@ -5,18 +5,28 @@ module Neovim
     class Error < RuntimeError; end
 
     def initialize(stream)
-      @stream = stream
+      @request  = -1
+      @packer   = MessagePack::Packer.new(stream)
+      @unpacker = MessagePack::Unpacker.new(stream)
     end
 
-    def write(data)
-      packed_data = MessagePack.pack(data)
-      packed_response = @stream.write(packed_data).read
+    def send(function, *args)
+      @packer.write_array_header(4).
+        write(0).
+        write(@request += 1).
+        write(function.to_s).
+        write(args).
+        flush
 
-      MessagePack.unpack(packed_response).tap do |payload|
-        if error_msg = payload[2]
+      self
+    end
+
+    def response
+      @unpacker.read.tap do |payload|
+        if error_msg = payload.fetch(2)
           raise Error.new(error_msg)
         end
-      end
+      end.fetch(3)
     end
   end
 end

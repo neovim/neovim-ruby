@@ -1,22 +1,12 @@
-require "neovim/stream"
 require "neovim/rpc"
 require "neovim/variable"
 require "neovim/scope"
 require "neovim/option"
 
-require "msgpack"
-
 module Neovim
   class Client
-    def initialize(address)
-      address, port = address.split(":")
-      stream = Stream.new(address, port)
-
-      @rpc = RPC.new(stream)
-      @req_id = 0
-
-      @plugin_id, defs = discover_api
-      @method_lookup = create_method_lookup(defs["functions"])
+    def initialize(io)
+      @rpc = RPC.new(io)
     end
 
     def message(msg)
@@ -116,26 +106,7 @@ module Neovim
     end
 
     def rpc_send(method_name, *args)
-      method_id = @method_lookup.fetch(method_name)
-      data = [0, @req_id += 1, method_id, args]
-
-      begin
-        @rpc.write(data).fetch(3)
-      rescue EOFError
-        # Neovim was killed by the rpc
-      end
-    end
-
-    def discover_api
-      rpc_response = @rpc.write([0, 0, 0, []])
-      plugin_id, encoded_api = rpc_response.fetch(3)
-      [plugin_id, MessagePack.unpack(encoded_api)]
-    end
-
-    def create_method_lookup(defs)
-      defs.inject({}) do |acc, mdef|
-        acc.merge(mdef["name"].to_sym => mdef["id"])
-      end
+      @rpc.send(method_name, *args).response
     end
   end
 end
