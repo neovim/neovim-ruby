@@ -1,5 +1,6 @@
-require "neovim/variable"
+require "neovim/option"
 require "neovim/scope"
+require "neovim/variable"
 
 module Neovim
   class Buffer

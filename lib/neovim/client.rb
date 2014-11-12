@@ -1,7 +1,10 @@
-require "neovim/rpc"
-require "neovim/variable"
-require "neovim/scope"
+require "neovim/buffer"
 require "neovim/option"
+require "neovim/rpc"
+require "neovim/scope"
+require "neovim/tabpage"
+require "neovim/variable"
+require "neovim/window"
 
 module Neovim
   class Client

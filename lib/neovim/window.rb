@@ -1,3 +1,10 @@
+require "neovim/buffer"
+require "neovim/cursor"
+require "neovim/option"
+require "neovim/scope"
+require "neovim/tabpage"
+require "neovim/variable"
+
 module Neovim
   class Window
     attr_reader :index

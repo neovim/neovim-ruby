@@ -1,3 +1,5 @@
+require "neovim/rpc"
+
 module Neovim
   class Variable
     attr_reader :name, :value, :scope

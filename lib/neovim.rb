@@ -1,1 +1,10 @@
-Dir[File.expand_path("../neovim/**/*.rb", __FILE__)].each &method(:require)
+require "neovim/buffer"
+require "neovim/client"
+require "neovim/cursor"
+require "neovim/option"
+require "neovim/rpc"
+require "neovim/scope"
+require "neovim/tabpage"
+require "neovim/variable"
+require "neovim/version"
+require "neovim/window"

@@ -1,3 +1,8 @@
+require "neovim/option"
+require "neovim/scope"
+require "neovim/variable"
+require "neovim/window"
+
 module Neovim
   class Tabpage
     attr_reader :index
