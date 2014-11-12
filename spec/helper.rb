@@ -7,7 +7,10 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 
+  config.disable_monkey_patching!
   config.order = :random
+
+  Kernel.srand config.seed
 end
 
 RSpec.shared_examples :remote => true do

@@ -1,7 +1,7 @@
 require "helper"
 
 module Neovim
-  describe Variable, :remote => true do
+  RSpec.describe Variable, :remote => true do
     shared_context "getters and setters" do
       it "reads a variable" do
         variable = Variable.new("buf_var", scope, @client)

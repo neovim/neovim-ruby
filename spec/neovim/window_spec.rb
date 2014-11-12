@@ -1,7 +1,7 @@
 require "helper"
 
 module Neovim
-  describe Window, :remote => true do
+  RSpec.describe Window, :remote => true do
     let(:window) { Window.new(1, @client) }
 
     describe "#buffer" do

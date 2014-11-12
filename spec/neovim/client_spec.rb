@@ -2,7 +2,7 @@
 require "helper"
 
 module Neovim
-  describe Client, :remote => true do
+  RSpec.describe Client, :remote => true do
     describe "#message" do
       it "prints a message to neovim" do
         skip "Still deciding how to test this (also it doesn't work)"
