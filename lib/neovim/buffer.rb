@@ -12,7 +12,7 @@ module Neovim
     end
 
     def length
-      @client.rpc_send(:buffer_get_length, @index)
+      @client.rpc_send(:buffer_line_count, @index)
     end
 
     def lines
