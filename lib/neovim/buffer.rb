@@ -7,12 +7,16 @@ module Neovim
     attr_reader :index
 
     def initialize(index, client)
-      @index = index
+      @index = [index].pack("c*")
       @client = client
     end
 
+    def to_ext
+      MessagePack::Extended.create(0, @index)
+    end
+
     def length
-      @client.rpc_send(:buffer_line_count, @index)
+      @client.rpc_send(:buffer_line_count, to_ext)
     end
 
     def lines
@@ -34,23 +38,23 @@ module Neovim
     end
 
     def number
-      @client.rpc_send(:buffer_get_number, @index)
+      @client.rpc_send(:buffer_get_number, to_ext)
     end
 
     def name
-      @client.rpc_send(:buffer_get_name, @index)
+      @client.rpc_send(:buffer_get_name, to_ext)
     end
 
     def name=(name)
-      @client.rpc_send(:buffer_set_name, @index, name)
+      @client.rpc_send(:buffer_set_name, to_ext, name)
     end
 
     def valid?
-      @client.rpc_send(:buffer_is_valid, @index)
+      @client.rpc_send(:buffer_is_valid, to_ext)
     end
 
     def mark(name)
-      @client.rpc_send(:buffer_get_mark, @index, name)
+      @client.rpc_send(:buffer_get_mark, to_ext, name)
     end
   end
 
