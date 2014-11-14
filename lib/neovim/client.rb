@@ -9,11 +9,20 @@ require "neovim/window"
 module Neovim
   class Client
     def initialize(io)
-      @rpc = RPC.new(io)
-      @id, @api = rpc_send(:vim_get_api_info)
+      @rpc = RPC.new(io, self)
     end
 
-    def type_code(klass)
+    def class_for(type_code)
+      types.inject(nil) do |klass, (class_str, data)|
+        next(klass) if klass
+
+        if data["id"] == type_code
+          Neovim.const_get(class_str)
+        end
+      end
+    end
+
+    def type_code_for(klass)
       unqualified = klass.to_s.split("::").last
       types.fetch(unqualified).fetch("id")
     end
@@ -51,16 +60,11 @@ module Neovim
     end
 
     def buffers
-      rpc_send(:vim_get_buffers).map do |buffer|
-        buffer_index = buffer.data.unpack("c*").first
-        Buffer.new(buffer_index, self)
-      end
+      rpc_send(:vim_get_buffers)
     end
 
     def current_buffer
-      buffer = rpc_send(:vim_get_current_buffer)
-      buffer_index = buffer.data.unpack("c*").first
-      Buffer.new(buffer_index, self)
+      rpc_send(:vim_get_current_buffer)
     end
 
     def current_line
@@ -72,16 +76,11 @@ module Neovim
     end
 
     def windows
-      rpc_send(:vim_get_windows).map do |window|
-        window_index = window.data.unpack("c*").first
-        Window.new(window_index, self)
-      end
+      rpc_send(:vim_get_windows)
     end
 
     def current_window
-      window = rpc_send(:vim_get_current_window)
-      window_index = window.data.unpack("c*").first
-      Window.new(window_index, self)
+      rpc_send(:vim_get_current_window)
     end
 
     def current_window=(window_index)
@@ -90,16 +89,11 @@ module Neovim
     end
 
     def tabpages
-      rpc_send(:vim_get_tabpages).map do |tabpage|
-        tabpage_index = tabpage.data.unpack("c*").first
-        Tabpage.new(tabpage_index, self)
-      end
+      rpc_send(:vim_get_tabpages)
     end
 
     def current_tabpage
-      tabpage = rpc_send(:vim_get_current_tabpage)
-      tabpage_index = tabpage.data.unpack("c*").first
-      Tabpage.new(tabpage_index, self)
+      rpc_send(:vim_get_current_tabpage)
     end
 
     def current_tabpage=(tabpage_index)
@@ -129,7 +123,9 @@ module Neovim
     private
 
     def types
-      @types ||= @api.fetch("types")
+      @types ||= begin
+        rpc_send(:vim_get_api_info).fetch(1).fetch("types")
+      end
     end
   end
 end

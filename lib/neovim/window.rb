@@ -12,9 +12,7 @@ module Neovim
     end
 
     def buffer
-      buffer = @client.rpc_send(:window_get_buffer, self)
-      buffer_index = buffer.data.unpack("c*").first
-      Buffer.new(buffer_index, @client)
+      @client.rpc_send(:window_get_buffer, self)
     end
 
     def cursor
@@ -62,9 +60,7 @@ module Neovim
     end
 
     def tabpage
-      tabpage = @client.rpc_send(:window_get_tabpage, self)
-      tabpage_index = tabpage.data.unpack("c*").first
-      Tabpage.new(tabpage_index, @client)
+      @client.rpc_send(:window_get_tabpage, self)
     end
 
     def valid?

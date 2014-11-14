@@ -4,29 +4,31 @@ module Neovim
   class RPC
     class Error < RuntimeError; end
 
-    def initialize(stream)
+    def initialize(stream, client)
       @request  = -1
+      @client   = client
       @packer   = MessagePack::Packer.new(stream)
       @unpacker = MessagePack::Unpacker.new(stream)
     end
 
-    def send(function, *args)
+    def send(function, *_args)
+      args = msgpack_args(_args)
+
       @packer.write_array_header(4).
         write(0).
         write(@request += 1).
         write(function.to_s).
-        write(msgpack_args(args)).
+        write(args).
         flush
 
       self
     end
 
     def response
-      @unpacker.read.tap do |payload|
-        if error_msg = payload.fetch(2)
-          raise Error.new(error_msg)
-        end
-      end.fetch(3)
+      _, _, error, response = @unpacker.read
+      raise Error.new(error) if error
+
+      to_neovim_object(response)
     end
 
     private
@@ -34,6 +36,19 @@ module Neovim
     def msgpack_args(args)
       args.map do |obj|
         obj.respond_to?(:msgpack_data) ? obj.msgpack_data : obj
+      end
+    end
+
+    def to_neovim_object(obj)
+      if obj.is_a?(MessagePack::Extended)
+        klass = @client.class_for(obj.type)
+        data  = obj.data.unpack("c*").fetch(0)
+
+        klass.new(data, @client)
+      elsif obj.respond_to?(:to_ary)
+        obj.map { |elem| to_neovim_object(elem) }
+      else
+        obj
       end
     end
   end

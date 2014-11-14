@@ -10,7 +10,7 @@ module Neovim
 
     def msgpack_data
       @msgpack_data ||= begin
-        type_code = @client.type_code(self.class)
+        type_code = @client.type_code_for(self.class)
         MessagePack::Extended.create(type_code, @handle)
       end
     end

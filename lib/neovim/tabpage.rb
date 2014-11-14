@@ -10,16 +10,11 @@ module Neovim
     end
 
     def windows
-      @client.rpc_send(:tabpage_get_windows, self).map do |window|
-        window_index = window.data.unpack("c*").first
-        Window.new(window_index, @client)
-      end
+      @client.rpc_send(:tabpage_get_windows, self)
     end
 
     def current_window
-      window = @client.rpc_send(:tabpage_get_window, self)
-      window_index = window.data.unpack("c*").first
-      Window.new(window_index, @client)
+      @client.rpc_send(:tabpage_get_window, self)
     end
 
     def variable(name)
