@@ -15,7 +15,7 @@ module Neovim
         write(0).
         write(@request += 1).
         write(function.to_s).
-        write(args).
+        write(msgpack_args(args)).
         flush
 
       self
@@ -27,6 +27,14 @@ module Neovim
           raise Error.new(error_msg)
         end
       end.fetch(3)
+    end
+
+    private
+
+    def msgpack_args(args)
+      args.map do |obj|
+        obj.respond_to?(:msgpack_data) ? obj.msgpack_data : obj
+      end
     end
   end
 end

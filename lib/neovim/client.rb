@@ -122,11 +122,7 @@ module Neovim
       Option.new(name, scope, self)
     end
 
-    def rpc_send(method_name, *_args)
-      args = _args.map do |obj|
-        obj.respond_to?(:msgpack_data) ? obj.msgpack_data : obj
-      end
-
+    def rpc_send(method_name, *args)
       @rpc.send(method_name, *args).response
     end
 

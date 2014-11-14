@@ -13,6 +13,14 @@ module Neovim
 
         rpc.send(:my_method, 1, "x")
       end
+
+      it "dumps nvim objects to their msgpack representation" do
+        my_obj = double(:msgpack_data => "data")
+        message = MessagePack.pack([0, 0, :my_method, ["data"]])
+        expect(stream).to receive(:write).with(message)
+
+        rpc.send(:my_method, my_obj)
+      end
     end
 
     describe "#response" do
