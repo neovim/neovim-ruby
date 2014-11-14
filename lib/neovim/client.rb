@@ -45,14 +45,16 @@ module Neovim
     end
 
     def buffers
-      rpc_send(:vim_get_buffers).map do |index|
-        Buffer.new(index, self)
+      rpc_send(:vim_get_buffers).map do |buffer|
+        buffer_index = buffer.data.unpack("c*").first
+        Buffer.new(buffer_index, self)
       end
     end
 
     def current_buffer
-      index = rpc_send(:vim_get_current_buffer)
-      Buffer.new(index, self)
+      buffer = rpc_send(:vim_get_current_buffer)
+      buffer_index = buffer.data.unpack("c*").first
+      Buffer.new(buffer_index, self)
     end
 
     def current_line
@@ -64,33 +66,39 @@ module Neovim
     end
 
     def windows
-      rpc_send(:vim_get_windows).map do |window_index|
+      rpc_send(:vim_get_windows).map do |window|
+        window_index = window.data.unpack("c*").first
         Window.new(window_index, self)
       end
     end
 
     def current_window
-      window_index = rpc_send(:vim_get_current_window)
+      window = rpc_send(:vim_get_current_window)
+      window_index = window.data.unpack("c*").first
       Window.new(window_index, self)
     end
 
     def current_window=(window_index)
-      rpc_send(:vim_set_current_window, window_index)
+      window = Window.new(window_index, self)
+      rpc_send(:vim_set_current_window, window.to_ext)
     end
 
     def tabpages
-      rpc_send(:vim_get_tabpages).map do |tabpage_index|
+      rpc_send(:vim_get_tabpages).map do |tabpage|
+        tabpage_index = tabpage.data.unpack("c*").first
         Tabpage.new(tabpage_index, self)
       end
     end
 
     def current_tabpage
-      tabpage_index = rpc_send(:vim_get_current_tabpage)
+      tabpage = rpc_send(:vim_get_current_tabpage)
+      tabpage_index = tabpage.data.unpack("c*").first
       Tabpage.new(tabpage_index, self)
     end
 
     def current_tabpage=(tabpage_index)
-      rpc_send(:vim_set_current_tabpage, tabpage_index)
+      tabpage = Tabpage.new(tabpage_index, self)
+      rpc_send(:vim_set_current_tabpage, tabpage.to_ext)
     end
 
     def variable(name)
