@@ -11,7 +11,7 @@ task :coveralls do
 end
 
 desc "Run tests for CI"
-task :ci => [:coveralls, :spec]
+task :ci => ["neovim:install", :coveralls, :spec]
 
 namespace :neovim do
   vendor = File.expand_path("../vendor/neovim", __FILE__)
