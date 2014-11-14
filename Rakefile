@@ -15,10 +15,11 @@ namespace :neovim do
   end
 
   desc "Update Neovim installation"
-  task :update => [:install] do
-    sh "git submodule sync && " +
+  task :update do
+    sh "git submodule update --init && " +
        "cd #{vendor} && " +
-       "rm -rf build && " +
+       "git clean -fdx && " +
+       "git pull origin master && " +
        "make"
   end
 end
