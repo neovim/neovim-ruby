@@ -86,7 +86,7 @@ module Neovim
 
     def current_window=(window_index)
       window = Window.new(window_index, self)
-      rpc_send(:vim_set_current_window, window.to_ext)
+      rpc_send(:vim_set_current_window, window.to_msgpack)
     end
 
     def tabpages

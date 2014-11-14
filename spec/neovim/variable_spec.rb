@@ -39,7 +39,7 @@ module Neovim
 
     describe "window scoped" do
       let(:window) { Window.new(1, @client) }
-      let(:scope) { Scope::Window.new(window.to_ext) }
+      let(:scope) { Scope::Window.new(window.to_msgpack) }
       include_context "getters and setters"
     end
 
