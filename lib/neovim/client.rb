@@ -10,6 +10,12 @@ module Neovim
   class Client
     def initialize(io)
       @rpc = RPC.new(io)
+      @id, @api = rpc_send(:vim_get_api_info)
+    end
+
+    def type_code(klass)
+      unqualified = klass.to_s.split("::").last
+      types.fetch(unqualified).fetch("id")
     end
 
     def message(msg)
@@ -118,6 +124,12 @@ module Neovim
 
     def rpc_send(method_name, *args)
       @rpc.send(method_name, *args).response
+    end
+
+    private
+
+    def types
+      @types ||= @api.fetch("types")
     end
   end
 end

@@ -3,6 +3,14 @@ require "helper"
 
 module Neovim
   RSpec.describe Client, :remote => true do
+    describe "#type_code" do
+      it "returns the type code for buffers, windows, and tabpages" do
+        expect(@client.type_code(Buffer)).to  respond_to(:to_int)
+        expect(@client.type_code(Window)).to  respond_to(:to_int)
+        expect(@client.type_code(Tabpage)).to respond_to(:to_int)
+      end
+    end
+
     describe "#message" do
       it "prints a message to neovim" do
         skip "Still deciding how to test this (also it doesn't work)"

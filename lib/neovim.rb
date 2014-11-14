@@ -1,6 +1,7 @@
 require "neovim/buffer"
 require "neovim/client"
 require "neovim/cursor"
+require "neovim/object"
 require "neovim/option"
 require "neovim/rpc"
 require "neovim/scope"

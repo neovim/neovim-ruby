@@ -1,27 +1,16 @@
+require "neovim/object"
 require "neovim/option"
 require "neovim/scope"
 require "neovim/variable"
 
 module Neovim
-  class Buffer
-    attr_reader :index
-
-    def initialize(index, client)
-      @index  = index
-      @client = client
-      @handle = [index].pack("c*")
-    end
-
-    def to_ext
-      @to_ext ||= MessagePack::Extended.create(0, @handle)
-    end
-
+  class Buffer < Object
     def length
-      @client.rpc_send(:buffer_line_count, to_ext)
+      @client.rpc_send(:buffer_line_count, to_msgpack)
     end
 
     def lines
-      @lines ||= Lines.new(to_ext, @client)
+      @lines ||= Lines.new(to_msgpack, @client)
     end
 
     def lines=(lns)
@@ -29,33 +18,33 @@ module Neovim
     end
 
     def variable(name)
-      scope = Scope::Buffer.new(to_ext)
+      scope = Scope::Buffer.new(to_msgpack)
       Variable.new(name, scope, @client)
     end
 
     def option(name)
-      scope = Scope::Buffer.new(to_ext)
+      scope = Scope::Buffer.new(to_msgpack)
       Option.new(name, scope, @client)
     end
 
     def number
-      @client.rpc_send(:buffer_get_number, to_ext)
+      @client.rpc_send(:buffer_get_number, to_msgpack)
     end
 
     def name
-      @client.rpc_send(:buffer_get_name, to_ext)
+      @client.rpc_send(:buffer_get_name, to_msgpack)
     end
 
     def name=(name)
-      @client.rpc_send(:buffer_set_name, to_ext, name)
+      @client.rpc_send(:buffer_set_name, to_msgpack, name)
     end
 
     def valid?
-      @client.rpc_send(:buffer_is_valid, to_ext)
+      @client.rpc_send(:buffer_is_valid, to_msgpack)
     end
 
     def mark(name)
-      @client.rpc_send(:buffer_get_mark, to_ext, name)
+      @client.rpc_send(:buffer_get_mark, to_msgpack, name)
     end
   end
 

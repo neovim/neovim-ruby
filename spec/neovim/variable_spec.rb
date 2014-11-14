@@ -33,7 +33,7 @@ module Neovim
 
     describe "buffer scoped" do
       let(:buffer) { Buffer.new(2, @client) }
-      let(:scope) { Scope::Buffer.new(buffer.to_ext) }
+      let(:scope) { Scope::Buffer.new(buffer.to_msgpack) }
       include_context "getters and setters"
     end
 
