@@ -8,8 +8,8 @@ module Neovim
       @handle = [index].pack("c*")
     end
 
-    def to_msgpack
-      @to_msgpack ||= begin
+    def msgpack_data
+      @msgpack_data ||= begin
         type_code = @client.type_code(self.class)
         MessagePack::Extended.create(type_code, @handle)
       end

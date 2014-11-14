@@ -31,14 +31,14 @@ module Neovim
 
     describe "buffer scoped" do
       let(:buffer) { Buffer.new(2, @client) }
-      let(:scope) { Scope::Buffer.new(buffer.to_msgpack) }
+      let(:scope) { Scope::Buffer.new(buffer) }
       let(:option_name) { "expandtab" }
       include_context "getters and setters"
     end
 
     describe "window scoped" do
       let(:window) { Window.new(1, @client) }
-      let(:scope) { Scope::Window.new(window.to_msgpack) }
+      let(:scope) { Scope::Window.new(window) }
       let(:option_name) { "list" }
       include_context "getters and setters"
     end

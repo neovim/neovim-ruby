@@ -6,11 +6,11 @@ require "neovim/variable"
 module Neovim
   class Buffer < Object
     def length
-      @client.rpc_send(:buffer_line_count, to_msgpack)
+      @client.rpc_send(:buffer_line_count, self)
     end
 
     def lines
-      @lines ||= Lines.new(to_msgpack, @client)
+      @lines ||= Lines.new(self, @client)
     end
 
     def lines=(lns)
@@ -18,33 +18,33 @@ module Neovim
     end
 
     def variable(name)
-      scope = Scope::Buffer.new(to_msgpack)
+      scope = Scope::Buffer.new(self)
       Variable.new(name, scope, @client)
     end
 
     def option(name)
-      scope = Scope::Buffer.new(to_msgpack)
+      scope = Scope::Buffer.new(self)
       Option.new(name, scope, @client)
     end
 
     def number
-      @client.rpc_send(:buffer_get_number, to_msgpack)
+      @client.rpc_send(:buffer_get_number, self)
     end
 
     def name
-      @client.rpc_send(:buffer_get_name, to_msgpack)
+      @client.rpc_send(:buffer_get_name, self)
     end
 
     def name=(name)
-      @client.rpc_send(:buffer_set_name, to_msgpack, name)
+      @client.rpc_send(:buffer_set_name, self, name)
     end
 
     def valid?
-      @client.rpc_send(:buffer_is_valid, to_msgpack)
+      @client.rpc_send(:buffer_is_valid, self)
     end
 
     def mark(name)
-      @client.rpc_send(:buffer_get_mark, to_msgpack, name)
+      @client.rpc_send(:buffer_get_mark, self, name)
     end
   end
 

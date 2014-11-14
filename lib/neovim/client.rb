@@ -86,7 +86,7 @@ module Neovim
 
     def current_window=(window_index)
       window = Window.new(window_index, self)
-      rpc_send(:vim_set_current_window, window.to_msgpack)
+      rpc_send(:vim_set_current_window, window)
     end
 
     def tabpages
@@ -104,7 +104,7 @@ module Neovim
 
     def current_tabpage=(tabpage_index)
       tabpage = Tabpage.new(tabpage_index, self)
-      rpc_send(:vim_set_current_tabpage, tabpage.to_msgpack)
+      rpc_send(:vim_set_current_tabpage, tabpage)
     end
 
     def variable(name)
@@ -122,7 +122,11 @@ module Neovim
       Option.new(name, scope, self)
     end
 
-    def rpc_send(method_name, *args)
+    def rpc_send(method_name, *_args)
+      args = _args.map do |obj|
+        obj.respond_to?(:msgpack_data) ? obj.msgpack_data : obj
+      end
+
       @rpc.send(method_name, *args).response
     end
 
