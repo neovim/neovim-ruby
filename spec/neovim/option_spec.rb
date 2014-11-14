@@ -30,13 +30,15 @@ module Neovim
     end
 
     describe "buffer scoped" do
-      let(:scope) { Scope::Buffer.new(2) }
+      let(:buffer) { Buffer.new(2, @client) }
+      let(:scope) { Scope::Buffer.new(buffer.to_ext) }
       let(:option_name) { "expandtab" }
       include_context "getters and setters"
     end
 
     describe "window scoped" do
-      let(:scope) { Scope::Window.new(1) }
+      let(:window) { Window.new(1, @client) }
+      let(:scope) { Scope::Window.new(window.to_ext) }
       let(:option_name) { "list" }
       include_context "getters and setters"
     end
