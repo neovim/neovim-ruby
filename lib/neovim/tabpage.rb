@@ -22,13 +22,15 @@ module Neovim
     end
 
     def windows
-      @client.rpc_send(:tabpage_get_windows, to_ext).map do |window_index|
+      @client.rpc_send(:tabpage_get_windows, to_ext).map do |window|
+        window_index = window.data.unpack("c*").first
         Window.new(window_index, @client)
       end
     end
 
     def current_window
-      window_index = @client.rpc_send(:tabpage_get_window, to_ext)
+      window = @client.rpc_send(:tabpage_get_window, to_ext)
+      window_index = window.data.unpack("c*").first
       Window.new(window_index, @client)
     end
 

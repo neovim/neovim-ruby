@@ -3,7 +3,7 @@ require "helper"
 module Neovim
   RSpec.describe Cursor, :remote => true do
     let(:window) { Window.new(1, @client) }
-    let(:cursor) { Cursor.new(window.index, @client) }
+    let(:cursor) { Cursor.new(window.to_ext, @client) }
 
     before do
       window.buffer.lines = ["first", "second", "third"]

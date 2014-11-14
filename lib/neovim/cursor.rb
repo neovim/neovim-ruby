@@ -1,26 +1,26 @@
 module Neovim
   class Cursor
-    def initialize(window_index, client)
-      @window_index = window_index
+    def initialize(window, client)
+      @window = window
       @client = client
     end
 
     def line
-      @line ||= @client.rpc_send(:window_get_cursor, @window_index)[0]
+      @line ||= @client.rpc_send(:window_get_cursor, @window)[0]
     end
 
     def line=(ln)
-      @client.rpc_send(:window_set_cursor, @window_index, [ln, column])
+      @client.rpc_send(:window_set_cursor, @window, [ln, column])
       @line = nil
       ln
     end
 
     def column
-      @column ||= @client.rpc_send(:window_get_cursor, @window_index)[1]
+      @column ||= @client.rpc_send(:window_get_cursor, @window)[1]
     end
 
     def column=(col)
-      @client.rpc_send(:window_set_cursor, @window_index, [line, col])
+      @client.rpc_send(:window_set_cursor, @window, [line, col])
       @column = nil
       col
     end
