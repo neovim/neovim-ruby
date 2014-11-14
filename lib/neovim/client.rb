@@ -104,7 +104,7 @@ module Neovim
 
     def current_tabpage=(tabpage_index)
       tabpage = Tabpage.new(tabpage_index, self)
-      rpc_send(:vim_set_current_tabpage, tabpage.to_ext)
+      rpc_send(:vim_set_current_tabpage, tabpage.to_msgpack)
     end
 
     def variable(name)
