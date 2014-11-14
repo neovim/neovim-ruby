@@ -16,3 +16,8 @@ before_install:
 
 before_script:
   - bundle exec rake neovim:install
+
+cache:
+  apt: true
+  directories:
+    - vendor/neovim
