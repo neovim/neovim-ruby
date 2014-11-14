@@ -8,8 +8,13 @@ module Neovim
     attr_reader :index
 
     def initialize(index, client)
-      @index = index
+      @index  = index
       @client = client
+      @handle = [index].pack("c*")
+    end
+
+    def to_ext
+      @to_ext ||= MessagePack::Extended.create(2, @handle)
     end
 
     def ==(other)
@@ -17,28 +22,28 @@ module Neovim
     end
 
     def windows
-      @client.rpc_send(:tabpage_get_windows, @index).map do |window_index|
+      @client.rpc_send(:tabpage_get_windows, to_ext).map do |window_index|
         Window.new(window_index, @client)
       end
     end
 
     def current_window
-      window_index = @client.rpc_send(:tabpage_get_window, @index)
+      window_index = @client.rpc_send(:tabpage_get_window, to_ext)
       Window.new(window_index, @client)
     end
 
     def variable(name)
-      scope = Scope::Tabpage.new(@index)
+      scope = Scope::Tabpage.new(to_ext)
       Variable.new(name, scope, @client)
     end
 
     def option(name)
-      scope = Scope::Tabpage.new(@index)
+      scope = Scope::Tabpage.new(to_ext)
       Option.new(name, scope, @client)
     end
 
     def valid?
-      @client.rpc_send(:tabpage_is_valid, @index)
+      @client.rpc_send(:tabpage_is_valid, to_ext)
     end
   end
 end
