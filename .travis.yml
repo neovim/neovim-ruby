@@ -15,3 +15,5 @@ before_install:
 
 before_script:
   - bundle exec rake neovim:install
+
+script: bundle exec rake ci
