@@ -25,8 +25,8 @@ module Neovim
     end
 
     def response
-      _, _, error, response = @unpacker.read
-      raise Error.new(error) if error
+      _, _, error_msg, response = @unpacker.read
+      raise(Error, error_msg) if error_msg
 
       to_neovim_object(response)
     end
