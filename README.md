@@ -1,6 +1,7 @@
 # Neovim Ruby
 
-![Travis](https://travis-ci.org/alexgenco/neovim-ruby.svg?branch=master)
+[![Travis](https://travis-ci.org/alexgenco/neovim-ruby.svg?branch=master)](https://travis-ci.org/alexgenco/neovim-ruby)
+[![Coverage Status](https://coveralls.io/repos/alexgenco/neovim-ruby/badge.png)](https://coveralls.io/r/alexgenco/neovim-ruby)
 
 Ruby bindings for [Neovim](https://github.com/neovim/neovim).
 
