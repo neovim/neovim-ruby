@@ -1,7 +1,7 @@
 require "helper"
 
 RSpec.describe Neovim, :remote => true do
-  it "conforms to the API returned from Neovim" do
+  it "implements all functions supported by a running nvim instance" do
     lib_root = File.expand_path("../../lib", __FILE__)
     functions = @client.rpc_send(:vim_get_api_info).fetch(1).fetch("functions")
 

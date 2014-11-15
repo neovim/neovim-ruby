@@ -197,7 +197,7 @@ module Neovim
       end
     end
 
-    describe "delete_current_line" do
+    describe "#delete_current_line" do
       before { @client.current_line = "hi" }
 
       it "deletes the current line" do
