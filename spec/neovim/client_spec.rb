@@ -305,5 +305,17 @@ module Neovim
         expect(option.scope).to be_a(Scope::Global)
       end
     end
+
+    describe "#register_provider" do
+      it "registers a feature provider"
+    end
+
+    describe "#subscribe" do
+      it "subscribes to events"
+    end
+
+    describe "#unsubscribe" do
+      it "unsubscribes from events"
+    end
   end
 end
