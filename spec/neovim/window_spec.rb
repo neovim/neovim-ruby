@@ -63,11 +63,12 @@ module Neovim
     end
 
     describe "width=" do
+      before { @client.command("vsp") }
+
       it "sets the window width" do
-        skip "this doesn't work"
         expect {
-          window.width -= 1
-        }.to change { window.width }.by(-1)
+          window.width += 1
+        }.to change { window.width }.by(1)
       end
 
       it "returns the new width" do

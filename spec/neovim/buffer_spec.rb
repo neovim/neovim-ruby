@@ -46,6 +46,22 @@ module Neovim
         buffer.lines[0..1] = ["new first", "new second"]
         expect(buffer.lines.to_a).to eq(["new first", "new second", "third"])
       end
+
+      it "returns the lines" do
+        expect(buffer.lines = ["line"]).to eq(["line"])
+      end
+    end
+
+    describe "#insert" do
+      it "inserts lines after the given index" do
+        buffer.lines = ["first", "last"]
+        buffer.insert(0, ["foo", "bar"])
+        expect(buffer.lines.to_a).to eq(["first", "foo", "bar", "last"])
+      end
+
+      it "returns the buffer" do
+        expect(buffer.insert(0, ["line"])).to eq(buffer)
+      end
     end
 
     describe "#variable" do

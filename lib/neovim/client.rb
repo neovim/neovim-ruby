@@ -43,8 +43,13 @@ module Neovim
       rpc_send(:vim_eval, expr)
     end
 
-    def push_keys(keys)
-      rpc_send(:vim_push_keys, keys)
+    def feed_keys(keys, mode)
+      rpc_send(:vim_feedkeys, keys, mode)
+      self
+    end
+
+    def input(keys)
+      rpc_send(:vim_input, keys)
     end
 
     def strwidth(str)

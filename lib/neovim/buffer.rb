@@ -17,6 +17,11 @@ module Neovim
       lines[0..-1] = lns
     end
 
+    def insert(index, lns)
+      lines.insert(index, Array(lns))
+      self
+    end
+
     def variable(name)
       scope = Scope::Buffer.new(self)
       Variable.new(name, scope, @client)
@@ -84,6 +89,10 @@ module Neovim
       line = self[index]
       @client.rpc_send(:buffer_del_line, @buffer, index)
       line
+    end
+
+    def insert(index, lines)
+      @client.rpc_send(:buffer_insert, @buffer, index, lines)
     end
   end
 end
