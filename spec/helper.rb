@@ -18,14 +18,15 @@ RSpec.shared_examples :remote => true do
     nvim = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
 
     IO.popen("#{nvim} --embed -u NONE -i NONE -N -n", "rb+") do |io|
-      nvim_pid = io.pid
-      @client = Neovim::Client.new(io)
+      @nvim_io  = io
+      @nvim_pid = io.pid
+      @client   = Neovim::Client.new(io)
 
       begin
         spec.run
       ensure
-        Process.kill(:TERM, nvim_pid)
-        Process.waitpid2(nvim_pid)
+        Process.kill(:TERM, @nvim_pid)
+        Process.waitpid2(@nvim_pid)
       end
     end
   end
