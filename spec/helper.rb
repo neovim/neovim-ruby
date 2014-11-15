@@ -15,14 +15,6 @@ end
 
 RSpec.shared_examples :remote => true do
   around do |spec|
-    retry_exceptions = [
-      Errno::ENOENT,
-      Errno::ECONNREFUSED,
-      Errno::EPIPE,
-      Errno::ECONNRESET,
-      EOFError
-    ]
-
     nvim = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
 
     IO.popen("#{nvim} --embed -u NONE -i NONE -N -n", "rb+") do |io|
