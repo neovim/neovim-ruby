@@ -41,6 +41,10 @@ module Neovim
           @client.command("set hlsearch")
         }.to change { @client.option("hlsearch").value }.from(false).to(true)
       end
+
+      it "returns the client" do
+        expect(@client.command("set hlsearch")).to eq(@client)
+      end
     end
 
     describe "#evaluate" do
@@ -92,6 +96,10 @@ module Neovim
         expect {
           @client.change_directory("..")
         }.to change { @client.evaluate("getcwd()") }
+      end
+
+      it "returns the client" do
+        expect(@client.change_directory("..")).to eq(@client)
       end
 
       it "raises an exception on failure" do
@@ -167,6 +175,10 @@ module Neovim
         }.to change { @client.current_window.index }.to(1)
       end
 
+      it "returns the index" do
+        expect(@client.current_window = 1).to eq(1)
+      end
+
       it "raises an exception for an invalid window index" do
         expect {
           @client.current_window = 999
@@ -202,6 +214,10 @@ module Neovim
 
         @client.current_tabpage = initial_index
         expect(@client.current_tabpage.index).to eq(initial_index)
+      end
+
+      it "returns the index" do
+        expect(@client.current_tabpage = 3).to eq(3) # 3 is a magic number
       end
     end
 

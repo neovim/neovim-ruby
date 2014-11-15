@@ -102,6 +102,10 @@ module Neovim
         buffer.name = "buffer_abc"
         expect(buffer.name).to match(/buffer_abc$/)
       end
+
+      it "returns the buffer name" do
+        expect(buffer.name = "buffer").to eq("buffer")
+      end
     end
 
     describe "#valid?" do

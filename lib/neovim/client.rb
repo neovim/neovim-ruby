@@ -37,6 +37,7 @@ module Neovim
 
     def command(cmd)
       rpc_send(:vim_command, cmd)
+      self
     end
 
     def evaluate(expr)
@@ -62,6 +63,7 @@ module Neovim
 
     def change_directory(dir)
       rpc_send(:vim_change_directory, dir)
+      self
     end
 
     def buffers
