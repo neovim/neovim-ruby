@@ -35,6 +35,12 @@ module Neovim
       end
     end
 
+    describe "#report_error" do
+      it "doesn't blow up" do
+        @client.report_error("error!")
+      end
+    end
+
     describe "#command" do
       it "runs the provided command" do
         expect {
@@ -44,6 +50,24 @@ module Neovim
 
       it "returns the client" do
         expect(@client.command("set hlsearch")).to eq(@client)
+      end
+
+      it "raises errors when command writes to err stream" do
+        expect {
+          @client.command("echoerr 'error!'")
+        }.to raise_error(RPC::Error, /error!/)
+      end
+    end
+
+    describe "#command_output" do
+      it "returns the output of a command" do
+        expect(@client.command_output("echom 'hi'")).to match(/hi/)
+      end
+
+      it "raises errors when command writes to err stream" do
+        expect {
+          @client.command_output("echoerr 'error!'")
+        }.to raise_error(RPC::Error, /error!/)
       end
     end
 
@@ -82,6 +106,16 @@ module Neovim
     describe "#strwidth" do
       it "returns the string cell width" do
         expect(@client.strwidth("テスト")).to eq(6)
+      end
+    end
+
+    describe "#replace_termcodes" do
+      it "replaces termcodes" do
+        expect(@client.replace_termcodes("esc", true, true, true)).to eq("esc\e")
+      end
+
+      it "passes through" do
+        expect(@client.replace_termcodes("hi", true, true, true)).to eq("hi")
       end
     end
 
@@ -124,6 +158,17 @@ module Neovim
       end
     end
 
+    describe "#current_buffer=" do
+      it "sets the current buffer" do
+        initial_index = @client.current_buffer.index
+        @client.command("vnew")
+
+        expect {
+          @client.current_buffer = initial_index
+        }.to change { @client.current_buffer.index }
+      end
+    end
+
     describe "#current_line" do
       it "returns an empty string if the current line is empty" do
         expect(@client.current_line).to eq("")
@@ -149,6 +194,16 @@ module Neovim
         @client.current_line = "New content"
         @client.current_line = ""
         expect(@client.current_line).to eq("")
+      end
+    end
+
+    describe "delete_current_line" do
+      before { @client.current_line = "hi" }
+
+      it "deletes the current line" do
+        expect {
+          @client.delete_current_line
+        }.to change { @client.current_line }.from("hi").to("")
       end
     end
 

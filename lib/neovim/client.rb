@@ -35,9 +35,17 @@ module Neovim
       rpc_send(:vim_err_write, msg)
     end
 
+    def report_error(msg)
+      rpc_send(:vim_report_error, msg)
+    end
+
     def command(cmd)
       rpc_send(:vim_command, cmd)
       self
+    end
+
+    def command_output(cmd)
+      rpc_send(:vim_command_output, cmd)
     end
 
     def evaluate(expr)
@@ -57,6 +65,10 @@ module Neovim
       rpc_send(:vim_strwidth, str)
     end
 
+    def replace_termcodes(str, from_part, do_lt, special)
+      rpc_send(:vim_replace_termcodes, str, from_part, do_lt, special)
+    end
+
     def runtime_paths
       rpc_send(:vim_list_runtime_paths)
     end
@@ -74,12 +86,21 @@ module Neovim
       rpc_send(:vim_get_current_buffer)
     end
 
+    def current_buffer=(buffer_index)
+      buffer = Buffer.new(buffer_index, self)
+      rpc_send(:vim_set_current_buffer, buffer)
+    end
+
     def current_line
       rpc_send(:vim_get_current_line)
     end
 
     def current_line=(line)
       rpc_send(:vim_set_current_line, line)
+    end
+
+    def delete_current_line
+      rpc_send(:vim_del_current_line)
     end
 
     def windows
