@@ -4,14 +4,17 @@ require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
-desc "Enable coveralls coverage reporting"
-task :coveralls do
-  require "coveralls"
-  Coveralls.wear!
-end
-
 desc "Run tests for CI"
-task :ci => ["neovim:install", :coveralls, :spec]
+task :ci do
+  begin
+    Rake::Task["neovim:install"].invoke
+  rescue
+    # retry since the install fails occassionally
+    Rake::Task["neovim:install"].invoke
+  end
+
+  Rake::Task[:spec].invoke
+end
 
 namespace :neovim do
   vendor = File.expand_path("../vendor/neovim", __FILE__)

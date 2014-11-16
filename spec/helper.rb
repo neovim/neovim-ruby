@@ -2,6 +2,11 @@ require "rubygems"
 require "bundler/setup"
 require "neovim"
 
+if ENV["REPORT_COVERAGE"]
+  require "coveralls"
+  Coveralls.wear!
+end
+
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
