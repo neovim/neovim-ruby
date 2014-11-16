@@ -1,7 +1,7 @@
 require "helper"
 
 module Neovim
-  RSpec.describe Buffer, :remote => true do
+  RSpec.describe Buffer, :remote do
     let(:buffer) { Buffer.new(2, @client) } # I don't know why it has to be 2
 
     describe "#length" do

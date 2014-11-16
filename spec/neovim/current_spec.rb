@@ -1,7 +1,7 @@
 require "helper"
 
 module Neovim
-  RSpec.describe Current, :remote => true do
+  RSpec.describe Current, :remote do
     let(:current) { Current.new(@client) }
 
     describe "#line" do

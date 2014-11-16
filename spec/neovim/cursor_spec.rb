@@ -1,7 +1,7 @@
 require "helper"
 
 module Neovim
-  RSpec.describe Cursor, :remote => true do
+  RSpec.describe Cursor, :remote do
     let(:window) { Window.new(1, @client) }
     let(:cursor) { Cursor.new(window, @client) }
 

@@ -1,7 +1,7 @@
 require "helper"
 
 module Neovim
-  RSpec.describe Option, :remote => true do
+  RSpec.describe Option, :remote do
     shared_context "getters and setters" do
       it "reads an option" do
         option = Option.new(option_name, scope, @client)

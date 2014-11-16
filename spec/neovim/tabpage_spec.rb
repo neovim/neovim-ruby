@@ -1,7 +1,7 @@
 require "helper"
 
 module Neovim
-  RSpec.describe Tabpage, :remote => true do
+  RSpec.describe Tabpage, :remote do
     let(:tabpage) { Tabpage.new(3, @client) }
 
     describe "#windows" do

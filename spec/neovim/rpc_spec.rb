@@ -2,7 +2,7 @@ require "helper"
 require "msgpack"
 
 module Neovim
-  RSpec.describe RPC, :remote => true do
+  RSpec.describe RPC, :remote do
     let(:stream) { StringIO.new }
     let(:rpc)    { RPC.new(stream, @client) }
 
