@@ -82,21 +82,8 @@ module Neovim
       rpc_send(:vim_get_buffers)
     end
 
-    def current_buffer
-      rpc_send(:vim_get_current_buffer)
-    end
-
-    def current_buffer=(buffer_index)
-      buffer = Buffer.new(buffer_index, self)
-      rpc_send(:vim_set_current_buffer, buffer)
-    end
-
-    def current_line
-      rpc_send(:vim_get_current_line)
-    end
-
-    def current_line=(line)
-      rpc_send(:vim_set_current_line, line)
+    def current
+      Current.new(self)
     end
 
     def delete_current_line
@@ -107,26 +94,8 @@ module Neovim
       rpc_send(:vim_get_windows)
     end
 
-    def current_window
-      rpc_send(:vim_get_current_window)
-    end
-
-    def current_window=(window_index)
-      window = Window.new(window_index, self)
-      rpc_send(:vim_set_current_window, window)
-    end
-
     def tabpages
       rpc_send(:vim_get_tabpages)
-    end
-
-    def current_tabpage
-      rpc_send(:vim_get_current_tabpage)
-    end
-
-    def current_tabpage=(tabpage_index)
-      tabpage = Tabpage.new(tabpage_index, self)
-      rpc_send(:vim_set_current_tabpage, tabpage)
     end
 
     def variable(name)

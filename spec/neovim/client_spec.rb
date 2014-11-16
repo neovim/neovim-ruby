@@ -83,7 +83,7 @@ module Neovim
     describe "#feed_keys" do
       it "feeds keys in the provided mode" do
         @client.feed_keys("ihello", "m")
-        expect(@client.current_buffer.lines.to_a).to eq(["hello"])
+        expect(@client.current.buffer.lines.to_a).to eq(["hello"])
       end
 
       it "returns the client" do
@@ -95,7 +95,7 @@ module Neovim
       it "sends the provided keys" do
         pending "The input function takes several seconds to catch for some reason"
         @client.input("ihello")
-        expect(@client.current_buffer.lines.to_a).to eq(["hello"])
+        expect(@client.current.buffer.lines.to_a).to eq(["hello"])
       end
 
       it "returns the number of bytes written" do
@@ -151,59 +151,13 @@ module Neovim
       end
     end
 
-    describe "#current_buffer" do
-      it "returns a buffer" do
-        buffer = @client.current_buffer
-        expect(buffer).to be_a(Buffer)
-      end
-    end
-
-    describe "#current_buffer=" do
-      it "sets the current buffer" do
-        initial_index = @client.current_buffer.index
-        @client.command("vnew")
-
-        expect {
-          @client.current_buffer = initial_index
-        }.to change { @client.current_buffer.index }
-      end
-    end
-
-    describe "#current_line" do
-      it "returns an empty string if the current line is empty" do
-        expect(@client.current_line).to eq("")
-      end
-
-      it "returns the contents of the line" do
-        @client.current_line = "New content"
-        expect(@client.current_line).to eq("New content")
-      end
-    end
-
-    describe "#current_line=" do
-      it "sets the content of the current line" do
-        @client.current_line = "New content"
-        expect(@client.current_line).to eq("New content")
-      end
-
-      it "returns the new content" do
-        expect(@client.current_line = "New content").to eq("New content")
-      end
-
-      it "empties the line" do
-        @client.current_line = "New content"
-        @client.current_line = ""
-        expect(@client.current_line).to eq("")
-      end
-    end
-
     describe "#delete_current_line" do
-      before { @client.current_line = "hi" }
+      before { @client.current.line = "hi" }
 
       it "deletes the current line" do
         expect {
           @client.delete_current_line
-        }.to change { @client.current_line }.from("hi").to("")
+        }.to change { @client.current.line }.from("hi").to("")
       end
     end
 
@@ -212,32 +166,6 @@ module Neovim
         windows = @client.windows
         expect(windows.size).to eq(1)
         expect(windows.first).to be_a(Window)
-      end
-    end
-
-    describe "#current_window" do
-      it "returns the current window" do
-        expect(@client.current_window).to be_a(Window)
-      end
-    end
-
-    describe "#current_window=" do
-      it "sets the current window" do
-        @client.command("vsp")
-        expect(@client.current_window.index).not_to eq(1)
-        expect {
-          @client.current_window = 1
-        }.to change { @client.current_window.index }.to(1)
-      end
-
-      it "returns the index" do
-        expect(@client.current_window = 1).to eq(1)
-      end
-
-      it "raises an exception for an invalid window index" do
-        expect {
-          @client.current_window = 999
-        }.to raise_error(/invalid window id/i)
       end
     end
 
@@ -250,29 +178,6 @@ module Neovim
         expect {
           @client.command("tabclose")
         }.to change { @client.tabpages.count }.from(2).to(1)
-      end
-    end
-
-    describe "#current_tabpage" do
-      it "returns the current tabpage" do
-        tabpage = @client.current_tabpage
-        expect(tabpage).to be_a(Tabpage)
-        expect(tabpage).to eq(@client.tabpages.first)
-      end
-    end
-
-    describe "#current_tabpage=" do
-      it "sets the current tabpage" do
-        initial_index = @client.current_tabpage.index
-        @client.command("tabnew")
-        expect(@client.current_tabpage.index).to be > initial_index
-
-        @client.current_tabpage = initial_index
-        expect(@client.current_tabpage.index).to eq(initial_index)
-      end
-
-      it "returns the index" do
-        expect(@client.current_tabpage = 3).to eq(3) # 3 is a magic number
       end
     end
 

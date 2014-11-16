@@ -1,5 +1,6 @@
 require "neovim/buffer"
 require "neovim/client"
+require "neovim/current"
 require "neovim/cursor"
 require "neovim/object"
 require "neovim/option"
