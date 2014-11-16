@@ -14,4 +14,4 @@ before_install:
   - sudo apt-get install -y libtool autoconf automake cmake libncurses5-dev g++ pkg-config screen
 
 env: REPORT_COVERAGE=1
-script: bundle exec rake ci
+script: bundle exec rake spec:ci

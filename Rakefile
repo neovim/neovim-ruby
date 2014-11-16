@@ -4,16 +4,17 @@ require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
-desc "Run tests for CI"
-task :ci do
+RSpec::Core::RakeTask.new("spec:api") do |t|
+  t.rspec_opts = "--tag api"
+end
+
+RSpec::Core::RakeTask.new("spec:ci") do |t|
   begin
     Rake::Task["neovim:install"].invoke
   rescue
     # retry since the install fails occassionally
     Rake::Task["neovim:install"].invoke
   end
-
-  Rake::Task[:spec].invoke
 end
 
 namespace :neovim do
@@ -23,6 +24,7 @@ namespace :neovim do
   task :install do
     sh "git submodule update --init && " +
        "cd #{vendor} && " +
+       "make distclean && " +
        "make"
   end
 
@@ -30,7 +32,7 @@ namespace :neovim do
   task :update do
     sh "git submodule update --init && " +
        "cd #{vendor} && " +
-       "git clean -fdx && " +
+       "make distclean && " +
        "git pull origin master && " +
        "make"
   end
