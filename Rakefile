@@ -12,7 +12,7 @@ RSpec::Core::RakeTask.new("spec:ci") do |t|
   begin
     Rake::Task["neovim:install"].invoke
   rescue
-    # retry since the install fails occassionally
+    puts "Neovim install failed, retrying"
     Rake::Task["neovim:install"].invoke
   end
 end
