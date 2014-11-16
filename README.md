@@ -5,7 +5,7 @@
 
 Ruby bindings for [Neovim](https://github.com/neovim/neovim).
 
-*Warning*: This project is currently incomplete and unstable. It likely doesn't support any platform besides OS X.
+*Warning*: This project is currently incomplete and unstable.
 
 ## Installation
 
@@ -22,6 +22,21 @@ Or install it yourself as:
     $ gem install neovim
 
 ## Usage
+
+You can control a running `nvim` process by connecting to `$NVIM_LISTEN_ADDRESS`. Start it up like this:
+
+```shell
+$ NVIM_LISTEN_ADDRESS=/tmp/nvim.sock nvim
+```
+
+In Ruby, create an `IO` object connected to that socket and pass it to a `Neovim::Client`:
+
+```ruby
+socket = UNIXSocket.new(ENV["NVIM_LISTEN_ADDRESS"])
+client = Neovim::Client.new(socket)
+```
+
+Start in [client.rb](lib/neovim/client.rb) to see what client functions are currently supported.
 
 ## Contributing
 
