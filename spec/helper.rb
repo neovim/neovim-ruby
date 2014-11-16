@@ -1,6 +1,7 @@
 require "rubygems"
 require "bundler/setup"
 require "neovim"
+require "timeout"
 
 require File.expand_path("../support.rb", __FILE__)
 
@@ -27,7 +28,7 @@ RSpec.shared_examples :remote => true do
   around do |spec|
     with_neovim_client do |client|
       @client = client
-      spec.run
+      Timeout.timeout(1) { spec.run }
     end
   end
 end
