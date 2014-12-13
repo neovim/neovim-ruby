@@ -124,9 +124,7 @@ module Neovim
     private
 
     def types
-      @types ||= begin
-        rpc_send(:vim_get_api_info).fetch(1).fetch("types")
-      end
+      @types ||= rpc_send(:vim_get_api_info).fetch(1).fetch("types")
     end
   end
 end
