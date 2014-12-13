@@ -21,17 +21,20 @@ RSpec.describe Neovim do
     end
 
     it "connects to a TCP socket" do
-      env = {"NVIM_LISTEN_ADDRESS" => "127.0.0.1:6666"}
+      env = {"NVIM_LISTEN_ADDRESS" => "127.0.0.1:4567"}
       pid = spawn(env, bin, [:out, :err] => "/dev/null")
-      wait_socket = TCPSocket.open("127.0.0.1", 6666)
 
       begin
-        IO.select(nil, [wait_socket], nil, 1)
+        wait_socket = TCPSocket.open("127.0.0.1", 4567)
+      rescue Errno::ECONNREFUSED
+        retry
+      end
+      wait_socket.close
 
-        client = Neovim.connect("127.0.0.1", 6666)
+      begin
+        client = Neovim.connect("127.0.0.1", 4567)
         expect(client.strwidth("hi")).to eq(2)
       ensure
-        wait_socket.close
         Process.kill(:KILL, pid)
         Process.waitpid(pid)
       end
