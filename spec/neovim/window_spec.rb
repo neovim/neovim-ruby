@@ -120,7 +120,8 @@ module Neovim
       end
 
       it "returns false" do
-        skip "I don't know what this means"
+        window = Window.new(999, @client)
+        expect(window).not_to be_valid
       end
     end
   end

@@ -35,7 +35,8 @@ module Neovim
       end
 
       it "returns false" do
-        skip "I don't know what this means"
+        tabpage = Tabpage.new(999, @client)
+        expect(tabpage).not_to be_valid
       end
     end
   end
