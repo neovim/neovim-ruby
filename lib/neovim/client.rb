@@ -54,6 +54,10 @@ module Neovim
       rpc_send(:vim_replace_termcodes, str, from_part, do_lt, special)
     end
 
+    def name_to_color(name)
+      rpc_send(:vim_name_to_color, name)
+    end
+
     def runtime_paths
       rpc_send(:vim_list_runtime_paths)
     end

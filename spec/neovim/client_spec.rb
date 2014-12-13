@@ -118,6 +118,17 @@ module Neovim
       end
     end
 
+    describe "#name_to_color" do
+      it "returns color codes" do
+        expect(@client.name_to_color("Blue")).to eq(0xff)
+        expect(@client.name_to_color("SeaGreen")).to eq(0x2e8b57)
+      end
+
+      it "returns -1 for unknown colors" do
+        expect(@client.name_to_color("Unknown")).to eq(-1)
+      end
+    end
+
     describe "#runtime_paths" do
       it "returns an array of runtime paths" do
         expect(@client.runtime_paths).to respond_to(:to_ary)
