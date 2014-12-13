@@ -82,18 +82,17 @@ module Neovim
 
     describe "#feed_keys" do
       it "feeds keys in the provided mode" do
-        @client.feed_keys("ihello", "m")
+        @client.feed_keys("ihello", "m", true)
         expect(@client.current.buffer.lines.to_a).to eq(["hello"])
       end
 
       it "returns the client" do
-        expect(@client.feed_keys("j", "m")).to eq(@client)
+        expect(@client.feed_keys("j", "m", true)).to eq(@client)
       end
     end
 
     describe "#input" do
       it "sends the provided keys" do
-        pending "The input function takes several seconds to catch for some reason"
         @client.input("ihello")
         expect(@client.current.buffer.lines.to_a).to eq(["hello"])
       end

@@ -37,8 +37,8 @@ module Neovim
       rpc_send(:vim_eval, expr)
     end
 
-    def feed_keys(keys, mode)
-      rpc_send(:vim_feedkeys, keys, mode)
+    def feed_keys(keys, mode, escape_csi)
+      rpc_send(:vim_feedkeys, keys, mode, escape_csi)
       self
     end
 
