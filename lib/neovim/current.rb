@@ -1,7 +1,3 @@
-require "neovim/buffer"
-require "neovim/tabpage"
-require "neovim/window"
-
 module Neovim
   class Current
     def initialize(client)
