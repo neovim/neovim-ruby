@@ -3,10 +3,6 @@ require "helper"
 
 module Neovim
   RSpec.describe Client, :remote do
-    def each_function(&block)
-      @client.api_info.fetch(1).fetch("functions").each(&block)
-    end
-
     describe "#type_code_for" do
       it "returns the type code for buffers, windows, and tabpages" do
         expect(@client.type_code_for(Buffer)).to  respond_to(:to_int)
@@ -29,7 +25,7 @@ module Neovim
 
     describe "#respond_to?" do
       it "returns true for all rpc functions" do
-        each_function do |funcdef|
+        @client.api_info.fetch(1).fetch("functions").each do |funcdef|
           name = funcdef.fetch("name")
           next unless name =~ /^vim_/
           expect(@client).to respond_to(name.sub(/^vim_/, ""))
