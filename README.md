@@ -11,7 +11,8 @@ Ruby bindings for [Neovim](https://github.com/neovim/neovim).
 
 Add this line to your application's Gemfile:
 
-    gem "neovim"
+    source 'https://rubygems.org'
+    gem 'neovim', git: 'https://github.com/alexgenco/neovim-ruby/'
 
 And then execute:
 
@@ -20,6 +21,8 @@ And then execute:
 Or install it yourself as:
 
     $ gem install neovim
+
+*Warning*: This project is not in rubygems repository yet.
 
 ## Usage
 
@@ -31,7 +34,17 @@ $ NVIM_LISTEN_ADDRESS=/tmp/nvim.sock nvim
 
 In Ruby, create an `IO` object connected to that socket and pass it to a `Neovim::Client`:
 
+```shell
+$ bundle exec irb
+irb(main):001:0> require 'socket'
+irb(main):002:0> require 'neovim'
+irb(main):003:0> socket = UNIXSocket.new(ENV["NVIM_LISTEN_ADDRESS"])
+irb(main):004:0> client = Neovim::Client.new(socket)
+```
+
 ```ruby
+require 'socket'
+require 'neovim'
 socket = UNIXSocket.new(ENV["NVIM_LISTEN_ADDRESS"])
 client = Neovim::Client.new(socket)
 ```
