@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^spec/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "msgpack", "~> 0.5.8"
+  spec.add_dependency "msgpack", "~> 0.6"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"

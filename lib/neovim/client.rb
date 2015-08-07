@@ -4,6 +4,7 @@ module Neovim
   class Client
     def initialize(io)
       @rpc = RPC.new(io, self)
+      @rpc.register_types(types)
     end
 
     def method_missing(method_name, *args)
