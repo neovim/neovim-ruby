@@ -15,7 +15,6 @@ RSpec.configure do |config|
     exp.syntax = :expect
   end
 
-  config.filter_run_excluding :api
   config.disable_monkey_patching!
   config.order = :random
 
