@@ -36,8 +36,6 @@ socket = UNIXSocket.new(ENV["NVIM_LISTEN_ADDRESS"])
 client = Neovim::Client.new(socket)
 ```
 
-Start in [client.rb](lib/neovim/client.rb) to see what client functions are currently supported.
-
 ## Contributing
 
 1. Fork it (http://github.com/alexgenco/neovim-ruby/fork)
