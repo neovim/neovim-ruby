@@ -14,9 +14,24 @@ RSpec.describe Neovim do
         client = Neovim.connect("/tmp/nvim.sock")
         expect(client.strwidth("hi")).to eq(2)
       ensure
-        Process.kill(:KILL, pid)
+        Process.kill(:TERM, pid)
         Process.waitpid(pid)
-        File.delete("/tmp/nvim.sock")
+      end
+    end
+
+    it "connects to a UNIX socket as a Pathname" do
+      env = {"NVIM_LISTEN_ADDRESS" => "/tmp/nvim.sock"}
+      pid = spawn(env, bin, [:out, :err] => "/dev/null")
+
+      begin
+        loop { break if File.exists?("/tmp/nvim.sock") }
+
+        target = Pathname.new("/tmp/nvim.sock")
+        client = Neovim.connect(target)
+        expect(client.strwidth("hi")).to eq(2)
+      ensure
+        Process.kill(:TERM, pid)
+        Process.waitpid(pid)
       end
     end
 
@@ -32,11 +47,25 @@ RSpec.describe Neovim do
       wait_socket.close
 
       begin
-        client = Neovim.connect("127.0.0.1", 4567)
+        client = Neovim.connect("127.0.0.1:4567")
         expect(client.strwidth("hi")).to eq(2)
       ensure
-        Process.kill(:KILL, pid)
+        Process.kill(:TERM, pid)
         Process.waitpid(pid)
+      end
+    end
+
+    it "connects to an embedded process through standard streams" do
+      IO.popen("#{bin} --embed", "r+b", :err => "/dev/null") do |io|
+        pid = io.pid
+
+        begin
+          client = Neovim.connect(io)
+          expect(client.strwidth("hi")).to eq(2)
+        ensure
+          Process.kill(:TERM, pid)
+          Process.waitpid(pid)
+        end
       end
     end
 
@@ -46,8 +75,12 @@ RSpec.describe Neovim do
       }.to raise_error(Neovim::InvalidAddress, /No such file or directory/)
 
       expect {
-        client = Neovim.connect("127.0.0.1", 6667)
+        client = Neovim.connect("127.0.0.1:6667")
       }.to raise_error(Neovim::InvalidAddress, /Connection refused/)
+
+      expect {
+        client = Neovim.connect({})
+      }.to raise_error(Neovim::InvalidAddress, /Can't connect to object/)
     end
   end
 end
