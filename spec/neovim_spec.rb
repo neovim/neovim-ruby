@@ -1,4 +1,5 @@
 require "helper"
+require "socket"
 
 RSpec.describe Neovim do
   describe ".connect" do
