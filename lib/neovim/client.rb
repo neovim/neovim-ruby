@@ -27,21 +27,6 @@ module Neovim
       @rpc.send(method_name, *args).response
     end
 
-    def class_for(type_code)
-      types.inject(nil) do |klass, (class_str, data)|
-        next(klass) if klass
-
-        if data["id"] == type_code
-          Neovim.const_get(class_str)
-        end
-      end
-    end
-
-    def type_code_for(klass)
-      unqualified = klass.to_s.split("::").last
-      types.fetch(unqualified).fetch("id")
-    end
-
     def api_info
       @api_info ||= rpc_send(:vim_get_api_info)
     end
