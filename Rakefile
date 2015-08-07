@@ -4,10 +4,6 @@ require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
-RSpec::Core::RakeTask.new("spec:api") do |t|
-  t.rspec_opts = "--tag api"
-end
-
 RSpec::Core::RakeTask.new("spec:ci") do |t|
   begin
     Rake::Task["neovim:install"].invoke
