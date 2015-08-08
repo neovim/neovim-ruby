@@ -5,6 +5,7 @@ require "fileutils"
 RSpec.describe Neovim do
   describe ".connect" do
     let(:bin) { File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__) }
+    before { FileUtils.rm_f("/tmp/nvim.sock") }
 
     it "connects to a UNIX socket" do
       env = {"NVIM_LISTEN_ADDRESS" => "/tmp/nvim.sock"}
@@ -16,8 +17,8 @@ RSpec.describe Neovim do
         client = Neovim.connect("/tmp/nvim.sock")
         expect(client.strwidth("hi")).to eq(2)
       ensure
-        Process.kill(:TERM, pid)
-        Process.waitpid(pid, Process::WNOHANG)
+        Process.kill(:KILL, pid)
+        Process.waitpid(pid)
       end
     end
 
@@ -32,8 +33,8 @@ RSpec.describe Neovim do
         client = Neovim.connect(target)
         expect(client.strwidth("hi")).to eq(2)
       ensure
-        Process.kill(:TERM, pid)
-        Process.waitpid(pid, Process::WNOHANG)
+        Process.kill(:KILL, pid)
+        Process.waitpid(pid)
       end
     end
 
@@ -52,8 +53,8 @@ RSpec.describe Neovim do
         client = Neovim.connect("127.0.0.1:12321")
         expect(client.strwidth("hi")).to eq(2)
       ensure
-        Process.kill(:TERM, pid)
-        Process.waitpid(pid, Process::WNOHANG)
+        Process.kill(:KILL, pid)
+        Process.waitpid(pid)
       end
     end
 
@@ -65,8 +66,8 @@ RSpec.describe Neovim do
           client = Neovim.connect(io)
           expect(client.strwidth("hi")).to eq(2)
         ensure
-          Process.kill(:TERM, pid)
-          Process.waitpid(pid, Process::WNOHANG)
+          Process.kill(:KILL, pid)
+          Process.waitpid(pid)
         end
       end
     end
