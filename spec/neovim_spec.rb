@@ -41,18 +41,18 @@ RSpec.describe Neovim do
     end
 
     it "connects to a TCP socket" do
-      env = {"NVIM_LISTEN_ADDRESS" => "127.0.0.1:4567"}
+      env = {"NVIM_LISTEN_ADDRESS" => "127.0.0.1:12321"}
       pid = spawn(env, bin, [:out, :err] => "/dev/null")
 
       begin
-        wait_socket = TCPSocket.open("127.0.0.1", 4567)
+        wait_socket = TCPSocket.open("127.0.0.1", 12321)
       rescue Errno::ECONNREFUSED
         retry
       end
       wait_socket.close
 
       begin
-        client = Neovim.connect("127.0.0.1:4567")
+        client = Neovim.connect("127.0.0.1:12321")
         expect(client.strwidth("hi")).to eq(2)
       ensure
         Process.kill(:TERM, pid)
@@ -80,7 +80,7 @@ RSpec.describe Neovim do
       }.to raise_error(Neovim::InvalidAddress, /No such file or directory/)
 
       expect {
-        client = Neovim.connect("127.0.0.1:6667")
+        client = Neovim.connect("127.0.0.1:80")
       }.to raise_error(Neovim::InvalidAddress, /Connection refused/)
 
       expect {
