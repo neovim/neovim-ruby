@@ -1,18 +1,22 @@
 require "helper"
 require "socket"
+require "fileutils"
 
 RSpec.describe Neovim do
   describe ".connect" do
     let(:bin) { File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__) }
+    let(:tmp) { File.expand_path("../../tmp", __FILE__) }
+
+    before { FileUtils.mkdir_p(tmp) }
 
     it "connects to a UNIX socket" do
-      env = {"NVIM_LISTEN_ADDRESS" => "/tmp/nvim.sock"}
+      env = {"NVIM_LISTEN_ADDRESS" => "#{tmp}/nvim.sock"}
       pid = spawn(env, bin, [:out, :err] => "/dev/null")
 
       begin
-        loop { break if File.exists?("/tmp/nvim.sock") }
+        loop { break if File.exists?("#{tmp}/nvim.sock") }
 
-        client = Neovim.connect("/tmp/nvim.sock")
+        client = Neovim.connect("#{tmp}/nvim.sock")
         expect(client.strwidth("hi")).to eq(2)
       ensure
         Process.kill(:TERM, pid)
@@ -21,13 +25,13 @@ RSpec.describe Neovim do
     end
 
     it "connects to a UNIX socket as a Pathname" do
-      env = {"NVIM_LISTEN_ADDRESS" => "/tmp/nvim.sock"}
+      env = {"NVIM_LISTEN_ADDRESS" => "#{tmp}/nvim.sock"}
       pid = spawn(env, bin, [:out, :err] => "/dev/null")
 
       begin
-        loop { break if File.exists?("/tmp/nvim.sock") }
+        loop { break if File.exists?("#{tmp}/nvim.sock") }
 
-        target = Pathname.new("/tmp/nvim.sock")
+        target = Pathname.new("#{tmp}/nvim.sock")
         client = Neovim.connect(target)
         expect(client.strwidth("hi")).to eq(2)
       ensure
