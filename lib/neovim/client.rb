@@ -24,7 +24,7 @@ module Neovim
     end
 
     def rpc_send(method_name, *args)
-      @rpc.send(method_name, *args).response
+      @rpc.request(method_name, *args).response
     end
 
     def api_info

@@ -6,10 +6,10 @@ module Neovim
     let(:stream) { StringIO.new.set_encoding("ASCII-8BIT") }
     let(:rpc)    { RPC.new(stream, @client) }
 
-    describe "#send" do
+    describe "#request" do
       it "encodes the data and writes it to the stream" do
         message = MessagePack.pack([0, 0, :my_method, [1, "x"]])
-        rpc.send(:my_method, 1, "x")
+        rpc.request(:my_method, 1, "x")
         expect(stream.string).to eq(message)
       end
     end

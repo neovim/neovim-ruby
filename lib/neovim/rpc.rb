@@ -26,7 +26,7 @@ module Neovim
       end
     end
 
-    def send(function, *args)
+    def request(function, *args)
       @packer.write_array_header(4).
         write(0).
         write(@request += 1).
