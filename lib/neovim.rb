@@ -1,7 +1,7 @@
 require "neovim/client"
 require "neovim/current"
+require "neovim/message_pack_stream"
 require "neovim/object"
-require "neovim/rpc"
 require "neovim/version"
 
 module Neovim

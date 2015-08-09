@@ -1,14 +1,14 @@
 require "msgpack"
 
 module Neovim
-  class RPC
+  class MessagePackStream
     class Error < RuntimeError; end
 
-    def initialize(stream, client)
+    def initialize(io, client)
       @request  = -1
       @client   = client
-      @packer   = MessagePack::Packer.new(stream)
-      @unpacker = MessagePack::Unpacker.new(stream)
+      @packer   = MessagePack::Packer.new(io)
+      @unpacker = MessagePack::Unpacker.new(io)
     end
 
     def register_types(types)

@@ -1,9 +1,9 @@
-require "neovim/rpc"
+require "neovim/message_pack_stream"
 
 module Neovim
   class Client
     def initialize(io)
-      @rpc = RPC.new(io, self)
+      @rpc = MessagePackStream.new(io, self)
       @rpc.register_types(types)
     end
 
