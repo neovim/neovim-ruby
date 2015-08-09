@@ -29,11 +29,11 @@ You can control a running `nvim` process by connecting to `$NVIM_LISTEN_ADDRESS`
 $ NVIM_LISTEN_ADDRESS=/tmp/nvim.sock nvim
 ```
 
-In Ruby, create an `IO` object connected to that socket and pass it to a `Neovim::Client`:
+You can then connect to that socket in Ruby to get a `Neovim::Client`:
 
 ```ruby
-socket = UNIXSocket.new(ENV["NVIM_LISTEN_ADDRESS"])
-client = Neovim::Client.new(socket)
+require "neovim"
+client = Neovim.connect("/tmp/nvim.sock")
 ```
 
 ## Contributing
