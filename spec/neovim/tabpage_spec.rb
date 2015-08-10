@@ -4,39 +4,28 @@ module Neovim
   RSpec.describe Tabpage, :remote do
     let(:tabpage) { Tabpage.new(3, @client) }
 
-    describe "#windows" do
-      it "returns a list of windows" do
-        windows = tabpage.windows
-        expect(windows.size).to eq(1)
-        expect(windows.first).to be_a(Window)
+    describe "Boolean return functions" do
+      it "returns a boolean" do
+        expect(tabpage.is_valid).to be(true)
       end
     end
 
-    describe "#current_window" do
-      it "returns the current window" do
-        window = tabpage.current_window
-        expect(window).to be_a(Window)
+    describe "Object return functions" do
+      it "returns an object" do
+        tabpage.set_var("v1", {"foo" => "bar"})
+        expect(tabpage.get_var("v1")).to eq("foo" => "bar")
       end
     end
 
-    describe "#variable" do
-      it "reads a tabpage scoped variable" do
-        variable = tabpage.variable("tp_var")
-
-        expect(variable).to be_a(Variable)
-        expect(variable.name).to eq("tp_var")
-        expect(variable.scope).to be_a(Scope::Tabpage)
+    describe "ArrayOf return functions" do
+      it "returns an array" do
+        expect(tabpage.get_windows).to respond_to(:to_ary)
       end
     end
 
-    describe "#valid?" do
-      it "returns true" do
-        expect(tabpage).to be_valid
-      end
-
-      it "returns false" do
-        tabpage = Tabpage.new(999, @client)
-        expect(tabpage).not_to be_valid
+    describe "Window return functions" do
+      it "returns a window" do
+        expect(tabpage.get_window).to be_a(Window)
       end
     end
   end

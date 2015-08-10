@@ -3,7 +3,7 @@ module Support
     def with_neovim_client
       nvim = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
 
-      IO.popen("#{nvim} --embed -u NONE -i NONE -N -n", "rb+") do |io|
+      IO.popen("#{nvim} --embed -u NONE -i NONE -N -n", "rb+", :err => "/dev/null") do |io|
         nvim_pid = io.pid
         client   = Neovim::Client.new(io)
 

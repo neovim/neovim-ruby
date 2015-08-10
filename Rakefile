@@ -4,10 +4,6 @@ require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
-RSpec::Core::RakeTask.new("spec:api") do |t|
-  t.rspec_opts = "--tag api"
-end
-
 RSpec::Core::RakeTask.new("spec:ci") do |t|
   begin
     Rake::Task["neovim:install"].invoke
@@ -51,14 +47,20 @@ namespace :neovim do
     with_neovim_client do |client|
       api_info = client.rpc_send(:vim_get_api_info)
       function = ENV["function"]
+      funcdefs = api_info.fetch(1).fetch("functions")
 
       if function
-        funcdef = api_info.fetch(1).fetch("functions").find do |func|
-          func.fetch("name") == function
-        end
-        funcdef ? puts(funcdef.to_yaml) : puts("No function called '#{function}'")
-      else
-        puts api_info.to_yaml
+        regexp = Regexp.new(function)
+        funcdefs.select! { |func| func.fetch("name") =~ regexp }
+      end
+
+      funcdefs.each do |funcdef|
+        name = funcdef.fetch("name")
+        return_type = funcdef.fetch("return_type")
+        params = funcdef.fetch("parameters")
+        param_str = params.map { |p| p.join(" ") }.join(", ")
+
+        puts "#{name}(#{param_str}) # => #{return_type}"
       end
     end
   end
