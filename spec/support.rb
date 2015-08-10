@@ -5,10 +5,11 @@ module Support
 
       IO.popen("#{nvim} --embed -u NONE -i NONE -N -n", "rb+", :err => "/dev/null") do |io|
         nvim_pid = io.pid
-        client   = Neovim::Client.new(io)
 
         begin
-          yield client
+          Timeout.timeout(1) do
+            yield Neovim::Client.new(io)
+          end
         ensure
           Process.kill(:TERM, nvim_pid)
           Process.waitpid2(nvim_pid)

@@ -15,7 +15,6 @@ RSpec.configure do |config|
     exp.syntax = :expect
   end
 
-  config.filter_run_excluding :api
   config.disable_monkey_patching!
   config.order = :random
 
@@ -28,7 +27,7 @@ RSpec.shared_examples :remote => true do
   around do |spec|
     with_neovim_client do |client|
       @client = client
-      Timeout.timeout(1) { spec.run }
+      spec.run
     end
   end
 end

@@ -5,7 +5,6 @@ module Neovim
     def initialize(index, client)
       @index  = index
       @client = client
-      @handle = [index].pack("c*")
     end
 
     def method_missing(method_name, *args)
@@ -18,13 +17,6 @@ module Neovim
 
     def respond_to?(method_name)
       super || !!find_function(method_name)
-    end
-
-    def msgpack_data
-      @msgpack_data ||= begin
-        type_code = @client.type_code_for(self.class)
-        MessagePack::Extended.create(type_code, @handle)
-      end
     end
 
     private

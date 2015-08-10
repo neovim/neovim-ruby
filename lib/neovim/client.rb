@@ -1,9 +1,10 @@
-require "neovim/rpc"
+require "neovim/message_pack_stream"
 
 module Neovim
   class Client
     def initialize(io)
-      @rpc = RPC.new(io, self)
+      @rpc = MessagePackStream.new(io, self)
+      @rpc.register_types(types)
     end
 
     def method_missing(method_name, *args)
@@ -23,22 +24,7 @@ module Neovim
     end
 
     def rpc_send(method_name, *args)
-      @rpc.send(method_name, *args).response
-    end
-
-    def class_for(type_code)
-      types.inject(nil) do |klass, (class_str, data)|
-        next(klass) if klass
-
-        if data["id"] == type_code
-          Neovim.const_get(class_str)
-        end
-      end
-    end
-
-    def type_code_for(klass)
-      unqualified = klass.to_s.split("::").last
-      types.fetch(unqualified).fetch("id")
+      @rpc.request(method_name, *args).response
     end
 
     def api_info

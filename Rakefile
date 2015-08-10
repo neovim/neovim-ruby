@@ -5,6 +5,8 @@ RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
 RSpec::Core::RakeTask.new("spec:ci") do |t|
+  t.rspec_opts = "--color --format documentation"
+
   begin
     Rake::Task["neovim:install"].invoke
   rescue
