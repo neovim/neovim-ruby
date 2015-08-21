@@ -25,7 +25,9 @@ RSpec.shared_examples :remote => true do
   include Support::Remote
 
   around do |spec|
-    with_neovim_client do |client|
+    connect_type = spec.metadata.fetch(:connect, :embed)
+
+    with_neovim_client(connect_type) do |client|
       @client = client
       spec.run
     end
