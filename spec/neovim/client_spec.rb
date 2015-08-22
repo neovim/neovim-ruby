@@ -16,7 +16,7 @@ module Neovim
         expect(@client).to respond_to(:strwidth)
       end
 
-      it "returns true for non-vim functions" do
+      it "returns true for Ruby functions" do
         expect(@client).to respond_to(:inspect)
       end
 

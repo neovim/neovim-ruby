@@ -3,16 +3,26 @@ module Neovim
     attr_reader :index
 
     def initialize(index, rpc)
-      @index  = index
+      @index = index
       @rpc = rpc
     end
 
+    def respond_to?(method_name)
+      super || @rpc.defined?(qualify(method_name))
+    end
+
     def method_missing(method_name, *args)
-      prefix = self.class.to_s.split("::").last.downcase
-      full_method = :"#{prefix}_#{method_name}"
+      full_method = qualify(method_name)
       super unless @rpc.defined?(full_method)
 
       @rpc.send(full_method, @index, *args)
+    end
+
+    private
+
+    def qualify(string)
+      prefix = self.class.to_s.split("::").last.downcase
+      :"#{prefix}_#{string}"
     end
   end
 
