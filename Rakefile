@@ -46,8 +46,9 @@ namespace :neovim do
     require File.expand_path("../spec/support.rb", __FILE__)
     include Support::Remote
 
-    with_neovim_client do |client|
-      api_info = client.rpc_send(:vim_get_api_info)
+    with_neovim_connection(:embed) do |conn|
+      rpc = Neovim::RPC.new(conn)
+      api_info = rpc.send(:vim_get_api_info)
       function = ENV["function"]
       funcdefs = api_info.fetch(1).fetch("functions")
 
