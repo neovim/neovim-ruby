@@ -1,28 +1,15 @@
 require "neovim/client"
+require "neovim/connection"
 require "neovim/current"
-require "neovim/message_pack_stream"
 require "neovim/object"
+require "neovim/rpc"
 require "neovim/version"
 
 module Neovim
-  InvalidAddress = Class.new(ArgumentError)
-
   def self.connect(target)
-    case target
-    when IO
-      Client.new(target)
-    when String, Pathname
-      address, port = target.to_s.split(":")
+    connection = Connection.parse(target)
+    rpc = RPC.new(connection.to_io)
 
-      if port
-        Client.new(TCPSocket.new(address, port))
-      else
-        Client.new(UNIXSocket.new(address))
-      end
-    else
-      raise InvalidAddress, "Can't connect to object '#{target.inspect}'"
-    end
-  rescue => e
-    raise InvalidAddress, e.message
+    Client.new(rpc)
   end
 end

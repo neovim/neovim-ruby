@@ -20,16 +20,3 @@ RSpec.configure do |config|
 
   Kernel.srand config.seed
 end
-
-RSpec.shared_examples :remote => true do
-  include Support::Remote
-
-  around do |spec|
-    connect_type = spec.metadata.fetch(:connect, :embed)
-
-    with_neovim_client(connect_type) do |client|
-      @client = client
-      spec.run
-    end
-  end
-end
