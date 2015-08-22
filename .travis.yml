@@ -1,6 +1,9 @@
 language: ruby
 sudo: false
 
+branches:
+  only: master
+
 rvm:
   - 1.9.3
   - 2.0.0
