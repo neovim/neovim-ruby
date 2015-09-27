@@ -9,6 +9,7 @@ module Neovim
 
     def send(msg)
       @event_loop.send(MessagePack.pack(msg))
+      self
     end
 
     def run(&message_cb)
@@ -21,6 +22,7 @@ module Neovim
 
     def stop
       @event_loop.stop
+      self
     end
   end
 end

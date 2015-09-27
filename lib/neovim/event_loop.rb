@@ -34,10 +34,13 @@ module Neovim
         else
           @message_queue.push(data)
         end
+
+        self
       end
 
       def stop
         EM.stop
+        self
       end
 
       private
@@ -45,7 +48,7 @@ module Neovim
       def initialize_connection(connection)
         @connection = connection
         @connection.message_callback = @message_callback
-        @connection.flush_message_queue(@message_queue)
+        @connection.send_data_from_queue(@message_queue)
       end
     end
 
@@ -75,7 +78,7 @@ module Neovim
   class Connection < EM::Connection
     attr_writer :message_callback
 
-    def flush_message_queue(queue)
+    def send_data_from_queue(queue)
       queue.pop { |msg| send_data(msg) }
     end
 

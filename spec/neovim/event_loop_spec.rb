@@ -1,51 +1,47 @@
 require "helper"
+require "socket"
 
 module Neovim
   RSpec.describe EventLoop do
-    context "TCP" do
-      it "writes data" do
-        pending "START HERE: spin up a nc server and assert this thing writes to it"
-        event_loop = EventLoop.tcp("0.0.0.0", 3333)
+    before do
+      File.delete("/tmp/#$$.sock") if File.exists?("/tmp/#$$.sock")
+    end
+
+    shared_context "sending and receiving data" do
+      it "sends and receives data" do
         messages = []
 
-        thr = Thread.new do
-          event_loop.run do |msg|
-            messages << msg
-            event_loop.stop
-          end
+        srv_thr = Thread.new do
+          client = server.accept
+          messages << client.readpartial(1024)
+
+          client.write("from server")
+          client.close
+          server.close
         end
 
-        IO.popen(["/usr/bin/nc", "0.0.0.0", "3333"], "r+") do |io|
-          io.write("data")
-          io.close_write
+        event_loop.send("data").run do |msg|
+          expect(msg).to eq("from server")
+          event_loop.stop
         end
 
-        thr.join
+        srv_thr.join
         expect(messages).to eq(["data"])
       end
     end
 
+    context "TCP" do
+      let!(:server) { TCPServer.new(3333) }
+      let!(:event_loop) { EventLoop.tcp("0.0.0.0", 3333) }
+
+      include_context "sending and receiving data"
+    end
+
     context "Unix" do
-      it "writes data" do
-        pending "START HERE: spin up a nc server and assert this thing writes to it"
-        event_loop = EventLoop.unix("/tmp/#{$$}.sock")
-        messages = []
+      let!(:server) { UNIXServer.new("/tmp/#$$.sock") }
+      let!(:event_loop) { EventLoop.unix("/tmp/#$$.sock") }
 
-        thr = Thread.new do
-          event_loop.run do |msg|
-            messages << msg
-            event_loop.stop
-          end
-        end
-
-        IO.popen(["/usr/bin/nc", "-U", "/tmp/#{$$}.sock"], "r+") do |io|
-          io.write("data")
-          io.close_write
-        end
-
-        thr.join
-        expect(messages).to eq(["data"])
-      end
+      include_context "sending and receiving data"
     end
   end
 end

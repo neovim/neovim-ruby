@@ -5,8 +5,9 @@ module Neovim
     include Support::Remote
 
     it "sends synchronous requests" do
-      with_neovim(:unix) do |socket_path|
-        event_loop = EventLoop.unix(socket_path)
+      with_neovim(:tcp) do |address|
+        host, port = address.split(":")
+        event_loop = EventLoop.tcp(host, port)
         stream = MsgpackStream.new(event_loop)
         async = AsyncSession.new(stream)
         session = Session.new(async)

@@ -1,28 +1,29 @@
+require "socket"
 require "helper"
 
 module Neovim
   RSpec.describe MsgpackStream do
-    it "receives msgpack messages" do
-      event_loop = EventLoop.unix("/tmp/#{$$}.sock")
+    it "sends and receives msgpack" do
+      server = TCPServer.new("0.0.0.0", 3333)
+      event_loop = EventLoop.tcp("0.0.0.0", 3333)
       stream = MsgpackStream.new(event_loop)
       messages = []
 
-      thr = Thread.new do
-        stream.run do |message|
-          messages << message
-          stream.stop
-        end
+      srv_thr = Thread.new do
+        client = server.accept
+        messages << client.readpartial(1024)
+
+        client.write(MessagePack.pack([2]))
+        client.close
+        server.close
       end
 
-      IO.popen(["/usr/bin/nc", "-U", "/tmp/#{$$}.sock"], "rb+") do |io|
-        io.write(MessagePack.pack({:foo => "bar"}))
-        io.close_write
+      stream.send([1]).run do |msg|
+        expect(msg).to eq([2])
+        stream.stop
       end
 
-      thr.join
-      expect(messages).to eq([{"foo" => "bar"}])
+      expect(messages).to eq([MessagePack.pack([1])])
     end
-
-    it "sends msgpack messages"
   end
 end

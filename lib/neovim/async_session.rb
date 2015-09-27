@@ -12,10 +12,12 @@ module Neovim
 
       @msgpack_stream.send([0, reqid, method, args])
       @pending_requests[reqid] = response_cb || Proc.new {}
+      self
     end
 
     def notify(method, *args)
       @msgpack_stream.send([2, method, args])
+      self
     end
 
     def run(request_cb=nil, notification_cb=nil)
@@ -28,7 +30,7 @@ module Neovim
         case kind
         when 0
           reqid, method, args = rest
-          request_cb.call(method, args, Response.new(@msgpack_stream, reqid))
+          request_cb.call(method, args, Responder.new(@msgpack_stream, reqid))
         when 1
           reqid, error, result = rest
           @pending_requests.fetch(reqid).call(error, result)
@@ -41,9 +43,10 @@ module Neovim
 
     def stop
       @msgpack_stream.stop
+      self
     end
 
-    class Response
+    class Responder
       def initialize(msgpack_stream, request_id)
         @msgpack_stream = msgpack_stream
         @request_id = request_id
@@ -51,10 +54,12 @@ module Neovim
 
       def send(value)
         @msgpack_stream.send([1, @request_id, nil, value])
+        self
       end
 
       def error(value)
         @msgpack_stream.send([1, @request_id, value, nil])
+        self
       end
     end
   end
