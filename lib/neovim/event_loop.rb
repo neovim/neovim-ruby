@@ -16,7 +16,7 @@ module Neovim
     end
 
     def send(data)
-      if @connection.respond_to?(:send_data)
+      if EM.reactor_running? && @connection.respond_to?(:send_data)
         @connection.send_data(data)
       else
         @message_queue.push(data)
@@ -26,7 +26,7 @@ module Neovim
     end
 
     def run(&message_callback)
-      @message_callback = message_callback || Proc.new {}
+      message_callback ||= Proc.new {}
 
       EM.run do
         trap(:INT)  { stop }
@@ -35,7 +35,7 @@ module Neovim
 
         EM.connect(@host, @port, Connection) do |connection|
           @connection = connection
-          @connection.message_callback = @message_callback
+          @connection.message_callback = message_callback
           @message_queue.pop { |data| @connection.send_data(data) }
         end
       end
@@ -44,12 +44,12 @@ module Neovim
     end
 
     def stop
-      EM.stop
+      EM.stop_event_loop
       self
     end
 
     class Connection < EM::Connection
-      attr_writer :message_callback
+      attr_accessor :message_callback
 
       def receive_data(data)
         @message_callback.call(data)

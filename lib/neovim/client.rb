@@ -1,21 +1,35 @@
 module Neovim
   class Client
-    def initialize(rpc)
-      @rpc = rpc
+    def self.from_session(session)
+      channel_id, metadata = session.request(:vim_get_api_info)
+      new(session, channel_id, metadata)
     end
 
-    def respond_to?(method_name)
-      super || @rpc.defined?(:"vim_#{method_name}")
+    def initialize(session, channel_id, metadata)
+      @session = session
+      @channel_id = channel_id
+      @metadata = metadata
     end
 
     def method_missing(method_name, *args)
-      full_method = :"vim_#{method_name}"
-      super unless @rpc.defined?(full_method)
-      @rpc.send(full_method, *args)
+      if respond_to?(method_name)
+        full_name = "vim_#{method_name}"
+        err, res = @session.request(full_name, *args)
+
+        err ? raise(ArgumentError, err) : res
+      else
+        super
+      end
     end
 
-    def current
-      Current.new(@rpc)
+    def respond_to?(method_name)
+      super || @metadata.fetch(1).fetch("functions").any? do |func|
+        func["name"] == "vim_#{method_name}"
+      end
     end
+
+    #def current
+    #  Current.new(@session)
+    #end
   end
 end
