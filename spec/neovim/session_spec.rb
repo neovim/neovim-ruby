@@ -6,8 +6,8 @@ module Neovim
 
     it "sends synchronous requests" do
       with_neovim(:unix) do |socket_path|
-        server = Server.unix(socket_path)
-        stream = MsgpackStream.new(server)
+        event_loop = EventLoop.unix(socket_path)
+        stream = MsgpackStream.new(event_loop)
         async = AsyncSession.new(stream)
         session = Session.new(async)
 

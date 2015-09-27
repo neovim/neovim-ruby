@@ -3,8 +3,8 @@ require "helper"
 module Neovim
   RSpec.describe AsyncSession do
     it "receives requests" do
-      server = Server.unix("/tmp/#{$$}.sock")
-      stream = MsgpackStream.new(server)
+      event_loop = EventLoop.unix("/tmp/#{$$}.sock")
+      stream = MsgpackStream.new(event_loop)
       async = AsyncSession.new(stream)
       messages = []
 
@@ -32,8 +32,8 @@ module Neovim
     end
 
     it "receives notifications" do
-      server = Server.unix("/tmp/#{$$}.sock")
-      stream = MsgpackStream.new(server)
+      event_loop = EventLoop.unix("/tmp/#{$$}.sock")
+      stream = MsgpackStream.new(event_loop)
       async = AsyncSession.new(stream)
       notifications = []
 
@@ -56,8 +56,8 @@ module Neovim
     end
 
     it "receives responses" do
-      server = Server.unix("/tmp/#{$$}.sock")
-      stream = MsgpackStream.new(server)
+      event_loop = EventLoop.unix("/tmp/#{$$}.sock")
+      stream = MsgpackStream.new(event_loop)
       async = AsyncSession.new(stream)
       responses = []
 

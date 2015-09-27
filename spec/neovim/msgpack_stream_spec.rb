@@ -3,8 +3,8 @@ require "helper"
 module Neovim
   RSpec.describe MsgpackStream do
     it "receives msgpack messages" do
-      server = Server.unix("/tmp/#{$$}.sock")
-      stream = MsgpackStream.new(server)
+      event_loop = EventLoop.unix("/tmp/#{$$}.sock")
+      stream = MsgpackStream.new(event_loop)
       messages = []
 
       thr = Thread.new do

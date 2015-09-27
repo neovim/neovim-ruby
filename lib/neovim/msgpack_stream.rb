@@ -2,17 +2,17 @@ require "msgpack"
 
 module Neovim
   class MsgpackStream
-    def initialize(server)
-      @server = server
+    def initialize(event_loop)
+      @event_loop = event_loop
       @unpacker = MessagePack::Unpacker.new
     end
 
     def send(msg)
-      @server.send(MessagePack.pack(msg))
+      @event_loop.send(MessagePack.pack(msg))
     end
 
     def run(&message_cb)
-      @server.run do |data|
+      @event_loop.run do |data|
         @unpacker.feed_each(data) do |msg|
           message_cb.call(msg)
         end
@@ -20,7 +20,7 @@ module Neovim
     end
 
     def stop
-      @server.stop
+      @event_loop.stop
     end
   end
 end

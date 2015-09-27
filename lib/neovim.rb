@@ -4,7 +4,7 @@
 #require "neovim/rpc"
 #require "neovim/version"
 
-require "neovim/server"
+require "neovim/event_loop"
 require "neovim/msgpack_stream"
 require "neovim/async_session"
 require "neovim/session"

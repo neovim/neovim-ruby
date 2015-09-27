@@ -1,17 +1,17 @@
 require "helper"
 
 module Neovim
-  RSpec.describe Server do
+  RSpec.describe EventLoop do
     context "TCP" do
       it "writes data" do
         pending "START HERE: spin up a nc server and assert this thing writes to it"
-        server = Server.tcp("0.0.0.0", 3333)
+        event_loop = EventLoop.tcp("0.0.0.0", 3333)
         messages = []
 
         thr = Thread.new do
-          server.run do |msg|
+          event_loop.run do |msg|
             messages << msg
-            server.stop
+            event_loop.stop
           end
         end
 
@@ -28,13 +28,13 @@ module Neovim
     context "Unix" do
       it "writes data" do
         pending "START HERE: spin up a nc server and assert this thing writes to it"
-        server = Server.unix("/tmp/#{$$}.sock")
+        event_loop = EventLoop.unix("/tmp/#{$$}.sock")
         messages = []
 
         thr = Thread.new do
-          server.run do |msg|
+          event_loop.run do |msg|
             messages << msg
-            server.stop
+            event_loop.stop
           end
         end
 
