@@ -1,1 +1,0 @@
-The Session spec is passing, which is the important part. Now you just need to get the intermediate class specs passing. They are reversed right now, they assert that they act like servers, but they should assert that they act like clients (they should be able to _write_ to a connection, rather than _receive_ from it).
