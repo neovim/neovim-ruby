@@ -14,22 +14,22 @@ module Support
       end
     end
 
-    def with_neovim(connect)
+    def with_neovim(connect, target=nil)
       nvim_path = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
 
       case connect.to_sym
       when :embed
         nvim_pid, target = start_neovim_embed(nvim_path)
       when :unix
-        nvim_pid, target = start_neovim_unix(nvim_path)
+        nvim_pid, target = start_neovim_unix(nvim_path, target=nil)
       when :tcp
-        nvim_pid, target = start_neovim_tcp(nvim_path)
+        nvim_pid, target = start_neovim_tcp(nvim_path, target=nil)
       else
         raise "Can't spawn Neovim process of type #{connect.inspect}"
       end
 
       begin
-        yield target
+        result = yield target
       ensure
         begin
           Process.kill(:TERM, nvim_pid)
@@ -37,6 +37,7 @@ module Support
         rescue Errno::ESRCH, Errno::ECHILD
         end
       end
+      result
     end
 
     private
@@ -46,8 +47,8 @@ module Support
       [target.pid, target]
     end
 
-    def start_neovim_unix(nvim_path)
-      listen_address = "/tmp/nvim.sock"
+    def start_neovim_unix(nvim_path, listen_address)
+      listen_address ||= "/tmp/nvim.sock"
       FileUtils.rm_f(listen_address)
       env = {"NVIM_LISTEN_ADDRESS" => listen_address}
       pid = Process.spawn(env, "#{nvim_path} -u NONE -i NONE -N -n", :out => "/dev/null")
@@ -56,8 +57,8 @@ module Support
       [pid, listen_address]
     end
 
-    def start_neovim_tcp(nvim_path)
-      listen_address = "127.0.0.1:3333"
+    def start_neovim_tcp(nvim_path, listen_address)
+      listen_address ||= "127.0.0.1:3333"
       env = {"NVIM_LISTEN_ADDRESS" => listen_address}
       pid = Process.spawn(env, "#{nvim_path} -u NONE -i NONE -N -n", :out => "/dev/null")
 
