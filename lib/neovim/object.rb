@@ -2,20 +2,20 @@ module Neovim
   class Object
     attr_reader :index
 
-    def initialize(index, rpc)
+    def initialize(index, session)
       @index = index
-      @rpc = rpc
+      @session = session
     end
 
     def respond_to?(method_name)
-      super || @rpc.defined?(qualify(method_name))
+      super || @session.metadata.defined?(qualify(method_name))
     end
 
     def method_missing(method_name, *args)
       full_method = qualify(method_name)
-      super unless @rpc.defined?(full_method)
+      super unless @session.metadata.defined?(full_method)
 
-      @rpc.send(full_method, @index, *args)
+      @session.request(full_method, @index, *args)
     end
 
     private

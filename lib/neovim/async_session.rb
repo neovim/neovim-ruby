@@ -6,6 +6,10 @@ module Neovim
       @pending_requests = {}
     end
 
+    def register_session(session)
+      @msgpack_stream.register_session(session)
+    end
+
     def request(method, *args, &response_cb)
       reqid = @request_id
       @request_id += 1
@@ -32,7 +36,7 @@ module Neovim
           reqid, method, args = rest
           request_cb.call(method, args, Responder.new(@msgpack_stream, reqid))
         when 1
-          reqid, error, result = rest
+          reqid, (_, error), result = rest
           @pending_requests.fetch(reqid).call(error, result)
         when 2
           event, args = rest

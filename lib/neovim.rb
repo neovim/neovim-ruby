@@ -1,14 +1,9 @@
-#require "neovim/client"
-#require "neovim/current"
-#require "neovim/object"
-#require "neovim/rpc"
-#require "neovim/version"
-
+require "neovim/async_session"
 require "neovim/client"
 require "neovim/event_loop"
 require "neovim/msgpack_stream"
-require "neovim/async_session"
 require "neovim/session"
+require "neovim/object"
 
 module Neovim
   def self.attach_tcp(host, port)

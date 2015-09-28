@@ -1,35 +1,32 @@
+require "neovim/current"
+require "neovim/metadata"
+
 module Neovim
   class Client
     def self.from_session(session)
-      channel_id, metadata = session.request(:vim_get_api_info)
-      new(session, channel_id, metadata)
+      raw_metadata = session.request(:vim_get_api_info)
+      session.metadata = Metadata.new(raw_metadata)
+      new(session)
     end
 
-    def initialize(session, channel_id, metadata)
+    def initialize(session)
       @session = session
-      @channel_id = channel_id
-      @metadata = metadata
     end
 
     def method_missing(method_name, *args)
       if respond_to?(method_name)
-        full_name = "vim_#{method_name}"
-        err, res = @session.request(full_name, *args)
-
-        err ? raise(ArgumentError, err) : res
+        @session.request("vim_#{method_name}", *args)
       else
         super
       end
     end
 
     def respond_to?(method_name)
-      super || @metadata.fetch(1).fetch("functions").any? do |func|
-        func["name"] == "vim_#{method_name}"
-      end
+      super || @session.metadata.defined?("vim_#{method_name}")
     end
 
-    #def current
-    #  Current.new(@session)
-    #end
+    def current
+      Current.new(@session)
+    end
   end
 end

@@ -22,6 +22,18 @@ module Neovim
       it "enables vim_* function calls" do
         expect(client.strwidth("hi")).to eq(2)
       end
+
+      it "raises exceptions for unknown methods" do
+        expect {
+          client.foobar
+        }.to raise_error(NoMethodError)
+      end
+
+      it "raises exceptions for incorrect usage" do
+        expect {
+          client.strwidth("too", "many")
+        }.to raise_error("Wrong number of arguments: expecting 1 but got 2")
+      end
     end
 
     describe "#current" do
