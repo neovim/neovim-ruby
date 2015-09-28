@@ -11,15 +11,19 @@ require "neovim/async_session"
 require "neovim/session"
 
 module Neovim
-  def self.attach(target)
-    host, port = target.split(":")
+  def self.attach_tcp(host, port)
+    attach_event_loop(EventLoop.tcp(host, port))
+  end
 
-    if port
-      event_loop = EventLoop.tcp(host, port)
-    else
-      event_loop = EventLoop.unix(host)
-    end
+  def self.attach_unix(socket_path)
+    attach_event_loop(EventLoop.unix(socket_path))
+  end
 
+  def self.attach_child(argv=[])
+    attach_event_loop(EventLoop.child(argv))
+  end
+
+  def self.attach_event_loop(event_loop)
     msgpack_stream = MsgpackStream.new(event_loop)
     async_session = AsyncSession.new(msgpack_stream)
     session = Session.new(async_session)

@@ -4,18 +4,12 @@ module Support
   module Remote
     def with_neovim_client(connect)
       with_neovim(connect) do |target|
-        yield Neovim.connect(target)
-      end
-    end
-
-    def with_neovim_connection(connect)
-      with_neovim(connect) do |target|
-        yield Neovim::Connection.parse(target).to_io
+        yield Neovim.attach(target)
       end
     end
 
     def with_neovim(connect, target=nil)
-      nvim_path = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
+       nvim_path = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
 
       case connect.to_sym
       when :embed

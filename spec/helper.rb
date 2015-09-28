@@ -10,6 +10,8 @@ if ENV["REPORT_COVERAGE"]
   Coveralls.wear!
 end
 
+ENV["NVIM_EXECUTABLE"] = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
+
 RSpec.configure do |config|
   config.expect_with :rspec do |exp|
     exp.syntax = :expect

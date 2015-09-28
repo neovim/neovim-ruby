@@ -21,7 +21,7 @@ module Neovim
 
       req_cb = Proc.new do |*payload|
         messages << payload
-        async.stop
+        async.shutdown
       end
 
       async.run(req_cb)
@@ -51,7 +51,7 @@ module Neovim
 
       not_cb = Proc.new do |*payload|
         messages << payload
-        async.stop
+        async.shutdown
       end
 
       async.run(nil, not_cb)
@@ -82,7 +82,7 @@ module Neovim
       async.request("func", 1, 2, 3) do |error, result|
         expect(error).to eq("error")
         expect(result).to eq("result")
-        async.stop
+        async.shutdown
       end
 
       async.run

@@ -46,6 +46,11 @@ module Neovim
       self
     end
 
+    def shutdown
+      @msgpack_stream.shutdown
+      self
+    end
+
     class Responder
       def initialize(msgpack_stream, request_id)
         @msgpack_stream = msgpack_stream

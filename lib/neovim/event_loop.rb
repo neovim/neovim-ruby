@@ -1,27 +1,29 @@
 require "eventmachine"
+require "socket"
 
 module Neovim
   class EventLoop
     def self.tcp(host, port)
-      new(host, port)
+      new ::TCPSocket.new(host, port)
     end
 
     def self.unix(path)
-      new(path, nil)
+      new ::UNIXSocket.new(path)
     end
 
-    def initialize(host, port)
-      @host, @port = host, port
-      @message_queue = EM::Queue.new
+    def self.child(argv)
+      argv = [ENV.fetch("NVIM_EXECUTABLE", "nvim"), "--embed"] | argv.to_ary
+      new ::IO.popen(argv, "rb+")
+    end
+
+    def initialize(io)
+      @io = io
     end
 
     def send(data)
-      if EM.reactor_running? && @connection.respond_to?(:send_data)
+      EM.schedule do
         @connection.send_data(data)
-      else
-        @message_queue.push(data)
       end
-
       self
     end
 
@@ -29,18 +31,10 @@ module Neovim
       message_callback ||= Proc.new {}
 
       EM.run do
-        trap(:INT)  { stop }
-        trap(:TERM) { stop }
-
-
-        EM.connect(@host, @port, Connection) do |connection|
-          @connection = connection
-          @connection.message_callback = message_callback
-          @message_queue.pop { |data| @connection.send_data(data) }
-        end
+        @connection = EM.watch(@io, Connection)
+        @connection.notify_readable = true
+        @connection.message_callback = message_callback
       end
-    ensure
-      @message_callback = nil
     end
 
     def stop
@@ -48,11 +42,22 @@ module Neovim
       self
     end
 
-    class Connection < EM::Connection
-      attr_accessor :message_callback
+    def shutdown
+      stop
+      self
+    ensure
+      @io.close if @io.respond_to?(:close)
+    end
 
-      def receive_data(data)
-        @message_callback.call(data)
+    class Connection < EM::Connection
+      attr_writer :message_callback
+
+      def send_data(data)
+        @io.write(data)
+      end
+
+      def notify_readable
+        @message_callback.call(@io.readpartial(1024 * 16))
       end
     end
   end

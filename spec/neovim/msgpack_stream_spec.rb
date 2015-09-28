@@ -20,7 +20,7 @@ module Neovim
 
       stream.send([1]).run do |msg|
         expect(msg).to eq([2])
-        stream.stop
+        stream.shutdown
       end
 
       expect(messages).to eq([MessagePack.pack([1])])
