@@ -35,36 +35,4 @@ namespace :neovim do
        "git pull origin master && " +
        "make"
   end
-
-  desc "Dump Neovim API metadata"
-  task :api_info do
-    require "rubygems"
-    require "bundler/setup"
-    require "neovim"
-    require "yaml"
-
-    require File.expand_path("../spec/support.rb", __FILE__)
-    include Support::Remote
-
-    with_neovim_connection(:embed) do |conn|
-      rpc = Neovim::RPC.new(conn)
-      api_info = rpc.send(:vim_get_api_info)
-      function = ENV["function"]
-      funcdefs = api_info.fetch(1).fetch("functions")
-
-      if function
-        regexp = Regexp.new(function)
-        funcdefs.select! { |func| func.fetch("name") =~ regexp }
-      end
-
-      funcdefs.each do |funcdef|
-        name = funcdef.fetch("name")
-        return_type = funcdef.fetch("return_type")
-        params = funcdef.fetch("parameters")
-        param_str = params.map { |p| p.join(" ") }.join(", ")
-
-        puts "#{name}(#{param_str}) # => #{return_type}"
-      end
-    end
-  end
 end
