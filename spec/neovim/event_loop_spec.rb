@@ -47,7 +47,7 @@ module Neovim
 
     context "child" do
       it "sends and receives data" do
-        event_loop = EventLoop.child(["-u", "NONE"])
+        event_loop = EventLoop.child(["-n", "-u", "NONE"])
         message = MessagePack.pack([0, 0, :vim_strwidth, ["hi"]])
 
         event_loop.send(message).run do |msg|
