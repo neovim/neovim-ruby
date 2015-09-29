@@ -4,16 +4,16 @@ require "socket"
 module Neovim
   class EventLoop
     def self.tcp(host, port)
-      new ::TCPSocket.new(host, port)
+      new TCPSocket.new(host, port)
     end
 
     def self.unix(path)
-      new ::UNIXSocket.new(path)
+      new UNIXSocket.new(path)
     end
 
     def self.child(argv)
       argv = [ENV.fetch("NVIM_EXECUTABLE", "nvim"), "--embed"] | argv.to_ary
-      new ::IO.popen(argv, "rb+")
+      new IO.popen(argv, "rb+")
     end
 
     def initialize(io)

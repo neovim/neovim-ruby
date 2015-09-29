@@ -19,7 +19,7 @@ RSpec.describe Neovim do
     end
 
     it "connects to a child through standard streams" do
-      nvim = Neovim.attach_child(["-u", "NONE"])
+      nvim = Neovim.attach_child(["-n", "-u", "NONE"])
       expect(nvim.strwidth("hi")).to eq(2)
     end
   end

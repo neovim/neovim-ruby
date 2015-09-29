@@ -5,7 +5,7 @@ module Neovim
     include Support::Remote
 
     it "exposes a synchronous API" do
-      event_loop = EventLoop.child(["-u", "NONE"])
+      event_loop = EventLoop.child(["-n", "-u", "NONE"])
       stream = MsgpackStream.new(event_loop)
       async = AsyncSession.new(stream)
       session = Session.new(async)
@@ -14,7 +14,7 @@ module Neovim
     end
 
     it "raises an exception when there are errors" do
-      event_loop = EventLoop.child(["-u", "NONE"])
+      event_loop = EventLoop.child(["-n", "-u", "NONE"])
       stream = MsgpackStream.new(event_loop)
       async = AsyncSession.new(stream)
       session = Session.new(async)

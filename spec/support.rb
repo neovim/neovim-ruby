@@ -2,18 +2,10 @@ require "fileutils"
 
 module Support
   module Remote
-    def with_neovim_client(connect)
-      with_neovim(connect) do |target|
-        yield Neovim.attach(target)
-      end
-    end
-
     def with_neovim(connect, target=nil)
        nvim_path = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
 
       case connect.to_sym
-      when :embed
-        nvim_pid, target = start_neovim_embed(nvim_path)
       when :unix
         nvim_pid, target = start_neovim_unix(nvim_path, target=nil)
       when :tcp
@@ -35,11 +27,6 @@ module Support
     end
 
     private
-
-    def start_neovim_embed(nvim_path)
-      target = IO.popen("#{nvim_path} --embed -u NONE -i NONE -N -n", "rb+", :err => "/dev/null")
-      [target.pid, target]
-    end
 
     def start_neovim_unix(nvim_path, listen_address)
       listen_address ||= "/tmp/nvim.sock"

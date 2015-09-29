@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe Tabpage do
-    let(:tabpage) { Neovim.attach_child(["-u", "NONE"]).current.tabpage }
+    let(:tabpage) { Neovim.attach_child(["-n", "-u", "NONE"]).current.tabpage }
 
     describe "#respond_to?" do
       it "returns true for Tabpage functions" do
