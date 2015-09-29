@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe Window do
-    let(:window) { Neovim.attach_child.current.window }
+    let(:window) { Neovim.attach_child(["-u", "NONE"]).current.window }
 
     describe "#respond_to?" do
       it "returns true for Window functions" do

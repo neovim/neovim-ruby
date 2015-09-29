@@ -18,6 +18,10 @@ module Neovim
       @session.request(full_method, @index, *args)
     end
 
+    def to_msgpack(packer)
+      packer.pack(@index)
+    end
+
     private
 
     def qualify(string)

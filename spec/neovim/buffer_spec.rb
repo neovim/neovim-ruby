@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe Buffer do
-    let(:buffer) { Neovim.attach_child.current.buffer }
+    let(:buffer) { Neovim.attach_child(["-u", "NONE"]).current.buffer }
 
     describe "#respond_to?" do
       it "returns true for Buffer functions" do

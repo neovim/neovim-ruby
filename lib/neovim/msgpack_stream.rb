@@ -4,7 +4,6 @@ module Neovim
   class MsgpackStream
     def initialize(event_loop)
       @event_loop = event_loop
-      @packer = MessagePack::Packer.new
       @unpacker = MessagePack::Unpacker.new
     end
 
@@ -13,10 +12,6 @@ module Neovim
         klass = Neovim.const_get(type)
         id = info.fetch("id")
 
-        @packer.register_type(id, klass) do |obj|
-          MessagePack.pack(obj.index)
-        end
-
         @unpacker.register_type(id) do |data|
           klass.new(MessagePack.unpack(data), session)
         end
@@ -24,7 +19,7 @@ module Neovim
     end
 
     def send(msg)
-      @event_loop.send(@packer.pack(msg))
+      @event_loop.send(MessagePack.pack(msg))
       self
     end
 

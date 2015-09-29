@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe Current do
-    let(:client) { Neovim.attach_child }
+    let(:client) { Neovim.attach_child(["-u", "NONE"]) }
     let(:current) { client.current }
 
     describe "#line" do
