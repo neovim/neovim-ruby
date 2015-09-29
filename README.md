@@ -33,7 +33,7 @@ You can then connect to that socket in Ruby to get a `Neovim::Client`:
 
 ```ruby
 require "neovim"
-client = Neovim.connect("/tmp/nvim.sock")
+client = Neovim.attach_unix("/tmp/nvim.sock")
 ```
 
 ## Contributing
