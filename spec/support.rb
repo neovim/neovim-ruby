@@ -12,8 +12,6 @@ module Support
        nvim_path = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
 
       case connect.to_sym
-      when :embed
-        nvim_pid, target = start_neovim_embed(nvim_path)
       when :unix
         nvim_pid, target = start_neovim_unix(nvim_path, target=nil)
       when :tcp
@@ -35,11 +33,6 @@ module Support
     end
 
     private
-
-    def start_neovim_embed(nvim_path)
-      target = IO.popen("#{nvim_path} --embed -u NONE -i NONE -N -n", "rb+", :err => "/dev/null")
-      [target.pid, target]
-    end
 
     def start_neovim_unix(nvim_path, listen_address)
       listen_address ||= "/tmp/nvim.sock"
