@@ -16,14 +16,10 @@ module Neovim
 
       @async_session.request(method, *args) do |error, response|
         err, res = error, response
-        stop
+        @async_session.stop
       end.run
 
       err ? raise(ArgumentError, err) : res
-    end
-
-    def stop
-      @async_session.stop
     end
   end
 end
