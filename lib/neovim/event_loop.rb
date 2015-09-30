@@ -57,7 +57,7 @@ module Neovim
       end
 
       def notify_readable
-        @message_callback.call(@io.read_nonblock(1024 * 16))
+        @message_callback.call(@io.readpartial(1024 * 16))
       end
     end
   end
