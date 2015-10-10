@@ -26,4 +26,4 @@ addons:
       - pkg-config
 
 env: REPORT_COVERAGE=1
-script: bundle exec rake spec:ci
+script: travis_retry bundle exec rake spec:ci
