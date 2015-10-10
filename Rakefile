@@ -4,10 +4,6 @@ require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
-RSpec::Core::RakeTask.new("spec:ci" => "neovim:install") do |t|
-  t.rspec_opts = "--color --format documentation"
-end
-
 namespace :neovim do
   vendor = File.expand_path("../vendor/neovim", __FILE__)
 

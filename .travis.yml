@@ -26,4 +26,5 @@ addons:
       - pkg-config
 
 env: REPORT_COVERAGE=1
-script: travis_retry bundle exec rake spec:ci
+before_script: bundle exec rake neovim:install
+script: travis_retry bundle exec rake
