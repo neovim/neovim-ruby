@@ -4,16 +4,8 @@ require "rspec/core/rake_task"
 RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
-RSpec::Core::RakeTask.new("spec:ci") do |t|
+RSpec::Core::RakeTask.new("spec:ci" => "neovim:install") do |t|
   t.rspec_opts = "--color --format documentation"
-
-  begin
-    Rake::Task["neovim:install"].invoke
-  rescue
-    puts "Neovim install failed, retrying"
-    Rake::Task["neovim:install"].reenable
-    Rake::Task["neovim:install"].invoke
-  end
 end
 
 namespace :neovim do
