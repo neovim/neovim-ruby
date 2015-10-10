@@ -2,8 +2,6 @@ require "helper"
 
 module Neovim
   RSpec.describe Session do
-    include Support::Remote
-
     it "exposes a synchronous API" do
       event_loop = EventLoop.child(["-n", "-u", "NONE"])
       stream = MsgpackStream.new(event_loop)
