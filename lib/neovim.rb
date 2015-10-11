@@ -18,11 +18,15 @@ module Neovim
     attach_event_loop(EventLoop.child(argv))
   end
 
-  def self.attach_event_loop(event_loop)
-    msgpack_stream = MsgpackStream.new(event_loop)
-    async_session = AsyncSession.new(msgpack_stream)
-    session = Session.new(async_session)
+  class << self
+    private
 
-    Client.from_session(session)
+    def attach_event_loop(event_loop)
+      msgpack_stream = MsgpackStream.new(event_loop)
+      async_session = AsyncSession.new(msgpack_stream)
+      session = Session.new(async_session)
+
+      Client.from_session(session)
+    end
   end
 end
