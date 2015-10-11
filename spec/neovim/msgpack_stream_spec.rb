@@ -4,8 +4,8 @@ require "helper"
 module Neovim
   RSpec.describe MsgpackStream do
     it "sends and receives msgpack" do
-      server = TCPServer.new("0.0.0.0", 3333)
-      event_loop = EventLoop.tcp("0.0.0.0", 3333)
+      server = TCPServer.new("0.0.0.0", 0)
+      event_loop = EventLoop.tcp("0.0.0.0", server.addr[1])
       stream = MsgpackStream.new(event_loop)
       messages = []
 

@@ -6,18 +6,22 @@ RSpec.describe Neovim do
 
   describe ".attach_tcp" do
     it "attaches to a TCP socket" do
-      env = {"NVIM_LISTEN_ADDRESS" => "0.0.0.0:3333"}
+      srv = TCPServer.new("0.0.0.0", 0)
+      port = srv.addr[1]
+      srv.close
+
+      env = {"NVIM_LISTEN_ADDRESS" => "0.0.0.0:#{port}"}
       pid = Process.spawn(env, "#{nvim_executable} -u NONE -i NONE -N -n", :out => "/dev/null")
 
       begin
-        wait_socket = TCPSocket.open("0.0.0.0", 3333)
+        wait_socket = TCPSocket.open("0.0.0.0", port)
       rescue Errno::ECONNREFUSED
         retry
       end
       wait_socket.close
 
       begin
-        expect(Neovim.attach_tcp("0.0.0.0", 3333).strwidth("hi")).to eq(2)
+        expect(Neovim.attach_tcp("0.0.0.0", port).strwidth("hi")).to eq(2)
       ensure
         Process.kill(:TERM, pid)
       end
@@ -26,14 +30,14 @@ RSpec.describe Neovim do
 
   describe ".attach_unix" do
     it "attaches to a UNIX socket" do
-      FileUtils.rm_f("/tmp/nvim.sock")
-      env = {"NVIM_LISTEN_ADDRESS" => "/tmp/nvim.sock"}
+      FileUtils.rm_f("/tmp/#$$.sock")
+      env = {"NVIM_LISTEN_ADDRESS" => "/tmp/#$$.sock"}
       pid = Process.spawn(env, "#{nvim_executable} -u NONE -i NONE -N -n", :out => "/dev/null")
 
-      loop { break if File.exists?("/tmp/nvim.sock") }
+      loop { break if File.exists?("/tmp/#$$.sock") }
 
       begin
-        expect(Neovim.attach_unix("/tmp/nvim.sock").strwidth("hi")).to eq(2)
+        expect(Neovim.attach_unix("/tmp/#$$.sock").strwidth("hi")).to eq(2)
       ensure
         Process.kill(:TERM, pid)
       end

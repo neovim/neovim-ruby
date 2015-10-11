@@ -3,8 +3,8 @@ require "helper"
 module Neovim
   RSpec.describe AsyncSession do
     it "receives requests" do
-      server = TCPServer.new("0.0.0.0", 3333)
-      event_loop = EventLoop.tcp("0.0.0.0", 3333)
+      server = TCPServer.new("0.0.0.0", 0)
+      event_loop = EventLoop.tcp("0.0.0.0", server.addr[1])
       stream = MsgpackStream.new(event_loop)
       async = AsyncSession.new(stream)
       messages = []
@@ -33,8 +33,8 @@ module Neovim
     end
 
     it "receives notifications" do
-      server = TCPServer.new("0.0.0.0", 3333)
-      event_loop = EventLoop.tcp("0.0.0.0", 3333)
+      server = TCPServer.new("0.0.0.0", 0)
+      event_loop = EventLoop.tcp("0.0.0.0", server.addr[1])
       stream = MsgpackStream.new(event_loop)
       async = AsyncSession.new(stream)
       messages = []
@@ -61,8 +61,8 @@ module Neovim
     end
 
     it "receives responses to requests" do
-      server = TCPServer.new("0.0.0.0", 3333)
-      event_loop = EventLoop.tcp("0.0.0.0", 3333)
+      server = TCPServer.new("0.0.0.0", 0)
+      event_loop = EventLoop.tcp("0.0.0.0", server.addr[1])
       stream = MsgpackStream.new(event_loop)
       async = AsyncSession.new(stream)
       messages = []

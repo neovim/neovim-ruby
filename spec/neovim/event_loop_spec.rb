@@ -1,13 +1,10 @@
 require "helper"
 require "socket"
 require "msgpack"
+require "fileutils"
 
 module Neovim
   RSpec.describe EventLoop do
-    before do
-      File.delete("/tmp/#$$.sock") if File.exists?("/tmp/#$$.sock")
-    end
-
     shared_context "socket behaviors" do
       it "sends and receives data" do
         messages = []
@@ -32,13 +29,14 @@ module Neovim
     end
 
     context "tcp" do
-      let!(:server) { TCPServer.new(3333) }
-      let!(:event_loop) { EventLoop.tcp("0.0.0.0", 3333) }
+      let!(:server) { TCPServer.new("0.0.0.0", 0) }
+      let!(:event_loop) { EventLoop.tcp("0.0.0.0", server.addr[1]) }
 
       include_context "socket behaviors"
     end
 
     context "unix" do
+      before { FileUtils.rm_f("/tmp/#$$.sock") }
       let!(:server) { UNIXServer.new("/tmp/#$$.sock") }
       let!(:event_loop) { EventLoop.unix("/tmp/#$$.sock") }
 
