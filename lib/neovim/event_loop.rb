@@ -4,25 +4,32 @@ require "socket"
 module Neovim
   class EventLoop
     def self.tcp(host, port)
-      new TCPSocket.new(host, port)
+      socket = TCPSocket.new(host, port)
+      new(socket, socket)
     end
 
     def self.unix(path)
-      new UNIXSocket.new(path)
+      socket = UNIXSocket.new(path)
+      new(socket, socket)
     end
 
     def self.child(argv)
       argv = [ENV.fetch("NVIM_EXECUTABLE", "nvim"), "--embed"] | argv.to_ary
-      new IO.popen(argv, "rb+")
+      io = IO.popen(argv, "rb+")
+      new(io, io)
     end
 
-    def initialize(io)
-      @io = io
+    def self.stdio
+      new(STDIN, STDOUT)
+    end
+
+    def initialize(rd, wr)
+      @read_stream, @write_stream = rd, wr
     end
 
     def send(data)
       EM.schedule do
-        @connection.send_data(data)
+        @write_conn.send_data(data)
       end
       self
     end
@@ -31,9 +38,12 @@ module Neovim
       message_callback ||= Proc.new {}
 
       EM.run do
-        @connection = EM.watch(@io, Connection)
-        @connection.notify_readable = true
-        @connection.message_callback = message_callback
+        @read_conn = EM.watch(@read_stream, Connection)
+        @write_conn = EM.watch(@write_stream, Connection) unless @write_stream == @read_stream
+        @write_conn ||= @read_conn
+
+        @read_conn.notify_readable = true
+        @read_conn.message_callback = message_callback
       end
     end
 
@@ -46,7 +56,8 @@ module Neovim
       stop
       self
     ensure
-      @io.close if @io.respond_to?(:close)
+      @read_conn.close if @read_conn.respond_to?(:close)
+      @write_conn.close if @write_conn.respond_to?(:close)
     end
 
     class Connection < EM::Connection
