@@ -8,9 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Neovim::VERSION
   spec.authors       = ["Alex Genco"]
   spec.email         = ["alexgenco@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{A Ruby client for Neovim}
+  spec.homepage      = "https://github.com/alexgenco/neovim-ruby"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -18,8 +17,8 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^spec/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "msgpack", "~> 0.7.0dev1"
-  spec.add_dependency "eventmachine"
+  spec.add_dependency "msgpack", "0.7.0dev1"
+  spec.add_dependency "eventmachine", "~> 1.0"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
