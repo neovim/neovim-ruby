@@ -19,5 +19,9 @@ module Neovim
         func["name"] == function.to_s
       end
     end
+
+    def inspect
+      "#<#{self.class}:0x%x @channel_id=#{@channel_id.inspect} @types={...} @functions={...}>" % (object_id << 1)
+    end
   end
 end
