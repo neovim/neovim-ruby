@@ -22,11 +22,18 @@ module Neovim
       packer.pack(@index)
     end
 
+    def methods
+      super | @session.api_methods_for_prefix(function_prefix)
+    end
+
     private
 
-    def qualify(string)
-      prefix = self.class.to_s.split("::").last.downcase
-      :"#{prefix}_#{string}"
+    def function_prefix
+      "#{self.class.to_s.split("::").last.downcase}_"
+    end
+
+    def qualify(method_name)
+      :"#{function_prefix}#{method_name}"
     end
   end
 

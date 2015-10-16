@@ -23,5 +23,15 @@ module Neovim
         expect(tabpage.is_valid).to be(true)
       end
     end
+
+    describe "#methods" do
+      it "returns builtin methods" do
+        expect(tabpage.methods).to include(:inspect)
+      end
+
+      it "returns api methods" do
+        expect(tabpage.methods).to include(:get_windows)
+      end
+    end
   end
 end

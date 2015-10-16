@@ -36,6 +36,16 @@ module Neovim
       end
     end
 
+    describe "#methods" do
+      it "includes builtin methods" do
+        expect(client.methods).to include(:inspect)
+      end
+
+      it "includes api methods" do
+        expect(client.methods).to include(:strwidth)
+      end
+    end
+
     describe "#current" do
       it "returns the target" do
         expect(client.current.buffer).to be_a(Buffer)

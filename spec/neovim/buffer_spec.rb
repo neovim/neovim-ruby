@@ -23,5 +23,15 @@ module Neovim
         expect(buffer.line_count).to be(1)
       end
     end
+
+    describe "#methods" do
+      it "returns builtin methods" do
+        expect(buffer.methods).to include(:inspect)
+      end
+
+      it "returns api methods" do
+        expect(buffer.methods).to include(:get_mark)
+      end
+    end
   end
 end

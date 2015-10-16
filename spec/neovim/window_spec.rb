@@ -23,5 +23,15 @@ module Neovim
         expect(window.get_cursor).to eq([1, 0])
       end
     end
+
+    describe "#methods" do
+      it "returns builtin methods" do
+        expect(window.methods).to include(:inspect)
+      end
+
+      it "returns api methods" do
+        expect(window.methods).to include(:get_height)
+      end
+    end
   end
 end

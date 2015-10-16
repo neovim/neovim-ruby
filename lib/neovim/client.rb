@@ -18,6 +18,10 @@ module Neovim
       super || @session.defined?("vim_#{method_name}")
     end
 
+    def methods
+      super | @session.api_methods_for_prefix("vim_")
+    end
+
     def current
       Current.new(@session)
     end
