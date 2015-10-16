@@ -29,12 +29,14 @@ You can control a running `nvim` process by connecting to `$NVIM_LISTEN_ADDRESS`
 $ NVIM_LISTEN_ADDRESS=/tmp/nvim.sock nvim
 ```
 
-You can then connect to that socket in Ruby to get a `Neovim::Client`:
+You can then connect to that socket to get a `Neovim::Client`:
 
 ```ruby
 require "neovim"
 client = Neovim.attach_unix("/tmp/nvim.sock")
 ```
+
+The interface of the client is generated at runtime from the `vim_get_api_info` RPC call. For now, you can refer to the Node client's auto-generated [API description](https://github.com/neovim/node-client/blob/master/index.d.ts). Note that methods will be in `snake_case` rather than `camelCase`.
 
 ## Contributing
 
