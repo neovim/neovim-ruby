@@ -1,13 +1,13 @@
+require "neovim/api_info"
+
 module Neovim
   class Session
-    attr_reader :metadata
+    attr_reader :api_info
 
     def initialize(async_session)
       @async_session = async_session
-    end
 
-    def metadata=(metadata)
-      @metadata = metadata
+      @api_info = APIInfo.new(request(:vim_get_api_info))
       @async_session.register_session(self)
     end
 
@@ -20,6 +20,10 @@ module Neovim
       end.run
 
       err ? raise(ArgumentError, err) : res
+    end
+
+    def defined?(method_name)
+      @api_info.defined?(method_name)
     end
   end
 end

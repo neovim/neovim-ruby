@@ -8,7 +8,7 @@ module Neovim
     end
 
     def register_session(session)
-      session.metadata.types.each do |type, info|
+      session.api_info.types.each do |type, info|
         klass = Neovim.const_get(type)
         id = info.fetch("id")
 

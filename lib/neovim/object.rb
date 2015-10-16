@@ -8,12 +8,12 @@ module Neovim
     end
 
     def respond_to?(method_name)
-      super || @session.metadata.defined?(qualify(method_name))
+      super || @session.defined?(qualify(method_name))
     end
 
     def method_missing(method_name, *args)
       full_method = qualify(method_name)
-      super unless @session.metadata.defined?(full_method)
+      super unless @session.defined?(full_method)
 
       @session.request(full_method, @index, *args)
     end

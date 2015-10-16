@@ -3,7 +3,6 @@ require "neovim/client"
 require "neovim/event_loop"
 require "neovim/msgpack_stream"
 require "neovim/session"
-require "neovim/object"
 
 module Neovim
   def self.attach_tcp(host, port)
@@ -26,7 +25,7 @@ module Neovim
       async_session = AsyncSession.new(msgpack_stream)
       session = Session.new(async_session)
 
-      Client.from_session(session)
+      Client.new(session)
     end
   end
 end

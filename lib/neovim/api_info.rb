@@ -1,7 +1,7 @@
 require "delegate"
 
 module Neovim
-  class Metadata < SimpleDelegator
+  class APIInfo < SimpleDelegator
     def functions
       @functions ||= fetch(1).fetch("functions")
     end
