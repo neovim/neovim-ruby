@@ -22,10 +22,6 @@ module Neovim
       err ? raise(ArgumentError, err) : res
     end
 
-    def defined?(method_name)
-      @api_info.defined?(method_name)
-    end
-
     def api_methods_for_prefix(prefix)
       @api_info.functions.inject([]) do |acc, function|
         if function["name"] =~ /\A#{prefix}/

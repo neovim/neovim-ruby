@@ -7,7 +7,7 @@ module Neovim
     end
 
     def method_missing(method_name, *args)
-      if respond_to?(method_name)
+      if methods.include?(method_name)
         @session.request("vim_#{method_name}", *args)
       else
         super
@@ -15,7 +15,7 @@ module Neovim
     end
 
     def respond_to?(method_name)
-      super || @session.defined?("vim_#{method_name}")
+      super || methods.include?(method_name.to_sym)
     end
 
     def methods

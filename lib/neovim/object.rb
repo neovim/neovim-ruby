@@ -8,14 +8,15 @@ module Neovim
     end
 
     def respond_to?(method_name)
-      super || @session.defined?(qualify(method_name))
+      super || methods.include?(method_name.to_sym)
     end
 
     def method_missing(method_name, *args)
-      full_method = qualify(method_name)
-      super unless @session.defined?(full_method)
-
-      @session.request(full_method, @index, *args)
+      if methods.include?(method_name)
+        @session.request(qualify(method_name), @index, *args)
+      else
+        super
+      end
     end
 
     def to_msgpack(packer)
