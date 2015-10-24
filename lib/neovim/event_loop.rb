@@ -56,8 +56,12 @@ module Neovim
       stop
       self
     ensure
-      @read_conn.close if @read_conn.respond_to?(:close)
-      @write_conn.close if @write_conn.respond_to?(:close)
+      [@read_stream, @write_stream].each do |conn|
+        begin
+          conn.close if conn.respond_to?(:close)
+        rescue IOError
+        end
+      end
     end
 
     class Connection < EM::Connection
