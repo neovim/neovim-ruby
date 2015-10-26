@@ -3,6 +3,7 @@ require "neovim/client"
 require "neovim/event_loop"
 require "neovim/msgpack_stream"
 require "neovim/session"
+require "neovim/plugin"
 
 module Neovim
   def self.attach_tcp(host, port)
@@ -15,6 +16,16 @@ module Neovim
 
   def self.attach_child(argv=[])
     attach_event_loop(EventLoop.child(argv))
+  end
+
+  def self.plugin(&block)
+    Plugin.from_config_block(&block).tap do |plugin|
+      plugins << plugin
+    end
+  end
+
+  def self.plugins
+    @plugins ||= []
   end
 
   class << self

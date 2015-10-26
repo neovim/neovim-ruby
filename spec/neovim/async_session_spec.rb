@@ -7,7 +7,7 @@ module Neovim
       event_loop = EventLoop.tcp("0.0.0.0", server.addr[1])
       stream = MsgpackStream.new(event_loop)
       async = AsyncSession.new(stream)
-      messages = []
+      requests = []
 
       srv_thr = Thread.new do
         client = server.accept
@@ -19,17 +19,18 @@ module Neovim
         server.close
       end
 
-      req_cb = Proc.new do |*payload|
-        messages << payload
+      req_cb = Proc.new do |request|
+        requests << request
         async.shutdown
       end
 
       async.run(req_cb)
       srv_thr.join
 
-      expect(messages.first.size).to eq(3)
-      expect(messages.first[0..1]).to eq(["func", [1, 2, 3]])
-      expect(messages.first[2]).to be_a(AsyncSession::Responder)
+      request = requests.first
+      expect(request).to be_a(Request)
+      expect(request.method_name).to eq("func")
+      expect(request.arguments).to eq([1, 2, 3])
     end
 
     it "receives notifications" do
@@ -37,7 +38,7 @@ module Neovim
       event_loop = EventLoop.tcp("0.0.0.0", server.addr[1])
       stream = MsgpackStream.new(event_loop)
       async = AsyncSession.new(stream)
-      messages = []
+      notifications = []
 
       srv_thr = Thread.new do
         client = server.accept
@@ -49,15 +50,18 @@ module Neovim
         server.close
       end
 
-      not_cb = Proc.new do |*payload|
-        messages << payload
+      not_cb = Proc.new do |notification|
+        notifications << notification
         async.shutdown
       end
 
       async.run(nil, not_cb)
       srv_thr.join
 
-      expect(messages).to eq([["func", [1, 2, 3]]])
+      notification = notifications.first
+      expect(notification).to be_a(Notification)
+      expect(notification.method_name).to eq("func")
+      expect(notification.arguments).to eq([1, 2, 3])
     end
 
     it "receives responses to requests" do

@@ -25,5 +25,9 @@ module Neovim
     def current
       Current.new(@session)
     end
+
+    def shutdown
+      @session.shutdown
+    end
   end
 end

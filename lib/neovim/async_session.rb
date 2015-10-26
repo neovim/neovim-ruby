@@ -1,3 +1,6 @@
+require "neovim/request"
+require "neovim/notification"
+
 module Neovim
   class AsyncSession
     def initialize(msgpack_stream)
@@ -34,13 +37,13 @@ module Neovim
         case kind
         when 0
           reqid, method, args = rest
-          request_cb.call(method, args, Responder.new(@msgpack_stream, reqid))
+          request_cb.call(Request.new(method, args, @msgpack_stream, reqid))
         when 1
           reqid, (_, error), result = rest
           @pending_requests.fetch(reqid).call(error, result)
         when 2
-          event, args = rest
-          notification_cb.call(event, args)
+          method, args = rest
+          notification_cb.call(Notification.new(method, args))
         end
       end
     end
@@ -53,23 +56,6 @@ module Neovim
     def shutdown
       @msgpack_stream.shutdown
       self
-    end
-
-    class Responder
-      def initialize(msgpack_stream, request_id)
-        @msgpack_stream = msgpack_stream
-        @request_id = request_id
-      end
-
-      def send(value)
-        @msgpack_stream.send([1, @request_id, nil, value])
-        self
-      end
-
-      def error(value)
-        @msgpack_stream.send([1, @request_id, value, nil])
-        self
-      end
     end
   end
 end

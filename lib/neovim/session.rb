@@ -31,5 +31,9 @@ module Neovim
         end
       end
     end
+
+    def shutdown
+      @async_session.shutdown
+    end
   end
 end

@@ -45,10 +45,18 @@ RSpec.describe Neovim do
     end
   end
 
-  describe "attach_child" do
+  describe ".attach_child" do
     it "spawns and attaches to a child process" do
       nvim = Neovim.attach_child(nvim_argv)
       expect(nvim.strwidth("hi")).to eq(2)
+    end
+  end
+
+  describe ".plugin" do
+    it "adds to Neovim.plugins" do
+      expect {
+        Neovim.plugin
+      }.to change { Neovim.plugins.size }.by(1)
     end
   end
 end
