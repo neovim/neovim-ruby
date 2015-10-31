@@ -50,8 +50,6 @@ plugin = Neovim.plugin do |plug|
   plug.on_request do |request, nvim|
     # nvim has sent a request to the process and is waiting on a response.
     # The `respond` method will send a response back.
-
-    nvim.current.line = "Received request #{request.method_name} with arguments #{request.arguments}"
     request.respond("OK")
   end
 
@@ -71,10 +69,10 @@ To run this script from nvim:
 let g:channel = rpcstart("/path/to/script")
 
 " Send a request and get a response
-let g:response = rpcrequest(g:channel, "method_name", "arg1", "arg2)
+let g:response = rpcrequest(g:channel, "my_request", "arg1", "arg2)
 
 " Send a notification
-call rpcnotify(g:channel, "method_name", "arg1", "arg2")
+call rpcnotify(g:channel, "my_notification", "arg1", "arg2")
 ```
 
 ## Contributing
