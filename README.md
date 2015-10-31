@@ -39,42 +39,6 @@ client = Neovim.attach_unix("/tmp/nvim.sock")
 
 The interface of the client is generated at runtime from the `vim_get_api_info` RPC call. For now, you can refer to the Node client's auto-generated [API description](https://github.com/neovim/node-client/blob/master/index.d.ts). Note that methods will be in `snake_case` rather than `camelCase`.
 
-You can also define plugins that nvim can spawn and communicate with via its MessagePack RPC API. Here's an example plugin definition:
-
-```ruby
-#!/usr/bin/env ruby
-
-require "neovim"
-
-plugin = Neovim.plugin do |plug|
-  plug.on_request do |request, nvim|
-    # nvim has sent a request to the process and is waiting on a response.
-    # The `respond` method will send a response back.
-    request.respond("OK")
-  end
-
-  plug.on_notification do |notification, nvim|
-    # nvim has sent a notification to the process and will not wait for a response.
-    nvim.current.line = "Received notification #{notification.method_name} with arguments #{notification.arguments}"
-  end
-end
-
-plugin.run
-```
-
-To run this script from nvim:
-
-```vim
-" Start the plugin process to get a channel ID
-let g:channel = rpcstart("/path/to/script")
-
-" Send a request and get a response
-let g:response = rpcrequest(g:channel, "my_request", "arg1", "arg2)
-
-" Send a notification
-call rpcnotify(g:channel, "my_notification", "arg1", "arg2")
-```
-
 ## Contributing
 
 1. Fork it (http://github.com/alexgenco/neovim-ruby/fork)
