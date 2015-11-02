@@ -35,10 +35,5 @@ module Neovim
       @event_loop.stop
       self
     end
-
-    def shutdown
-      @event_loop.shutdown
-      self
-    end
   end
 end

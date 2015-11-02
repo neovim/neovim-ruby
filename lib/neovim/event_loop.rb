@@ -1,4 +1,3 @@
-require "eventmachine"
 require "socket"
 
 module Neovim
@@ -24,56 +23,34 @@ module Neovim
     end
 
     def initialize(rd, wr)
-      @read_stream, @write_stream = rd, wr
+      @rd, @wr = rd, wr
     end
 
     def send(data)
-      EM.schedule do
-        @write_conn.send_data(data)
-      end
+      _, wrs = IO.select(nil, [@wr])
+      wrs.each { |wr| wr.write_nonblock(data) }
       self
     end
 
     def run(&message_callback)
+      @running = true
       message_callback ||= Proc.new {}
 
-      EM.run do
-        @read_conn = EM.watch(@read_stream, Connection)
-        @write_conn = EM.watch(@write_stream, Connection) unless @write_stream == @read_stream
-        @write_conn ||= @read_conn
+      loop do
+        break unless @running
 
-        @read_conn.notify_readable = true
-        @read_conn.message_callback = message_callback
+        rds, = IO.select([@rd])
+        rds.each do |io|
+          message_callback.call(io.readpartial(1024 * 16))
+        end
       end
+    rescue EOFError
+      stop
     end
 
     def stop
-      EM.stop_event_loop
+      @running = false
       self
-    end
-
-    def shutdown
-      stop
-      self
-    ensure
-      [@read_stream, @write_stream].each do |conn|
-        begin
-          conn.close if conn.respond_to?(:close)
-        rescue IOError
-        end
-      end
-    end
-
-    class Connection < EM::Connection
-      attr_writer :message_callback
-
-      def send_data(data)
-        @io.write_nonblock(data)
-      end
-
-      def notify_readable
-        @message_callback.call(@io.readpartial(1024 * 16))
-      end
     end
   end
 end

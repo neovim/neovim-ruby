@@ -18,7 +18,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "msgpack", "0.7.0dev1"
-  spec.add_dependency "eventmachine", "~> 1.0"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"

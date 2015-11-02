@@ -11,16 +11,16 @@ module Neovim
 
         srv_thr = Thread.new do
           client = server.accept
-          messages << client.read_nonblock(1024)
+          messages << client.readpartial(1024)
 
-          client.write("from server")
+          client.write("OK")
           client.close
           server.close
         end
 
         event_loop.send("data").run do |msg|
-          expect(msg).to eq("from server")
-          event_loop.shutdown
+          expect(msg).to eq("OK")
+          event_loop.stop
         end
 
         srv_thr.join
@@ -37,6 +37,7 @@ module Neovim
 
     context "unix" do
       before { FileUtils.rm_f("/tmp/#$$.sock") }
+      after { FileUtils.rm_f("/tmp/#$$.sock") }
       let!(:server) { UNIXServer.new("/tmp/#$$.sock") }
       let!(:event_loop) { EventLoop.unix("/tmp/#$$.sock") }
 
@@ -50,7 +51,7 @@ module Neovim
 
         event_loop.send(message).run do |msg|
           expect(msg).to eq(MessagePack.pack([1, 0, nil, 2]))
-          event_loop.shutdown
+          event_loop.stop
         end
       end
     end

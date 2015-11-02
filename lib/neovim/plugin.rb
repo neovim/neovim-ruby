@@ -42,11 +42,7 @@ module Neovim
         @notification_handler.call(notification, client)
       end
 
-      begin
-        async_session.run(request_cb, notification_cb)
-      ensure
-        async_session.shutdown
-      end
+      async_session.run(request_cb, notification_cb)
     end
   end
 end

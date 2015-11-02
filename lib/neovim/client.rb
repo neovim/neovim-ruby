@@ -26,8 +26,8 @@ module Neovim
       Current.new(@session)
     end
 
-    def shutdown
-      @session.shutdown
+    def stop
+      @session.stop
     end
   end
 end
