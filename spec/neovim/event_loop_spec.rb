@@ -5,7 +5,7 @@ require "fileutils"
 
 module Neovim
   RSpec.describe EventLoop do
-    shared_context "socket behaviors" do
+    shared_context "socket behavior" do
       it "sends and receives data" do
         messages = []
 
@@ -32,7 +32,7 @@ module Neovim
       let!(:server) { TCPServer.new("0.0.0.0", 0) }
       let!(:event_loop) { EventLoop.tcp("0.0.0.0", server.addr[1]) }
 
-      include_context "socket behaviors"
+      include_context "socket behavior"
     end
 
     context "unix" do
@@ -41,7 +41,7 @@ module Neovim
       let!(:server) { UNIXServer.new("/tmp/#$$.sock") }
       let!(:event_loop) { EventLoop.unix("/tmp/#$$.sock") }
 
-      include_context "socket behaviors"
+      include_context "socket behavior"
     end
 
     context "child" do
