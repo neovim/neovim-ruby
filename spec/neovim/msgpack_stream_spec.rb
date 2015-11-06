@@ -11,17 +11,16 @@ module Neovim
         srv_thr = Thread.new do
           client = server.accept
           messages << client.read_nonblock(1024)
-
           client.write(MessagePack.pack([2]))
-          client.close
-          server.close
         end
 
-        stream.send([1]).run do |msg|
-          expect(msg).to eq([2])
-          stream.stop
+        fiber = Fiber.new do
+          stream.send([1]).run do |msg|
+            Fiber.yield(msg)
+          end
         end
 
+        expect(fiber.resume).to eq([2])
         expect(messages).to eq([MessagePack.pack([1])])
       end
     end

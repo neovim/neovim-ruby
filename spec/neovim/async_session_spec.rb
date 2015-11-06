@@ -6,27 +6,26 @@ module Neovim
       it "receives requests" do
         stream = MsgpackStream.new(event_loop)
         async = AsyncSession.new(stream)
-        requests = []
 
         srv_thr = Thread.new do
           client = server.accept
           client.write(MessagePack.pack(
             [0, 123, "func", [1, 2, 3]]
           ))
-
-          client.close
-          server.close
         end
 
         req_cb = Proc.new do |request|
-          requests << request
-          async.stop
+          Fiber.yield(request)
         end
 
-        async.run(req_cb)
+        fiber = Fiber.new do
+          async.run(req_cb)
+        end
+
+        request = fiber.resume
+
         srv_thr.join
 
-        request = requests.first
         expect(request).to be_a(Request)
         expect(request.method_name).to eq(:func)
         expect(request.arguments).to eq([1, 2, 3])
@@ -35,27 +34,26 @@ module Neovim
       it "receives notifications" do
         stream = MsgpackStream.new(event_loop)
         async = AsyncSession.new(stream)
-        notifications = []
 
         srv_thr = Thread.new do
           client = server.accept
           client.write(MessagePack.pack(
             [2, "func", [1, 2, 3]]
           ))
-
-          client.close
-          server.close
         end
 
         not_cb = Proc.new do |notification|
-          notifications << notification
-          async.stop
+          Fiber.yield(notification)
         end
 
-        async.run(nil, not_cb)
+        fiber = Fiber.new do
+          async.run(nil, not_cb)
+        end
+
+        notification = fiber.resume
+
         srv_thr.join
 
-        notification = notifications.first
         expect(notification).to be_a(Notification)
         expect(notification.method_name).to eq(:func)
         expect(notification.arguments).to eq([1, 2, 3])
@@ -73,31 +71,22 @@ module Neovim
           client.write(MessagePack.pack(
             [1, 0, [0, "error"], "result"]
           ))
-
-          client.close
-          server.close
         end
 
-        async.request("func", 1, 2, 3) do |error, result|
-          expect(error).to eq("error")
-          expect(result).to eq("result")
-          async.stop
+        fiber = Fiber.new do
+          async.request("func", 1, 2, 3) do |error, result|
+            Fiber.yield(error, result)
+          end.run
         end
 
-        async.run
+        expect(fiber.resume).to eq(["error", "result"])
+
         srv_thr.join
 
         expect(messages).to eq(
           [MessagePack.pack([0, 0, "func", [1, 2, 3]])]
         )
       end
-    end
-
-    context "tcp" do
-      let!(:server) { TCPServer.new("0.0.0.0", 0) }
-      let!(:event_loop) { EventLoop.tcp("0.0.0.0", server.addr[1]) }
-
-      include_context "async session behavior"
     end
 
     context "tcp" do

@@ -14,15 +14,15 @@ module Neovim
           messages << client.readpartial(1024)
 
           client.write("OK")
-          client.close
-          server.close
         end
 
-        event_loop.send("data").run do |msg|
-          expect(msg).to eq("OK")
-          event_loop.stop
+        fiber = Fiber.new do
+          event_loop.send("data").run do |msg|
+            Fiber.yield(msg)
+          end
         end
 
+        expect(fiber.resume).to eq("OK")
         srv_thr.join
         expect(messages).to eq(["data"])
       end
@@ -49,10 +49,13 @@ module Neovim
         event_loop = EventLoop.child(["-n", "-u", "NONE"])
         message = MessagePack.pack([0, 0, :vim_strwidth, ["hi"]])
 
-        event_loop.send(message).run do |msg|
-          expect(msg).to eq(MessagePack.pack([1, 0, nil, 2]))
-          event_loop.stop
+        fiber = Fiber.new do
+          event_loop.send(message).run do |msg|
+            Fiber.yield(msg)
+          end
         end
+
+        expect(fiber.resume).to eq(MessagePack.pack([1, 0, nil, 2]))
       end
     end
   end
