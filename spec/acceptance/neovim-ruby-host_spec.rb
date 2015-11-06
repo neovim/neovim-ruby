@@ -34,7 +34,7 @@ RSpec.describe "neovim-ruby-host" do
 
     # Start the remote host
     host_nvim.command(%{let g:chan = rpcstart("#{bin_path}", ["#{plugin1}", "#{plugin2}"])})
-    sleep 0.4 # TODO figure out if/why this is necessary
+    sleep 0.3 # TODO figure out if/why this is necessary
 
     # Make two requests to the synchronous SyncAdd method and store the results
     host_nvim.command(%{let g:res1 = rpcrequest(g:chan, "SyncAdd", 1, 2)})
@@ -48,6 +48,7 @@ RSpec.describe "neovim-ruby-host" do
     # Set the current line content twice via the AsyncSetLine method
     host_nvim.command(%{call rpcnotify(g:chan, "AsyncSetLine", "foo")})
     host_nvim.command(%{call rpcnotify(g:chan, "AsyncSetLine", "bar")})
+    sleep 0.3
 
     # Save the contents of the buffer
     host_nvim.command("write! #{output}")
