@@ -12,14 +12,14 @@ module Neovim
     end
 
     def request(method, *args)
-      err = res = nil
+      fiber = Fiber.new do
+        @async_session.request(method, *args) do |err, res|
+          Fiber.yield(err, res)
+        end.run
+      end
 
-      @async_session.request(method, *args) do |error, response|
-        err, res = error, response
-        @async_session.stop
-      end.run
-
-      err ? raise(ArgumentError, err) : res
+      error, response = fiber.resume
+      error ? raise(ArgumentError, error) : response
     end
 
     def api_methods_for_prefix(prefix)
