@@ -1,11 +1,14 @@
 require "neovim/async_session"
 require "neovim/client"
 require "neovim/event_loop"
+require "neovim/host"
 require "neovim/msgpack_stream"
 require "neovim/session"
 require "neovim/plugin"
 
 module Neovim
+  @__configured_plugins = []
+
   def self.attach_tcp(host, port)
     attach_event_loop(EventLoop.tcp(host, port))
   end
@@ -18,17 +21,19 @@ module Neovim
     attach_event_loop(EventLoop.child(argv))
   end
 
+  def self.start_host(rplugin_paths)
+    Host.load_from_files(rplugin_paths).run
+  end
+
   def self.plugin(&block)
     Plugin.from_config_block(&block).tap do |plugin|
-      plugins << plugin
+      __configured_plugins << plugin
     end
   end
 
-  def self.plugins
-    @plugins ||= []
-  end
-
   class << self
+    attr_accessor :__configured_plugins
+
     private
 
     def attach_event_loop(event_loop)

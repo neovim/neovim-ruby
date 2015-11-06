@@ -27,7 +27,7 @@ module Neovim
           :name => name.to_sym,
           :sync => !!options.delete(:sync),
           :opts => options,
-          :proc => block || Proc.new {}
+          :proc => block || ::Proc.new {}
         )
       end
 

@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+require "neovim"
+Neovim.start_host(ARGV)
