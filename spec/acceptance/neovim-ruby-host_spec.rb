@@ -1,4 +1,4 @@
-require "timeout"
+require "helper"
 require "tempfile"
 
 RSpec.describe "neovim-ruby-host" do
@@ -7,8 +7,6 @@ RSpec.describe "neovim-ruby-host" do
   let(:nvim_path) { File.expand_path("../../../vendor/neovim/build/bin/nvim", __FILE__) }
 
   specify do
-    pending "TODO: Notifications are broken in this test"
-
     plugin1 = Tempfile.open("plug1") do |f|
       f.write(<<-RUBY)
         Neovim.plugin do |plug|
@@ -32,33 +30,33 @@ RSpec.describe "neovim-ruby-host" do
     end
 
     output = Tempfile.new("output").tap(&:close).path
+    host_nvim = Neovim.attach_child(["--headless", "-u", "NONE", "-N", "-n"])
 
-    nvim_pid = spawn({"RUBYLIB" => lib_path}, <<-BASH, [:out, :err] => "/dev/null")
-      #{nvim_path} \
-        --headless -u NONE -N -n \
-        +'let g:chan = rpcstart("#{bin_path}", ["#{plugin1}", "#{plugin2}"])' \
-        +'sleep 300m' \
-        +'let g:res = rpcrequest(g:chan, "SyncAdd", 1, 2)' \
-        +'put =g:res' \
-        +'normal o' \
-        +'call rpcnotify(g:chan, "AsyncSetLine", "Foobar")' \
-        +'sleep 300m' \
-        +'write! #{output}' \
-        +'quitall!'
-    BASH
+    # Start the remote host
+    host_nvim.command(%{let g:chan = rpcstart("#{bin_path}", ["#{plugin1}", "#{plugin2}"])})
+    sleep 0.4 # TODO figure out if/why this is necessary
 
-    begin
-      Timeout.timeout(5) do
-        _, status = ::Process.waitpid2(nvim_pid)
-        expect(status.exitstatus).to be(0)
-        expect(File.read(output)).to eq(<<-OUT)
+    # Make two requests to the synchronous SyncAdd method and store the results
+    host_nvim.command(%{let g:res1 = rpcrequest(g:chan, "SyncAdd", 1, 2)})
+    host_nvim.command(%{let g:res2 = rpcrequest(g:chan, "SyncAdd", 3, 4)})
+
+    # Write the results to the buffer
+    host_nvim.command("put =g:res1")
+    host_nvim.command("put =g:res2")
+    host_nvim.command("normal o")
+
+    # Set the current line content twice via the AsyncSetLine method
+    host_nvim.command(%{call rpcnotify(g:chan, "AsyncSetLine", "foo")})
+    host_nvim.command(%{call rpcnotify(g:chan, "AsyncSetLine", "bar")})
+
+    # Save the contents of the buffer
+    host_nvim.command("write! #{output}")
+
+    expect(File.read(output)).to eq(<<-OUT)
 
 3
-Foobar
-        OUT
-      end
-    ensure
-      ::Process.kill(:TERM, nvim_pid) rescue nil
-    end
+7
+bar
+    OUT
   end
 end
