@@ -24,6 +24,7 @@ module Neovim
 
     def initialize(rd, wr)
       @rd, @wr = rd, wr
+      @running = false
     end
 
     def send(data)
