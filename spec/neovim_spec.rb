@@ -53,10 +53,10 @@ RSpec.describe Neovim do
   end
 
   describe ".plugin" do
-    it "adds to Neovim.plugins" do
+    it "adds to Neovim.__configured_plugins" do
       expect {
         Neovim.plugin
-      }.to change { Neovim.plugins.size }.by(1)
+      }.to change { Neovim.__configured_plugins.size }.by(1)
     end
   end
 end

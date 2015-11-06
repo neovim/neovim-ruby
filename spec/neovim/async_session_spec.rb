@@ -28,7 +28,7 @@ module Neovim
 
         request = requests.first
         expect(request).to be_a(Request)
-        expect(request.method_name).to eq("func")
+        expect(request.method_name).to eq(:func)
         expect(request.arguments).to eq([1, 2, 3])
       end
 
@@ -57,7 +57,7 @@ module Neovim
 
         notification = notifications.first
         expect(notification).to be_a(Notification)
-        expect(notification.method_name).to eq("func")
+        expect(notification.method_name).to eq(:func)
         expect(notification.arguments).to eq([1, 2, 3])
       end
 
