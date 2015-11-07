@@ -21,6 +21,7 @@ module Neovim
 
     def initialize(plugins)
       @plugins = plugins
+      @handlers = compile_handlers(plugins)
     end
 
     def run
@@ -30,28 +31,40 @@ module Neovim
       session = Session.new(async_session)
       client = Client.new(session)
 
-      notification_callback = Proc.new do |notification|
-        @plugins.each do |plugin|
-          plugin.specs.each do |spec|
-            if !spec[:sync] && spec[:name] == notification.method_name
+      notification_callback = Proc.new do |notif|
+        @handlers[:notification][notif.method_name].call(client, notif)
+      end
+
+      request_callback = Proc.new do |request|
+        @handlers[:request][request.method_name].call(client, request)
+      end
+
+      async_session.run(request_callback, notification_callback)
+    end
+
+    private
+
+    def compile_handlers(plugins)
+      base = {
+        :request => Hash.new(Proc.new {}),
+        :notification => Hash.new(Proc.new {})
+      }
+
+      plugins.inject(base) do |handlers, plugin|
+        plugin.specs.each do |spec|
+          if spec[:sync]
+            handlers[:request][spec[:name]] = lambda do |client, request|
+              request.respond(spec[:proc].call(client, *request.arguments))
+            end
+          else
+            handlers[:notification][spec[:name]] = lambda do |client, notification|
               spec[:proc].call(client, *notification.arguments)
             end
           end
         end
-      end
 
-      request_callback = Proc.new do |request|
-        @plugins.each do |plugin|
-          plugin.specs.each do |spec|
-            if spec[:sync] && spec[:name] == request.method_name
-              result = spec[:proc].call(client, *request.arguments)
-              request.respond(result)
-            end
-          end
-        end
+        handlers
       end
-
-      async_session.run(request_callback, notification_callback)
     end
   end
 end

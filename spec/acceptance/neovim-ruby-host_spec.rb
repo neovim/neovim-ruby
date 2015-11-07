@@ -52,11 +52,6 @@ RSpec.describe "neovim-ruby-host" do
     # Save the contents of the buffer
     host_nvim.command("write! #{output}")
 
-    expect(File.read(output)).to eq(<<-OUT)
-
-3
-7
-bar
-    OUT
+    expect(File.read(output)).to eq("\n3\n7\nbar\n")
   end
 end
