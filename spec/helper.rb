@@ -21,6 +21,6 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   config.around do |spec|
-    Timeout.timeout(1) { spec.run }
+    Timeout.timeout(5) { spec.run }
   end
 end

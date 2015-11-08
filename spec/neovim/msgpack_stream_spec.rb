@@ -10,7 +10,7 @@ module Neovim
 
         srv_thr = Thread.new do
           client = server.accept
-          messages << client.read_nonblock(1024)
+          messages << client.readpartial(1024)
           client.write(MessagePack.pack([2]))
         end
 

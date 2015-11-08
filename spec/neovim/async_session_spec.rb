@@ -9,6 +9,7 @@ module Neovim
 
         srv_thr = Thread.new do
           client = server.accept
+          IO.select(nil, [client])
           client.write(MessagePack.pack(
             [0, 123, "func", [1, 2, 3]]
           ))
@@ -37,6 +38,7 @@ module Neovim
 
         srv_thr = Thread.new do
           client = server.accept
+          IO.select(nil, [client])
           client.write(MessagePack.pack(
             [2, "func", [1, 2, 3]]
           ))
@@ -66,7 +68,7 @@ module Neovim
 
         srv_thr = Thread.new do
           client = server.accept
-          messages << client.read_nonblock(1024)
+          messages << client.readpartial(1024)
 
           client.write(MessagePack.pack(
             [1, 0, [0, "error"], "result"]
