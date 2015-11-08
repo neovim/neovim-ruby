@@ -39,6 +39,38 @@ client = Neovim.attach_unix("/tmp/nvim.sock")
 
 The interface of the client is generated at runtime from the `vim_get_api_info` RPC call. For now, you can refer to the Node client's auto-generated [API description](https://github.com/neovim/node-client/blob/master/index.d.ts). Note that methods will be in `snake_case` rather than `camelCase`.
 
+The `neovim-ruby-host` executable can be used to spawn Ruby plugins via the `rpcstart` command. A plugin can be defined like this:
+
+```ruby
+# my_plugin.rb
+
+Neovim.plugin do |plug|
+  # Define a command called "Add" which returns the sum of two numbers
+  # The `:sync => true` option tells nvim to wait for a response.
+  # The result of the block will be returned to nvim.
+  plug.command(:Add, :nargs => 2, :sync => true) do |nvim, x, y|
+    x + y
+  end
+  
+  # Define a command called "SetLine" which sets the current line
+  # This command is asynchronous, so nvim won't wait for a response.
+  plug.command(:SetLine, :nargs => 1) do |nvim, str|
+    nvim.current.line = str
+  end
+end
+```
+
+In your `nvim`, you can start this plugin by running `let host = rpcstart("neovim-ruby-host", ["./my_plugin.rb"])`. You can use this channel id to communicate with the host, e.g.
+```viml
+let result = rpcrequest(host, "Add", 1, 2)
+let result " # => 3
+
+call rpcnotify(host, "SetLine", "Foo")
+" Current line is set to "Foo"
+```
+
+Plugin functionality is very limited right now. Besides `command`, the plugin DSL exposes the `function` and `autocmd` directives, however they are functionally identical to `command`. Their purpose is to define a manifest that nvim can load via the `UpdateRemotePlugins` command, which will generate the actual `command`, `function`, and `autocmd` definitions. This piece has not yet been implemented.
+
 ## Contributing
 
 1. Fork it (http://github.com/alexgenco/neovim-ruby/fork)
