@@ -28,9 +28,11 @@ module Neovim
     end
 
     def send(data)
-      _, wrs = IO.select(nil, [@wr])
-      wrs.each { |wr| wr.write_nonblock(data) }
+      @wr.write_nonblock(data)
       self
+    rescue IO::WaitWritable
+      IO.select(nil, [@wr])
+      retry
     end
 
     def run(&message_callback)
@@ -39,11 +41,7 @@ module Neovim
 
       loop do
         break unless @running
-
-        rds, = IO.select([@rd])
-        rds.each do |io|
-          message_callback.call(io.readpartial(1024 * 16))
-        end
+        message_callback.call(@rd.readpartial(1024 * 16))
       end
     rescue EOFError
       stop
