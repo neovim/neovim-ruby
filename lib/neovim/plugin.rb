@@ -34,14 +34,14 @@ module Neovim
       def function(name, _options, &block)
         options = _options.dup
         options[:range] = "" if options[:range] == true
-        options[:range] = ::Kernel::String(options[:range])
+        options[:range] = ::Kernel.String(options[:range])
 
         @plugin.specs.push(
           :type => :function,
           :name => name.to_sym,
           :sync => !!options.delete(:sync),
           :opts => options,
-          :proc => block || Proc.new {}
+          :proc => block || ::Proc.new {}
         )
       end
 
@@ -53,7 +53,7 @@ module Neovim
           :name => name.to_sym,
           :sync => !!options.delete(:sync),
           :opts => options,
-          :proc => block || Proc.new {}
+          :proc => block || ::Proc.new {}
         )
       end
     end

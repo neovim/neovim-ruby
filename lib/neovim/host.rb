@@ -8,7 +8,7 @@ module Neovim
         Neovim.__configured_plugins = captured_plugins
 
         rplugin_paths.each do |rplugin_path|
-          ::Kernel.load(rplugin_path, true)
+          Kernel.load(rplugin_path, true)
         end
 
         new(captured_plugins)
