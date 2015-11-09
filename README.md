@@ -60,16 +60,16 @@ Neovim.plugin do |plug|
 end
 ```
 
-In your `nvim`, you can start this plugin by running `let host = rpcstart("neovim-ruby-host", ["./my_plugin.rb"])`. You can use this channel id to communicate with the host, e.g.
-```viml
-let result = rpcrequest(host, "Add", 1, 2)
-let result " # => 3
+You can start this plugin via the `rpcstart` nvim function. The resulting channel ID can be used to send requests and notifications to the plugin.
 
-call rpcnotify(host, "SetLine", "Foo")
-" Current line is set to "Foo"
+```viml
+let host = rpcstart("neovim-ruby-host", ["./my_plugin.rb"])
+
+let result = rpcrequest(host, "Add", 1, 2) " result is set to 3
+call rpcnotify(host, "SetLine", "Foo")     " current line is set to 'Foo'
 ```
 
-Plugin functionality is very limited right now. Besides `command`, the plugin DSL exposes the `function` and `autocmd` directives, however they are functionally identical to `command`. Their purpose is to define a manifest that nvim can load via the `UpdateRemotePlugins` command, which will generate the actual `command`, `function`, and `autocmd` definitions. This piece has not yet been implemented.
+Plugin functionality is very limited right now. Besides `command`, the plugin DSL exposes the `function` and `autocmd` directives, however they are functionally almost identical to `command`. Their purpose is to define a manifest that nvim can load via the `UpdateRemotePlugins` command, which will generate the actual `command`, `function`, and `autocmd` definitions. This piece has not yet been implemented.
 
 ## Contributing
 
