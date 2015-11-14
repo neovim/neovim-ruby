@@ -13,7 +13,7 @@ module Neovim
     end
 
     def self.child(argv)
-      argv = [ENV.fetch("NVIM_EXECUTABLE", "nvim"), "--embed"] | argv.to_ary
+      argv = [ENV.fetch("NVIM_EXECUTABLE", "nvim"), "--embed"] | argv
       io = IO.popen(argv, "rb+")
       new(io, io)
     end
