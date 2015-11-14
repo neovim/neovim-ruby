@@ -2,6 +2,7 @@ require "rubygems"
 require "bundler/setup"
 require "neovim"
 require "timeout"
+require "pry"
 
 if ENV["REPORT_COVERAGE"]
   require "coveralls"
