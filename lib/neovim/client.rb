@@ -2,6 +2,8 @@ require "neovim/current"
 
 module Neovim
   class Client
+    attr_reader :session
+
     def initialize(session)
       @session = session
     end

@@ -1,4 +1,6 @@
-require "neovim/object"
+require "neovim/buffer"
+require "neovim/tabpage"
+require "neovim/window"
 
 module Neovim
   class Current

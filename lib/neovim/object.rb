@@ -37,8 +37,4 @@ module Neovim
       :"#{function_prefix}#{method_name}"
     end
   end
-
-  Buffer  = Class.new(Object)
-  Tabpage = Class.new(Object)
-  Window  = Class.new(Object)
 end

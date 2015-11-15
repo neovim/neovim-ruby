@@ -1,4 +1,7 @@
 require "helper"
+require "neovim/buffer"
+require "neovim/tabpage"
+require "neovim/window"
 
 module Neovim
   RSpec.describe Object do
