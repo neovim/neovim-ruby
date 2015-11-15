@@ -1,6 +1,6 @@
-require "rubygems"
 require "bundler/setup"
 require "neovim"
+require "pry"
 require "timeout"
 
 if ENV["REPORT_COVERAGE"]
