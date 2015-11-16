@@ -6,8 +6,8 @@ module Neovim
 
     def initialize(async_session)
       @async_session = async_session
-
       @api_info = APIInfo.new(request(:vim_get_api_info))
+
       @async_session.register_session(self)
     end
 
