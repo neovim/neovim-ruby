@@ -1,5 +1,4 @@
 require "helper"
-require "neovim/buffer"
 
 module Neovim
   RSpec.describe Buffer do

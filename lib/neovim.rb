@@ -27,7 +27,7 @@ module Neovim
 
   def self.plugin(&block)
     Plugin.from_config_block(&block).tap do |plugin|
-      __configured_plugins << plugin
+      @__configured_plugins << plugin
     end
   end
 
