@@ -34,39 +34,38 @@ module Neovim
         to_a.each(&block)
       end
 
-      def [](obj, len=nil)
-        case obj
+      def [](idx, len=nil)
+        case idx
         when Range
-          @buffer.get_line_slice(obj.begin, obj.end, true, !obj.exclude_end?)
+          @buffer.get_line_slice(idx.begin, idx.end, true, !idx.exclude_end?)
         else
           if len
-            @buffer.get_line_slice(obj, obj + len, true, false)
+            @buffer.get_line_slice(idx, idx + len, true, false)
           else
-            @buffer.get_line(obj)
+            @buffer.get_line(idx)
           end
         end
       end
       alias_method :slice, :[]
 
-      def []=(*_args)
-        args = _args.dup
-        repl = args.pop
-        obj, len = args
+      def []=(*args)
+        *target, val = args
+        idx, len = target
 
-        case obj
+        case idx
         when Range
           @buffer.set_line_slice(
-            obj.begin,
-            obj.end,
+            idx.begin,
+            idx.end,
             true,
-            !obj.exclude_end?,
-            Array(repl)
+            !idx.exclude_end?,
+            val
           )
         else
           if len
-            @buffer.set_line_slice(obj, obj + len, true, false, Array(repl))
+            @buffer.set_line_slice(idx, idx + len, true, false, val)
           else
-            @buffer.set_line(obj, repl)
+            @buffer.set_line(idx, val)
           end
         end
       end
