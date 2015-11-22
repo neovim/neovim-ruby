@@ -45,10 +45,20 @@ module Neovim
     private
 
     def compile_handlers(plugins)
+      default_req_handler = Proc.new do |_, request|
+        request.error("Unknown request #{request.method_name.inspect}")
+      end
+
+      default_ntf_handler = Proc.new {}
+
       base = {
-        :request => Hash.new(Proc.new {}),
-        :notification => Hash.new(Proc.new {})
+        :request => Hash.new(default_req_handler),
+        :notification => Hash.new(default_ntf_handler)
       }
+
+      base[:request][:poll] = lambda do |_, request|
+        request.respond("ok")
+      end
 
       plugins.inject(base) do |handlers, plugin|
         plugin.specs.each do |spec|
