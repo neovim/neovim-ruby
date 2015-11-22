@@ -22,15 +22,12 @@ module Neovim
     def initialize(plugins)
       @plugins = plugins
       @handlers = compile_handlers(plugins)
+      @event_loop = EventLoop.stdio
+      @msgpack_stream = MsgpackStream.new(@event_loop)
+      @async_session = AsyncSession.new(@msgpack_stream)
     end
 
     def run
-      event_loop = EventLoop.stdio
-      msgpack_stream = MsgpackStream.new(event_loop)
-      async_session = AsyncSession.new(msgpack_stream)
-      session = Session.new(async_session)
-      client = Client.new(session)
-
       notification_callback = Proc.new do |notif|
         @handlers[:notification][notif.method_name].call(client, notif)
       end
@@ -39,10 +36,18 @@ module Neovim
         @handlers[:request][request.method_name].call(client, request)
       end
 
-      async_session.run(request_callback, notification_callback)
+      @async_session.run(request_callback, notification_callback)
     end
 
     private
+
+    def client
+      @client ||= Client.new(session)
+    end
+
+    def session
+      @session ||= Session.new(@async_session)
+    end
 
     def compile_handlers(plugins)
       default_req_handler = Proc.new do |_, request|

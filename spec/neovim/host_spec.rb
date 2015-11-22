@@ -40,8 +40,6 @@ module Neovim
           plug.command(:Async, :nargs => 2, &async_cb)
         end
 
-        host = Host.new([plugin])
-
         mock_async_session = double(:async_session, :request => nil)
         expect(AsyncSession).to receive(:new) { mock_async_session }
 
@@ -73,6 +71,7 @@ module Neovim
           not_cb.call(mock_notification)
         end
 
+        host = Host.new([plugin])
         host.run
       end
     end
