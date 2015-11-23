@@ -2,7 +2,7 @@ require "helper"
 require "tmpdir"
 
 RSpec.describe "neovim-ruby-host" do
-  specify do
+  it "loads and runs plugins from Ruby source files" do
     Dir.mktmpdir do |pwd|
       Dir.chdir(pwd) do
         File.write("./plugin1.rb", <<-RUBY)
