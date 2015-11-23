@@ -27,9 +27,5 @@ module Neovim
     def current
       Current.new(@session)
     end
-
-    def stop
-      @session.stop
-    end
   end
 end
