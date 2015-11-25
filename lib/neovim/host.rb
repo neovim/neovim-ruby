@@ -28,12 +28,12 @@ module Neovim
     end
 
     def run
-      notification_callback = Proc.new do |notif|
-        @handlers[:notification][notif.method_name].call(client, notif)
+      notification_callback = Proc.new do |ntf|
+        @handlers[:notification][ntf.method_name].call(client, ntf)
       end
 
-      request_callback = Proc.new do |request|
-        @handlers[:request][request.method_name].call(client, request)
+      request_callback = Proc.new do |req|
+        @handlers[:request][req.method_name].call(client, req)
       end
 
       @async_session.run(request_callback, notification_callback)
@@ -50,8 +50,8 @@ module Neovim
     end
 
     def compile_handlers(plugins)
-      default_req_handler = Proc.new do |_, request|
-        request.error("Unknown request #{request.method_name.inspect}")
+      default_req_handler = Proc.new do |_, req|
+        req.error("Unknown request #{req.method_name.inspect}")
       end
 
       default_ntf_handler = Proc.new {}
@@ -61,19 +61,17 @@ module Neovim
         :notification => Hash.new(default_ntf_handler)
       }
 
-      base[:request][:poll] = lambda do |_, request|
-        request.respond("ok")
-      end
+      base[:request][:poll] = lambda { |_, req| req.respond("ok") }
 
       plugins.inject(base) do |handlers, plugin|
-        plugin.specs.each do |spec|
-          if spec[:sync]
-            handlers[:request][spec[:name]] = lambda do |client, request|
-              request.respond(spec[:proc].call(client, *request.arguments))
+        plugin.handlers.each do |handler|
+          if handler.sync?
+            handlers[:request][handler.name] = lambda do |client, req|
+              req.respond(handler.call(client, *req.arguments))
             end
           else
-            handlers[:notification][spec[:name]] = lambda do |client, notification|
-              spec[:proc].call(client, *notification.arguments)
+            handlers[:notification][handler.name] = lambda do |client, ntf|
+              handler.call(client, *ntf.arguments)
             end
           end
         end

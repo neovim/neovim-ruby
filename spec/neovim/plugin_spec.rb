@@ -10,16 +10,15 @@ module Neovim
           plug.command("Foo", :range => true, :nargs => 1, &cmd_block)
         end
 
-        expect(plugin.specs).to eq(
-          [
-            {
-              :type => :command,
-              :name => :Foo,
-              :sync => false,
-              :opts => {:range => "", :nargs => 1},
-              :proc => cmd_block
-            }
-          ]
+        expect(plugin.handlers.size).to be(1)
+        handler = plugin.handlers.first
+
+        expect(handler.block).to eq(cmd_block)
+        expect(handler.to_spec).to eq(
+          :type => :command,
+          :name => :Foo,
+          :sync => false,
+          :opts => {:range => "", :nargs => 1},
         )
       end
 
@@ -30,16 +29,15 @@ module Neovim
           plug.autocmd("BufEnter", :pattern => "*.rb", &au_block)
         end
 
-        expect(plugin.specs).to eq(
-          [
-            {
-              :type => :autocmd,
-              :name => :BufEnter,
-              :sync => false,
-              :opts => {:pattern => "*.rb"},
-              :proc => au_block
-            }
-          ]
+        expect(plugin.handlers.size).to be(1)
+        handler = plugin.handlers.first
+
+        expect(handler.block).to eq(au_block)
+        expect(handler.to_spec).to eq(
+          :type => :autocmd,
+          :name => :BufEnter,
+          :sync => false,
+          :opts => {:pattern => "*.rb"},
         )
       end
 
@@ -50,16 +48,15 @@ module Neovim
           plug.function("Foo", :range => true, :nargs => 1, &fun_block)
         end
 
-        expect(plugin.specs).to eq(
-          [
-            {
-              :type => :function,
-              :name => :Foo,
-              :sync => false,
-              :opts => {:range => "", :nargs => 1},
-              :proc => fun_block
-            }
-          ]
+        expect(plugin.handlers.size).to be(1)
+        handler = plugin.handlers.first
+
+        expect(handler.block).to eq(fun_block)
+        expect(handler.to_spec).to eq(
+          :type => :function,
+          :name => :Foo,
+          :sync => false,
+          :opts => {:range => "", :nargs => 1},
         )
       end
     end

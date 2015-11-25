@@ -6,10 +6,46 @@ module Neovim
       end
     end
 
-    attr_accessor :specs
+    attr_accessor :handlers
 
     def initialize
-      @specs = []
+      @handlers = []
+    end
+
+    def handler(name)
+    end
+
+    def specs
+      @handlers.map(&:to_spec)
+    end
+
+    class Handler
+      attr_reader :name, :block
+
+      def initialize(type, name, sync, options, block)
+        @type = type.to_sym
+        @name = name.to_sym
+        @sync = !!sync
+        @options = options
+        @block = block || ::Proc.new {}
+      end
+
+      def sync?
+        @sync
+      end
+
+      def to_spec
+        {
+          :type => @type,
+          :name => @name,
+          :sync => @sync,
+          :opts => @options,
+        }
+      end
+
+      def call(*args)
+        @block.call(*args)
+      end
     end
 
     class DSL < BasicObject
@@ -17,44 +53,41 @@ module Neovim
         @plugin = plugin
       end
 
-      def command(name, _options={}, &block)
-        options = _options.dup
-        options[:range] = "" if options[:range] == true
-        options[:range] = ::Kernel.String(options[:range])
+      def command(name, options={}, &block)
+        register_handler(:command, name, options, block)
+      end
 
-        @plugin.specs.push(
-          :type => :command,
-          :name => name.to_sym,
-          :sync => !!options.delete(:sync),
-          :opts => options,
-          :proc => block || ::Proc.new {}
+      def function(name, options, &block)
+        register_handler(:function, name, options, block)
+      end
+
+      def autocmd(name, options={}, &block)
+        register_handler(:autocmd, name, options, block)
+      end
+
+      private
+
+      def register_handler(type, name, _options, block)
+        if type == :autocmd
+          options = _options.dup
+        else
+          options = standardize_range(_options.dup)
+        end
+
+        sync = options.delete(:sync)
+
+        @plugin.handlers.push(
+          Handler.new(type, name, sync, options, block)
         )
       end
 
-      def function(name, _options, &block)
-        options = _options.dup
-        options[:range] = "" if options[:range] == true
-        options[:range] = ::Kernel.String(options[:range])
+      def standardize_range(options)
+        if options.key?(:range)
+          options[:range] = "" if options[:range] == true
+          options[:range] = ::Kernel.String(options[:range])
+        end
 
-        @plugin.specs.push(
-          :type => :function,
-          :name => name.to_sym,
-          :sync => !!options.delete(:sync),
-          :opts => options,
-          :proc => block || ::Proc.new {}
-        )
-      end
-
-      def autocmd(name, _options={}, &block)
-        options = _options.dup
-
-        @plugin.specs.push(
-          :type => :autocmd,
-          :name => name.to_sym,
-          :sync => !!options.delete(:sync),
-          :opts => options,
-          :proc => block || ::Proc.new {}
-        )
+        options
       end
     end
   end
