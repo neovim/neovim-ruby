@@ -30,6 +30,10 @@ module Neovim
         self[0..-1]
       end
 
+      def inspect
+        "#<#{self.class}:0x%x #{to_a.inspect}>" % (object_id << 1)
+      end
+
       def each(&block)
         to_a.each(&block)
       end
