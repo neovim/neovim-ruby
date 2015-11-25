@@ -23,31 +23,23 @@ RSpec.describe "neovim-ruby-host" do
 
         nvim = Neovim.attach_child(["--headless", "-u", "NONE", "-N", "-n"])
 
-        # Start the remote host
         host_exe = File.expand_path("../../../bin/neovim-ruby-host", __FILE__)
         nvim.command("let host = rpcstart('#{host_exe}', ['./plugin1.rb', './plugin2.rb'])")
 
-        # Send a "poll" request
         expect(nvim.eval("rpcrequest(host, 'poll')")).to eq("ok")
-
-        # Make a request to the synchronous SyncAdd method and store the result
         expect(nvim.eval("rpcrequest(host, 'SyncAdd', 1, 2)")).to eq(3)
 
-        # Set the current line via the AsyncSetLine method
-        nvim.eval("rpcnotify(host, 'AsyncSetLine', 'foo')")
-
-        # Make an unknown notification
         expect {
-          nvim.command("call rpcnotify(host, 'Unknown')")
+          nvim.eval("rpcnotify(host, 'AsyncSetLine', 'foo')")
+        }.to change { nvim.current.buffer.lines.to_a }.from([""]).to(["foo"])
+
+        expect {
+          nvim.eval("rpcnotify(host, 'Unkown')")
         }.not_to raise_error
 
-        # Make an unknown request
         expect {
-          nvim.command("call rpcrequest(host, 'Unknown')")
-        }.to raise_error(ArgumentError, /unknown request/i)
-
-        # Assert the contents of the buffer
-        expect(nvim.current.buffer.lines).to eq(["foo"])
+          nvim.eval("call rpcrequest(host, 'Unknown')")
+        }.to raise_error(ArgumentError)
       end
     end
   end
