@@ -47,10 +47,5 @@ module Neovim
         end
       end
     end
-
-    def stop
-      @msgpack_stream.stop
-      self
-    end
   end
 end

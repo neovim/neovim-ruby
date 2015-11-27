@@ -30,10 +30,5 @@ module Neovim
         end
       end
     end
-
-    def stop
-      @event_loop.stop
-      self
-    end
   end
 end

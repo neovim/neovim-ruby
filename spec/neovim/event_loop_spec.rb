@@ -14,6 +14,8 @@ module Neovim
           messages << client.readpartial(1024)
 
           client.write("OK")
+          client.close
+          server.close
         end
 
         fiber = Fiber.new do

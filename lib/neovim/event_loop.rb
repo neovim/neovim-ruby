@@ -51,12 +51,6 @@ module Neovim
         message_callback.call(@rd.readpartial(1024 * 16))
       end
     rescue EOFError
-      stop
-    end
-
-    def stop
-      @running = false
-      self
     end
   end
 end
