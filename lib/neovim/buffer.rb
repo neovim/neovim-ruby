@@ -17,21 +17,8 @@ module Neovim
         @buffer = buffer
       end
 
-      def ==(other)
-        case other
-        when Array
-          to_a == other
-        else
-          super
-        end
-      end
-
       def to_a
         self[0..-1]
-      end
-
-      def inspect
-        "#<#{self.class}:0x%x #{to_a.inspect}>" % (object_id << 1)
       end
 
       def each(&block)

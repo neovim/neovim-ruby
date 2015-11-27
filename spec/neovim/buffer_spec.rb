@@ -13,7 +13,7 @@ module Neovim
       end
 
       it "returns the buffer's lines as an array" do
-        expect(buffer.lines).to eq(["1", "2", "3"])
+        expect(buffer.lines.to_a).to eq(["1", "2", "3"])
       end
 
       it "can be indexed into" do
@@ -30,29 +30,29 @@ module Neovim
 
       it "can be updated at an index" do
         buffer.lines[0] = "foo"
-        expect(buffer.lines).to eq(["foo", "2", "3"])
+        expect(buffer.lines.to_a).to eq(["foo", "2", "3"])
       end
 
       it "can be updated with a length" do
         buffer.lines[0, 2] = ["foo"]
-        expect(buffer.lines).to eq(["foo", "3"])
+        expect(buffer.lines.to_a).to eq(["foo", "3"])
       end
 
       it "can be updated with a range" do
         buffer.lines[0..1] = ["foo"]
-        expect(buffer.lines).to eq(["foo", "3"])
+        expect(buffer.lines.to_a).to eq(["foo", "3"])
       end
 
       it "exposes the Enumerable interface" do
         succ_lines = buffer.lines.collect(&:succ)
-        expect(succ_lines).to eq(["2", "3", "4"])
+        expect(succ_lines.to_a).to eq(["2", "3", "4"])
       end
     end
 
     describe "#lines=" do
       it "updates the buffers lines" do
         buffer.lines = ["one", "two"]
-        expect(buffer.lines).to eq(["one", "two"])
+        expect(buffer.lines.to_a).to eq(["one", "two"])
       end
     end
   end
