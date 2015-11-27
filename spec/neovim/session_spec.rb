@@ -1,5 +1,6 @@
 require "helper"
 require "securerandom"
+require "fileutils"
 
 module Neovim
   RSpec.describe Session do
@@ -69,6 +70,7 @@ module Neovim
 
     context "unix" do
       let!(:nvim_pid) do
+        FileUtils.rm_f("/tmp/nvim-#$$.sock")
         Process.spawn(
           {"NVIM_LISTEN_ADDRESS" => "/tmp/nvim-#$$.sock"},
           "#{ENV.fetch("NVIM_EXECUTABLE")} --headless -n -u NONE",
@@ -83,6 +85,7 @@ module Neovim
       after do
         Process.kill(:TERM, nvim_pid)
         Process.waitpid(nvim_pid)
+        FileUtils.rm_f("/tmp/nvim-#$$.sock")
       end
 
       let(:session) do
