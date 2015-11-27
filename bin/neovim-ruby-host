@@ -2,7 +2,9 @@
 
 require "neovim"
 
-if $stdin.tty?
+if $0 != __FILE__
+  raise(LoadError, "Can't load neovim-ruby-host as a library.")
+elsif STDIN.tty?
   abort("Can't run neovim-ruby-host interactively.")
 else
   Neovim.start_host(ARGV)
