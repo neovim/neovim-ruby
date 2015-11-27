@@ -28,11 +28,18 @@ module Neovim
     end
 
     def send(data)
-      @wr.write_nonblock(data)
-      self
-    rescue IO::WaitWritable
-      IO.select(nil, [@wr])
-      retry
+      start = 0
+      size = data.size
+
+      begin
+        while start < size
+          start += @wr.write_nonblock(data[start..-1])
+        end
+        self
+      rescue IO::WaitWritable
+        IO.select(nil, [@wr])
+        retry
+      end
     end
 
     def run(&message_callback)

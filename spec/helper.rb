@@ -8,6 +8,8 @@ if ENV["REPORT_COVERAGE"]
   Coveralls.wear!
 end
 
+Thread.abort_on_exception = true
+
 ENV["NVIM_EXECUTABLE"] = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
 
 RSpec.configure do |config|
