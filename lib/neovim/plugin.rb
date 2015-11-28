@@ -12,9 +12,6 @@ module Neovim
       @handlers = []
     end
 
-    def handler(name)
-    end
-
     def specs
       @handlers.map(&:to_spec)
     end
@@ -57,7 +54,7 @@ module Neovim
         register_handler(:command, name, options, block)
       end
 
-      def function(name, options, &block)
+      def function(name, options={}, &block)
         register_handler(:function, name, options, block)
       end
 

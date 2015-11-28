@@ -30,6 +30,31 @@ module Neovim
       end
     end
 
+    describe "#handlers" do
+      it "includes a poll callback" do
+        host = Host.new([Plugin.new])
+        expect(host.handlers[:request]).to include(:poll => kind_of(Proc))
+      end
+
+      it "includes request callbacks" do
+        plugin = Plugin.from_config_block do |plug|
+          plug.command("Foo", :sync => true)
+        end
+
+        host = Host.new([plugin])
+        expect(host.handlers[:request]).to include(:Foo => kind_of(Proc))
+      end
+
+      it "includes notification callbacks" do
+        plugin = Plugin.from_config_block do |plug|
+          plug.command("Foo", :sync => false)
+        end
+
+        host = Host.new([plugin])
+        expect(host.handlers[:notification]).to include(:Foo => kind_of(Proc))
+      end
+    end
+
     describe "#run" do
       it "runs an async client with the plugins as callbacks" do
         sync_cb = lambda { |nvim, x, y| [nvim, x, y] }

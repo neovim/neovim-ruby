@@ -17,7 +17,7 @@ module Neovim
       end
     end
 
-    attr_reader :plugins
+    attr_reader :plugins, :handlers
 
     def initialize(plugins)
       @plugins = plugins
@@ -42,11 +42,7 @@ module Neovim
     private
 
     def client
-      @client ||= Client.new(session)
-    end
-
-    def session
-      @session ||= Session.new(@async_session)
+      @client ||= Client.new(Session.new(@async_session))
     end
 
     def compile_handlers(plugins)
