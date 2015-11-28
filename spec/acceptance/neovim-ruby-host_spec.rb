@@ -31,6 +31,7 @@ RSpec.describe "neovim-ruby-host" do
 
         expect {
           nvim.eval("rpcnotify(host, 'AsyncSetLine', 'foo')")
+          nvim.eval("rpcrequest(host, 'poll')")
         }.to change { nvim.current.buffer.lines.to_a }.from([""]).to(["foo"])
 
         expect {
