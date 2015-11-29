@@ -27,11 +27,12 @@ module Neovim
       self
     end
 
-    def run(request_cb=nil, notification_cb=nil)
+    def run(request_cb=nil, notification_cb=nil, setup_cb=nil)
       request_cb ||= Proc.new {}
       notification_cb ||= Proc.new {}
+      setup_cb ||= Proc.new {}
 
-      @msgpack_stream.run do |msg|
+      msg_cb = Proc.new do |msg|
         kind, *rest = msg
 
         case kind
@@ -46,6 +47,8 @@ module Neovim
           notification_cb.call(Notification.new(method, args))
         end
       end
+
+      @msgpack_stream.run(msg_cb, setup_cb)
     end
   end
 end

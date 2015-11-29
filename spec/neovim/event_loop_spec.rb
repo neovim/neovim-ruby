@@ -5,6 +5,19 @@ require "fileutils"
 
 module Neovim
   RSpec.describe EventLoop do
+    it "calls the setup callback" do
+      messages = []
+      rd, wr = IO.pipe
+      event_loop = EventLoop.new(rd, wr)
+
+      fiber = Fiber.new do
+        setup_cb = Proc.new { Fiber.yield(:setup) }
+        event_loop.run(nil, setup_cb)
+      end
+
+      expect(fiber.resume).to eq(:setup)
+    end
+
     shared_context "socket behavior" do
       it "sends and receives data" do
         messages = []
@@ -19,9 +32,8 @@ module Neovim
         end
 
         fiber = Fiber.new do
-          event_loop.send("data").run do |msg|
-            Fiber.yield(msg)
-          end
+          msg_cb = Proc.new { |msg| Fiber.yield(msg) }
+          event_loop.send("data").run(msg_cb)
         end
 
         expect(fiber.resume).to eq("OK")
@@ -67,9 +79,8 @@ module Neovim
           end
 
           fiber = Fiber.new do
-            event_loop.send("data").run do |msg|
-              Fiber.yield(msg)
-            end
+            msg_cb = Proc.new { |msg| Fiber.yield(msg) }
+            event_loop.send("data").run(msg_cb)
           end
 
           expect(fiber.resume).to eq("OK")
@@ -88,9 +99,8 @@ module Neovim
         message = MessagePack.pack([0, 0, :vim_strwidth, ["hi"]])
 
         fiber = Fiber.new do
-          event_loop.send(message).run do |msg|
-            Fiber.yield(msg)
-          end
+          msg_cb = Proc.new { |msg| Fiber.yield(msg) }
+          event_loop.send(message).run(msg_cb)
         end
 
         expect(fiber.resume).to eq(MessagePack.pack([1, 0, nil, 2]))

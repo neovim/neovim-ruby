@@ -23,12 +23,14 @@ module Neovim
       self
     end
 
-    def run(&message_cb)
-      @event_loop.run do |data|
+    def run(message_cb, setup_cb=nil)
+      data_cb = Proc.new do |data|
         @unpacker.feed_each(data) do |msg|
           message_cb.call(msg)
         end
       end
+
+      @event_loop.run(data_cb, setup_cb)
     end
   end
 end
