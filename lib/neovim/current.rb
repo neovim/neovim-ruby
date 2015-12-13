@@ -42,5 +42,14 @@ module Neovim
       tabpage = Tabpage.new(tabpage_index, @session)
       @session.request(:vim_set_current_tabpage, tabpage)
     end
+
+    def range
+      @range ||= LineRange.new(buffer, 0, -1)
+    end
+
+    def range=(_range)
+      _end = _range.exclude_end? ? _range.end - 1 : _range.end
+      @range = LineRange.new(buffer, _range.begin, _end)
+    end
   end
 end
