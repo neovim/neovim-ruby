@@ -44,6 +44,21 @@ module Neovim
         manifest.handlers[:sync][:poll].call(mock_client, mock_req)
       end
 
+      it "loads the specs handler" do
+        mock_client = double(:client)
+        mock_req = double(:request, :arguments => [])
+
+        plugin = Plugin.from_config_block do |plug|
+          plug.command("Cmd1", :sync => true, :range => true)
+          plug.command("Cmd2", :sync => false)
+        end
+
+        manifest = Manifest.load_from_plugins([plugin])
+
+        expect(mock_req).to receive(:respond).with(plugin.specs)
+        manifest.handlers[:sync][:specs].call(mock_client, mock_req)
+      end
+
       it "loads the default request handler" do
         mock_client = double(:client)
         mock_req = double(:request, :method_name => :foobar, :arguments => [])
