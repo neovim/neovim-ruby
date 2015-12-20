@@ -57,6 +57,8 @@ RSpec.describe Neovim do
       expect {
         Neovim.plugin
       }.to change { Neovim.__configured_plugins.size }.by(1)
+
+      expect(Neovim.__configured_plugins.last.source).to eq(__FILE__)
     end
   end
 end

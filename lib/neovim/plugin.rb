@@ -1,15 +1,17 @@
 module Neovim
   class Plugin
-    def self.from_config_block(&block)
-      new.tap do |instance|
+    def self.from_config_block(source, &block)
+      new(source).tap do |instance|
         block.call(DSL.new(instance)) if block
       end
     end
 
     attr_accessor :handlers
+    attr_reader :source
 
-    def initialize
+    def initialize(source)
       @handlers = []
+      @source = source
     end
 
     def specs
@@ -17,14 +19,24 @@ module Neovim
     end
 
     class Handler
-      attr_reader :name, :block
+      attr_reader :source, :name, :block
 
-      def initialize(type, name, sync, options, block)
+      def initialize(source, type, name, sync, options, block)
+        @source = source
         @type = type.to_sym
         @name = name.to_sym
         @sync = !!sync
         @options = options
         @block = block || ::Proc.new {}
+      end
+
+      def qualified_name
+        if @type == :autocmd
+          pattern = options.fetch(:pattern, "*")
+          :"#{@source}:#{@type}:#{@name}:#{pattern}"
+        else
+          :"#{@source}:#{@type}:#{@name}"
+        end
       end
 
       def sync?
@@ -74,7 +86,7 @@ module Neovim
         sync = options.delete(:sync)
 
         @plugin.handlers.push(
-          Handler.new(type, name, sync, options, block)
+          Handler.new(@plugin.source, type, name, sync, options, block)
         )
       end
 

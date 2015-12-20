@@ -6,7 +6,7 @@ module Neovim
   RSpec.describe Manifest do
     describe ".load_from_plugins" do
       it "loads sync handlers" do
-        plugin = Plugin.from_config_block do |plug|
+        plugin = Plugin.from_config_block("source") do |plug|
           plug.command(:Foo, :sync => true) do |client, *args|
             [client, args]
           end
@@ -17,11 +17,11 @@ module Neovim
         manifest = Manifest.load_from_plugins([plugin])
 
         expect(mock_req).to receive(:respond).with([mock_client, []])
-        manifest.handlers[:sync][:Foo].call(mock_client, mock_req)
+        manifest.handlers[:sync][:"source:command:Foo"].call(mock_client, mock_req)
       end
 
       it "loads async handlers" do
-        plugin = Plugin.from_config_block do |plug|
+        plugin = Plugin.from_config_block("source") do |plug|
           plug.command(:Foo, :sync => false) do |client, *args|
             [client, args]
           end
@@ -31,14 +31,14 @@ module Neovim
         mock_ntf = double(:notification, :arguments => [])
         manifest = Manifest.load_from_plugins([plugin])
 
-        result = manifest.handlers[:async][:Foo].call(mock_client, mock_ntf)
+        result = manifest.handlers[:async][:"source:command:Foo"].call(mock_client, mock_ntf)
         expect(result).to eq([mock_client, []])
       end
 
       it "loads the poll handler" do
         mock_client = double(:client)
         mock_req = double(:request, :arguments => [])
-        manifest = Manifest.load_from_plugins([Plugin.new])
+        manifest = Manifest.load_from_plugins([Plugin.new("source")])
 
         expect(mock_req).to receive(:respond).with("ok")
         manifest.handlers[:sync][:poll].call(mock_client, mock_req)
@@ -48,7 +48,7 @@ module Neovim
         mock_client = double(:client)
         mock_req = double(:request, :arguments => [])
 
-        plugin = Plugin.from_config_block do |plug|
+        plugin = Plugin.from_config_block("source") do |plug|
           plug.command("Cmd1", :sync => true, :range => true)
           plug.command("Cmd2", :sync => false)
         end
@@ -62,7 +62,7 @@ module Neovim
       it "loads the default request handler" do
         mock_client = double(:client)
         mock_req = double(:request, :method_name => :foobar, :arguments => [])
-        manifest = Manifest.load_from_plugins([Plugin.new])
+        manifest = Manifest.load_from_plugins([Plugin.new("source")])
 
         expect(mock_req).to receive(:error)
         manifest.handlers[:sync][:foobar].call(mock_client, mock_req)
@@ -71,7 +71,7 @@ module Neovim
       it "loads the default no-op notification handler" do
         mock_client = double(:client)
         mock_ntf = double(:notification)
-        manifest = Manifest.load_from_plugins([Plugin.new])
+        manifest = Manifest.load_from_plugins([Plugin.new("source")])
 
         manifest.handlers[:async][:foobar].call(mock_client, mock_ntf)
       end

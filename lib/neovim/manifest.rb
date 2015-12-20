@@ -4,9 +4,9 @@ module Neovim
       handlers = plugins.inject(default_handlers(plugins)) do |acc, plugin|
         plugin.handlers.each do |handler|
           if handler.sync?
-            acc[:sync][handler.name] = wrap_sync_handler(handler)
+            acc[:sync][handler.qualified_name] = wrap_sync_handler(handler)
           else
-            acc[:async][handler.name] = wrap_async_handler(handler)
+            acc[:async][handler.qualified_name] = wrap_async_handler(handler)
           end
         end
 
@@ -42,7 +42,7 @@ module Neovim
 
     def self.default_sync_handler
       Proc.new do |_, request|
-        request.error("Unknown request #{request.method_name.inspect}")
+        request.error("Unknown request #{request.method_name}")
       end
     end
     private_class_method :default_sync_handler

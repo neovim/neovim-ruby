@@ -26,7 +26,8 @@ module Neovim
   end
 
   def self.plugin(&block)
-    Plugin.from_config_block(&block).tap do |plugin|
+    source = caller.first.split(":").first
+    Plugin.from_config_block(source, &block).tap do |plugin|
       @__configured_plugins << plugin
     end
   end

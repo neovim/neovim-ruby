@@ -6,7 +6,7 @@ module Neovim
       it "registers a command" do
         cmd_block = Proc.new {}
 
-        plugin = Plugin.from_config_block do |plug|
+        plugin = Plugin.from_config_block("source") do |plug|
           plug.command("Foo", :range => true, :nargs => 1, &cmd_block)
         end
 
@@ -25,7 +25,7 @@ module Neovim
       it "registers an autocmd" do
         au_block = Proc.new {}
 
-        plugin = Plugin.from_config_block do |plug|
+        plugin = Plugin.from_config_block("source") do |plug|
           plug.autocmd("BufEnter", :pattern => "*.rb", &au_block)
         end
 
@@ -44,7 +44,7 @@ module Neovim
       it "registers a function" do
         fun_block = Proc.new {}
 
-        plugin = Plugin.from_config_block do |plug|
+        plugin = Plugin.from_config_block("source") do |plug|
           plug.function("Foo", :range => true, :nargs => 1, &fun_block)
         end
 
