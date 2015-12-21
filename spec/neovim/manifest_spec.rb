@@ -4,102 +4,109 @@ require "neovim/plugin"
 
 module Neovim
   RSpec.describe Manifest do
-    describe ".load_from_plugins" do
-      it "loads sync handlers" do
-        plugin = Plugin.from_config_block("source") do |plug|
-          plug.command(:Foo, :sync => true) do |client, *args|
-            [client, args]
-          end
-        end
+    it "has a default poll handler" do
+      manifest = Manifest.new
+      expect(manifest.handlers["poll"]).to respond_to(:call)
+    end
 
-        mock_client = double(:client)
-        mock_req = double(:request, :arguments => [])
-        manifest = Manifest.load_from_plugins([plugin])
+    it "has default specs" do
+      manifest = Manifest.new
+      expect(manifest.specs).to eq({})
+    end
 
-        expect(mock_req).to receive(:respond).with([mock_client, []])
-        manifest.handlers[:sync][:"source:command:Foo"].call(mock_client, mock_req)
-      end
-
-      it "loads async handlers" do
-        plugin = Plugin.from_config_block("source") do |plug|
-          plug.command(:Foo, :sync => false) do |client, *args|
-            [client, args]
-          end
-        end
-
-        mock_client = double(:client)
-        mock_ntf = double(:notification, :arguments => [])
-        manifest = Manifest.load_from_plugins([plugin])
-
-        result = manifest.handlers[:async][:"source:command:Foo"].call(mock_client, mock_ntf)
-        expect(result).to eq([mock_client, []])
-      end
-
-      it "loads the poll handler" do
-        mock_client = double(:client)
-        mock_req = double(:request, :arguments => [])
-        manifest = Manifest.load_from_plugins([Plugin.new("source")])
-
-        expect(mock_req).to receive(:respond).with("ok")
-        manifest.handlers[:sync][:poll].call(mock_client, mock_req)
-      end
-
-      it "loads the specs handler" do
-        mock_client = double(:client)
-        mock_req = double(:request, :arguments => [])
+    describe "#register" do
+      it "adds specs" do
+        manifest = Manifest.new
 
         plugin = Plugin.from_config_block("source") do |plug|
-          plug.command("Cmd1", :sync => true, :range => true)
-          plug.command("Cmd2", :sync => false)
+          plug.command(:Foo)
         end
 
-        manifest = Manifest.load_from_plugins([plugin])
-
-        expect(mock_req).to receive(:respond).with(plugin.specs)
-        manifest.handlers[:sync][:specs].call(mock_client, mock_req)
+        expect {
+          manifest.register(plugin)
+        }.to change { manifest.specs }.from({}).to("source" => plugin.specs)
       end
 
-      it "loads the default request handler" do
-        mock_client = double(:client)
-        mock_req = double(:request, :method_name => :foobar, :arguments => [])
-        manifest = Manifest.load_from_plugins([Plugin.new("source")])
+      it "adds plugin handlers" do
+        manifest = Manifest.new
 
-        expect(mock_req).to receive(:error)
-        manifest.handlers[:sync][:foobar].call(mock_client, mock_req)
-      end
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.command(:Foo)
+        end
 
-      it "loads the default no-op notification handler" do
-        mock_client = double(:client)
-        mock_ntf = double(:notification)
-        manifest = Manifest.load_from_plugins([Plugin.new("source")])
-
-        manifest.handlers[:async][:foobar].call(mock_client, mock_ntf)
+        expect {
+          manifest.register(plugin)
+        }.to change {
+          manifest.handlers["source:command:Foo"]
+        }.from(nil).to(kind_of(Proc))
       end
     end
 
-    describe "#handle_request" do
-      it "delegates to the appropriate sync handler" do
-        req_cb = Proc.new {}
-        mock_client = double(:client)
-        mock_req = double(:request, :method_name => :foo)
-        handlers = {:sync => {:foo => req_cb}}
+    describe "#handle" do
+      it "calls the poll handler" do
+        manifest = Manifest.new
+        message = double(:message, :method_name => "poll", :sync? => true)
+        client = double(:client)
 
-        manifest = Manifest.new(handlers)
-        expect(req_cb).to receive(:call).with(mock_client, mock_req)
-        manifest.handle_request(mock_req, mock_client)
+        expect(message).to receive(:respond).with("ok")
+        manifest.handle(message, client)
       end
-    end
 
-    describe "#handle_notification" do
-      it "delegates to the appropriate async handler" do
-        ntf_cb = Proc.new {}
-        mock_client = double(:client)
-        mock_ntf = double(:notification, :method_name => :foo)
-        handlers = {:async => {:foo => ntf_cb}}
+      it "calls the specs handler" do
+        manifest = Manifest.new
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.command(:Foo)
+        end
+        manifest.register(plugin)
 
-        manifest = Manifest.new(handlers)
-        expect(ntf_cb).to receive(:call).with(mock_client, mock_ntf)
-        manifest.handle_notification(mock_ntf, mock_client)
+        message = double(:message, :method_name => "specs", :sync? => true, :arguments => ["source"])
+
+        expect(message).to receive(:respond).with(plugin.specs)
+        manifest.handle(message, double(:client))
+      end
+
+      it "calls a plugin sync handler" do
+        manifest = Manifest.new
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.command(:Foo, :sync => true) { |client, arg| [client, arg] }
+        end
+        manifest.register(plugin)
+
+        message = double(:message, :method_name => "source:command:Foo", :sync? => true, :arguments => [:arg])
+        client = double(:client)
+
+        expect(message).to receive(:respond).with([client, :arg])
+        manifest.handle(message, client)
+      end
+
+      it "calls a plugin async handler" do
+        manifest = Manifest.new
+        async_proc = Proc.new {}
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.command(:Foo, &async_proc)
+        end
+        manifest.register(plugin)
+
+        message = double(:message, :method_name => "source:command:Foo", :sync? => false, :arguments => [:arg])
+        client = double(:client)
+
+        expect(async_proc).to receive(:call).with(client, :arg)
+        manifest.handle(message, client)
+      end
+
+      it "calls a default sync handler" do
+        manifest = Manifest.new
+        message = double(:message, :method_name => "foobar", :sync? => true)
+
+        expect(message).to receive(:error).with("Unknown request foobar")
+        manifest.handle(message, double(:client))
+      end
+
+      it "calls a default async handler" do
+        manifest = Manifest.new
+        message = double(:message, :method_name => "foobar", :sync? => false)
+
+        manifest.handle(message, double(:client))
       end
     end
   end

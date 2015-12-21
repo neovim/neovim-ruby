@@ -1,3 +1,4 @@
+require "neovim/plugin"
 require "helper"
 require "fileutils"
 
@@ -53,12 +54,18 @@ RSpec.describe Neovim do
   end
 
   describe ".plugin" do
-    it "adds to Neovim.__configured_plugins" do
-      expect {
-        Neovim.plugin
-      }.to change { Neovim.__configured_plugins.size }.by(1)
+    it "registers the plugin to Neovim.__configured_plugin_manifest" do
+      mock_manifest = double(:manifest)
+      mock_plugin = double(:plugin)
+      mock_path = "/source/path"
 
-      expect(Neovim.__configured_plugins.last.source).to eq(__FILE__)
+      allow(Neovim).to receive(:__configured_plugin_path).and_return(mock_path)
+      allow(Neovim).to receive(:__configured_plugin_manifest).and_return(mock_manifest)
+
+      expect(Neovim::Plugin).to receive(:from_config_block).with(mock_path).and_return(mock_plugin)
+      expect(mock_manifest).to receive(:register).with(mock_plugin)
+
+      Neovim.plugin
     end
   end
 end

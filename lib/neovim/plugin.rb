@@ -19,12 +19,12 @@ module Neovim
     end
 
     class Handler
-      attr_reader :source, :name, :block
+      attr_reader :block
 
       def initialize(source, type, name, sync, options, block)
         @source = source
         @type = type.to_sym
-        @name = name.to_sym
+        @name = name.to_s
         @sync = !!sync
         @options = options
         @block = block || ::Proc.new {}
@@ -32,10 +32,10 @@ module Neovim
 
       def qualified_name
         if @type == :autocmd
-          pattern = options.fetch(:pattern, "*")
-          :"#{@source}:#{@type}:#{@name}:#{pattern}"
+          pattern = @options.fetch(:pattern, "*")
+          "#{@source}:#{@type}:#{@name}:#{pattern}"
         else
-          :"#{@source}:#{@type}:#{@name}"
+          "#{@source}:#{@type}:#{@name}"
         end
       end
 

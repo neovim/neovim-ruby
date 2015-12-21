@@ -2,21 +2,22 @@ require "neovim/manifest"
 
 module Neovim
   class Host
-    def self.load_from_files(rplugin_paths)
-      plugins_before = Neovim.__configured_plugins
-      captured_plugins = []
+    def self.load_from_files(rplugin_paths, target_manifest=Manifest.new)
+      old_manifest = Neovim.__configured_plugin_manifest
+      old_path = Neovim.__configured_plugin_path
 
       begin
-        Neovim.__configured_plugins = captured_plugins
+        Neovim.__configured_plugin_manifest = target_manifest
 
         rplugin_paths.each do |rplugin_path|
+          Neovim.__configured_plugin_path = rplugin_path
           Kernel.load(rplugin_path, true)
         end
 
-        manifest = Manifest.load_from_plugins(captured_plugins)
-        new(manifest)
+        new(target_manifest)
       ensure
-        Neovim.__configured_plugins = plugins_before
+        Neovim.__configured_plugin_manifest = old_manifest
+        Neovim.__configured_plugin_path = old_path
       end
     end
 
@@ -30,15 +31,11 @@ module Neovim
     end
 
     def run
-      request_callback = Proc.new do |req|
-        @manifest.handle_request(req, client)
+      callback = Proc.new do |msg|
+        @manifest.handle(msg, client)
       end
 
-      notification_callback = Proc.new do |ntf|
-        @manifest.handle_notification(ntf, client)
-      end
-
-      @async_session.run(request_callback, notification_callback)
+      @async_session.run(callback, callback)
     end
 
     private

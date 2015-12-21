@@ -1,83 +1,62 @@
 module Neovim
   class Manifest
-    def self.load_from_plugins(plugins)
-      handlers = plugins.inject(default_handlers(plugins)) do |acc, plugin|
-        plugin.handlers.each do |handler|
-          if handler.sync?
-            acc[:sync][handler.qualified_name] = wrap_sync_handler(handler)
-          else
-            acc[:async][handler.qualified_name] = wrap_async_handler(handler)
-          end
+    attr_reader :handlers, :specs
+
+    def initialize
+      @handlers = {"poll" => poll_handler, "specs" => specs_handler}
+      @specs = {}
+    end
+
+    def register(plugin)
+      plugin.handlers.each do |handler|
+        wrapped_handler = handler.sync? ? wrap_sync(handler) : wrap_async(handler)
+        @handlers[handler.qualified_name] = wrapped_handler
+      end
+
+      @specs[plugin.source] = plugin.specs
+    end
+
+    def handle(msg, client)
+      default_handler = msg.sync? ? default_sync_handler : default_async_handler
+      @handlers.fetch(msg.method_name, default_handler).call(client, msg)
+    end
+
+    private
+
+    def poll_handler
+      @poll_handler ||= Proc.new { |_, req| req.respond("ok") }
+    end
+
+    def specs_handler
+      @specs_handler ||= Proc.new do |_, req|
+        source = req.arguments.fetch(0)
+
+        if @specs.key?(source)
+          req.respond(@specs.fetch(source))
+        else
+          req.error("Unknown plugin #{source}")
         end
-
-        acc
-      end
-
-      new(handlers)
-    end
-
-    def self.default_handlers(plugins)
-      sync = Hash.new(default_sync_handler).merge(
-        :poll => default_poll_handler,
-        :specs => default_specs_handler(plugins)
-      )
-      async = Hash.new(default_async_handler)
-      {:sync => sync, :async => async}
-    end
-    private_class_method :default_handlers
-
-    def self.default_poll_handler
-      Proc.new do |_, request|
-        request.respond("ok")
       end
     end
-    private_class_method :default_poll_handler
 
-    def self.default_specs_handler(plugins)
-      Proc.new do |_, request|
-        request.respond(plugins.flat_map(&:specs))
-      end
+    def default_sync_handler
+      @default_sync_handler ||= Proc.new { |_, req| req.error("Unknown request #{req.method_name}") }
     end
-    private_class_method :default_specs_handler
 
-    def self.default_sync_handler
-      Proc.new do |_, request|
-        request.error("Unknown request #{request.method_name}")
-      end
+    def default_async_handler
+      @default_async_handler ||= Proc.new {}
     end
-    private_class_method :default_sync_handler
 
-    def self.default_async_handler
-      Proc.new {}
-    end
-    private_class_method :default_async_handler
-
-    def self.wrap_sync_handler(handler)
+    def wrap_sync(handler)
       Proc.new do |client, request|
         request.respond(handler.call(client, *request.arguments))
       end
     end
-    private_class_method :wrap_sync_handler
 
-    def self.wrap_async_handler(handler)
+    def wrap_async(handler)
       Proc.new do |client, notification|
         handler.call(client, *notification.arguments)
       end
-    end
-    private_class_method :wrap_async_handler
-
-    attr_reader :handlers
-
-    def initialize(handlers)
-      @handlers = handlers
-    end
-
-    def handle_request(req, client)
-      @handlers[:sync][req.method_name].call(client, req)
-    end
-
-    def handle_notification(ntf, client)
-      @handlers[:async][ntf.method_name].call(client, ntf)
     end
   end
 end

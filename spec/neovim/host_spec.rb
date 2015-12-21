@@ -15,14 +15,11 @@ module Neovim
           f.path
         end
 
-        mock_manifest = double(:manifest)
-        expect(Manifest).to receive(:load_from_plugins) do |plugs|
-          expect(plugs.size).to be(3)
-          mock_manifest
-        end
+        manifest = Manifest.new
 
-        host = Host.load_from_files([plug1, plug2])
-        expect(host.manifest).to eq(mock_manifest)
+        expect(manifest).to receive(:register).exactly(3).times
+        host = Host.load_from_files([plug1, plug2], manifest)
+        expect(host.manifest).to eq(manifest)
       end
 
       it "doesn't load plugin code into the global namespace" do

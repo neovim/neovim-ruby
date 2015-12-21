@@ -7,7 +7,9 @@ require "neovim/session"
 require "neovim/plugin"
 
 module Neovim
-  @__configured_plugins = []
+  class << self
+    attr_accessor :__configured_plugin_manifest, :__configured_plugin_path
+  end
 
   def self.attach_tcp(host, port)
     attach_event_loop(EventLoop.tcp(host, port))
@@ -26,23 +28,21 @@ module Neovim
   end
 
   def self.plugin(&block)
-    source = caller.first.split(":").first
-    Plugin.from_config_block(source, &block).tap do |plugin|
-      @__configured_plugins << plugin
+    Plugin.from_config_block(__configured_plugin_path, &block).tap do |plugin|
+      if __configured_plugin_manifest.respond_to?(:register)
+        __configured_plugin_manifest.register(plugin)
+      end
     end
   end
 
-  class << self
-    attr_accessor :__configured_plugins
 
-    private
 
-    def attach_event_loop(event_loop)
-      msgpack_stream = MsgpackStream.new(event_loop)
-      async_session = AsyncSession.new(msgpack_stream)
-      session = Session.new(async_session)
+  def self.attach_event_loop(event_loop)
+    msgpack_stream = MsgpackStream.new(event_loop)
+    async_session = AsyncSession.new(msgpack_stream)
+    session = Session.new(async_session)
 
-      Client.new(session)
-    end
+    Client.new(session)
   end
+  private_class_method :attach_event_loop
 end
