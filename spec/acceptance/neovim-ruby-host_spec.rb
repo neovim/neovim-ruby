@@ -37,7 +37,7 @@ RSpec.describe "neovim-ruby-host" do
         }.to change { nvim.current.buffer.lines.to_a }.from([""]).to(["foo"])
 
         expect {
-          nvim.eval("rpcnotify(host, 'Unkown')")
+          nvim.eval("rpcnotify(host, 'Unknown')")
         }.not_to raise_error
 
         expect {
