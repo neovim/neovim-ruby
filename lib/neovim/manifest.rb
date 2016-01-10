@@ -49,13 +49,13 @@ module Neovim
 
     def wrap_sync(handler)
       Proc.new do |client, request|
-        request.respond(handler.call(client, *request.arguments))
+        request.respond(handler.call(client, *request.arguments[0]))
       end
     end
 
     def wrap_async(handler)
       Proc.new do |client, notification|
-        handler.call(client, *notification.arguments)
+        handler.call(client, *notification.arguments[0])
       end
     end
   end

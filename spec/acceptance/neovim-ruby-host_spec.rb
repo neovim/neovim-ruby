@@ -29,10 +29,10 @@ RSpec.describe "neovim-ruby-host" do
         nvim.command("let host = rpcstart('#{host_exe}', ['#{plugin1_path}', '#{plugin2_path}'])")
 
         expect(nvim.eval("rpcrequest(host, 'poll')")).to eq("ok")
-        expect(nvim.eval("rpcrequest(host, '#{plugin1_path}:command:SyncAdd', 1, 2)")).to eq(3)
+        expect(nvim.eval("rpcrequest(host, '#{plugin1_path}:command:SyncAdd', [1, 2])")).to eq(3)
 
         expect {
-          nvim.eval("rpcnotify(host, '#{plugin2_path}:command:AsyncSetLine', 'foo')")
+          nvim.eval("rpcnotify(host, '#{plugin2_path}:command:AsyncSetLine', ['foo'])")
           nvim.eval("rpcrequest(host, 'poll')")
         }.to change { nvim.current.buffer.lines.to_a }.from([""]).to(["foo"])
 
