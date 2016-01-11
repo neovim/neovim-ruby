@@ -45,17 +45,23 @@ The `neovim-ruby-host` executable can be used to spawn Ruby plugins via the `rpc
 # my_plugin.rb
 
 Neovim.plugin do |plug|
-  # Define a command called "Add" which returns the sum of two numbers
-  # The `:sync => true` option tells nvim to wait for a response.
-  # The result of the block will be returned to nvim.
-  plug.command(:Add, :nargs => 2, :sync => true) do |nvim, x, y|
-    x + y
-  end
-  
-  # Define a command called "SetLine" which sets the current line
-  # This command is asynchronous, so nvim won't wait for a response.
+  # Define a command called "SetLine" which sets the current line to the sum of
+  # two values. This command is executed asynchronously, so the return value is
+  # ignored.
   plug.command(:SetLine, :nargs => 1) do |nvim, str|
     nvim.current.line = str
+  end
+
+  # Define a function called "Sum" which sets the current line. This function
+  # is executed synchronously, so the result of the block will be returned to
+  # nvim.
+  plug.command(:Sum, :nargs => 2, :sync => true) do |nvim, x, y|
+    x + y
+  end
+
+  # Define an autocmd for the BufEnter event on Ruby files.
+  plug.autocmd(:BufEnter, :pattern => "*.rb") do |nvim|
+    nvim.command("echom 'Ruby file, eh?'")
   end
 end
 ```
@@ -69,7 +75,7 @@ let result = rpcrequest(host, "Add", 1, 2) " result is set to 3
 call rpcnotify(host, "SetLine", "Foo")     " current line is set to 'Foo'
 ```
 
-Plugin functionality is very limited right now. Besides `command`, the plugin DSL exposes the `function` and `autocmd` directives, however they are functionally almost identical to `command`. Their purpose is to define a manifest that nvim can load via the `UpdateRemotePlugins` command, which will generate the actual `command`, `function`, and `autocmd` definitions. This piece has not yet been implemented.
+Eventually these plugins will be loaded automatically from the `$VIMRUNTIME/rplugin/ruby` directory.
 
 ## Contributing
 
