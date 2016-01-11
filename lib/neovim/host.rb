@@ -40,6 +40,9 @@ module Neovim
       end
 
       @async_session.run(callback, callback)
+    rescue => e
+      fatal("got unexpected error #{e}")
+      debug(e.backtrace.join("\n"))
     end
 
     private

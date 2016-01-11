@@ -3,29 +3,11 @@ require "stringio"
 
 module Neovim
   module Logging
-    def self.included(base)
-      base.send(:attr_writer, :logger)
+    class << self
+      attr_writer :logger
     end
 
-    private
-
-    def fatal(msg)
-      logger.fatal(msg)
-    end
-
-    def warn(msg)
-      logger.warn(msg)
-    end
-
-    def info(msg)
-      logger.info(msg)
-    end
-
-    def debug(msg)
-      logger.debug(msg)
-    end
-
-    def logger
+    def self.logger
       return @logger if instance_variable_defined?(:@logger)
 
       if ENV["NVIM_RUBY_LOG_FILE"].respond_to?(:to_str)
@@ -40,8 +22,29 @@ module Neovim
         @logger.level = Logger::WARN
       end
 
-      @logger.progname = self.class
       @logger
+    end
+
+    private
+
+    def fatal(msg)
+      logger.fatal(self.class) { msg }
+    end
+
+    def warn(msg)
+      logger.warn(self.class) { msg }
+    end
+
+    def info(msg)
+      logger.info(self.class) { msg }
+    end
+
+    def debug(msg)
+      logger.debug(self.class) { msg }
+    end
+
+    def logger
+      Logging.logger
     end
   end
 end

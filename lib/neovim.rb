@@ -35,6 +35,14 @@ module Neovim
     end
   end
 
+  def self.logger=(logger)
+    Logging.logger = logger
+  end
+
+  def self.logger
+    Logging.logger
+  end
+
   def self.attach_event_loop(event_loop)
     msgpack_stream = MsgpackStream.new(event_loop)
     async_session = AsyncSession.new(msgpack_stream)

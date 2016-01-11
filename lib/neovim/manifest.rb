@@ -23,6 +23,9 @@ module Neovim
     def handle(msg, client)
       default_handler = msg.sync? ? default_sync_handler : default_async_handler
       @handlers.fetch(msg.method_name, default_handler).call(client, msg)
+    rescue => e
+      fatal("got unexpected error #{e}")
+      debug(e.backtrace.join("\n"))
     end
 
     private

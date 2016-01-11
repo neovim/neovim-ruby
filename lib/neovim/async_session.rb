@@ -1,8 +1,11 @@
+require "neovim/logging"
 require "neovim/request"
 require "neovim/notification"
 
 module Neovim
   class AsyncSession
+    include Logging
+
     def initialize(msgpack_stream)
       @msgpack_stream = msgpack_stream
       @request_id = 0
@@ -49,6 +52,9 @@ module Neovim
       end
 
       @msgpack_stream.run(msg_cb, setup_cb)
+    rescue => e
+      fatal("got unexpected error #{e}")
+      debug(e.backtrace.join("\n"))
     end
   end
 end

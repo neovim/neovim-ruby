@@ -57,6 +57,10 @@ module Neovim
         message_callback.call(message)
       end
     rescue EOFError
+      warn("got EOFError")
+    rescue => e
+      fatal("got unexpected error #{e}")
+      debug(e.backtrace.join("\n"))
     end
   end
 end

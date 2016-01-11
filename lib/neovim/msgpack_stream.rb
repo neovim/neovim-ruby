@@ -36,6 +36,9 @@ module Neovim
       end
 
       @event_loop.run(data_cb, setup_cb)
+    rescue => e
+      fatal("got unexpected error #{e}")
+      debug(e.backtrace.join("\n"))
     end
   end
 end
