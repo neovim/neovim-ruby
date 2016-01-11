@@ -1,7 +1,10 @@
+require "neovim/logging"
 require "msgpack"
 
 module Neovim
   class MsgpackStream
+    include Logging
+
     def initialize(event_loop)
       @event_loop = event_loop
       @unpacker = MessagePack::Unpacker.new
@@ -19,6 +22,7 @@ module Neovim
     end
 
     def send(msg)
+      debug("sending #{msg.inspect}")
       @event_loop.send(MessagePack.pack(msg))
       self
     end
@@ -26,6 +30,7 @@ module Neovim
     def run(message_cb, setup_cb=nil)
       data_cb = Proc.new do |data|
         @unpacker.feed_each(data) do |msg|
+          debug("received #{msg.inspect}")
           message_cb.call(msg)
         end
       end

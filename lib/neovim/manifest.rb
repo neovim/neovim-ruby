@@ -1,5 +1,9 @@
+require "neovim/logging"
+
 module Neovim
   class Manifest
+    include Logging
+
     attr_reader :handlers, :specs
 
     def initialize
@@ -24,11 +28,15 @@ module Neovim
     private
 
     def poll_handler
-      @poll_handler ||= Proc.new { |_, req| req.respond("ok") }
+      @poll_handler ||= Proc.new do |_, req|
+        debug("received 'poll' request #{req.inspect}")
+        req.respond("ok")
+      end
     end
 
     def specs_handler
       @specs_handler ||= Proc.new do |_, req|
+        debug("received 'specs' request #{req.inspect}")
         source = req.arguments.fetch(0)
 
         if @specs.key?(source)
@@ -49,12 +57,14 @@ module Neovim
 
     def wrap_sync(handler)
       Proc.new do |client, request|
+        debug("received #{request.inspect}")
         request.respond(handler.call(client, *request.arguments[0]))
       end
     end
 
     def wrap_async(handler)
       Proc.new do |client, notification|
+        debug("received #{notification.inspect}")
         handler.call(client, *notification.arguments[0])
       end
     end

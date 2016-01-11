@@ -1,7 +1,12 @@
+require "neovim/logging"
 require "neovim/manifest"
 
 module Neovim
   class Host
+    include Logging
+
+    attr_reader :manifest
+
     def self.load_from_files(rplugin_paths, target_manifest=Manifest.new)
       old_manifest = Neovim.__configured_plugin_manifest
       old_path = Neovim.__configured_plugin_path
@@ -21,8 +26,6 @@ module Neovim
       end
     end
 
-    attr_reader :manifest
-
     def initialize(manifest)
       @manifest = manifest
       @event_loop = EventLoop.stdio
@@ -32,6 +35,7 @@ module Neovim
 
     def run
       callback = Proc.new do |msg|
+        debug("received #{msg.inspect}")
         @manifest.handle(msg, client)
       end
 
