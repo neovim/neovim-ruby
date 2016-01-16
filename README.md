@@ -66,16 +66,7 @@ Neovim.plugin do |plug|
 end
 ```
 
-You can start this plugin via the `rpcstart` nvim function. The resulting channel ID can be used to send requests and notifications to the plugin.
-
-```viml
-let host = rpcstart("neovim-ruby-host", ["./my_plugin.rb"])
-
-let result = rpcrequest(host, "Add", 1, 2) " result is set to 3
-call rpcnotify(host, "SetLine", "Foo")     " current line is set to 'Foo'
-```
-
-Eventually these plugins will be loaded automatically from the `$VIMRUNTIME/rplugin/ruby` directory.
+After a call to `:UpdateRemotePlugins`, these plugins will be auto-loaded from the `$VIMRUNTIME/rplugin/ruby` directory.
 
 ## Contributing
 
