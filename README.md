@@ -42,7 +42,7 @@ The client's interface is generated at runtime from the `vim_get_api_info` RPC c
 The `neovim-ruby-host` executable can be used to spawn Ruby plugins via the `rpcstart` command. A plugin can be defined like this:
 
 ```ruby
-# my_plugin.rb
+# $VIMRUNTIME/rplugin/ruby/my_plugin.rb
 
 Neovim.plugin do |plug|
   # Define a command called "SetLine" which sets the current line to the sum of
@@ -66,7 +66,7 @@ Neovim.plugin do |plug|
 end
 ```
 
-After a call to `:UpdateRemotePlugins`, these plugins will be auto-loaded from the `$VIMRUNTIME/rplugin/ruby` directory.
+After a call to `:UpdateRemotePlugins`, plugins will be auto-loaded from the `$VIMRUNTIME/rplugin/ruby` directory.
 
 ## Contributing
 
