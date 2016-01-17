@@ -13,11 +13,10 @@ RSpec.describe Neovim do
       pid = Process.spawn(env, nvim_exe, *nvim_argv, [:out, :err] => "/dev/null")
 
       begin
-        wait_socket = TCPSocket.open("0.0.0.0", port)
+        TCPSocket.open("0.0.0.0", port).close
       rescue Errno::ECONNREFUSED
         retry
       end
-      wait_socket.close
 
       begin
         expect(Neovim.attach_tcp("0.0.0.0", port).strwidth("hi")).to eq(2)
@@ -29,15 +28,21 @@ RSpec.describe Neovim do
 
   describe ".attach_unix" do
     it "attaches to a UNIX socket" do
-      env = {"NVIM_LISTEN_ADDRESS" => Support.socket_path}
+      socket_path = Support.socket_path
+      env = {"NVIM_LISTEN_ADDRESS" => socket_path}
       pid = Process.spawn(env, nvim_exe, *nvim_argv, [:out, :err] => "/dev/null")
 
-      loop { break if File.socket?(Support.socket_path) }
+      begin
+        UNIXSocket.new(socket_path).close
+      rescue Errno::ENOENT, Errno::ECONNREFUSED
+        retry
+      end
 
       begin
-        expect(Neovim.attach_unix(Support.socket_path).strwidth("hi")).to eq(2)
+        expect(Neovim.attach_unix(socket_path).strwidth("hi")).to eq(2)
       ensure
         Process.kill(:TERM, pid)
+        Process.waitpid(pid)
       end
     end
   end
