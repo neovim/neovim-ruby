@@ -76,7 +76,7 @@ module Neovim
           [:out, :err] => "/dev/null"
         ).tap do
           loop do
-            break if File.exists?(Support.socket_path)
+            break if File.socket?(Support.socket_path)
           end
         end
       end

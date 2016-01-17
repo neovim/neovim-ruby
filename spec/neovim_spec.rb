@@ -35,7 +35,7 @@ RSpec.describe Neovim do
       env = {"NVIM_LISTEN_ADDRESS" => Support.socket_path}
       pid = Process.spawn(env, nvim_exe, *nvim_argv, [:out, :err] => "/dev/null")
 
-      loop { break if File.exists?(Support.socket_path) }
+      loop { break if File.socket?(Support.socket_path) }
 
       begin
         expect(Neovim.attach_unix(Support.socket_path).strwidth("hi")).to eq(2)
