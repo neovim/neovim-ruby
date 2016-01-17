@@ -8,10 +8,7 @@ RSpec.describe Neovim do
 
   describe ".attach_tcp" do
     it "attaches to a TCP socket" do
-      srv = TCPServer.new("0.0.0.0", 0)
-      port = srv.addr[1]
-      srv.close
-
+      port = Support.port
       env = {"NVIM_LISTEN_ADDRESS" => "0.0.0.0:#{port}"}
       pid = Process.spawn(env, nvim_exe, *nvim_argv, [:out, :err] => "/dev/null")
 

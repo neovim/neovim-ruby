@@ -9,6 +9,11 @@ module Support
     file_path("nvim.sock")
   end
 
+  def self.port
+    server = TCPServer.new("0.0.0.0", 0)
+    server.addr[1].tap { server.close }
+  end
+
   def self.file_path(name)
     File.join(workspace, name)
   end

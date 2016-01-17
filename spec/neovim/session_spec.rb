@@ -34,23 +34,21 @@ module Neovim
     end
 
     context "tcp" do
-      let!(:nvim_port) do
-        server = TCPServer.new("0.0.0.0", 0)
-        server.addr[1].tap { server.close }
-      end
-
+      let!(:nvim_port) { Support.port }
       let!(:nvim_pid) do
-        Process.spawn(
+        pid = Process.spawn(
           {"NVIM_LISTEN_ADDRESS" => "0.0.0.0:#{nvim_port}"},
           "#{ENV.fetch("NVIM_EXECUTABLE")} --headless -n -u NONE",
           [:out, :err] => "/dev/null"
-        ).tap do
-          begin
-            TCPSocket.open("0.0.0.0", nvim_port).close
-          rescue Errno::ECONNREFUSED
-            retry
-          end
+        )
+
+        begin
+          TCPSocket.open("0.0.0.0", nvim_port).close
+        rescue Errno::ECONNREFUSED
+          retry
         end
+
+        pid
       end
 
       after do
@@ -69,16 +67,21 @@ module Neovim
     end
 
     context "unix" do
+      let!(:socket_path) { Support.socket_path }
       let!(:nvim_pid) do
-        Process.spawn(
-          {"NVIM_LISTEN_ADDRESS" => Support.socket_path},
+        pid = Process.spawn(
+          {"NVIM_LISTEN_ADDRESS" => socket_path},
           "#{ENV.fetch("NVIM_EXECUTABLE")} --headless -n -u NONE",
           [:out, :err] => "/dev/null"
-        ).tap do
-          loop do
-            break if File.socket?(Support.socket_path)
-          end
+        )
+
+        begin
+          UNIXSocket.new(socket_path).close
+        rescue Errno::ENOENT, Errno::ECONNREFUSED
+          retry
         end
+
+        pid
       end
 
       after do
@@ -87,7 +90,7 @@ module Neovim
       end
 
       let(:session) do
-        event_loop = EventLoop.unix(Support.socket_path)
+        event_loop = EventLoop.unix(socket_path)
         stream = MsgpackStream.new(event_loop)
         async = AsyncSession.new(stream)
         Session.new(async)
