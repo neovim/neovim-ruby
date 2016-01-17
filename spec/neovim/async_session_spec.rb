@@ -7,7 +7,7 @@ module Neovim
         stream = MsgpackStream.new(event_loop)
         async = AsyncSession.new(stream)
 
-        srv_thr = Thread.new do
+        server_thread = Thread.new do
           client = server.accept
           IO.select(nil, [client])
           client.write(MessagePack.pack(
@@ -25,7 +25,7 @@ module Neovim
 
         request = fiber.resume
 
-        srv_thr.join
+        server_thread.join
 
         expect(request).to be_a(Request)
         expect(request.method_name).to eq("func")
@@ -36,7 +36,7 @@ module Neovim
         stream = MsgpackStream.new(event_loop)
         async = AsyncSession.new(stream)
 
-        srv_thr = Thread.new do
+        server_thread = Thread.new do
           client = server.accept
           IO.select(nil, [client])
           client.write(MessagePack.pack(
@@ -54,7 +54,7 @@ module Neovim
 
         notification = fiber.resume
 
-        srv_thr.join
+        server_thread.join
 
         expect(notification).to be_a(Notification)
         expect(notification.method_name).to eq("func")
@@ -66,7 +66,7 @@ module Neovim
         async = AsyncSession.new(stream)
         messages = []
 
-        srv_thr = Thread.new do
+        server_thread = Thread.new do
           client = server.accept
           messages << client.readpartial(1024)
 
@@ -83,7 +83,7 @@ module Neovim
 
         expect(fiber.resume).to eq(["error", "result"])
 
-        srv_thr.join
+        server_thread.join
 
         expect(messages).to eq(
           [MessagePack.pack([0, 0, "func", [1, 2, 3]])]
@@ -99,10 +99,8 @@ module Neovim
     end
 
     context "unix" do
-      before { FileUtils.rm_f("/tmp/#$$.sock") }
-      after { FileUtils.rm_f("/tmp/#$$.sock") }
-      let!(:server) { UNIXServer.new("/tmp/#$$.sock") }
-      let!(:event_loop) { EventLoop.unix("/tmp/#$$.sock") }
+      let!(:server) { UNIXServer.new(Support.socket_path) }
+      let!(:event_loop) { EventLoop.unix(Support.socket_path) }
 
       include_context "async session behavior"
     end

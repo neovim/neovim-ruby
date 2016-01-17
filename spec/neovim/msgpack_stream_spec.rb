@@ -6,11 +6,11 @@ module Neovim
     shared_context "msgpack stream behavior" do
       it "sends and receives data" do
         stream = MsgpackStream.new(event_loop)
-        messages = []
+        client_messages = []
 
-        srv_thr = Thread.new do
+        server_thread = Thread.new do
           client = server.accept
-          messages << client.readpartial(1024)
+          client_messages << client.readpartial(1024)
 
           client.write(MessagePack.pack([2]))
           client.close
@@ -22,8 +22,11 @@ module Neovim
           stream.send([1]).run(msg_cb)
         end
 
-        expect(fiber.resume).to eq([2])
-        expect(messages).to eq([MessagePack.pack([1])])
+        server_message = fiber.resume
+        server_thread.join
+
+        expect(server_message).to eq([2])
+        expect(client_messages).to eq([MessagePack.pack([1])])
       end
     end
 
@@ -35,10 +38,8 @@ module Neovim
     end
 
     context "unix" do
-      before { FileUtils.rm_f("/tmp/#$$.sock") }
-      after { FileUtils.rm_f("/tmp/#$$.sock") }
-      let!(:server) { UNIXServer.new("/tmp/#$$.sock") }
-      let!(:event_loop) { EventLoop.unix("/tmp/#$$.sock") }
+      let!(:server) { UNIXServer.new(Support.socket_path) }
+      let!(:event_loop) { EventLoop.unix(Support.socket_path) }
 
       include_context "msgpack stream behavior"
     end

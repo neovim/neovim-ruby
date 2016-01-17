@@ -70,14 +70,13 @@ module Neovim
 
     context "unix" do
       let!(:nvim_pid) do
-        FileUtils.rm_f("/tmp/nvim-#$$.sock")
         Process.spawn(
-          {"NVIM_LISTEN_ADDRESS" => "/tmp/nvim-#$$.sock"},
+          {"NVIM_LISTEN_ADDRESS" => Support.socket_path},
           "#{ENV.fetch("NVIM_EXECUTABLE")} --headless -n -u NONE",
           [:out, :err] => "/dev/null"
         ).tap do
           loop do
-            break if File.exists?("/tmp/nvim-#$$.sock")
+            break if File.exists?(Support.socket_path)
           end
         end
       end
@@ -85,11 +84,10 @@ module Neovim
       after do
         Process.kill(:TERM, nvim_pid)
         Process.waitpid(nvim_pid)
-        FileUtils.rm_f("/tmp/nvim-#$$.sock")
       end
 
       let(:session) do
-        event_loop = EventLoop.unix("/tmp/nvim-#$$.sock")
+        event_loop = EventLoop.unix(Support.socket_path)
         stream = MsgpackStream.new(event_loop)
         async = AsyncSession.new(stream)
         Session.new(async)

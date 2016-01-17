@@ -22,7 +22,7 @@ module Neovim
       it "sends and receives data" do
         messages = []
 
-        srv_thr = Thread.new do
+        server_thread = Thread.new do
           client = server.accept
           messages << client.readpartial(1024)
 
@@ -37,7 +37,7 @@ module Neovim
         end
 
         expect(fiber.resume).to eq("OK")
-        srv_thr.join
+        server_thread.join
         expect(messages).to eq(["data"])
       end
     end
@@ -50,10 +50,8 @@ module Neovim
     end
 
     context "unix" do
-      before { FileUtils.rm_f("/tmp/#$$.sock") }
-      after { FileUtils.rm_f("/tmp/#$$.sock") }
-      let!(:server) { UNIXServer.new("/tmp/#$$.sock") }
-      let!(:event_loop) { EventLoop.unix("/tmp/#$$.sock") }
+      let!(:server) { UNIXServer.new(Support.socket_path) }
+      let!(:event_loop) { EventLoop.unix(Support.socket_path) }
 
       include_context "socket behavior"
     end
@@ -73,7 +71,7 @@ module Neovim
           event_loop = EventLoop.stdio
           messages = []
 
-          srv_thr = Thread.new do
+          server_thread = Thread.new do
             messages << srv_stdout.readpartial(1024)
             srv_stdin.write("OK")
           end
@@ -84,7 +82,7 @@ module Neovim
           end
 
           expect(fiber.resume).to eq("OK")
-          srv_thr.join
+          server_thread.join
           expect(messages).to eq(["data"])
         ensure
           STDOUT.reopen(old_stdout)

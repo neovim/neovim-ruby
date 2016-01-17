@@ -32,14 +32,13 @@ RSpec.describe Neovim do
 
   describe ".attach_unix" do
     it "attaches to a UNIX socket" do
-      FileUtils.rm_f("/tmp/#$$.sock")
-      env = {"NVIM_LISTEN_ADDRESS" => "/tmp/#$$.sock"}
+      env = {"NVIM_LISTEN_ADDRESS" => Support.socket_path}
       pid = Process.spawn(env, nvim_exe, *nvim_argv, [:out, :err] => "/dev/null")
 
-      loop { break if File.exists?("/tmp/#$$.sock") }
+      loop { break if File.exists?(Support.socket_path) }
 
       begin
-        expect(Neovim.attach_unix("/tmp/#$$.sock").strwidth("hi")).to eq(2)
+        expect(Neovim.attach_unix(Support.socket_path).strwidth("hi")).to eq(2)
       ensure
         Process.kill(:TERM, pid)
       end

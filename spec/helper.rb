@@ -4,6 +4,8 @@ require "neovim"
 require "pry"
 require "timeout"
 
+require File.expand_path("../support.rb", __FILE__)
+
 if ENV["REPORT_COVERAGE"]
   require "coveralls"
   Coveralls.wear!
@@ -26,7 +28,12 @@ RSpec.configure do |config|
 
   Kernel.srand config.seed
 
-  config.around do |spec|
+  config.around(:example) do |spec|
+    Support.clean_workspace
     Timeout.timeout(5) { spec.run }
+  end
+
+  config.after(:suite) do
+    Support.remove_workspace
   end
 end
