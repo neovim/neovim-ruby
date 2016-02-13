@@ -55,7 +55,7 @@ Neovim.plugin do |plug|
   # Define a function called "Sum" which sets the current line. This function
   # is executed synchronously, so the result of the block will be returned to
   # nvim.
-  plug.command(:Sum, :nargs => 2, :sync => true) do |nvim, x, y|
+  plug.function(:Sum, :nargs => 2, :sync => true) do |nvim, x, y|
     x + y
   end
 
