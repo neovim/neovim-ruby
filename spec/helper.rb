@@ -15,8 +15,9 @@ Thread.abort_on_exception = true
 
 ENV["NVIM_EXECUTABLE"] = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
 
-Neovim.logger = Logger.new(STDERR)
-Neovim.logger.level = Logger::WARN
+Neovim.logger = Logger.new(STDERR).tap do |logger|
+  logger.level = ENV.fetch("NVIM_RUBY_LOG_LEVEL", Logger::WARN).to_i
+end
 
 RSpec.configure do |config|
   config.expect_with :rspec do |exp|
@@ -30,7 +31,7 @@ RSpec.configure do |config|
 
   config.around(:example) do |spec|
     Support.clean_workspace
-    Timeout.timeout(5) { spec.run }
+    Timeout.timeout(2) { spec.run }
   end
 
   config.after(:suite) do

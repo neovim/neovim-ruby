@@ -10,13 +10,13 @@ module Neovim
     def self.logger
       return @logger if instance_variable_defined?(:@logger)
 
-      if ENV["NVIM_RUBY_LOG_FILE"].respond_to?(:to_str)
-        @logger = Logger.new(ENV["NVIM_RUBY_LOG_FILE"].to_str)
+      if ENV["NVIM_RUBY_LOG_FILE"]
+        @logger = Logger.new(ENV["NVIM_RUBY_LOG_FILE"])
       else
-        @logger = Logger.new(StringIO.new)
+        @logger = Logger.new(STDERR)
       end
 
-      if ENV["NVIM_RUBY_LOG_LEVEL"].respond_to?(:to_str)
+      if ENV["NVIM_RUBY_LOG_LEVEL"]
         @logger.level = Integer(ENV["NVIM_RUBY_LOG_LEVEL"])
       else
         @logger.level = Logger::WARN
