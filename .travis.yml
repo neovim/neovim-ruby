@@ -27,4 +27,4 @@ addons:
 
 env: REPORT_COVERAGE=1
 before_script: travis_retry bundle exec rake neovim:install
-script: bundle exec rake
+script: travis_retry bundle exec rake
