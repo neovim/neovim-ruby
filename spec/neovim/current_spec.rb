@@ -74,19 +74,5 @@ module Neovim
         }.to change { current.tabpage.index }.to(initial_index)
       end
     end
-
-    describe "#range" do
-      it "returns the current range" do
-        expect(current.range).to be_a(LineRange)
-      end
-    end
-
-    describe "#range=" do
-      it "sets the current range" do
-        current.buffer.lines = ["1", "2", "3"]
-        current.range = (1..2)
-        expect(current.range.to_a).to eq(["2", "3"])
-      end
-    end
   end
 end
