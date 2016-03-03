@@ -1,3 +1,8 @@
+# 0.0.5
+- Various fixes for Ruby remote plugins
+- Move Current#range and #range= methods to Buffer
+- Add better logging
+
 # 0.0.4
 - Add support for loading Ruby remote plugins from nvim
 - Add Current#range to return a LineRange enumerable object
