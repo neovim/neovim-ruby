@@ -30,11 +30,11 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   config.around(:example) do |spec|
-    Support.clean_workspace
+    Support.setup_workspace
     Timeout.timeout(2) { spec.run }
   end
 
   config.after(:suite) do
-    Support.remove_workspace
+    Support.teardown_workspace
   end
 end

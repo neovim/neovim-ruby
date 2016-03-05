@@ -18,12 +18,12 @@ module Support
     File.join(workspace, name)
   end
 
-  def self.remove_workspace
-    FileUtils.rm_rf(workspace)
+  def self.setup_workspace
+    teardown_workspace
+    FileUtils.mkdir_p(workspace)
   end
 
-  def self.clean_workspace
-    remove_workspace
-    FileUtils.mkdir_p(workspace)
+  def self.teardown_workspace
+    FileUtils.rm_rf(workspace)
   end
 end
