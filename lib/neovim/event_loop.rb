@@ -41,7 +41,7 @@ module Neovim
         end
         self
       rescue IO::WaitWritable
-        IO.select(nil, [@wr])
+        IO.select(nil, [@wr], nil, 1)
         retry
       end
     end

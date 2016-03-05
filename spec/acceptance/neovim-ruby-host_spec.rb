@@ -1,5 +1,4 @@
 require "helper"
-require "tmpdir"
 
 RSpec.describe "neovim-ruby-host" do
   it "loads and runs plugins from Ruby source files" do
