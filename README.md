@@ -52,9 +52,8 @@ Neovim.plugin do |plug|
     nvim.current.line = str
   end
 
-  # Define a function called "Sum" which sets the current line. This function
-  # is executed synchronously, so the result of the block will be returned to
-  # nvim.
+  # Define a function called "Sum" which adds two numbers. This function is
+  # executed synchronously, so the result of the block will be returned to nvim.
   plug.function(:Sum, :nargs => 2, :sync => true) do |nvim, x, y|
     x + y
   end
