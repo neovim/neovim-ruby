@@ -22,6 +22,7 @@ RSpec.describe Neovim do
         expect(Neovim.attach_tcp("0.0.0.0", port).strwidth("hi")).to eq(2)
       ensure
         Process.kill(:TERM, pid)
+        Process.waitpid(pid)
       end
     end
   end
@@ -49,8 +50,7 @@ RSpec.describe Neovim do
 
   describe ".attach_child" do
     it "spawns and attaches to a child process" do
-      nvim = Neovim.attach_child(nvim_argv)
-      expect(nvim.strwidth("hi")).to eq(2)
+      expect(Neovim.attach_child(nvim_argv).strwidth("hi")).to eq(2)
     end
   end
 

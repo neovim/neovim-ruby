@@ -2,7 +2,11 @@ require "bundler/gem_tasks"
 require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:spec)
-task :default => :spec
+
+namespace :spec do
+  desc "Install Neovim and run specs on CI"
+  task :ci => ["neovim:install", :spec]
+end
 
 namespace :neovim do
   vendor = File.expand_path("../vendor/neovim", __FILE__)
@@ -24,3 +28,5 @@ namespace :neovim do
        "make"
   end
 end
+
+task :default => :spec
