@@ -26,8 +26,8 @@ addons:
       - pkg-config
 
 cache:
-  directories:
-    - vendor/neovim
+  - apt
+  - bundler
 
 env: REPORT_COVERAGE=1
 script: bundle exec rake spec:ci
