@@ -5,8 +5,12 @@ RSpec.describe "neovim-ruby-host" do
     plugin1_path = Support.file_path("plugin1.rb")
     File.write(plugin1_path, <<-RUBY)
       Neovim.plugin do |plug|
-        plug.command(:SyncAdd, :args => 2, :sync => true) do |nvim, x, y|
+        plug.function(:SyncAdd, :args => 2, :sync => true) do |nvim, x, y|
           x + y
+        end
+
+        plug.autocmd(:BufEnter, :pattern => "*.rb") do |nvim|
+          nvim.current.line = "Ruby file, eh?"
         end
       end
     RUBY
@@ -26,12 +30,17 @@ RSpec.describe "neovim-ruby-host" do
     nvim.command("let host = rpcstart('#{host_exe}', ['#{plugin1_path}', '#{plugin2_path}'])")
 
     expect(nvim.eval("rpcrequest(host, 'poll')")).to eq("ok")
-    expect(nvim.eval("rpcrequest(host, '#{plugin1_path}:command:SyncAdd', [1, 2])")).to eq(3)
+    expect(nvim.eval("rpcrequest(host, '#{plugin1_path}:function:SyncAdd', [1, 2])")).to eq(3)
+
+    expect {
+      nvim.eval("rpcnotify(host, '#{plugin1_path}:autocmd:BufEnter:*.rb')")
+      nvim.eval("rpcrequest(host, 'poll')")
+    }.to change { nvim.current.buffer.lines.to_a }.from([""]).to(["Ruby file, eh?"])
 
     expect {
       nvim.eval("rpcnotify(host, '#{plugin2_path}:command:AsyncSetLine', ['foo'])")
       nvim.eval("rpcrequest(host, 'poll')")
-    }.to change { nvim.current.buffer.lines.to_a }.from([""]).to(["foo"])
+    }.to change { nvim.current.buffer.lines.to_a }.from(["Ruby file, eh?"]).to(["foo"])
 
     expect {
       nvim.eval("rpcnotify(host, 'Unknown')")
