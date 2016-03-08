@@ -1,7 +1,8 @@
 require "helper"
+require "rspec/retry"
 
 RSpec.describe "neovim-ruby-host" do
-  it "loads and runs plugins from Ruby source files" do
+  it "loads and runs plugins from Ruby source files", :retry => 3, :retry_wait => 1 do
     plugin1_path = Support.file_path("plugin1.rb")
     File.write(plugin1_path, <<-RUBY)
       Neovim.plugin do |plug|
