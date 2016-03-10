@@ -5,19 +5,6 @@ require "fileutils"
 
 module Neovim
   RSpec.describe EventLoop do
-    it "calls the setup callback" do
-      messages = []
-      rd, wr = IO.pipe
-      event_loop = EventLoop.new(rd, wr)
-
-      fiber = Fiber.new do
-        setup_cb = Proc.new { Fiber.yield(:setup) }
-        event_loop.run(nil, setup_cb)
-      end
-
-      expect(fiber.resume).to eq(:setup)
-    end
-
     shared_context "socket behavior" do
       it "sends and receives data" do
         messages = []

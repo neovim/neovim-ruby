@@ -27,7 +27,7 @@ module Neovim
       self
     end
 
-    def run(message_cb, setup_cb=nil)
+    def run(message_cb)
       data_cb = Proc.new do |data|
         @unpacker.feed_each(data) do |msg|
           debug("received #{msg.inspect}")
@@ -35,7 +35,7 @@ module Neovim
         end
       end
 
-      @event_loop.run(data_cb, setup_cb)
+      @event_loop.run(data_cb)
     rescue => e
       fatal("got unexpected error #{e}")
       debug(e.backtrace.join("\n"))

@@ -30,10 +30,9 @@ module Neovim
       self
     end
 
-    def run(request_cb=nil, notification_cb=nil, setup_cb=nil)
+    def run(request_cb=nil, notification_cb=nil)
       request_cb ||= Proc.new {}
       notification_cb ||= Proc.new {}
-      setup_cb ||= Proc.new {}
 
       msg_cb = Proc.new do |msg|
         kind, *rest = msg
@@ -51,7 +50,7 @@ module Neovim
         end
       end
 
-      @msgpack_stream.run(msg_cb, setup_cb)
+      @msgpack_stream.run(msg_cb)
     rescue => e
       fatal("got unexpected error #{e}")
       debug(e.backtrace.join("\n"))

@@ -46,9 +46,8 @@ module Neovim
       end
     end
 
-    def run(message_callback, setup_callback=nil)
+    def run(message_callback)
       @running = true
-      setup_callback.call if setup_callback.respond_to?(:call)
 
       loop do
         break unless @running
