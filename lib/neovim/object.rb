@@ -5,14 +5,15 @@ module Neovim
     def initialize(index, session)
       @index = index
       @session = session
+      @api = session.api
     end
 
     def respond_to?(method_name)
-      super || methods.include?(method_name.to_sym)
+      super || rpc_methods.include?(method_name.to_sym)
     end
 
     def method_missing(method_name, *args)
-      if methods.include?(method_name)
+      if rpc_methods.include?(method_name)
         @session.request(qualify(method_name), @index, *args)
       else
         super
@@ -24,10 +25,14 @@ module Neovim
     end
 
     def methods
-      super | @session.api_methods_for_prefix(function_prefix)
+      super | rpc_methods
     end
 
     private
+
+    def rpc_methods
+      @api.functions_with_prefix(function_prefix)
+    end
 
     def function_prefix
       "#{self.class.to_s.split("::").last.downcase}_"

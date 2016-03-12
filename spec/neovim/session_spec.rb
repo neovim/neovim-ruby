@@ -24,13 +24,6 @@ module Neovim
         session.request(:vim_set_current_line, large_str)
         expect(session.request(:vim_get_current_line)).to eq(large_str)
       end
-
-      describe "#api_methods_for_prefix" do
-        it "returns relevant functions without a prefix" do
-          methods = session.api_methods_for_prefix("vim_")
-          expect(methods).to include(:strwidth)
-        end
-      end
     end
 
     context "tcp" do

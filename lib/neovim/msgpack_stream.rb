@@ -10,24 +10,13 @@ module Neovim
       @unpacker = MessagePack::Unpacker.new
     end
 
-    def register_session(session)
-      session.api_info.types.each do |type, info|
-        klass = Neovim.const_get(type)
-        id = info.fetch("id")
-
-        @unpacker.register_type(id) do |data|
-          klass.new(MessagePack.unpack(data), session)
-        end
-      end
-    end
-
     def send(msg)
       debug("sending #{msg.inspect}")
       @event_loop.send(MessagePack.pack(msg))
       self
     end
 
-    def run(message_cb)
+    def run(message_cb, session=nil)
       data_cb = Proc.new do |data|
         @unpacker.feed_each(data) do |msg|
           debug("received #{msg.inspect}")
@@ -35,6 +24,7 @@ module Neovim
         end
       end
 
+      register_types(session)
       @event_loop.run(data_cb)
     rescue => e
       fatal("got unexpected error #{e}")
@@ -43,6 +33,21 @@ module Neovim
 
     def stop
       @event_loop.stop
+    end
+
+    private
+
+    def register_types(session)
+      return unless session && session.api
+
+      session.api.types.each do |type, info|
+        klass = Neovim.const_get(type)
+        id = info.fetch("id")
+
+        @unpacker.register_type(id) do |data|
+          klass.new(MessagePack.unpack(data), session)
+        end
+      end
     end
   end
 end

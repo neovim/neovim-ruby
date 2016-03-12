@@ -12,16 +12,12 @@ module Neovim
       @pending_requests = {}
     end
 
-    def register_session(session)
-      @msgpack_stream.register_session(session)
-    end
-
     def request(method, *args, &response_cb)
       reqid = @request_id
       @request_id += 1
 
       @msgpack_stream.send([0, reqid, method, args])
-      @pending_requests[reqid] = response_cb || Proc.new {}
+      @pending_requests[reqid] = response_cb
       self
     end
 
@@ -30,7 +26,7 @@ module Neovim
       self
     end
 
-    def run(request_cb=nil, notification_cb=nil)
+    def run(request_cb=nil, notification_cb=nil, session=nil)
       request_cb ||= Proc.new {}
       notification_cb ||= Proc.new {}
 
@@ -50,7 +46,7 @@ module Neovim
         end
       end
 
-      @msgpack_stream.run(msg_cb)
+      @msgpack_stream.run(msg_cb, session)
     rescue => e
       fatal("got unexpected error #{e}")
       debug(e.backtrace.join("\n"))

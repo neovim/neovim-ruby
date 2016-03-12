@@ -6,10 +6,11 @@ module Neovim
 
     def initialize(session)
       @session = session
+      @api = session.api
     end
 
     def method_missing(method_name, *args)
-      if methods.include?(method_name)
+      if rpc_methods.include?(method_name)
         @session.request("vim_#{method_name}", *args)
       else
         super
@@ -17,15 +18,21 @@ module Neovim
     end
 
     def respond_to?(method_name)
-      super || methods.include?(method_name.to_sym)
+      super || rpc_methods.include?(method_name.to_sym)
     end
 
     def methods
-      super | @session.api_methods_for_prefix("vim_")
+      super | rpc_methods
     end
 
     def current
       Current.new(@session)
+    end
+
+    private
+
+    def rpc_methods
+      @api.functions_with_prefix("vim_")
     end
   end
 end

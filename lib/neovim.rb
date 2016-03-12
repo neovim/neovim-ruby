@@ -46,7 +46,7 @@ module Neovim
   def self.attach_event_loop(event_loop)
     msgpack_stream = MsgpackStream.new(event_loop)
     async_session = AsyncSession.new(msgpack_stream)
-    session = Session.new(async_session)
+    session = Session.new(async_session).discover_api
 
     Client.new(session)
   end
