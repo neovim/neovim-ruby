@@ -1,5 +1,9 @@
 module Neovim
   class APIInfo
+    def self.null
+      new([nil, {"functions" => [], "types" => []}])
+    end
+
     def initialize(data)
       @data = data
     end

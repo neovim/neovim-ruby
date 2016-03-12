@@ -2,8 +2,6 @@ require "neovim/api_info"
 
 module Neovim
   class Session
-    attr_reader :api
-
     def initialize(async_session)
       @async_session = async_session
     end
@@ -11,6 +9,10 @@ module Neovim
     def discover_api
       @api = APIInfo.new(request(:vim_get_api_info))
       self
+    end
+
+    def api
+      @api ||= APIInfo.null
     end
 
     def request(method, *args)
