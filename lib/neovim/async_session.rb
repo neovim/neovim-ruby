@@ -55,5 +55,9 @@ module Neovim
       fatal("got unexpected error #{e}")
       debug(e.backtrace.join("\n"))
     end
+
+    def stop
+      @msgpack_stream.stop
+    end
   end
 end
