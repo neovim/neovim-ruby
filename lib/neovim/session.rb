@@ -42,6 +42,11 @@ module Neovim
       err ? raise(ArgumentError, err) : res
     end
 
+    def notify(method, *args)
+      @async_session.notify(method, *args)
+      nil
+    end
+
     private
 
     def in_handler_fiber(&block)

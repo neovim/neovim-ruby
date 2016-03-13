@@ -9,7 +9,9 @@ module Neovim
     end
 
     def functions
-      @functions ||= @data.fetch(1).fetch("functions")
+      @functions ||= @data.fetch(1).fetch("functions").map do |func|
+        Function.new(func["name"], func["async"])
+      end
     end
 
     def types
@@ -20,24 +22,30 @@ module Neovim
       @channel_id ||= @data.fetch(0)
     end
 
-    def defined?(function)
-      functions.any? do |func|
-        func["name"] == function.to_s
+    def functions_with_prefix(prefix)
+      functions.select do |function|
+        function.name =~ /\A#{prefix}/
       end
     end
 
-    def functions_with_prefix(prefix)
-      functions.inject([]) do |acc, function|
-        if function["name"] =~ /\A#{prefix}/
-          acc + [function["name"].sub(/\A#{prefix}/, "").to_sym]
-        else
-          acc
-        end
+    def function(name)
+      functions.find do |func|
+        func.name == name.to_s
       end
     end
 
     def inspect
       "#<#{self.class}:0x%x @types={...} @functions={...}>" % (object_id << 1)
+    end
+
+    class Function < Struct.new(:name, :async)
+      def call(session, *args)
+        if async
+          session.notify(name, *args)
+        else
+          session.request(name, *args)
+        end
+      end
     end
   end
 end

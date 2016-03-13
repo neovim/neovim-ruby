@@ -13,8 +13,8 @@ module Neovim
     end
 
     def method_missing(method_name, *args)
-      if rpc_methods.include?(method_name)
-        @session.request(qualify(method_name), @index, *args)
+      if func = @api.function(qualify(method_name))
+        func.call(@session, @index, *args)
       else
         super
       end
@@ -31,7 +31,9 @@ module Neovim
     private
 
     def rpc_methods
-      @api.functions_with_prefix(function_prefix)
+      @api.functions_with_prefix(function_prefix).map do |func|
+        func.name.sub(/\A#{function_prefix}/, "").to_sym
+      end
     end
 
     def function_prefix

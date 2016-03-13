@@ -5,12 +5,12 @@ require "fileutils"
 module Neovim
   RSpec.describe Session do
     shared_context "session behavior" do
-      it "supports functions with async=false" do
+      it "supports requests" do
         expect(session.request(:vim_strwidth, "foobar")).to be(6)
       end
 
-      it "supports functions with async=true" do
-        expect(session.request(:vim_input, "jk")).to be(2)
+      it "supports notifications" do
+        expect(session.notify(:vim_input, "jk")).to be(nil)
       end
 
       it "raises an exception when there are errors" do

@@ -10,8 +10,8 @@ module Neovim
     end
 
     def method_missing(method_name, *args)
-      if rpc_methods.include?(method_name)
-        @session.request("vim_#{method_name}", *args)
+      if func = @api.function("vim_#{method_name}")
+        func.call(session, *args)
       else
         super
       end
@@ -32,7 +32,9 @@ module Neovim
     private
 
     def rpc_methods
-      @api.functions_with_prefix("vim_")
+      @api.functions_with_prefix("vim_").map do |func|
+        func.name.sub(/\Avim_/, "").to_sym
+      end
     end
   end
 end
