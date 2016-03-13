@@ -15,12 +15,10 @@ module Neovim
           ))
         end
 
-        req_cb = Proc.new do |request|
-          Fiber.yield(request)
-        end
-
         fiber = Fiber.new do
-          async.run(req_cb)
+          async.run do |message|
+            Fiber.yield(message)
+          end
         end
 
         request = fiber.resume
@@ -44,12 +42,10 @@ module Neovim
           ))
         end
 
-        not_cb = Proc.new do |notification|
-          Fiber.yield(notification)
-        end
-
         fiber = Fiber.new do
-          async.run(nil, not_cb)
+          async.run do |message|
+            Fiber.yield(message)
+          end
         end
 
         notification = fiber.resume

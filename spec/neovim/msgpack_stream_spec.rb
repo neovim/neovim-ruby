@@ -18,8 +18,9 @@ module Neovim
         end
 
         fiber = Fiber.new do
-          msg_cb = Proc.new { |msg| Fiber.yield(msg) }
-          stream.send([1]).run(msg_cb)
+          stream.send([1]).run do |message|
+            Fiber.yield(message)
+          end
         end
 
         server_message = fiber.resume

@@ -46,7 +46,7 @@ module Neovim
       end
     end
 
-    def run(message_callback)
+    def run(&message_callback)
       @running = true
 
       loop do

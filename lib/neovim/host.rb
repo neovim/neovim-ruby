@@ -28,18 +28,18 @@ module Neovim
 
     def initialize(manifest)
       @manifest = manifest
-      @event_loop = EventLoop.stdio
-      @msgpack_stream = MsgpackStream.new(@event_loop)
-      @async_session = AsyncSession.new(@msgpack_stream)
+
+      event_loop = EventLoop.stdio
+      msgpack_stream = MsgpackStream.new(event_loop)
+      async_session = AsyncSession.new(msgpack_stream)
+      @session = Session.new(async_session)
     end
 
     def run
-      callback = Proc.new do |msg|
+      @session.run do |msg|
         debug("received #{msg.inspect}")
         @manifest.handle(msg, client)
       end
-
-      @async_session.run(callback, callback)
     rescue => e
       fatal("got unexpected error #{e}")
       debug(e.backtrace.join("\n"))
@@ -48,7 +48,7 @@ module Neovim
     private
 
     def client
-      @client ||= Client.new(Session.new(@async_session))
+      @client ||= Client.new(@session.discover_api)
     end
   end
 end

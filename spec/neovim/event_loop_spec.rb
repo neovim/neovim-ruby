@@ -19,8 +19,9 @@ module Neovim
         end
 
         fiber = Fiber.new do
-          msg_cb = Proc.new { |msg| Fiber.yield(msg) }
-          event_loop.send("data").run(msg_cb)
+          event_loop.send("data").run do |message|
+            Fiber.yield(message)
+          end
         end
 
         expect(fiber.resume).to eq("OK")
@@ -64,8 +65,9 @@ module Neovim
           end
 
           fiber = Fiber.new do
-            msg_cb = Proc.new { |msg| Fiber.yield(msg) }
-            event_loop.send("data").run(msg_cb)
+            event_loop.send("data").run do |message|
+              Fiber.yield(message)
+            end
           end
 
           expect(fiber.resume).to eq("OK")
@@ -84,8 +86,9 @@ module Neovim
         message = MessagePack.pack([0, 0, :vim_strwidth, ["hi"]])
 
         fiber = Fiber.new do
-          msg_cb = Proc.new { |msg| Fiber.yield(msg) }
-          event_loop.send(message).run(msg_cb)
+          event_loop.send(message).run do |message|
+            Fiber.yield(message)
+          end
         end
 
         expect(fiber.resume).to eq(MessagePack.pack([1, 0, nil, 2]))

@@ -26,27 +26,24 @@ module Neovim
       self
     end
 
-    def run(request_cb=nil, notification_cb=nil, session=nil)
-      request_cb ||= Proc.new {}
-      notification_cb ||= Proc.new {}
+    def run(session=nil, &message_cb)
+      message_cb ||= Proc.new {}
 
-      msg_cb = Proc.new do |msg|
+      @msgpack_stream.run(session) do |msg|
         kind, *rest = msg
 
         case kind
         when 0
           reqid, method, args = rest
-          request_cb.call(Request.new(method, args, @msgpack_stream, reqid))
+          message_cb.call(Request.new(method, args, @msgpack_stream, reqid))
         when 1
           reqid, (_, error), result = rest
           @pending_requests.fetch(reqid).call(error, result)
         when 2
           method, args = rest
-          notification_cb.call(Notification.new(method, args))
+          message_cb.call(Notification.new(method, args))
         end
       end
-
-      @msgpack_stream.run(msg_cb, session)
     rescue => e
       fatal("got unexpected error #{e}")
       debug(e.backtrace.join("\n"))

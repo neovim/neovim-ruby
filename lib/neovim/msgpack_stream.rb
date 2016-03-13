@@ -16,16 +16,15 @@ module Neovim
       self
     end
 
-    def run(message_cb, session=nil)
-      data_cb = Proc.new do |data|
+    def run(session=nil, &message_cb)
+      register_types(session)
+
+      @event_loop.run do |data|
         @unpacker.feed_each(data) do |msg|
           debug("received #{msg.inspect}")
           message_cb.call(msg)
         end
       end
-
-      register_types(session)
-      @event_loop.run(data_cb)
     rescue => e
       fatal("got unexpected error #{e}")
       debug(e.backtrace.join("\n"))
