@@ -27,7 +27,6 @@ module Neovim
 
       @async_session.run(self) do |message|
         in_handler_fiber { message_cb.call(message) }
-        STDERR.puts("AFTER")
       end
     ensure
       stop
@@ -53,7 +52,6 @@ module Neovim
     def running_request(method, *args)
       Fiber.new do
         @async_session.request(method, *args) do |err, res|
-          STDERR.puts("BEFORE")
           @handler_fiber.transfer(err, res)
         end
       end.transfer
