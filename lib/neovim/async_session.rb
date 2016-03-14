@@ -38,7 +38,7 @@ module Neovim
           message_cb.call(Request.new(method, args, @msgpack_stream, reqid))
         when 1
           reqid, (_, error), result = rest
-          @pending_requests.fetch(reqid).call(error, result)
+          @pending_requests.delete(reqid).call(error, result)
         when 2
           method, args = rest
           message_cb.call(Notification.new(method, args))

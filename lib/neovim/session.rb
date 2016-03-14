@@ -21,8 +21,8 @@ module Neovim
     def run(&message_cb)
       message_cb ||= Proc.new {}
 
-      until @pending_messages.empty?
-        in_handler_fiber { message_cb.call(@pending_messages.shift) }
+      while message = @pending_messages.shift
+        in_handler_fiber { message_cb.call(message) }
       end
 
       @async_session.run(self) do |message|
