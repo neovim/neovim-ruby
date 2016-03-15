@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+#
+# Convert STDIN from JSON to MessagePack.
+require "json"
+require "msgpack"
+
+ARGF.binmode
+puts MessagePack.pack(JSON.parse(ARGF.read.strip))
