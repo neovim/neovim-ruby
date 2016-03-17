@@ -48,6 +48,7 @@ module Neovim
 
     def run(&message_callback)
       @running = true
+      message_callback ||= Proc.new {}
 
       loop do
         break unless @running

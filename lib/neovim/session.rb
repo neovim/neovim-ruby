@@ -6,7 +6,7 @@ module Neovim
     def initialize(async_session)
       @async_session = async_session
       @pending_messages = []
-      @running = false
+      @in_handler = false
     end
 
     def api
@@ -33,7 +33,7 @@ module Neovim
     end
 
     def request(method, *args)
-      if @handler_fiber
+      if @in_handler
         err, res = running_request(method, *args)
       else
         err, res = stopped_request(method, *args)
@@ -50,16 +50,22 @@ module Neovim
     private
 
     def in_handler_fiber(&block)
-      @handler_fiber = Fiber.new(&block)
-      @handler_fiber.resume
+      Fiber.new do
+        @in_handler = true
+        begin
+          block.call
+        ensure
+          @in_handler = false
+        end
+      end.resume
     end
 
     def running_request(method, *args)
-      Fiber.new do
-        @async_session.request(method, *args) do |err, res|
-          @handler_fiber.transfer(err, res)
-        end
-      end.transfer
+      fiber = Fiber.current
+      @async_session.request(method, *args) do |err, res|
+        fiber.resume(err, res)
+      end
+      Fiber.yield
     end
 
     def stopped_request(method, *args)
