@@ -21,10 +21,6 @@ RSpec.describe "neovim-ruby-host" do
         plug.command(:AsyncSetLine, :args => 1) do |nvim, str|
           nvim.current.line = str
         end
-
-        plug.command(:SlowAsyncCommand) do |nvim, str|
-          sleep
-        end
       end
     RUBY
 
@@ -43,9 +39,6 @@ RSpec.describe "neovim-ruby-host" do
     expect {
       nvim.eval("rpcnotify(host, '#{plugin2_path}:command:AsyncSetLine', ['foo'])")
     }.to change { nvim.current.buffer.lines.to_a }.from(["Ruby file, eh?"]).to(["foo"])
-
-    nvim.eval("rpcnotify(host, '#{plugin2_path}:command:SlowAsyncCommand')")
-    expect(nvim.eval("rpcrequest(host, '#{plugin1_path}:function:SyncAdd', [1, 2])")).to eq(3)
 
     expect {
       nvim.eval("rpcnotify(host, 'Unknown')")
