@@ -19,7 +19,7 @@ module Neovim
         end
 
         fiber = Fiber.new do
-          event_loop.send("data").run do |message|
+          event_loop.write("data").run do |message|
             Fiber.yield(message)
           end
         end
@@ -65,7 +65,7 @@ module Neovim
           end
 
           fiber = Fiber.new do
-            event_loop.send("data").run do |message|
+            event_loop.write("data").run do |message|
               Fiber.yield(message)
             end
           end
@@ -86,7 +86,7 @@ module Neovim
         message = MessagePack.pack([0, 0, :vim_strwidth, ["hi"]])
 
         fiber = Fiber.new do
-          event_loop.send(message).run do |message|
+          event_loop.write(message).run do |message|
             Fiber.yield(message)
           end
         end

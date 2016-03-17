@@ -10,9 +10,9 @@ module Neovim
       @unpacker = MessagePack::Unpacker.new
     end
 
-    def send(msg)
-      debug("sending #{msg.inspect}")
-      @event_loop.send(MessagePack.pack(msg))
+    def write(msg)
+      debug("writing #{msg.inspect}")
+      @event_loop.write(MessagePack.pack(msg))
       self
     end
 

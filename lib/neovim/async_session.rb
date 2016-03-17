@@ -16,13 +16,13 @@ module Neovim
       reqid = @request_id
       @request_id += 1
 
-      @msgpack_stream.send([0, reqid, method, args])
+      @msgpack_stream.write([0, reqid, method, args])
       @pending_requests[reqid] = response_cb
       self
     end
 
     def notify(method, *args)
-      @msgpack_stream.send([2, method, args])
+      @msgpack_stream.write([2, method, args])
       self
     end
 

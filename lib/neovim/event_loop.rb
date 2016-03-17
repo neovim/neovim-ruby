@@ -30,10 +30,10 @@ module Neovim
       @running = false
     end
 
-    def send(data)
+    def write(data)
       start = 0
       size = data.size
-      debug("sending #{data.inspect}")
+      debug("writing #{data.inspect}")
 
       begin
         while start < size

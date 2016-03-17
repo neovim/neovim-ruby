@@ -18,7 +18,7 @@ module Neovim
         end
 
         fiber = Fiber.new do
-          stream.send([1]).run do |message|
+          stream.write([1]).run do |message|
             Fiber.yield(message)
           end
         end

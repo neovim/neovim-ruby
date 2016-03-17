@@ -14,12 +14,12 @@ module Neovim
     end
 
     def respond(value)
-      @msgpack_stream.send([1, @request_id, nil, value])
+      @msgpack_stream.write([1, @request_id, nil, value])
       self
     end
 
     def error(message)
-      @msgpack_stream.send([1, @request_id, message, nil])
+      @msgpack_stream.write([1, @request_id, message, nil])
       self
     end
   end
