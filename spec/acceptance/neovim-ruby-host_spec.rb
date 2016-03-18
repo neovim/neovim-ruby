@@ -33,19 +33,21 @@ RSpec.describe "neovim-ruby-host" do
     expect(nvim.eval("rpcrequest(host, '#{plugin1_path}:function:SyncAdd', [1, 2])")).to eq(3)
 
     expect {
-      nvim.eval("rpcnotify(host, '#{plugin1_path}:autocmd:BufEnter:*.rb')")
+      nvim.command("call rpcnotify(host, '#{plugin1_path}:autocmd:BufEnter:*.rb')")
+      sleep 0.1
     }.to change { nvim.current.buffer.lines.to_a }.from([""]).to(["Ruby file, eh?"])
 
     expect {
-      nvim.eval("rpcnotify(host, '#{plugin2_path}:command:AsyncSetLine', ['foo'])")
+      nvim.command("call rpcnotify(host, '#{plugin2_path}:command:AsyncSetLine', ['foo'])")
+      sleep 0.1
     }.to change { nvim.current.buffer.lines.to_a }.from(["Ruby file, eh?"]).to(["foo"])
 
     expect {
-      nvim.eval("rpcnotify(host, 'Unknown')")
+      nvim.command("call rpcnotify(host, 'Unknown')")
     }.not_to raise_error
 
     expect {
-      nvim.eval("call rpcrequest(host, 'Unknown')")
+      nvim.command("call rpcrequest(host, 'Unknown')")
     }.to raise_error(ArgumentError)
   end
 end
