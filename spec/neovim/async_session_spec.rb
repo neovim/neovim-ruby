@@ -22,6 +22,7 @@ module Neovim
         end
 
         server_thread.join
+        event_loop.shutdown
 
         expect(request).to be_a(Request)
         expect(request.method_name).to eq("func")
@@ -47,6 +48,7 @@ module Neovim
         end
 
         server_thread.join
+        event_loop.shutdown
 
         expect(notification).to be_a(Notification)
         expect(notification.method_name).to eq("func")
@@ -77,6 +79,7 @@ module Neovim
         expect(result).to eq("result")
 
         server_thread.join
+        event_loop.shutdown
 
         expect(messages).to eq(
           [MessagePack.pack([0, 0, "func", [1, 2, 3]])]

@@ -24,6 +24,7 @@ module Neovim
         end
 
         server_thread.join
+        event_loop.shutdown
         expect(server_message).to eq([2])
         expect(client_messages).to eq([MessagePack.pack([1])])
       end

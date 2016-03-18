@@ -25,6 +25,7 @@ module Neovim
         end
 
         server_thread.join
+        event_loop.shutdown
         expect(message).to eq("OK")
         expect(messages).to eq(["data"])
       end
@@ -91,6 +92,7 @@ module Neovim
           event_loop.stop
         end
 
+        event_loop.shutdown
         expect(message).to eq(MessagePack.pack([1, 0, nil, 2]))
       end
     end

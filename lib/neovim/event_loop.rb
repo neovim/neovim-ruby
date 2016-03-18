@@ -66,5 +66,11 @@ module Neovim
     def stop
       @running = false
     end
+
+    def shutdown
+      stop
+      [@rd, @wr].each(&:close)
+    rescue IOError
+    end
   end
 end

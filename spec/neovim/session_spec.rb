@@ -35,6 +35,8 @@ module Neovim
           session.stop
         end
 
+        event_loop.shutdown
+
         expect(messages.first).to be_a(Notification)
         expect(messages.first.method_name).to eq("my_event")
         expect(messages.first.arguments).to eq(["foo"])
@@ -64,8 +66,9 @@ module Neovim
         Process.waitpid(nvim_pid)
       end
 
+      let(:event_loop) { EventLoop.tcp("0.0.0.0", nvim_port) }
+
       let(:session) do
-        event_loop = EventLoop.tcp("0.0.0.0", nvim_port)
         stream = MsgpackStream.new(event_loop)
         async = AsyncSession.new(stream)
         Session.new(async)
@@ -97,8 +100,9 @@ module Neovim
         Process.waitpid(nvim_pid)
       end
 
+      let(:event_loop) { EventLoop.unix(socket_path) }
+
       let(:session) do
-        event_loop = EventLoop.unix(socket_path)
         stream = MsgpackStream.new(event_loop)
         async = AsyncSession.new(stream)
         Session.new(async)
@@ -108,8 +112,9 @@ module Neovim
     end
 
     context "child" do
+      let(:event_loop) { EventLoop.child(["-n", "-u", "NONE"]) }
+
       let(:session) do
-        event_loop = EventLoop.child(["-n", "-u", "NONE"])
         stream = MsgpackStream.new(event_loop)
         async = AsyncSession.new(stream)
         Session.new(async)
