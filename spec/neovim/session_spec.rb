@@ -24,6 +24,21 @@ module Neovim
         session.request(:vim_set_current_line, large_str)
         expect(session.request(:vim_get_current_line)).to eq(large_str)
       end
+
+      it "subscribes to events" do
+        session.request(:vim_subscribe, "my_event")
+        session.request(:vim_command, "call rpcnotify(0, 'my_event', 'foo')")
+
+        messages = []
+        session.run do |msg|
+          messages << msg
+          session.stop
+        end
+
+        expect(messages.first).to be_a(Notification)
+        expect(messages.first.method_name).to eq("my_event")
+        expect(messages.first.arguments).to eq(["foo"])
+      end
     end
 
     context "tcp" do

@@ -7,6 +7,7 @@ module Neovim
       @async_session = async_session
       @pending_messages = []
       @in_handler = false
+      @running = false
     end
 
     def api
@@ -19,11 +20,14 @@ module Neovim
     end
 
     def run(&message_cb)
+      @running = true
       message_cb ||= Proc.new {}
 
       while message = @pending_messages.shift
         in_handler_fiber { message_cb.call(message) }
       end
+
+      return unless @running
 
       @async_session.run(self) do |message|
         in_handler_fiber { message_cb.call(message) }
@@ -45,6 +49,11 @@ module Neovim
     def notify(method, *args)
       @async_session.notify(method, *args)
       nil
+    end
+
+    def stop
+      @running = false
+      @async_session.stop
     end
 
     private
@@ -79,11 +88,6 @@ module Neovim
       end
 
       [error, result]
-    end
-
-    def stop
-      @handler_fiber = nil
-      @async_session.stop
     end
   end
 end

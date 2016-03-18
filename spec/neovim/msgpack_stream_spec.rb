@@ -17,15 +17,13 @@ module Neovim
           server.close
         end
 
-        fiber = Fiber.new do
-          stream.write([1]).run do |message|
-            Fiber.yield(message)
-          end
+        server_message = nil
+        stream.write([1]).run do |message|
+          server_message = message
+          stream.stop
         end
 
-        server_message = fiber.resume
         server_thread.join
-
         expect(server_message).to eq([2])
         expect(client_messages).to eq([MessagePack.pack([1])])
       end

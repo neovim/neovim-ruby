@@ -15,13 +15,11 @@ module Neovim
           ))
         end
 
-        fiber = Fiber.new do
-          async.run do |message|
-            Fiber.yield(message)
-          end
+        request = nil
+        async.run do |msg|
+          request = msg
+          async.stop
         end
-
-        request = fiber.resume
 
         server_thread.join
 
@@ -42,13 +40,11 @@ module Neovim
           ))
         end
 
-        fiber = Fiber.new do
-          async.run do |message|
-            Fiber.yield(message)
-          end
+        notification = nil
+        async.run do |message|
+          notification = message
+          async.stop
         end
-
-        notification = fiber.resume
 
         server_thread.join
 
@@ -71,13 +67,14 @@ module Neovim
           ))
         end
 
-        fiber = Fiber.new do
-          async.request("func", 1, 2, 3) do |error, result|
-            Fiber.yield(error, result)
-          end.run
-        end
+        error, result = nil
+        async.request("func", 1, 2, 3) do |err, res|
+          error, result = err, res
+          async.stop
+        end.run
 
-        expect(fiber.resume).to eq(["error", "result"])
+        expect(error).to eq("error")
+        expect(result).to eq("result")
 
         server_thread.join
 

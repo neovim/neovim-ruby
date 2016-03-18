@@ -18,14 +18,14 @@ module Neovim
           server.close
         end
 
-        fiber = Fiber.new do
-          event_loop.write("data").run do |message|
-            Fiber.yield(message)
-          end
+        message = nil
+        event_loop.write("data").run do |msg|
+          message = msg
+          event_loop.stop
         end
 
-        expect(fiber.resume).to eq("OK")
         server_thread.join
+        expect(message).to eq("OK")
         expect(messages).to eq(["data"])
       end
     end
@@ -64,14 +64,14 @@ module Neovim
             srv_stdin.write("OK")
           end
 
-          fiber = Fiber.new do
-            event_loop.write("data").run do |message|
-              Fiber.yield(message)
-            end
+          message = nil
+          event_loop.write("data").run do |msg|
+            message = msg
+            event_loop.stop
           end
 
-          expect(fiber.resume).to eq("OK")
           server_thread.join
+          expect(message).to eq("OK")
           expect(messages).to eq(["data"])
         ensure
           STDOUT.reopen(old_stdout)
@@ -83,15 +83,15 @@ module Neovim
     context "child" do
       it "sends and receives data" do
         event_loop = EventLoop.child(["-n", "-u", "NONE"])
-        message = MessagePack.pack([0, 0, :vim_strwidth, ["hi"]])
+        input = MessagePack.pack([0, 0, :vim_strwidth, ["hi"]])
 
-        fiber = Fiber.new do
-          event_loop.write(message).run do |message|
-            Fiber.yield(message)
-          end
+        message = nil
+        event_loop.write(input).run do |msg|
+          message = msg
+          event_loop.stop
         end
 
-        expect(fiber.resume).to eq(MessagePack.pack([1, 0, nil, 2]))
+        expect(message).to eq(MessagePack.pack([1, 0, nil, 2]))
       end
     end
   end
