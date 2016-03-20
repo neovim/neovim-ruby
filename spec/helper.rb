@@ -13,7 +13,14 @@ end
 
 Thread.abort_on_exception = true
 
-ENV["NVIM_EXECUTABLE"] = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
+nvim_bin = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
+
+if File.exists?(nvim_bin)
+  ENV["NVIM_EXECUTABLE"] = nvim_bin
+else
+  warn("Can't find vendored `nvim` executable. Build it with `rake neovim:build`")
+  exit(1)
+end
 
 Neovim.logger = Logger.new(STDERR).tap do |logger|
   logger.level = ENV.fetch("NVIM_RUBY_LOG_LEVEL", Logger::WARN).to_i
