@@ -5,7 +5,7 @@ module Neovim
   RSpec.describe MsgpackStream do
     shared_context "msgpack stream behavior" do
       it "sends and receives data" do
-        stream = MsgpackStream.new(event_loop)
+        msgpack_stream = MsgpackStream.new(event_loop)
         client_messages = []
 
         server_thread = Thread.new do
@@ -18,13 +18,12 @@ module Neovim
         end
 
         server_message = nil
-        stream.write([1]).run do |message|
+        msgpack_stream.write([1]).run do |message|
           server_message = message
-          stream.stop
+          msgpack_stream.shutdown
         end
 
         server_thread.join
-        event_loop.shutdown
         expect(server_message).to eq([2])
         expect(client_messages).to eq([MessagePack.pack([1])])
       end

@@ -30,11 +30,7 @@ module Neovim
       it "delegates messages to the manifest" do
         messages = []
         manifest = instance_double(Manifest)
-
-        event_loop = EventLoop.child(["-n", "-u", "NONE"])
-        msgpack_stream = MsgpackStream.new(event_loop)
-        async_session = AsyncSession.new(msgpack_stream)
-        session = Session.new(async_session)
+        session = Session.child(["-n", "-u", "NONE"])
 
         host = Host.new(manifest, session)
 

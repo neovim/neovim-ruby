@@ -3,6 +3,28 @@ require "fiber"
 
 module Neovim
   class Session
+    def self.tcp(host, port)
+      from_event_loop(EventLoop.tcp(host, port))
+    end
+
+    def self.unix(socket_path)
+      from_event_loop(EventLoop.unix(socket_path))
+    end
+
+    def self.child(argv)
+      from_event_loop(EventLoop.child(argv))
+    end
+
+    def self.stdio
+      from_event_loop(EventLoop.stdio)
+    end
+
+    def self.from_event_loop(event_loop)
+      msgpack_stream = MsgpackStream.new(event_loop)
+      async_session = AsyncSession.new(msgpack_stream)
+      new(async_session)
+    end
+
     def initialize(async_session)
       @async_session = async_session
       @pending_messages = []
@@ -54,6 +76,11 @@ module Neovim
     def stop
       @running = false
       @async_session.stop
+    end
+
+    def shutdown
+      @running = false
+      @async_session.shutdown
     end
 
     private

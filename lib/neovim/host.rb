@@ -27,14 +27,7 @@ module Neovim
     end
 
     def initialize(manifest, session=nil)
-      session ||= begin
-        event_loop = EventLoop.stdio
-        msgpack_stream = MsgpackStream.new(event_loop)
-        async_session = AsyncSession.new(msgpack_stream)
-        Session.new(async_session)
-      end
-
-      @session = session
+      @session = session || Session.stdio
       @manifest = manifest
     end
 

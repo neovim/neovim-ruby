@@ -5,7 +5,7 @@ module Neovim
     shared_context "async session behavior" do
       it "receives requests" do
         stream = MsgpackStream.new(event_loop)
-        async = AsyncSession.new(stream)
+        async_session = AsyncSession.new(stream)
 
         server_thread = Thread.new do
           client = server.accept
@@ -16,13 +16,12 @@ module Neovim
         end
 
         request = nil
-        async.run do |msg|
+        async_session.run do |msg|
           request = msg
-          async.stop
+          async_session.shutdown
         end
 
         server_thread.join
-        event_loop.shutdown
 
         expect(request).to be_a(Request)
         expect(request.method_name).to eq("func")
@@ -31,7 +30,7 @@ module Neovim
 
       it "receives notifications" do
         stream = MsgpackStream.new(event_loop)
-        async = AsyncSession.new(stream)
+        async_session = AsyncSession.new(stream)
 
         server_thread = Thread.new do
           client = server.accept
@@ -42,13 +41,12 @@ module Neovim
         end
 
         notification = nil
-        async.run do |message|
+        async_session.run do |message|
           notification = message
-          async.stop
+          async_session.shutdown
         end
 
         server_thread.join
-        event_loop.shutdown
 
         expect(notification).to be_a(Notification)
         expect(notification.method_name).to eq("func")
@@ -57,7 +55,7 @@ module Neovim
 
       it "receives responses to requests" do
         stream = MsgpackStream.new(event_loop)
-        async = AsyncSession.new(stream)
+        async_session = AsyncSession.new(stream)
         messages = []
 
         server_thread = Thread.new do
@@ -70,16 +68,16 @@ module Neovim
         end
 
         error, result = nil
-        async.request("func", 1, 2, 3) do |err, res|
+        async_session.request("func", 1, 2, 3) do |err, res|
           error, result = err, res
-          async.stop
+          async_session.shutdown
         end.run
 
         expect(error).to eq("error")
         expect(result).to eq("result")
 
         server_thread.join
-        event_loop.shutdown
+        async_session.shutdown
 
         expect(messages).to eq(
           [MessagePack.pack([0, 0, "func", [1, 2, 3]])]

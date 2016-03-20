@@ -12,15 +12,15 @@ module Neovim
   end
 
   def self.attach_tcp(host, port)
-    attach_event_loop(EventLoop.tcp(host, port))
+    Client.new(Session.tcp(host, port).discover_api)
   end
 
   def self.attach_unix(socket_path)
-    attach_event_loop(EventLoop.unix(socket_path))
+    Client.new(Session.unix(socket_path).discover_api)
   end
 
   def self.attach_child(argv=[])
-    attach_event_loop(EventLoop.child(argv))
+    Client.new(Session.child(argv).discover_api)
   end
 
   def self.start_host(rplugin_paths)
@@ -42,13 +42,4 @@ module Neovim
   def self.logger
     Logging.logger
   end
-
-  def self.attach_event_loop(event_loop)
-    msgpack_stream = MsgpackStream.new(event_loop)
-    async_session = AsyncSession.new(msgpack_stream)
-    session = Session.new(async_session).discover_api
-
-    Client.new(session)
-  end
-  private_class_method :attach_event_loop
 end

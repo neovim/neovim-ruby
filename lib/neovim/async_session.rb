@@ -52,5 +52,9 @@ module Neovim
     def stop
       @msgpack_stream.stop
     end
+
+    def shutdown
+      @msgpack_stream.shutdown
+    end
   end
 end

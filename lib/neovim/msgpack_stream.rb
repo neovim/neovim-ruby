@@ -34,6 +34,10 @@ module Neovim
       @event_loop.stop
     end
 
+    def shutdown
+      @event_loop.shutdown
+    end
+
     private
 
     def register_types(session)
