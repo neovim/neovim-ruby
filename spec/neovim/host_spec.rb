@@ -27,7 +27,30 @@ module Neovim
     end
 
     describe "#run" do
-      # TODO: Find a way to test this without excessive mocking
+      it "delegates messages to the manifest" do
+        messages = []
+        manifest = instance_double(Manifest)
+
+        event_loop = EventLoop.child(["-n", "-u", "NONE"])
+        msgpack_stream = MsgpackStream.new(event_loop)
+        async_session = AsyncSession.new(msgpack_stream)
+        session = Session.new(async_session)
+
+        host = Host.new(manifest, session)
+
+        expect(manifest).to receive(:handle) do |msg, client|
+          expect(msg.method_name).to eq("my_event")
+          expect(msg.arguments).to eq(["arg"])
+          expect(client).to be_a(Client)
+
+          session.stop
+        end
+
+        session.request(:vim_subscribe, "my_event")
+        session.request(:vim_command, "call rpcnotify(0, 'my_event', 'arg')")
+
+        host.run
+      end
     end
   end
 end

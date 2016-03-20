@@ -17,7 +17,7 @@ module Neovim
       @request_id += 1
 
       @msgpack_stream.write([0, reqid, method, args])
-      @pending_requests[reqid] = response_cb
+      @pending_requests[reqid] = response_cb || Proc.new {}
       self
     end
 
