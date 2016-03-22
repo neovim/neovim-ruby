@@ -6,8 +6,8 @@ require "neovim/msgpack_stream"
 require "neovim/session"
 require "neovim/plugin"
 
-# This is the main entrypoint to the +Neovim+ gem. It allows you to connect to
-# a running +nvim+ instance programmatically or define a remote plugin to be
+# The main entrypoint to the +Neovim+ gem. It allows you to connect to a
+# running +nvim+ instance programmatically or define a remote plugin to be
 # autoloaded by +nvim+.
 #
 # You can connect to a running +nvim+ instance by setting or inspecting the

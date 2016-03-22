@@ -1,6 +1,14 @@
 require "neovim/current"
 
 module Neovim
+  # Client to a running +nvim+ instance. The interface is generated at
+  # runtime via the +vim_get_api_info+ RPC call. Some methods return
+  # +Neovim::Object+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
+  # which similarly have dynamically generated interfaces.
+  #
+  # @see Buffer
+  # @see Window
+  # @see Tabpage
   class Client
     attr_reader :session
 
@@ -9,6 +17,7 @@ module Neovim
       @api = session.api
     end
 
+    # Intercept method calls and delegate to appropriate RPC methods
     def method_missing(method_name, *args)
       if func = @api.function("vim_#{method_name}")
         func.call(session, *args)
@@ -17,14 +26,19 @@ module Neovim
       end
     end
 
+    # Extend +respond_to?+ to support RPC methods
     def respond_to?(method_name)
       super || rpc_methods.include?(method_name.to_sym)
     end
 
+    # Extend +methods+ to include RPC methods
     def methods
       super | rpc_methods
     end
 
+    # Access to objects belonging to the current +nvim+ context
+    # @return [Current]
+    # @see Current
     def current
       Current.new(@session)
     end
