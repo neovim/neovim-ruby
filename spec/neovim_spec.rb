@@ -1,4 +1,3 @@
-require "neovim/plugin"
 require "helper"
 require "fileutils"
 

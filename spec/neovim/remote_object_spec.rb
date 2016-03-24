@@ -1,10 +1,7 @@
 require "helper"
-require "neovim/buffer"
-require "neovim/tabpage"
-require "neovim/window"
 
 module Neovim
-  RSpec.describe Object do
+  RSpec.describe RemoteObject do
     context Window do
       let(:window) { Neovim.attach_child(["-n", "-u", "NONE"]).current.window }
 

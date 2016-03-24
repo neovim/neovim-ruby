@@ -1,7 +1,7 @@
-require "neovim/object"
+require "neovim/remote_object"
 
 module Neovim
-  class Tabpage < Neovim::Object
+  class Tabpage < RemoteObject
 
 # The following methods are dynamically generated.
 =begin

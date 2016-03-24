@@ -1,6 +1,4 @@
 require "helper"
-require "neovim/manifest"
-require "neovim/plugin"
 
 module Neovim
   RSpec.describe Manifest do

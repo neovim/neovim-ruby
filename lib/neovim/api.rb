@@ -1,5 +1,5 @@
 module Neovim
-  class APIInfo
+  class API
     def self.null
       new([nil, {"functions" => [], "types" => []}])
     end

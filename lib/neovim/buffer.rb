@@ -1,20 +1,31 @@
-require "neovim/object"
+require "neovim/remote_object"
 require "neovim/line_range"
 
 module Neovim
-  class Buffer < Neovim::Object
+  # Class representing an +nvim+ buffer
+  class Buffer < RemoteObject
+    # A +LineRange+ object representing the buffer's lines
+    # @return [LineRange]
     def lines
       @lines ||= LineRange.new(self, 0, -1)
     end
 
-    def lines=(arr)
-      lines[0..-1] = arr
+    # Replace all the lines of the buffer
+    # @param strs [Array<String>] The replacement lines
+    # @return [Array<String>]
+    def lines=(strs)
+      lines[0..-1] = strs
     end
 
+    # A +LineRange+ object representing the buffer's selection range
+    # @return [LineRange]
     def range
       @range ||= LineRange.new(self, 0, -1)
     end
 
+    # Set the buffer's current selection range
+    # @param _range [Range] The replacement range
+    # @return [LineRange]
     def range=(_range)
       _end = _range.exclude_end? ? _range.end - 1 : _range.end
       @range = LineRange.new(self, _range.begin, _end)

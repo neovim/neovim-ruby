@@ -1,4 +1,4 @@
-require "neovim/api_info"
+require "neovim/api"
 require "fiber"
 
 module Neovim
@@ -33,11 +33,11 @@ module Neovim
     end
 
     def api
-      @api ||= APIInfo.null
+      @api ||= API.null
     end
 
     def discover_api
-      @api = APIInfo.new(request(:vim_get_api_info))
+      @api = API.new(request(:vim_get_api_info))
       self
     end
 
