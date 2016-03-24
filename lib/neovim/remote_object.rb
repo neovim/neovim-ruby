@@ -14,6 +14,7 @@ module Neovim
     end
 
     # Serialize object to MessagePack.
+    #
     # @param packer [MessagePack::Packer]
     # @return [String]
     def to_msgpack(packer)

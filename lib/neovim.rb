@@ -67,28 +67,35 @@ module Neovim
   end
 
   # Connect to a running +nvim+ instance over TCP
+  #
   # @param host [String] The hostname or IP address
   # @param port [Fixnum] The port
   # @return [Client]
+  # @see Session.tcp
   def self.attach_tcp(host, port)
     Client.new(Session.tcp(host, port).discover_api)
   end
 
   # Connect to a running +nvim+ instance over a UNIX domain socket
+  #
   # @param socket_path [String] The socket path
   # @return [Client]
+  # @see Session.unix
   def self.attach_unix(socket_path)
     Client.new(Session.unix(socket_path).discover_api)
   end
 
   # Spawn and connect to a child +nvim+ process
+  #
   # @param argv [Array] The arguments to pass to the spawned process
   # @return [Client]
+  # @see Session.child
   def self.attach_child(argv=[])
     Client.new(Session.child(argv).discover_api)
   end
 
   # Define an +nvim+ remote plugin using the plugin DSL
+  #
   # @yield [Plugin::DSL]
   # @return [Plugin]
   # @see Plugin::DSL
@@ -103,6 +110,7 @@ module Neovim
   # Start a plugin host. This is called by the +nvim-ruby-host+ executable,
   # which is spawned by +nvim+ to discover and run Ruby plugins, and acts as
   # the bridge between +nvim+ and the plugin.
+  #
   # @param rplugin_paths [Array<String>] The paths to remote plugin files
   # @return [void]
   # @see Host
@@ -111,14 +119,18 @@ module Neovim
   end
 
   # Set the Neovim global logger
+  #
   # @param logger [Logger] The target logger
   # @return [Logger]
+  # @see Logging
   def self.logger=(logger)
     Logging.logger = logger
   end
 
   # The Neovim global logger
+  #
   # @return [Logger]
+  # @see Logging
   def self.logger
     Logging.logger
   end

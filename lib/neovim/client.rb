@@ -1,10 +1,10 @@
 require "neovim/current"
 
 module Neovim
-  # Client to a running +nvim+ instance. The interface is generated at runtime
-  # via the +vim_get_api_info+ RPC call. Some methods return +RemoteObject+
-  # subclasses (i.e. +Buffer+, +Window+, or +Tabpage+), which similarly have
-  # dynamically generated interfaces.
+  # Client to a running +nvim+ instance. The interface is generated at
+  # runtime via the +vim_get_api_info+ RPC call. Some methods return
+  # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
+  # which similarly have dynamically generated interfaces.
   #
   # @see Buffer
   # @see Window
@@ -37,6 +37,7 @@ module Neovim
     end
 
     # Access to objects belonging to the current +nvim+ context
+    #
     # @return [Current]
     # @see Current
     def current
