@@ -40,30 +40,30 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
-@!method line_count
+@method line_count
   @return [Fixnum]
 
-@!method get_line(index)
+@method get_line(index)
   @param [Fixnum] index
   @return [String]
 
-@!method set_line(index, line)
+@method set_line(index, line)
   @param [Fixnum] index
   @param [String] line
   @return [void]
 
-@!method del_line(index)
+@method del_line(index)
   @param [Fixnum] index
   @return [void]
 
-@!method get_line_slice(start, end, include_start, include_end)
+@method get_line_slice(start, end, include_start, include_end)
   @param [Fixnum] start
   @param [Fixnum] end
   @param [Boolean] include_start
   @param [Boolean] include_end
   @return [Array<String>]
 
-@!method set_line_slice(start, end, include_start, include_end, replacement)
+@method set_line_slice(start, end, include_start, include_end, replacement)
   @param [Fixnum] start
   @param [Fixnum] end
   @param [Boolean] include_start
@@ -71,47 +71,47 @@ module Neovim
   @param [Array<String>] replacement
   @return [void]
 
-@!method get_var(name)
+@method get_var(name)
   @param [String] name
   @return [Object]
 
-@!method set_var(name, value)
+@method set_var(name, value)
   @param [String] name
   @param [Object] value
   @return [Object]
 
-@!method get_option(name)
+@method get_option(name)
   @param [String] name
   @return [Object]
 
-@!method set_option(name, value)
+@method set_option(name, value)
   @param [String] name
   @param [Object] value
   @return [void]
 
-@!method get_number
+@method get_number
   @return [Fixnum]
 
-@!method get_name
+@method get_name
   @return [String]
 
-@!method set_name(name)
+@method set_name(name)
   @param [String] name
   @return [void]
 
-@!method is_valid
+@method is_valid
   @return [Boolean]
 
-@!method insert(lnum, lines)
+@method insert(lnum, lines)
   @param [Fixnum] lnum
   @param [Array<String>] lines
   @return [void]
 
-@!method get_mark(name)
+@method get_mark(name)
   @param [String] name
   @return [Array<Fixnum>]
 
-@!method add_highlight(src_id, hl_group, line, col_start, col_end)
+@method add_highlight(src_id, hl_group, line, col_start, col_end)
   @param [Fixnum] src_id
   @param [String] hl_group
   @param [Fixnum] line
@@ -119,7 +119,7 @@ module Neovim
   @param [Fixnum] col_end
   @return [Fixnum]
 
-@!method clear_highlight(src_id, line_start, line_end)
+@method clear_highlight(src_id, line_start, line_end)
   @param [Fixnum] src_id
   @param [Fixnum] line_start
   @param [Fixnum] line_end

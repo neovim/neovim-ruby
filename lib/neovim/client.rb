@@ -60,141 +60,141 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
-@!method command(str)
+@method command(str)
   @param [String] str
   @return [void]
 
-@!method feedkeys(keys, mode, escape_csi)
+@method feedkeys(keys, mode, escape_csi)
   @param [String] keys
   @param [String] mode
   @param [Boolean] escape_csi
   @return [void]
 
-@!method input(keys)
+@method input(keys)
   @param [String] keys
   @return [Fixnum]
 
-@!method replace_termcodes(str, from_part, do_lt, special)
+@method replace_termcodes(str, from_part, do_lt, special)
   @param [String] str
   @param [Boolean] from_part
   @param [Boolean] do_lt
   @param [Boolean] special
   @return [String]
 
-@!method command_output(str)
+@method command_output(str)
   @param [String] str
   @return [String]
 
-@!method eval(str)
+@method eval(str)
   @param [String] str
   @return [Object]
 
-@!method call_function(fname, args)
+@method call_function(fname, args)
   @param [String] fname
   @param [Array] args
   @return [Object]
 
-@!method strwidth(str)
+@method strwidth(str)
   @param [String] str
   @return [Fixnum]
 
-@!method list_runtime_paths
+@method list_runtime_paths
   @return [Array<String>]
 
-@!method change_directory(dir)
+@method change_directory(dir)
   @param [String] dir
   @return [void]
 
-@!method get_current_line
+@method get_current_line
   @return [String]
 
-@!method set_current_line(line)
+@method set_current_line(line)
   @param [String] line
   @return [void]
 
-@!method del_current_line
+@method del_current_line
   @return [void]
 
-@!method get_var(name)
+@method get_var(name)
   @param [String] name
   @return [Object]
 
-@!method set_var(name, value)
+@method set_var(name, value)
   @param [String] name
   @param [Object] value
   @return [Object]
 
-@!method get_vvar(name)
+@method get_vvar(name)
   @param [String] name
   @return [Object]
 
-@!method get_option(name)
+@method get_option(name)
   @param [String] name
   @return [Object]
 
-@!method set_option(name, value)
+@method set_option(name, value)
   @param [String] name
   @param [Object] value
   @return [void]
 
-@!method out_write(str)
+@method out_write(str)
   @param [String] str
   @return [void]
 
-@!method err_write(str)
+@method err_write(str)
   @param [String] str
   @return [void]
 
-@!method report_error(str)
+@method report_error(str)
   @param [String] str
   @return [void]
 
-@!method get_buffers
+@method get_buffers
   @return [Array<Buffer>]
 
-@!method get_current_buffer
+@method get_current_buffer
   @return [Buffer]
 
-@!method set_current_buffer(buffer)
+@method set_current_buffer(buffer)
   @param [Buffer] buffer
   @return [void]
 
-@!method get_windows
+@method get_windows
   @return [Array<Window>]
 
-@!method get_current_window
+@method get_current_window
   @return [Window]
 
-@!method set_current_window(window)
+@method set_current_window(window)
   @param [Window] window
   @return [void]
 
-@!method get_tabpages
+@method get_tabpages
   @return [Array<Tabpage>]
 
-@!method get_current_tabpage
+@method get_current_tabpage
   @return [Tabpage]
 
-@!method set_current_tabpage(tabpage)
+@method set_current_tabpage(tabpage)
   @param [Tabpage] tabpage
   @return [void]
 
-@!method subscribe(event)
+@method subscribe(event)
   @param [String] event
   @return [void]
 
-@!method unsubscribe(event)
+@method unsubscribe(event)
   @param [String] event
   @return [void]
 
-@!method name_to_color(name)
+@method name_to_color(name)
   @param [String] name
   @return [Fixnum]
 
-@!method get_color_map
+@method get_color_map
   @return [Dictionary]
 
-@!method get_api_info
+@method get_api_info
   @return [Array]
 
 =end

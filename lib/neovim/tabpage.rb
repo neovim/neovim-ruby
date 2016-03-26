@@ -5,22 +5,22 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
-@!method get_windows
+@method get_windows
   @return [Array<Window>]
 
-@!method get_var(name)
+@method get_var(name)
   @param [String] name
   @return [Object]
 
-@!method set_var(name, value)
+@method set_var(name, value)
   @param [String] name
   @param [Object] value
   @return [Object]
 
-@!method get_window
+@method get_window
   @return [Window]
 
-@!method is_valid
+@method is_valid
   @return [Boolean]
 
 =end

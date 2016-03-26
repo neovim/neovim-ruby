@@ -50,7 +50,7 @@ namespace :neovim do
       params.shift unless prefix == "vim"
       param_names = params.map(&:last)
       param_str = params.empty? ? "" : "(#{param_names.join(", ")})"
-      method_decl = "@!method #{method_name}#{param_str}"
+      method_decl = "@method #{method_name}#{param_str}"
       param_docs = params.map do |type, name|
         "  @param [#{type}] #{name}"
       end

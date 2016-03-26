@@ -73,55 +73,55 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
-@!method get_buffer
+@method get_buffer
   @return [Buffer]
 
-@!method get_cursor
+@method get_cursor
   @return [Array<Fixnum>]
 
-@!method set_cursor(pos)
+@method set_cursor(pos)
   @param [Array<Fixnum>] pos
   @return [void]
 
-@!method get_height
+@method get_height
   @return [Fixnum]
 
-@!method set_height(height)
+@method set_height(height)
   @param [Fixnum] height
   @return [void]
 
-@!method get_width
+@method get_width
   @return [Fixnum]
 
-@!method set_width(width)
+@method set_width(width)
   @param [Fixnum] width
   @return [void]
 
-@!method get_var(name)
+@method get_var(name)
   @param [String] name
   @return [Object]
 
-@!method set_var(name, value)
+@method set_var(name, value)
   @param [String] name
   @param [Object] value
   @return [Object]
 
-@!method get_option(name)
+@method get_option(name)
   @param [String] name
   @return [Object]
 
-@!method set_option(name, value)
+@method set_option(name, value)
   @param [String] name
   @param [Object] value
   @return [void]
 
-@!method get_position
+@method get_position
   @return [Array<Fixnum>]
 
-@!method get_tabpage
+@method get_tabpage
   @return [Tabpage]
 
-@!method is_valid
+@method is_valid
   @return [Boolean]
 
 =end
