@@ -1,3 +1,9 @@
+# 0.0.6
+- Update Session with improved Fiber coordination
+- Documentation
+- Rename APIInfo -> API
+- Rename Object -> RemoteObject
+
 # 0.0.5
 - Various fixes for Ruby remote plugins
 - Move Current#range and #range= methods to Buffer
