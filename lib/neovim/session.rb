@@ -105,12 +105,12 @@ module Neovim
     #
     # If this method is called outside a callback, write to the stream and
     # run the event loop until a response is received. Messages received
-    # before the response are enqueued to be handled later.
+    # in the meantime are enqueued to be handled later.
     #
     # @param method [String, Symbol] The RPC method name
     # @param *args [Array] The RPC method arguments
     # @return [Object] The response from the RPC call
-    # @raise [ArgumentError] The error from the RPC call
+    # @raise [ArgumentError] An error returned from +nvim+
     def request(method, *args)
       if @in_handler
         err, res = running_request(method, *args)

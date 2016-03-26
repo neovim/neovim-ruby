@@ -5,9 +5,13 @@ module Neovim
     attr_accessor :handlers
     attr_reader :source
 
-    def self.from_config_block(source, &block)
+    # Entrypoint to the +Neovim.plugin+ DSL.
+    #
+    # @param source [String] The path of the plugin file.
+    # @yield [DSL] The receiver of DSL methods.
+    def self.from_config_block(source)
       new(source).tap do |instance|
-        block.call(DSL.new(instance)) if block
+        yield DSL.new(instance) if block_given?
       end
     end
 
@@ -16,6 +20,7 @@ module Neovim
       @source = source
     end
 
+    # @return [Array] Handler specs used by +nvim+ to register plugins.
     def specs
       @handlers.map(&:to_spec)
     end

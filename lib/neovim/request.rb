@@ -1,4 +1,6 @@
 module Neovim
+  # A synchronous message from +nvim+.
+  # @api private
   class Request
     attr_reader :method_name, :arguments
 

@@ -1,4 +1,5 @@
 module Neovim
+  # Provide an enumerable interface for dealing with ranges of lines.
   class LineRange
     include Enumerable
 
@@ -8,53 +9,92 @@ module Neovim
       @end = _end
     end
 
+    # @return [Array<String>]
     def to_a
       @buffer.get_line_slice(@begin, @end, true, true)
     end
 
+    # @yield [String] The current line
+    # @return [Array<String>]
     def each(&block)
       to_a.each(&block)
     end
 
-    def [](idx, len=nil)
-      case idx
+    # @overload [](index)
+    #   @param index [Fixnum]
+    #
+    # @overload [](range)
+    #   @param range [Range]
+    #
+    # @overload [](index, length)
+    #   @param index [Fixnum]
+    #   @param length [Fixnum]
+    #
+    # @example Get the first line using an index
+    #   line_range[0] # => "first"
+    # @example Get the first two lines using a +Range+
+    #   line_range[0..1] # => ["first", "second"]
+    # @example Get the first two lines using an index and length
+    #   line_range[0, 2] # => ["first", "second"]
+    def [](pos, len=nil)
+      case pos
       when ::Range
-        _end = idx.exclude_end? ? idx.end - 1 : idx.end
-        LineRange.new(@buffer, idx.begin, _end)
+        _end = pos.exclude_end? ? pos.end - 1 : pos.end
+        LineRange.new(@buffer, pos.begin, _end)
       else
         if len
-          LineRange.new(@buffer, idx, idx + len - 1)
+          LineRange.new(@buffer, pos, pos + len - 1)
         else
-          @buffer.get_line(idx)
+          @buffer.get_line(pos)
         end
       end
     end
     alias_method :slice, :[]
 
+    # @overload []=(index, string)
+    #   @param index [Fixnum]
+    #   @param string [String]
+    #
+    # @overload []=(index, length, strings)
+    #   @param index [Fixnum]
+    #   @param length [Fixnum]
+    #   @param strings [Array<String>]
+    #
+    # @overload []=(range, strings)
+    #   @param range [Range]
+    #   @param strings [Array<String>]
+    #
+    # @example Replace the first line using an index
+    #   line_range[0] = "first"
+    # @example Replace the first two lines using a +Range+
+    #   line_range[0..1] = ["first", "second"]
+    # @example Replace the first two lines using an index and length
+    #   line_range[0, 2] = ["first", "second"]
     def []=(*args)
       *target, val = args
-      idx, len = target
+      pos, len = target
 
-      case idx
+      case pos
       when ::Range
         @buffer.set_line_slice(
-          idx.begin,
-          idx.end,
+          pos.begin,
+          pos.end,
           true,
-          !idx.exclude_end?,
+          !pos.exclude_end?,
           val
         )
       else
         if len
-          @buffer.set_line_slice(idx, idx + len, true, false, val)
+          @buffer.set_line_slice(pos, pos + len, true, false, val)
         else
-          @buffer.set_line(idx, val)
+          @buffer.set_line(pos, val)
         end
       end
     end
 
-    def replace(other_ary)
-      self[0..-1] = other_ary
+    # @param other [Array] The replacement lines
+    def replace(other)
+      self[0..-1] = other
       self
     end
   end

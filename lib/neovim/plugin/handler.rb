@@ -1,5 +1,6 @@
 module Neovim
   class Plugin
+    # @api private
     class Handler
       attr_reader :block
 

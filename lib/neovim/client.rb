@@ -39,6 +39,10 @@ module Neovim
     # Access to objects belonging to the current +nvim+ context
     #
     # @return [Current]
+    # @example Get the current buffer
+    #   client.current.buffer
+    # @example Set the current line
+    #   client.current.line = "New line"
     # @see Current
     def current
       Current.new(@session)

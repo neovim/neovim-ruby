@@ -40,6 +40,11 @@ module Neovim
       super | rpc_methods
     end
 
+    # Extend +==+ to only look at class and index.
+    def ==(other)
+      other.class.equal?(self.class) && @index == other.index
+    end
+
     private
 
     def rpc_methods

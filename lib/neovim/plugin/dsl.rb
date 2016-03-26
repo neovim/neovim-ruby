@@ -2,21 +2,54 @@ require "neovim/plugin/handler"
 
 module Neovim
   class Plugin
+    # The DSL exposed in +Neovim.plugin+ blocks.
     class DSL < BasicObject
       def initialize(plugin)
         @plugin = plugin
       end
 
+      # Register an +nvim+ command
+      #
+      # @param name [String]
+      # @param options [Hash]
+      # @param &block [Proc, nil]
+      #
+      # @option options [Fixnum] :nargs
+      # @option options [Fixnum] :count
+      # @option options [String] :eval
+      # @option options [Boolean] :sync (false)
+      # @option options [Boolean] :bang
+      # @option options [Boolean] :register
+      # @option options [Boolean] :complete
+      # @option options [String, Boolean] :range
       def command(name, options={}, &block)
         register_handler(:command, name, options, block)
       end
 
+      # Register an +nvim+ function
+      #
+      # @param name [String]
+      # @param options [Hash]
+      # @param &block [Proc, nil]
+      #
+      # @option options [String] :eval
+      # @option options [Boolean] :sync (false)
+      # @option options [String, Boolean] :range
       def function(name, options={}, &block)
         register_handler(:function, name, options, block)
       end
 
-      def autocmd(name, options={}, &block)
-        register_handler(:autocmd, name, options, block)
+      # Register an +nvim+ autocmd
+      #
+      # @param event [String]
+      # @param options [Hash]
+      # @param &block [Proc, nil]
+      #
+      # @option options [String] :pattern
+      # @option options [String] :eval
+      # @option options [Boolean] :sync (false)
+      def autocmd(event, options={}, &block)
+        register_handler(:autocmd, event, options, block)
       end
 
       private
