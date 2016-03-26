@@ -17,8 +17,6 @@ namespace :neovim do
        "cd #{vendor} && " +
        "make distclean && " +
        "make"
-
-    Rake::Task["neovim:generate_docs"].invoke
   end
 
   desc "Update vendored Neovim revision"
@@ -28,8 +26,6 @@ namespace :neovim do
        "make distclean && " +
        "git pull origin master && " +
        "make"
-
-    Rake::Task["neovim:generate_docs"].invoke
   end
 
   desc "Generate Neovim remote API docs"
