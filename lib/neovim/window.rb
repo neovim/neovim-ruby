@@ -2,7 +2,7 @@ require "neovim/remote_object"
 
 module Neovim
   class Window < RemoteObject
-    # Interface for interacting with the cursor position
+    # Interface for interacting with the cursor position.
     #
     # @return [Cursor]
     # @see Cursor
@@ -15,7 +15,7 @@ module Neovim
         @window = window
       end
 
-      # Get the current coordinates of the cursor
+      # Get the current coordinates of the cursor.
       #
       # @return [Array<Fixnum>]
       # @note coordinates are 1-indexed
@@ -23,7 +23,7 @@ module Neovim
         @window.get_cursor
       end
 
-      # Set the coordinates of the cursor
+      # Set the coordinates of the cursor.
       #
       # @param coords [Array<Fixnum>] The coordinates as a pair of integers
       # @return [Array<Fixnum>]
@@ -34,7 +34,7 @@ module Neovim
         @window.set_cursor(coords)
       end
 
-      # Get the cursor's line number
+      # Get the cursor's line number.
       #
       # @return [Fixnum]
       # @note Line numbers are 1-indexed
@@ -42,7 +42,7 @@ module Neovim
         coordinates[0]
       end
 
-      # Set the cursor's line number
+      # Set the cursor's line number.
       #
       # @param n [Fixnum]
       # @return [Fixnum]
@@ -52,7 +52,7 @@ module Neovim
         n
       end
 
-      # Get the cursor's column number
+      # Get the cursor's column number.
       #
       # @return [Fixnum]
       # @note Column numbers are 1-indexed
@@ -60,7 +60,7 @@ module Neovim
         coordinates[1]
       end
 
-      # Set the cursor's column number
+      # Set the cursor's column number.
       #
       # @param n [Fixnum]
       # @return [Fixnum]

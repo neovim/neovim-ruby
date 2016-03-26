@@ -8,7 +8,7 @@ module Neovim
 
     private_class_method :new
 
-    # Connect to a TCP socket
+    # Connect to a TCP socket.
     #
     # @param host [String] The hostname or IP address
     # @param port [Fixnum] The port
@@ -18,7 +18,7 @@ module Neovim
       new(socket)
     end
 
-    # Connect to a UNIX domain socket
+    # Connect to a UNIX domain socket.
     #
     # @param path [String] The socket path
     # @return [EventLoop]
@@ -27,7 +27,7 @@ module Neovim
       new(socket)
     end
 
-    # Spawn and connect to a child +nvim+ process
+    # Spawn and connect to a child +nvim+ process.
     #
     # @param argv [Array] The arguments to pass to the spawned process
     # @return [EventLoop]
@@ -92,14 +92,14 @@ module Neovim
       debug(e.backtrace.join("\n"))
     end
 
-    # Stop the event loop
+    # Stop the event loop.
     #
     # @return [void]
     def stop
       @running = false
     end
 
-    # Stop the event loop and close underlying +IO+s
+    # Stop the event loop and close underlying +IO+s.
     #
     # @return [void]
     def shutdown

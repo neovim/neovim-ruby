@@ -4,7 +4,7 @@ require "fiber"
 module Neovim
   # Wraps an +AsyncSession+ in a synchronous API using +Fiber+s.
   class Session
-    # Connect to a TCP socket
+    # Connect to a TCP socket.
     #
     # @param host [String] The hostname or IP address
     # @param port [Fixnum] The port
@@ -14,7 +14,7 @@ module Neovim
       from_event_loop(EventLoop.tcp(host, port))
     end
 
-    # Connect to a UNIX domain socket
+    # Connect to a UNIX domain socket.
     #
     # @param socket_path [String] The socket path
     # @return [Session]
@@ -23,7 +23,7 @@ module Neovim
       from_event_loop(EventLoop.unix(socket_path))
     end
 
-    # Spawn and connect to a child +nvim+ process
+    # Spawn and connect to a child +nvim+ process.
     #
     # @param argv [Array] The arguments to pass to the spawned process
     # @return [Session]

@@ -2,9 +2,9 @@ require "neovim/remote_object"
 require "neovim/line_range"
 
 module Neovim
-  # Class representing an +nvim+ buffer
+  # Class representing an +nvim+ buffer.
   class Buffer < RemoteObject
-    # A +LineRange+ object representing the buffer's lines
+    # A +LineRange+ object representing the buffer's lines.
     #
     # @return [LineRange]
     # @see LineRange
@@ -12,7 +12,7 @@ module Neovim
       @lines ||= LineRange.new(self, 0, -1)
     end
 
-    # Replace all the lines of the buffer
+    # Replace all the lines of the buffer.
     #
     # @param strs [Array<String>] The replacement lines
     # @return [Array<String>]
@@ -20,7 +20,7 @@ module Neovim
       lines[0..-1] = strs
     end
 
-    # A +LineRange+ object representing the buffer's selection range
+    # A +LineRange+ object representing the buffer's selection range.
     #
     # @return [LineRange]
     # @see LineRange
@@ -28,7 +28,7 @@ module Neovim
       @range ||= LineRange.new(self, 0, -1)
     end
 
-    # Set the buffer's current selection range
+    # Set the buffer's current selection range.
     #
     # @param _range [Range] The replacement range
     # @return [LineRange]

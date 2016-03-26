@@ -8,7 +8,7 @@ module Neovim
         @plugin = plugin
       end
 
-      # Register an +nvim+ command
+      # Register an +nvim+ command.
       #
       # @param name [String]
       # @param options [Hash]
@@ -26,7 +26,7 @@ module Neovim
         register_handler(:command, name, options, block)
       end
 
-      # Register an +nvim+ function
+      # Register an +nvim+ function.
       #
       # @param name [String]
       # @param options [Hash]
@@ -39,7 +39,7 @@ module Neovim
         register_handler(:function, name, options, block)
       end
 
-      # Register an +nvim+ autocmd
+      # Register an +nvim+ autocmd.
       #
       # @param event [String]
       # @param options [Hash]

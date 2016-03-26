@@ -16,7 +16,7 @@ module Neovim
     end
 
     # Send an RPC request and enqueue it's callback to be called when a
-    # response is received
+    # response is received.
     #
     # @param method [Symbol, String] The RPC method name
     # @param *args [Array] The arguments to the RPC method
@@ -78,7 +78,7 @@ module Neovim
       debug(e.backtrace.join("\n"))
     end
 
-    # Stop the event loop
+    # Stop the event loop.
     #
     # @return [void]
     # @see EventLoop#stop
@@ -86,7 +86,7 @@ module Neovim
       @msgpack_stream.stop
     end
 
-    # Shut down the event loop
+    # Shut down the event loop.
     #
     # @return [void]
     # @see EventLoop#shutdown

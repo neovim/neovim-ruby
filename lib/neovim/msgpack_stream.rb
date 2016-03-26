@@ -12,7 +12,7 @@ module Neovim
       @unpacker = MessagePack::Unpacker.new
     end
 
-    # Serialize an RPC message to and write it to the event loop
+    # Serialize an RPC message to and write it to the event loop.
     #
     # @param msg [Array] The RPC message
     # @return [self]
@@ -24,7 +24,7 @@ module Neovim
       self
     end
 
-    # Run the event loop, yielding deserialized messages to the block
+    # Run the event loop, yielding deserialized messages to the block.
     #
     # @param session [Session] Used for registering msgpack +ext+ types as
     #   described by the +vim_get_api_info+ call
@@ -44,7 +44,7 @@ module Neovim
       debug(e.backtrace.join("\n"))
     end
 
-    # Stop the event loop
+    # Stop the event loop.
     #
     # @return [void]
     # @see EventLoop#stop
@@ -52,7 +52,7 @@ module Neovim
       @event_loop.stop
     end
 
-    # Shut down the event loop
+    # Shut down the event loop.
     #
     # @return [void]
     # @see EventLoop#shutdown

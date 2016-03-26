@@ -21,7 +21,7 @@ module Neovim
       packer.pack(@index)
     end
 
-    # Intercept method calls and delegate to appropriate RPC methods
+    # Intercept method calls and delegate to appropriate RPC methods.
     def method_missing(method_name, *args)
       if func = @api.function(qualify(method_name))
         func.call(@session, @index, *args)
@@ -30,7 +30,7 @@ module Neovim
       end
     end
 
-    # Extend +respond_to?+ to support RPC methods
+    # Extend +respond_to?+ to support RPC methods.
     def respond_to?(method_name)
       super || rpc_methods.include?(method_name.to_sym)
     end

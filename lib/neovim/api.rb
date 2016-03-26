@@ -47,7 +47,7 @@ module Neovim
       end
     end
 
-    # Find a function with the given name
+    # Find a function with the given name.
     #
     # @param name [String] The name of the function
     # @return [Function, nil]
