@@ -2,11 +2,15 @@ require "logger"
 require "stringio"
 
 module Neovim
+  # Mixed into classes for unified logging helper methods.
   module Logging
     class << self
       attr_writer :logger
     end
 
+    # Return the value of @logger, or construct it from the environment.
+    # $NVIM_RUBY_LOG_FILE specifies a file to log to (default +STDOUT+), while
+    # NVIM_RUBY_LOG_LEVEL specifies the level (default +WARN+)
     def self.logger
       return @logger if instance_variable_defined?(:@logger)
 

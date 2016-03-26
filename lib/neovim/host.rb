@@ -7,6 +7,20 @@ module Neovim
 
     attr_reader :manifest
 
+    # Load plugin definitions and instantiate a new +Host+. This temporarily
+    # mutates global state on the +Neovim+ module so that +Neovim.plugin+ calls
+    # will be registered correctly with the provided +Manifest+.
+    #
+    # @overload load_from_files(rplugin_paths)
+    #   @param rplugin_paths [Array<String>] The remote plugin paths.
+    #
+    # @overload load_from_files(rplugin_paths, target_manifest)
+    #   @param rplugin_paths [Array<String>] The remote plugin paths.
+    #   @param target_manifest [Manifest] The plugin manifest.
+    #
+    # @return [Host]
+    # @see Neovim.start_host
+    # @see Neovim.plugin
     def self.load_from_files(rplugin_paths, target_manifest=Manifest.new)
       old_manifest = Neovim.__configured_plugin_manifest
       old_path = Neovim.__configured_plugin_path
@@ -31,6 +45,9 @@ module Neovim
       @manifest = manifest
     end
 
+    # Run the event loop, passing received messages to the manifest.
+    #
+    # @return [void]
     def run
       @session.run do |msg|
         debug("received #{msg.inspect}")

@@ -1,4 +1,6 @@
 module Neovim
+  # An asynchronous message from +nvim+.
+  # @api private
   class Notification
     attr_reader :method_name, :arguments
 

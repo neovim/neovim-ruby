@@ -1,6 +1,5 @@
 require "helper"
 require "socket"
-require "msgpack"
 require "fileutils"
 
 module Neovim

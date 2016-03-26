@@ -11,6 +11,9 @@ module Neovim
       @specs = {}
     end
 
+    # Register a +Plugin+ to receive +Host+ messages.
+    #
+    # @param plugin [Plugin]
     def register(plugin)
       plugin.handlers.each do |handler|
         wrapped_handler = handler.sync? ? wrap_sync(handler) : wrap_async(handler)
@@ -20,9 +23,14 @@ module Neovim
       @specs[plugin.source] = plugin.specs
     end
 
-    def handle(msg, client)
-      default_handler = msg.sync? ? default_sync_handler : default_async_handler
-      @handlers.fetch(msg.method_name, default_handler).call(client, msg)
+    # Handle messages received from the host. Sends a +Neovim::Client+ along
+    # with the message to be used in plugin callbacks.
+    #
+    # @param message [Neovim::Request, Neovim::Notification]
+    # @param client [Neovim::Client]
+    def handle(message, client)
+      default_handler = message.sync? ? default_sync_handler : default_async_handler
+      @handlers.fetch(message.method_name, default_handler).call(client, message)
     rescue => e
       fatal("got unexpected error #{e}")
       debug(e.backtrace.join("\n"))

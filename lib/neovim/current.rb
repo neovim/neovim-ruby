@@ -3,43 +3,54 @@ require "neovim/tabpage"
 require "neovim/window"
 
 module Neovim
+  # Support for +client.current+ chaining.
+  # @see Client#current
   class Current
     def initialize(session)
       @session = session
     end
 
+    # @return [String]
     def line
       @session.request(:vim_get_current_line)
     end
 
-    def line=(ln)
-      @session.request(:vim_set_current_line, ln)
+    # @param line [String] The target line contents.
+    # @return [String]
+    def line=(line)
+      @session.request(:vim_set_current_line, line)
     end
 
+    # @return [Buffer]
     def buffer
       @session.request(:vim_get_current_buffer)
     end
 
-    def buffer=(buffer_index)
-      buffer = Buffer.new(buffer_index, @session)
+    # @param buffer [Buffer, Fixnum] The target buffer or index.
+    # @return [Buffer, Fixnum]
+    def buffer=(buffer)
       @session.request(:vim_set_current_buffer, buffer)
     end
 
+    # @return [Window]
     def window
       @session.request(:vim_get_current_window)
     end
 
-    def window=(window_index)
-      window = Window.new(window_index, @session)
+    # @param window [Window, Fixnum] The target window or index.
+    # @return [Window, Fixnum]
+    def window=(window)
       @session.request(:vim_set_current_window, window)
     end
 
+    # @return [Tabpage]
     def tabpage
       @session.request(:vim_get_current_tabpage)
     end
 
-    def tabpage=(tabpage_index)
-      tabpage = Tabpage.new(tabpage_index, @session)
+    # @param tabpage [Tabpage, Fixnum] The target tabpage or index.
+    # @return [Tabpage, Fixnum]
+    def tabpage=(tabpage)
       @session.request(:vim_set_current_tabpage, tabpage)
     end
   end
