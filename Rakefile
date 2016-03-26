@@ -69,20 +69,20 @@ namespace :neovim do
       when "window"
         window_docs << method_doc
       end
+    end
 
-      lib_dir = Pathname.new(File.expand_path("../lib/neovim", __FILE__))
-      {
-        "client.rb" => vim_docs,
-        "buffer.rb" => buffer_docs,
-        "tabpage.rb" => tabpage_docs,
-        "window.rb" => window_docs,
-      }.each do |filename, docs|
-        path = lib_dir.join(filename)
-        contents = File.read(path)
-        doc_str = ["=begin", *docs, "=end"].join("\n")
+    lib_dir = Pathname.new(File.expand_path("../lib/neovim", __FILE__))
+    {
+      "client.rb" => vim_docs,
+      "buffer.rb" => buffer_docs,
+      "tabpage.rb" => tabpage_docs,
+      "window.rb" => window_docs,
+    }.each do |filename, docs|
+      path = lib_dir.join(filename)
+      contents = File.read(path)
+      doc_str = ["=begin", *docs, "=end"].join("\n")
 
-        File.write(path, contents.sub(/=begin.+=end/m, doc_str))
-      end
+      File.write(path, contents.sub(/=begin.+=end/m, doc_str))
     end
   end
 end
