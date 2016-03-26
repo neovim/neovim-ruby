@@ -57,20 +57,17 @@ module Neovim
     # @return [void]
     # @see MsgpackStream#run
     # @see EventLoop#run
-    def run(session=nil)
+    def run(session=nil, &callback)
       @msgpack_stream.run(session) do |msg|
-        kind, *rest = msg
+        kind, *payload = msg
 
         case kind
         when 0
-          reqid, method, args = rest
-          yield Request.new(method, args, @msgpack_stream, reqid) if block_given?
+          handle_request(payload, callback)
         when 1
-          reqid, (_, error), result = rest
-          @pending_requests.delete(reqid).call(error, result)
+          handle_response(payload)
         when 2
-          method, args = rest
-          yield Notification.new(method, args) if block_given?
+          handle_notification(payload, callback)
         end
       end
     rescue => e
@@ -92,6 +89,25 @@ module Neovim
     # @see EventLoop#shutdown
     def shutdown
       @msgpack_stream.shutdown
+    end
+
+    private
+
+    def handle_request(payload, callback)
+      callback ||= Proc.new {}
+      reqid, method, args = payload
+      callback.call(Request.new(method, args, @msgpack_stream, reqid))
+    end
+
+    def handle_response(payload)
+      reqid, (_, error), result = payload
+      @pending_requests.delete(reqid).call(error, result)
+    end
+
+    def handle_notification(payload, callback)
+      callback ||= Proc.new {}
+      method, args = payload
+      callback.call(Notification.new(method, args))
     end
   end
 end
