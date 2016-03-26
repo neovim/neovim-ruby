@@ -3,6 +3,7 @@
 [![Gem Version](https://badge.fury.io/rb/neovim.svg)](https://badge.fury.io/rb/neovim)
 [![Travis](https://travis-ci.org/alexgenco/neovim-ruby.svg?branch=master)](https://travis-ci.org/alexgenco/neovim-ruby)
 [![Coverage Status](https://coveralls.io/repos/alexgenco/neovim-ruby/badge.png)](https://coveralls.io/r/alexgenco/neovim-ruby)
+[![Code Climate](https://codeclimate.com/github/alexgenco/neovim-ruby/badges/gpa.svg)](https://codeclimate.com/github/alexgenco/neovim-ruby)
 
 Ruby bindings for [Neovim](https://github.com/neovim/neovim).
 
