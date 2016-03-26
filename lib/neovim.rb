@@ -66,7 +66,7 @@ module Neovim
     attr_accessor :__configured_plugin_path
   end
 
-  # Connect to a running +nvim+ instance over TCP
+  # Connect to a running +nvim+ instance over TCP.
   #
   # @param host [String] The hostname or IP address
   # @param port [Fixnum] The port
@@ -76,7 +76,7 @@ module Neovim
     Client.new(Session.tcp(host, port).discover_api)
   end
 
-  # Connect to a running +nvim+ instance over a UNIX domain socket
+  # Connect to a running +nvim+ instance over a UNIX domain socket.
   #
   # @param socket_path [String] The socket path
   # @return [Client]
@@ -85,7 +85,7 @@ module Neovim
     Client.new(Session.unix(socket_path).discover_api)
   end
 
-  # Spawn and connect to a child +nvim+ process
+  # Spawn and connect to a child +nvim+ process.
   #
   # @param argv [Array] The arguments to pass to the spawned process
   # @return [Client]
@@ -94,7 +94,7 @@ module Neovim
     Client.new(Session.child(argv).discover_api)
   end
 
-  # Define an +nvim+ remote plugin using the plugin DSL
+  # Define an +nvim+ remote plugin using the plugin DSL.
   #
   # @yield [Plugin::DSL]
   # @return [Plugin]
@@ -118,7 +118,7 @@ module Neovim
     Host.load_from_files(rplugin_paths).run
   end
 
-  # Set the Neovim global logger
+  # Set the Neovim global logger.
   #
   # @param logger [Logger] The target logger
   # @return [Logger]
@@ -127,7 +127,7 @@ module Neovim
     Logging.logger = logger
   end
 
-  # The Neovim global logger
+  # The Neovim global logger.
   #
   # @return [Logger]
   # @see Logging
