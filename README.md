@@ -40,6 +40,8 @@ client = Neovim.attach_unix("/tmp/nvim.sock")
 
 The client's interface is generated at runtime from the `vim_get_api_info` RPC call. Refer to the [docs](http://www.rubydoc.info/github/alexgenco/neovim-ruby/master/Neovim/Client) for details.
 
+### Plugins
+
 The `neovim-ruby-host` executable can be used to spawn Ruby plugins via the `rpcstart` command. A plugin can be defined like this:
 
 ```ruby
@@ -67,6 +69,15 @@ end
 ```
 
 After a call to `:UpdateRemotePlugins`, plugins will be auto-loaded from the `$VIMRUNTIME/rplugin/ruby` directory.
+
+## Links
+
+* Source: <http://github.com/alexgenco/neovim-ruby>
+* Bugs:   <http://github.com/alexgenco/neovim-ruby/issues>
+* CI: <http://travis-ci.org/alexgenco/neovim-ruby>
+* Documentation:
+    * Latest Gem: <http://rubydoc.info/gems/neovim>
+    * Master: <http://rubydoc.info/github/alexgenco/neovim-ruby/master/frames>
 
 ## Contributing
 
