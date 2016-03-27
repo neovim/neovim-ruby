@@ -1,8 +1,5 @@
-require "neovim/async_session"
 require "neovim/client"
-require "neovim/event_loop"
 require "neovim/host"
-require "neovim/msgpack_stream"
 require "neovim/session"
 require "neovim/plugin"
 

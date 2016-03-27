@@ -1,4 +1,7 @@
 require "neovim/api"
+require "neovim/async_session"
+require "neovim/event_loop"
+require "neovim/msgpack_stream"
 require "fiber"
 
 module Neovim

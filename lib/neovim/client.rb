@@ -20,7 +20,7 @@ module Neovim
     # Intercept method calls and delegate to appropriate RPC methods.
     def method_missing(method_name, *args)
       if func = @api.function("vim_#{method_name}")
-        func.call(session, *args)
+        func.call(@session, *args)
       else
         super
       end
