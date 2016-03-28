@@ -5,39 +5,80 @@ require "fileutils"
 module Neovim
   RSpec.describe Session do
     shared_context "session behavior" do
-      it "supports requests" do
-        expect(session.request(:vim_strwidth, "foobar")).to be(6)
-      end
-
-      it "supports notifications" do
-        expect(session.notify(:vim_input, "jk")).to be(nil)
-      end
-
-      it "raises an exception when there are errors" do
-        expect {
-          session.request(:vim_strwidth, "too", "many")
-        }.to raise_error(/wrong number of arguments/i)
-      end
-
-      it "handles large data" do
-        large_str = Array.new(1024 * 16) { SecureRandom.hex(1) }.join
-        session.request(:vim_set_current_line, large_str)
-        expect(session.request(:vim_get_current_line)).to eq(large_str)
-      end
-
-      it "subscribes to events" do
-        session.request(:vim_subscribe, "my_event")
-        session.request(:vim_command, "call rpcnotify(0, 'my_event', 'foo')")
-
-        messages = []
-        session.run do |msg|
-          messages << msg
-          session.shutdown
+      describe "#channel_id" do
+        it "returns nil when the API hasn't been discovered" do
+          expect(session.channel_id).to be(nil)
         end
 
-        expect(messages.first).to be_a(Notification)
-        expect(messages.first.method_name).to eq("my_event")
-        expect(messages.first.arguments).to eq(["foo"])
+        it "returns the channel_id when the API has been discovered" do
+          expect(session.discover_api.channel_id).to respond_to(:to_int)
+        end
+      end
+
+      describe "#request" do
+        it "synchronously returns a result" do
+          expect(session.request(:vim_strwidth, "foobar")).to be(6)
+        end
+
+        it "raises an exception when there are errors" do
+          expect {
+            session.request(:vim_strwidth, "too", "many")
+          }.to raise_error(/wrong number of arguments/i)
+        end
+
+        it "handles large data" do
+          large_str = Array.new(1024 * 17) { SecureRandom.hex(1) }.join
+          session.request(:vim_set_current_line, large_str)
+          expect(session.request(:vim_get_current_line)).to eq(large_str)
+        end
+      end
+
+      describe "#notify" do
+        it "returns nil" do
+          expect(session.notify(:vim_input, "jk")).to be(nil)
+        end
+
+        it "doesn't raise exceptions" do
+          expect {
+            session.notify(:vim_strwidth, "too", "many")
+          }.not_to raise_error
+        end
+
+        it "handles large data" do
+          large_str = Array.new(1024 * 17) { SecureRandom.hex(1) }.join
+          session.notify(:vim_set_current_line, large_str)
+          expect(session.request(:vim_get_current_line)).to eq(large_str)
+        end
+      end
+
+      describe "#run" do
+        it "enqueues messages received during blocking requests" do
+          session.request(:vim_subscribe, "my_event")
+          session.request(:vim_command, "call rpcnotify(0, 'my_event', 'foo')")
+
+          messages = []
+          session.run do |msg|
+            messages << msg
+            session.shutdown
+          end
+
+          expect(messages.first).to be_a(Notification)
+          expect(messages.first.method_name).to eq("my_event")
+          expect(messages.first.arguments).to eq(["foo"])
+        end
+
+        it "supports requests within callbacks" do
+          session.request(:vim_subscribe, "my_event")
+          session.request(:vim_command, "call rpcnotify(0, 'my_event')")
+
+          result = nil
+          session.run do |msg|
+            result = session.request(:vim_strwidth, "foobar")
+            session.shutdown
+          end
+
+          expect(result).to be(6)
+        end
       end
     end
 

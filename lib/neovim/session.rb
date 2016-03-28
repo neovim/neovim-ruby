@@ -124,7 +124,7 @@ module Neovim
       err ? raise(ArgumentError, err) : res
     end
 
-    # Make an RPC notification
+    # Make an RPC notification.
     #
     # @param method [String, Symbol] The RPC method name
     # @param *args [Array] The RPC method arguments
@@ -134,7 +134,7 @@ module Neovim
       nil
     end
 
-    # Stop the event loop
+    # Stop the event loop.
     #
     # @return [void]
     # @see EventLoop#stop
@@ -143,13 +143,20 @@ module Neovim
       @async_session.stop
     end
 
-    # Shut down the event loop
+    # Shut down the event loop.
     #
     # @return [void]
     # @see EventLoop#shutdown
     def shutdown
       @running = false
       @async_session.shutdown
+    end
+
+    # Return the channel ID if registered via +vim_get_api_info+.
+    #
+    # @return [Fixnum, nil]
+    def channel_id
+      api.channel_id
     end
 
     private
