@@ -5,4 +5,4 @@ require "json"
 require "msgpack"
 
 ARGF.binmode
-puts JSON.dump(MessagePack.unpack(ARGF.read.strip))
+MessagePack::Unpacker.new(ARGF).each { |data| print JSON.dump(data) }

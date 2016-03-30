@@ -5,4 +5,4 @@ require "json"
 require "msgpack"
 
 ARGF.binmode
-puts MessagePack.pack(JSON.parse(ARGF.read.strip))
+print MessagePack.pack(JSON.parse(ARGF.read.strip))
