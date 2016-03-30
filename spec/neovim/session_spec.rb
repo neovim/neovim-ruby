@@ -56,15 +56,15 @@ module Neovim
           session.request(:vim_subscribe, "my_event")
           session.request(:vim_command, "call rpcnotify(0, 'my_event', 'foo')")
 
-          messages = []
+          message = nil
           session.run do |msg|
-            messages << msg
+            message = msg
             session.shutdown
           end
 
-          expect(messages.first).to be_a(Notification)
-          expect(messages.first.method_name).to eq("my_event")
-          expect(messages.first.arguments).to eq(["foo"])
+          expect(message).to be_a(Notification)
+          expect(message.method_name).to eq("my_event")
+          expect(message.arguments).to eq(["foo"])
         end
 
         it "supports requests within callbacks" do
