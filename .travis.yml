@@ -19,7 +19,7 @@ cache:
   - bundler
 
 before_install:
-  - travis_retry eval "$(curl -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64"
+  - eval "$(curl -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64"
 
 env: REPORT_COVERAGE=1
 script: bundle exec rake --trace spec
