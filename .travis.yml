@@ -14,20 +14,12 @@ os:
   - linux
   - osx
 
-addons:
-  apt:
-    packages:
-      - libtool
-      - autoconf
-      - automake
-      - cmake
-      - libncurses5-dev
-      - g++
-      - pkg-config
-
 cache:
   - apt
   - bundler
 
+before_install:
+  - eval "$(curl -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64"
+
 env: REPORT_COVERAGE=1
-script: bundle exec rake --trace spec:ci
+script: bundle exec rake --trace spec

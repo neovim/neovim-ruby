@@ -3,44 +3,9 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new(:spec)
 
-namespace :spec do
-  desc "Build Neovim and run specs on CI"
-  task :ci => ["neovim:build", :spec]
-end
-
 namespace :neovim do
-  vendor = File.expand_path("../vendor/neovim", __FILE__)
-
-  desc "Build Neovim"
-  task :build do
-    sh "git submodule update --init"
-
-    Dir.chdir(vendor) do
-      sh "make distclean"
-      sh "make"
-    end
-  end
-
-  desc "Update vendored Neovim revision"
-  task :update do
-    sh "git submodule update --init"
-
-    Dir.chdir(vendor) do
-      sh "make distclean"
-      sh "git pull origin master"
-      sh "make"
-    end
-
-    Rake::Task["neovim:generate_docs"].invoke
-  end
-
   desc "Generate Neovim remote API docs"
   task :generate_docs do
-    ENV["NVIM_EXECUTABLE"] = File.expand_path(
-      "../vendor/neovim/build/bin/nvim",
-      __FILE__
-    )
-
     require "neovim"
     require "pathname"
 
@@ -48,7 +13,7 @@ namespace :neovim do
     buffer_docs = []
     window_docs = []
     tabpage_docs = []
-    session = Neovim::Session.child(%w(-u NONE -n -N))
+    session = Neovim::Session.child(%w(nvim -u NONE -n -N))
 
     session.request(:vim_get_api_info)[1]["functions"].each do |func|
       prefix, method_name = func["name"].split("_", 2)

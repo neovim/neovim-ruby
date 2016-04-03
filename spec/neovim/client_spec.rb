@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe Client do
-    let(:client) { Neovim.attach_child(["-n", "-u", "NONE"]) }
+    let(:client) { Neovim.attach_child(["nvim", "-n", "-u", "NONE"]) }
 
     describe "#respond_to?" do
       it "returns true for vim functions" do

@@ -30,7 +30,7 @@ module Neovim
       it "delegates messages to the manifest" do
         messages = []
         manifest = instance_double(Manifest)
-        session = Session.child(["-n", "-u", "NONE"])
+        session = Session.child(["nvim", "-n", "-u", "NONE"])
 
         host = Host.new(manifest, session)
 

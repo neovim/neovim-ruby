@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe Window do
-    let(:client) { Neovim.attach_child(["--headless", "-n", "-u", "NONE"]) }
+    let(:client) { Neovim.attach_child(["nvim", "--headless", "-n", "-u", "NONE"]) }
     let(:window) { client.current.window }
 
     before do

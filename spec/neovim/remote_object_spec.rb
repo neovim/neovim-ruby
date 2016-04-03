@@ -3,7 +3,7 @@ require "helper"
 module Neovim
   RSpec.describe RemoteObject do
     context Window do
-      let(:window) { Neovim.attach_child(["-n", "-u", "NONE"]).current.window }
+      let(:window) { Neovim.attach_child(["nvim", "-n", "-u", "NONE"]).current.window }
 
       describe "#respond_to?" do
         it "returns true for Window functions" do
@@ -37,7 +37,7 @@ module Neovim
     end
 
     context Tabpage do
-      let(:tabpage) { Neovim.attach_child(["-n", "-u", "NONE"]).current.tabpage }
+      let(:tabpage) { Neovim.attach_child(["nvim", "-n", "-u", "NONE"]).current.tabpage }
 
       describe "#respond_to?" do
         it "returns true for Tabpage functions" do
@@ -71,7 +71,7 @@ module Neovim
     end
 
     context Buffer do
-      let(:buffer) { Neovim.attach_child(["-n", "-u", "NONE"]).current.buffer }
+      let(:buffer) { Neovim.attach_child(["nvim", "-n", "-u", "NONE"]).current.buffer }
 
       describe "#respond_to?" do
         it "returns true for Buffer functions" do

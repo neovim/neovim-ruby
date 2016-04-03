@@ -82,7 +82,7 @@ module Neovim
 
     context "child" do
       it "sends and receives data" do
-        event_loop = EventLoop.child(["-n", "-u", "NONE"])
+        event_loop = EventLoop.child(["nvim", "-n", "-u", "NONE"])
         input = MessagePack.pack([0, 0, :vim_strwidth, ["hi"]])
 
         message = nil

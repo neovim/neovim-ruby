@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe Buffer do
-    let(:client) { Neovim.attach_child(["--headless", "-n", "-u", "NONE"]) }
+    let(:client) { Neovim.attach_child(["nvim", "--headless", "-n", "-u", "NONE"]) }
     let(:buffer) { client.current.buffer }
 
     describe "#lines" do

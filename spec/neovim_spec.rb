@@ -2,14 +2,13 @@ require "helper"
 require "fileutils"
 
 RSpec.describe Neovim do
-  let(:nvim_exe) { ENV.fetch("NVIM_EXECUTABLE") }
-  let(:nvim_argv) { %w(--headless -u NONE -i NONE -N -n) }
+  let(:nvim_argv) { %w(nvim --headless -u NONE -i NONE -N -n) }
 
   describe ".attach_tcp" do
     it "attaches to a TCP socket" do
       port = Support.port
       env = {"NVIM_LISTEN_ADDRESS" => "0.0.0.0:#{port}"}
-      pid = Process.spawn(env, nvim_exe, *nvim_argv, [:out, :err] => "/dev/null")
+      pid = Process.spawn(env, *nvim_argv, [:out, :err] => "/dev/null")
 
       begin
         TCPSocket.open("0.0.0.0", port).close
@@ -30,7 +29,7 @@ RSpec.describe Neovim do
     it "attaches to a UNIX socket" do
       socket_path = Support.socket_path
       env = {"NVIM_LISTEN_ADDRESS" => socket_path}
-      pid = Process.spawn(env, nvim_exe, *nvim_argv, [:out, :err] => "/dev/null")
+      pid = Process.spawn(env, *nvim_argv, [:out, :err] => "/dev/null")
 
       begin
         UNIXSocket.new(socket_path).close

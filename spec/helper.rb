@@ -1,5 +1,6 @@
 require "bundler/setup"
 require "logger"
+require "mkmf"
 require "neovim"
 require "pry"
 require "timeout"
@@ -13,12 +14,9 @@ end
 
 Thread.abort_on_exception = true
 
-nvim_bin = File.expand_path("../../vendor/neovim/build/bin/nvim", __FILE__)
-
-if File.exists?(nvim_bin)
-  ENV["NVIM_EXECUTABLE"] = nvim_bin
-else
-  warn("Can't find vendored `nvim` executable. Build it with `rake neovim:build`")
+unless find_executable0("nvim")
+  warn("Can't find `nvim` executable. See installation instructions:")
+  warn("https://github.com/neovim/neovim/wiki/Installing-Neovim")
   exit(1)
 end
 

@@ -24,7 +24,7 @@ require "neovim/plugin"
 #   Neovim.attach_unix("/tmp/nvim.sock") # => Neovim::Client
 #
 # @example Spawn and connect to a child +nvim+ process
-#   Neovim.attach_child(["-u", "NONE"]) # => Neovim::Client
+#   Neovim.attach_child(["nvim", "--embed"]) # => Neovim::Client
 #
 # @example Define a Ruby plugin
 #   # ~/.config/nvim/rplugin/ruby/plugin.rb
