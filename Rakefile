@@ -26,10 +26,17 @@ namespace :neovim do
        "make distclean && " +
        "git pull origin master && " +
        "make"
+
+    Rake::Task["neovim:generate_docs"].invoke
   end
 
   desc "Generate Neovim remote API docs"
   task :generate_docs do
+    ENV["NVIM_EXECUTABLE"] = File.expand_path(
+      "../vendor/neovim/build/bin/nvim",
+      __FILE__
+    )
+
     require "neovim"
     require "pathname"
 
