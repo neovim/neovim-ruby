@@ -30,4 +30,4 @@ cache:
   - bundler
 
 env: REPORT_COVERAGE=1
-script: bundle exec rake spec:ci
+script: bundle exec rake --trace spec:ci
