@@ -13,19 +13,19 @@ namespace :neovim do
 
   desc "Build Neovim"
   task :build do
-    sh "git submodule update --init && " +
-       "cd #{vendor} && " +
-       "make distclean && " +
-       "make"
+    sh "git submodule update --init"
+    sh "cd #{vendor}"
+    sh "make distclean"
+    sh "make"
   end
 
   desc "Update vendored Neovim revision"
   task :update do
-    sh "git submodule update --init && " +
-       "cd #{vendor} && " +
-       "make distclean && " +
-       "git pull origin master && " +
-       "make"
+    sh "git submodule update --init"
+    sh "cd #{vendor}"
+    sh "make distclean"
+    sh "git pull origin master"
+    sh "make"
 
     Rake::Task["neovim:generate_docs"].invoke
   end
