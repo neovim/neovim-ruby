@@ -63,11 +63,24 @@ module Neovim
   @param [Boolean] include_end
   @return [Array<String>]
 
+@method get_lines(start, end, strict_indexing)
+  @param [Fixnum] start
+  @param [Fixnum] end
+  @param [Boolean] strict_indexing
+  @return [Array<String>]
+
 @method set_line_slice(start, end, include_start, include_end, replacement)
   @param [Fixnum] start
   @param [Fixnum] end
   @param [Boolean] include_start
   @param [Boolean] include_end
+  @param [Array<String>] replacement
+  @return [void]
+
+@method set_lines(start, end, strict_indexing, replacement)
+  @param [Fixnum] start
+  @param [Fixnum] end
+  @param [Boolean] strict_indexing
   @param [Array<String>] replacement
   @return [void]
 
