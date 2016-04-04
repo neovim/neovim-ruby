@@ -11,10 +11,6 @@ rvm:
   - 2.2.0
   - 2.3.0
 
-cache:
-  - apt
-  - bundler
-
 before_install:
   - eval "$(curl -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64"
 
