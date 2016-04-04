@@ -13,6 +13,8 @@ module Neovim
     attr_reader :session
 
     def initialize(session)
+      session.discover_api
+
       @session = session
       @api = session.api
     end

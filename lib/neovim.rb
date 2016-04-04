@@ -70,7 +70,7 @@ module Neovim
   # @return [Client]
   # @see Session.tcp
   def self.attach_tcp(host, port)
-    Client.new(Session.tcp(host, port).discover_api)
+    Client.new Session.tcp(host, port)
   end
 
   # Connect to a running +nvim+ instance over a UNIX domain socket.
@@ -79,7 +79,7 @@ module Neovim
   # @return [Client]
   # @see Session.unix
   def self.attach_unix(socket_path)
-    Client.new(Session.unix(socket_path).discover_api)
+    Client.new Session.unix(socket_path)
   end
 
   # Spawn and connect to a child +nvim+ process.
@@ -88,7 +88,7 @@ module Neovim
   # @return [Client]
   # @see Session.child
   def self.attach_child(argv=[])
-    Client.new(Session.child(argv).discover_api)
+    Client.new Session.child(argv)
   end
 
   # Define an +nvim+ remote plugin using the plugin DSL.

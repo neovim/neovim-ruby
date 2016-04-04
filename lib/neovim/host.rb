@@ -61,7 +61,7 @@ module Neovim
     private
 
     def client
-      @client ||= Client.new(@session.discover_api)
+      @client ||= Client.new(@session)
     end
   end
 end

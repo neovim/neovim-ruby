@@ -69,11 +69,10 @@ module Neovim
 
     # Discover the +nvim+ API as described in the +vim_get_api_info+ call.
     #
-    # @return [self]
+    # @return [API]
     # @see API
     def discover_api
       @api = API.new(request(:vim_get_api_info))
-      self
     end
 
     # Run the event loop, handling messages in a +Fiber+.

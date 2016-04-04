@@ -11,7 +11,8 @@ module Neovim
         end
 
         it "returns the channel_id when the API has been discovered" do
-          expect(session.discover_api.channel_id).to respond_to(:to_int)
+          session.discover_api
+          expect(session.channel_id).to respond_to(:to_int)
         end
       end
 
