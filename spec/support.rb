@@ -2,7 +2,7 @@ require "fileutils"
 
 module Support
   def self.workspace
-    File.expand_path("../workspace/#$$", __FILE__)
+    File.expand_path("../workspace", __FILE__)
   end
 
   def self.socket_path
@@ -19,7 +19,6 @@ module Support
   end
 
   def self.setup_workspace
-    teardown_workspace
     FileUtils.mkdir_p(workspace)
   end
 

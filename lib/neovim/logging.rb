@@ -14,14 +14,18 @@ module Neovim
     def self.logger
       return @logger if instance_variable_defined?(:@logger)
 
-      if ENV["NVIM_RUBY_LOG_FILE"]
-        @logger = Logger.new(ENV["NVIM_RUBY_LOG_FILE"])
+      if env_file = ENV["NVIM_RUBY_LOG_FILE"]
+        @logger = Logger.new(env_file)
       else
         @logger = Logger.new(STDERR)
       end
 
-      if ENV["NVIM_RUBY_LOG_LEVEL"]
-        @logger.level = Integer(ENV["NVIM_RUBY_LOG_LEVEL"])
+      if env_level = ENV["NVIM_RUBY_LOG_LEVEL"]
+        if Logger.const_defined?(env_level.upcase)
+          @logger.level = Logger.const_get(env_level.upcase)
+        else
+          @logger.level = Integer(env_level)
+        end
       else
         @logger.level = Logger::WARN
       end
@@ -29,26 +33,32 @@ module Neovim
       @logger
     end
 
-    private
-
-    def fatal(msg)
-      logger.fatal(self.class) { msg }
+    def self.included(base)
+      base.send(:include, Helpers)
     end
 
-    def warn(msg)
-      logger.warn(self.class) { msg }
-    end
+    module Helpers
+      private
 
-    def info(msg)
-      logger.info(self.class) { msg }
-    end
+      def fatal(msg)
+        logger.fatal(self.class) { msg }
+      end
 
-    def debug(msg)
-      logger.debug(self.class) { msg }
-    end
+      def warn(msg)
+        logger.warn(self.class) { msg }
+      end
 
-    def logger
-      Logging.logger
+      def info(msg)
+        logger.info(self.class) { msg }
+      end
+
+      def debug(msg)
+        logger.debug(self.class) { msg }
+      end
+
+      def logger
+        Logging.logger
+      end
     end
   end
 end
