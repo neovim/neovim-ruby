@@ -75,7 +75,7 @@ module Neovim
       pos, len = target
 
       case pos
-      when ::Range
+      when Range
         @buffer.set_line_slice(
           pos.begin,
           pos.end,
@@ -96,6 +96,11 @@ module Neovim
     def replace(other)
       self[0..-1] = other
       self
+    end
+
+    # @param index [Fixnum]
+    def delete(index)
+      @buffer.del_line(index)
     end
   end
 end

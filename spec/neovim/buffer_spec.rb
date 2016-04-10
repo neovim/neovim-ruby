@@ -31,5 +31,131 @@ module Neovim
         expect(buffer.range.to_a).to eq(["one", "two"])
       end
     end
+
+    describe "if_ruby compatibility" do
+      describe "#name" do
+        it "returns the buffer path as a string" do
+          buffer.set_name("test_buf")
+
+          expect(File.basename(buffer.name)).
+            to end_with("test_buf")
+        end
+      end
+
+      describe "#number" do
+        it "returns the buffer index" do
+          expect(buffer.number).to be(1)
+        end
+      end
+
+      describe "#count" do
+        it "returns the number of lines" do
+          buffer.lines = ["one", "two", "three"]
+          expect(buffer.count).to be(3)
+        end
+      end
+
+      describe "#length" do
+        it "returns the number of lines" do
+          buffer.lines = ["one", "two", "three"]
+          expect(buffer.length).to be(3)
+        end
+      end
+
+      describe "#[]" do
+        it "returns the line at the given index" do
+          buffer.lines = ["one", "two", "three"]
+          expect(buffer[1]).to eq("two")
+        end
+      end
+
+      describe "#[]=" do
+        it "sets the line at the given index" do
+          buffer.lines = ["one", "two"]
+
+          expect {
+            buffer[0] = "first"
+          }.to change { buffer.lines }.to(["first", "two"])
+        end
+
+        it "returns the line" do
+          expect(buffer[0] = "first").to eq("first")
+        end
+
+        it "raises an out of bounds exception" do
+          expect {
+            buffer[10] = "line"
+          }.to raise_error(/out of bounds/)
+        end
+      end
+
+      describe "#delete" do
+        it "deletes the line at the given index" do
+          buffer.lines = ["one", "two"]
+
+          expect {
+            buffer.delete(0)
+          }.to change { buffer.lines }.to(["two"])
+        end
+      end
+
+      describe "#append" do
+        it "adds a line after the given index" do
+          buffer.lines = ["one"]
+
+          expect {
+            buffer.append(0, "two")
+          }.to change { buffer.lines.to_a }.to(["one", "two"])
+        end
+
+        it "returns the appended line" do
+          expect(buffer.append(0, "two")).to eq("two")
+        end
+      end
+
+      describe "#line" do
+        it "returns the current line on an active buffer" do
+          buffer.lines = ["one", "two"]
+          expect(buffer.line).to eq("one")
+        end
+
+        it "returns nil on an inactive buffer" do
+          original = buffer
+          client.command("vnew")
+          expect(original.line).to be(nil)
+        end
+      end
+
+      describe "#line=" do
+        it "sets the current line on an active buffer" do
+          expect {
+            buffer.line = "line"
+          }.to change { buffer.lines }.to(["line"])
+        end
+
+        it "has no effect when called on an inactive buffer" do
+          original = buffer
+          client.command("vnew")
+          original.line = "line"
+
+          expect(original.lines.to_a).to eq([""])
+          expect(client.current.buffer.lines.to_a).to eq([""])
+        end
+      end
+
+      describe "#line_number" do
+        it "returns the current line number on an active buffer" do
+          client.command("normal oone")
+          expect(buffer.line_number).to be(2)
+        end
+
+        it "returns nil on an inactive buffer" do
+          original = buffer
+          client.command("vnew")
+
+          expect(original.line_number).to be(nil)
+        end
+      end
+    end
   end
 end

@@ -38,6 +38,105 @@ module Neovim
       @range = LineRange.new(self, _range.begin, _end)
     end
 
+    # Get the buffer name.
+    #
+    # @return [String]
+    def name
+      get_name
+    end
+
+    # Get the buffer index.
+    #
+    # @return [Fixnum]
+    def number
+      get_number
+    end
+
+    # Get the number of lines.
+    #
+    # @return [Fixnum]
+    def count
+      lines.to_a.size
+    end
+
+    # Get the number of lines.
+    #
+    # @return [Fixnum]
+    def length
+      count
+    end
+
+    # Get the line at the given index.
+    #
+    # @param index [Fixnum]
+    # @return [String]
+    def [](index)
+      lines[index]
+    end
+
+    # Set the line at the given index.
+    #
+    # @param index [Fixnum]
+    # @param str [String]
+    # @return [String]
+    def []=(index, str)
+      lines[index] = str
+    end
+
+    # Delete the line at the given index.
+    #
+    # @param index [Fixnum]
+    # @return [void]
+    def delete(index)
+      lines.delete(index)
+    end
+
+    # Append a line after the given index.
+    #
+    # @param index [Fixnum]
+    # @param str [String]
+    # @return [String]
+    def append(index, str)
+      lines[index, 1] = [lines[index], str]
+      str
+    end
+
+    # Get the current line of an active buffer.
+    #
+    # @return [String, nil]
+    def line
+      if active?
+        @session.request(:vim_get_current_line)
+      end
+    end
+
+    # Set the current line of an active buffer.
+    #
+    # @param str [String]
+    # @return [String, nil]
+    def line=(str)
+      if active?
+        @session.request(:vim_set_current_line, str)
+      end
+    end
+
+    # Get the current line number of an active buffer.
+    #
+    # @return [Fixnum, nil]
+    def line_number
+      if active?
+        window = @session.request(:vim_get_current_window)
+        @session.request(:window_get_cursor, window)[0]
+      end
+    end
+
+    # Determine if the buffer is active.
+    #
+    # @return [Boolean]
+    def active?
+      @session.request(:vim_get_current_buffer) == self
+    end
+
 # The following methods are dynamically generated.
 =begin
 @method line_count

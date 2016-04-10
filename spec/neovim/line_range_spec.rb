@@ -64,5 +64,15 @@ module Neovim
         expect(line_range.to_a).to eq(["5", "6"])
       end
     end
+
+    describe "#delete" do
+      it "deletes the line at the given index" do
+        line_range.replace(["one", "two"])
+
+        expect {
+          line_range.delete(0)
+        }.to change { line_range.to_a }.to(["two"])
+      end
+    end
   end
 end
