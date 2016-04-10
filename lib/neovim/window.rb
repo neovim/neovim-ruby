@@ -10,65 +10,58 @@ module Neovim
       @cursor ||= Cursor.new(self)
     end
 
-    class Cursor
-      def initialize(window)
-        @window = window
-      end
+    # Get the buffer displayed in the window
+    #
+    # @return [Buffer]
+    def buffer
+      get_buffer
+    end
 
-      # Get the current coordinates of the cursor.
-      #
-      # @return [Array<Fixnum>]
-      # @note coordinates are 1-indexed
-      def coordinates
-        @window.get_cursor
-      end
+    # Get the height of the window
+    #
+    # @return [Fixnum]
+    def height
+      get_height
+    end
 
-      # Set the coordinates of the cursor.
-      #
-      # @param coords [Array<Fixnum>] The coordinates as a pair of integers
-      # @return [Array<Fixnum>]
-      # @note coordinates are 1-indexed
-      # @example Move the cursor to line 1, column 2
-      #   window.cursor.coordinates = [1, 2]
-      def coordinates=(coords)
-        @window.set_cursor(coords)
-      end
+    # Set the height of the window
+    #
+    # @param height [Fixnum]
+    # @return [Fixnum]
+    def height=(height)
+      set_height(height)
+      height
+    end
 
-      # Get the cursor's line number.
-      #
-      # @return [Fixnum]
-      # @note Line numbers are 1-indexed
-      def line
-        coordinates[0]
-      end
+    # Get the width of the window
+    #
+    # @return [Fixnum]
+    def width
+      get_width
+    end
 
-      # Set the cursor's line number.
-      #
-      # @param n [Fixnum]
-      # @return [Fixnum]
-      # @note Line numbers are 1-indexed
-      def line=(n)
-        self.coordinates = [n, column]
-        n
-      end
+    # Set the width of the window
+    #
+    # @param width [Fixnum]
+    # @return [Fixnum]
+    def width=(width)
+      set_width(width)
+      width
+    end
 
-      # Get the cursor's column number.
-      #
-      # @return [Fixnum]
-      # @note Column numbers are 1-indexed
-      def column
-        coordinates[1]
-      end
+    # Get the cursor coordinates
+    #
+    # @return [Array(Fixnum, Fixnum)]
+    def cursor
+      get_cursor
+    end
 
-      # Set the cursor's column number.
-      #
-      # @param n [Fixnum]
-      # @return [Fixnum]
-      # @note Column numbers are 1-indexed
-      def column=(n)
-        self.coordinates = [line, n]
-        n
-      end
+    # Set the cursor coodinates
+    #
+    # @param coords [Array(Fixnum, Fixnum)]
+    # @return [Array(Fixnum, Fixnum)]
+    def cursor=(coords)
+      set_cursor(coords)
     end
 
 # The following methods are dynamically generated.
