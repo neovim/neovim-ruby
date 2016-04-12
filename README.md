@@ -48,8 +48,8 @@ The `neovim-ruby-host` executable can be used to spawn Ruby plugins via the `rpc
 # $VIMRUNTIME/rplugin/ruby/my_plugin.rb
 
 Neovim.plugin do |plug|
-  # Define a command called "SetLine" which sets the current line to the sum of
-  # two values. This command is executed asynchronously, so the return value is
+  # Define a command called "SetLine" which sets the contents of the current
+  # line. This command is executed asynchronously, so the return value is
   # ignored.
   plug.command(:SetLine, :nargs => 1) do |nvim, str|
     nvim.current.line = str
