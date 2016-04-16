@@ -9,10 +9,11 @@ module Neovim
 
         server_thread = Thread.new do
           client = server.accept
-          IO.select(nil, [client])
-          client.write(MessagePack.pack(
-            [0, 123, "func", [1, 2, 3]]
-          ))
+          client.write(
+            MessagePack.pack(
+              [0, 123, "func", [1, 2, 3]]
+            )
+          )
         end
 
         request = nil
@@ -34,10 +35,11 @@ module Neovim
 
         server_thread = Thread.new do
           client = server.accept
-          IO.select(nil, [client])
-          client.write(MessagePack.pack(
-            [2, "func", [1, 2, 3]]
-          ))
+          client.write(
+            MessagePack.pack(
+              [2, "func", [1, 2, 3]]
+            )
+          )
         end
 
         notification = nil
@@ -56,15 +58,17 @@ module Neovim
       it "receives responses to requests" do
         stream = MsgpackStream.new(event_loop)
         async_session = AsyncSession.new(stream)
-        messages = []
+        request = nil
 
         server_thread = Thread.new do
           client = server.accept
-          messages << client.readpartial(1024)
+          request = client.readpartial(1024)
 
-          client.write(MessagePack.pack(
-            [1, 0, [0, "error"], "result"]
-          ))
+          client.write(
+            MessagePack.pack(
+              [1, 0, [0, "error"], "result"]
+            )
+          )
         end
 
         error, result = nil
@@ -79,8 +83,8 @@ module Neovim
         server_thread.join
         async_session.shutdown
 
-        expect(messages).to eq(
-          [MessagePack.pack([0, 0, "func", [1, 2, 3]])]
+        expect(request).to eq(
+          MessagePack.pack([0, 0, "func", [1, 2, 3]])
         )
       end
     end

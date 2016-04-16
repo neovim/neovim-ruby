@@ -1,6 +1,5 @@
 require "helper"
 require "securerandom"
-require "fileutils"
 
 module Neovim
   RSpec.describe Session do
@@ -70,15 +69,15 @@ module Neovim
 
         it "supports requests within callbacks" do
           session.request(:vim_subscribe, "my_event")
-          session.request(:vim_command, "call rpcnotify(0, 'my_event')")
+          session.request(:vim_command, "call rpcnotify(0, 'my_event', 'foo')")
 
           result = nil
           session.run do |msg|
-            result = session.request(:vim_strwidth, "foobar")
+            result = session.request(:vim_strwidth, msg.arguments.first)
             session.shutdown
           end
 
-          expect(result).to be(6)
+          expect(result).to be(3)
         end
       end
     end
@@ -107,7 +106,6 @@ module Neovim
       end
 
       let(:session) { Session.tcp("0.0.0.0", nvim_port) }
-
       include_context "session behavior"
     end
 
@@ -135,7 +133,6 @@ module Neovim
       end
 
       let(:session) { Session.unix(socket_path) }
-
       include_context "session behavior"
     end
 

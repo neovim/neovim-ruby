@@ -6,27 +6,27 @@ module Neovim
   RSpec.describe EventLoop do
     shared_context "socket behavior" do
       it "sends and receives data" do
-        messages = []
+        request = nil
 
         server_thread = Thread.new do
           client = server.accept
-          messages << client.readpartial(1024)
+          request = client.readpartial(1024)
 
-          client.write("OK")
+          client.write("res")
           client.close
           server.close
         end
 
-        message = nil
-        event_loop.write("data").run do |msg|
-          message = msg
+        response = nil
+        event_loop.write("req").run do |msg|
+          response = msg
           event_loop.stop
         end
 
         server_thread.join
         event_loop.shutdown
-        expect(message).to eq("OK")
-        expect(messages).to eq(["data"])
+        expect(request).to eq("req")
+        expect(response).to eq("res")
       end
     end
 
@@ -57,22 +57,22 @@ module Neovim
           STDIN.reopen(cl_stdin)
 
           event_loop = EventLoop.stdio
-          messages = []
+          request = nil
 
           server_thread = Thread.new do
-            messages << srv_stdout.readpartial(1024)
-            srv_stdin.write("OK")
+            request = srv_stdout.readpartial(1024)
+            srv_stdin.write("res")
           end
 
-          message = nil
-          event_loop.write("data").run do |msg|
-            message = msg
+          response = nil
+          event_loop.write("req").run do |msg|
+            response = msg
             event_loop.stop
           end
 
           server_thread.join
-          expect(message).to eq("OK")
-          expect(messages).to eq(["data"])
+          expect(request).to eq("req")
+          expect(response).to eq("res")
         ensure
           STDOUT.reopen(old_stdout)
           STDIN.reopen(old_stdin)
@@ -85,14 +85,14 @@ module Neovim
         event_loop = EventLoop.child(["nvim", "-n", "-u", "NONE"])
         input = MessagePack.pack([0, 0, :vim_strwidth, ["hi"]])
 
-        message = nil
+        response = nil
         event_loop.write(input).run do |msg|
-          message = msg
+          response = msg
           event_loop.stop
         end
 
         event_loop.shutdown
-        expect(message).to eq(MessagePack.pack([1, 0, nil, 2]))
+        expect(response).to eq(MessagePack.pack([1, 0, nil, 2]))
       end
     end
   end

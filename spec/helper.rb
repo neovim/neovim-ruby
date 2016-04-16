@@ -1,5 +1,4 @@
 require "bundler/setup"
-require "logger"
 require "mkmf"
 require "neovim"
 require "pry"
@@ -31,7 +30,7 @@ RSpec.configure do |config|
     Support.setup_workspace
 
     begin
-      Timeout.timeout(2) { spec.run }
+      Timeout.timeout(5) { spec.run }
     ensure
       Support.teardown_workspace
     end
