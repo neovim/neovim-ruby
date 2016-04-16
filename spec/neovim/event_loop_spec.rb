@@ -1,6 +1,5 @@
 require "helper"
 require "socket"
-require "fileutils"
 
 module Neovim
   RSpec.describe EventLoop do

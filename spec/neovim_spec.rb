@@ -1,5 +1,4 @@
 require "helper"
-require "fileutils"
 
 RSpec.describe Neovim do
   let(:nvim_argv) { %w(nvim --headless -u NONE -i NONE -N -n) }

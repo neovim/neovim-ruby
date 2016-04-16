@@ -1,5 +1,4 @@
 require "logger"
-require "stringio"
 
 module Neovim
   # Mixed into classes for unified logging helper methods.
