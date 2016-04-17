@@ -35,12 +35,12 @@ module Neovim
       end
 
       describe "#width=" do
-        it "sets the width of the window" do
-          pending "This doesn't seem to actually do anything"
+        it "sets the width of a vertically split window" do
+          client.command("vsplit")
 
           expect {
-            window.width = 20
-          }.to change { window.width }.to(20)
+            window.width += 1
+          }.to change { window.width }.by(1)
         end
       end
 
