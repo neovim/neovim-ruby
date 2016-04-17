@@ -38,14 +38,21 @@ module Neovim
     #   line_range[0, 2] # => ["first", "second"]
     def [](pos, len=nil)
       case pos
-      when ::Range
-        _end = pos.exclude_end? ? pos.end - 1 : pos.end
-        LineRange.new(@buffer, pos.begin, _end)
+      when Range
+        LineRange.new(
+          @buffer,
+          abs_line(pos.begin),
+          abs_line(pos.exclude_end? ? pos.end - 1 : pos.end)
+        )
       else
         if len
-          LineRange.new(@buffer, pos, pos + len - 1)
+          LineRange.new(
+            @buffer,
+            abs_line(pos),
+            abs_line(pos + len -1)
+          )
         else
-          @buffer.get_line(pos)
+          @buffer.get_line(abs_line(pos))
         end
       end
     end
@@ -77,17 +84,23 @@ module Neovim
       case pos
       when Range
         @buffer.set_line_slice(
-          pos.begin,
-          pos.end,
+          abs_line(pos.begin),
+          abs_line(pos.end),
           true,
           !pos.exclude_end?,
           val
         )
       else
         if len
-          @buffer.set_line_slice(pos, pos + len, true, false, val)
+          @buffer.set_line_slice(
+            abs_line(pos),
+            abs_line(pos + len),
+            true,
+            false,
+            val
+          )
         else
-          @buffer.set_line(pos, val)
+          @buffer.set_line(abs_line(pos), val)
         end
       end
     end
@@ -100,7 +113,13 @@ module Neovim
 
     # @param index [Fixnum]
     def delete(index)
-      @buffer.del_line(index)
+      @buffer.del_line(abs_line(index))
+    end
+
+    private
+
+    def abs_line(n)
+      n < 0 ? (@end + n + 1) : @begin + n
     end
   end
 end
