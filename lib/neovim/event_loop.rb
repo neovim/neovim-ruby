@@ -103,8 +103,13 @@ module Neovim
     # @return [void]
     def shutdown
       stop
-      [@rd, @wr].each(&:close)
-    rescue IOError
+
+      [@rd, @wr].each do |io|
+        begin
+          io.close
+        rescue IOError
+        end
+      end
     end
   end
 end
