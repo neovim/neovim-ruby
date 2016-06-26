@@ -47,7 +47,7 @@ module Neovim
     #   client.current.line = "New line"
     # @see Current
     def current
-      Current.new(@session)
+      @current ||= Current.new(@session)
     end
 
     private

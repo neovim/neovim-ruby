@@ -8,6 +8,7 @@ module Neovim
   class Current
     def initialize(session)
       @session = session
+      @range = (0..-1)
     end
 
     # @return [String]
@@ -23,7 +24,9 @@ module Neovim
 
     # @return [Buffer]
     def buffer
-      @session.request(:vim_get_current_buffer)
+      @session.request(:vim_get_current_buffer).tap do |buf|
+        buf.range = @range
+      end
     end
 
     # @param buffer [Buffer, Fixnum] The target buffer or index.
@@ -52,6 +55,11 @@ module Neovim
     # @return [Tabpage, Fixnum]
     def tabpage=(tabpage)
       @session.request(:vim_set_current_tabpage, tabpage)
+    end
+
+    # @param range [Range] The target range
+    def range=(range)
+      @range = range
     end
   end
 end
