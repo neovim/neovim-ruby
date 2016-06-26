@@ -49,6 +49,8 @@ module Neovim
     #
     # @return [void]
     def run
+      @session.discover_api
+
       @session.run do |msg|
         debug("received #{msg.inspect}")
         @manifest.handle(msg, client)
