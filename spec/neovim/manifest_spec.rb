@@ -77,6 +77,20 @@ module Neovim
         manifest.handle(message, client)
       end
 
+      it "rescues plugin sync handler exceptions" do
+        manifest = Manifest.new
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.command(:Foo, :sync => true) { raise "BOOM" }
+        end
+        manifest.register(plugin)
+
+        message = double(:message, :method_name => "source:command:Foo", :sync? => true, :arguments => [])
+        client = double(:client)
+
+        expect(message).to receive(:error).with("BOOM")
+        manifest.handle(message, client)
+      end
+
       it "calls a plugin async handler" do
         manifest = Manifest.new
         async_proc = Proc.new {}

@@ -68,15 +68,21 @@ module Neovim
 
     def wrap_sync(handler)
       Proc.new do |client, request|
-        debug("received #{request.inspect}")
-        request.respond(handler.call(client, *request.arguments[0]))
+        begin
+          debug("received #{request.inspect}")
+          args = request.arguments.flatten(1)
+          request.respond(handler.call(client, *args))
+        rescue => e
+          request.error(e.message)
+        end
       end
     end
 
     def wrap_async(handler)
       Proc.new do |client, notification|
         debug("received #{notification.inspect}")
-        handler.call(client, *notification.arguments[0])
+        args = notification.arguments.flatten(1)
+        handler.call(client, *args)
       end
     end
   end
