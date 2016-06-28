@@ -38,6 +38,18 @@ module Neovim
           manifest.handlers["source:command:Foo"]
         }.from(nil).to(kind_of(Proc))
       end
+
+      it "doesn't add top-level RPCs to specs" do
+        manifest = Manifest.new
+
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.rpc(:Foo)
+        end
+
+        expect {
+          manifest.register(plugin)
+        }.to change { manifest.specs }.from({}).to("source" => [])
+      end
     end
 
     describe "#handle" do

@@ -21,6 +21,10 @@ RSpec.describe "neovim-ruby-host" do
         plug.command(:AsyncSetLine, :args => 1) do |nvim, str|
           nvim.current.line = str
         end
+
+        plug.rpc(:TopLevelAdd, :nargs => 2, :sync => true) do |nvim, x, y|
+          x + y
+        end
       end
     RUBY
 
@@ -31,6 +35,7 @@ RSpec.describe "neovim-ruby-host" do
 
     expect(nvim.eval("rpcrequest(host, 'poll')")).to eq("ok")
     expect(nvim.eval("rpcrequest(host, '#{plugin1_path}:function:SyncAdd', [1, 2])")).to eq(3)
+    expect(nvim.eval("rpcrequest(host, 'TopLevelAdd', 1, 2)")).to eq(3)
 
     expect {
       nvim.command("call rpcnotify(host, '#{plugin1_path}:autocmd:BufEnter:*.rb')")

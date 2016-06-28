@@ -22,7 +22,9 @@ module Neovim
 
     # @return [Array] Handler specs used by +nvim+ to register plugins.
     def specs
-      @handlers.map(&:to_spec)
+      @handlers.inject([]) do |acc, handler|
+        handler.qualified? ? acc + [handler.to_spec] : acc
+      end
     end
   end
 end
