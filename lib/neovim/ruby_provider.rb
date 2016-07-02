@@ -1,34 +1,28 @@
-require "delegate"
-
-# Make the +Vim+ constant delegate to a Neovim::Client instance.
-class ClientDelegator < SimpleDelegator
-  def initialize
-    super(nil)
+class VIM < BasicObject
+  class << self
+    attr_accessor :__client
   end
 
-  def Buffer
-    ::Neovim::Buffer
-  end
+  Buffer = ::Neovim::Buffer
+  Window = ::Neovim::Window
 
-  def Window
-    ::Neovim::Window
+  def self.method_missing(method, *args, &block)
+    @__client.public_send(method, *args, &block)
   end
 end
 
-Vim = ClientDelegator.new
-
 module Neovim
-  # Make +Vim::Buffer.current+ return the current buffer.
+  # Make +VIM::Buffer.current+ return the current buffer.
   class Buffer
     def self.current
-      ::Vim.current.buffer
+      ::VIM.current.buffer
     end
   end
 
-  # Make +Vim::Window.current+ return the current buffer.
+  # Make +VIM::Window.current+ return the current buffer.
   class Window
     def self.current
-      ::Vim.current.window
+      ::VIM.current.window
     end
   end
 
@@ -42,24 +36,20 @@ module Neovim
     end
 
     def self.define_ruby_execute(plug)
-      plug.rpc(:ruby_execute, sync: true) do |nvim, *args|
-        ruby, start, stop = args
-        nvim.current.range = (start-1..stop-1)
-
+      plug.rpc(:ruby_execute, sync: true) do |nvim, ruby|
         wrap_client(nvim) do
           eval(ruby, binding, __FILE__, __LINE__)
+          true
         end
       end
     end
     private_class_method :define_ruby_execute
 
     def self.define_ruby_execute_file(plug)
-      plug.rpc(:ruby_execute_file, sync: true) do |nvim, *args|
-        path, start, stop = args
-        nvim.current.range = (start-1..stop-1)
-
+      plug.rpc(:ruby_execute_file, sync: true) do |nvim, path|
         wrap_client(nvim) do
           eval(File.read(path), binding, __FILE__, __LINE__)
+          true
         end
       end
     end
@@ -86,16 +76,20 @@ module Neovim
         ensure
           $_ = nil
         end
+
+        true
       end
     end
     private_class_method :define_ruby_do_range
 
     def self.wrap_client(client)
       begin
-        ::Vim.__setobj__(client)
+        $curwin = client.current.window
+        $curbuf = client.current.buffer
+        ::VIM.__client = client
         yield
       ensure
-        ::Vim.__setobj__(nil)
+        $curwin = $curbuf = ::VIM.__client = nil
       end
     end
     private_class_method :wrap_client
