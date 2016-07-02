@@ -83,16 +83,59 @@ module Neovim
     private_class_method :define_ruby_do_range
 
     def self.wrap_client(client)
-      begin
-        $curwin = client.current.window
-        $curbuf = client.current.buffer
-        ::VIM.__client = client
-        yield
-      ensure
-        $curwin = $curbuf = ::VIM.__client = nil
+      with_globals(client) do
+        with_vim_constant(client) do
+          with_redirect_streams(client) do
+            yield
+          end
+        end
       end
     end
     private_class_method :wrap_client
+
+    def self.with_globals(client)
+      $curwin = client.current.window
+      $curbuf = client.current.buffer
+
+      begin
+        yield
+      ensure
+        $curwin = $curbuf = nil
+      end
+    end
+    private_class_method :with_globals
+
+    def self.with_vim_constant(client)
+      ::VIM.__client = client
+
+      begin
+        yield
+      ensure
+        ::VIM.__client = nil
+      end
+    end
+    private_class_method :with_vim_constant
+
+    def self.with_redirect_streams(client)
+      old_out_write = $stdout.method(:write)
+      old_err_write = $stderr.method(:write)
+
+      $stdout.define_singleton_method(:write) do |string|
+        client.out_write(string)
+      end
+
+      $stderr.define_singleton_method(:write) do |string|
+        client.err_write(string)
+      end
+
+      begin
+        yield
+      ensure
+        $stdout.define_singleton_method(:write, &old_out_write)
+        $stderr.define_singleton_method(:write, &old_err_write)
+      end
+    end
+    private_class_method :with_redirect_streams
   end
 end
 
