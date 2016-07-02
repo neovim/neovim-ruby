@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 require "neovim"
 
-if STDIN.tty?
+if ARGV.include?("--version") || ARGV.include?("-V")
+  puts Neovim::VERSION
+elsif STDIN.tty?
   abort("Can't run neovim-ruby-host interactively.")
 else
   Neovim.start_host(ARGV)

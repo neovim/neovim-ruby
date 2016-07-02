@@ -101,7 +101,8 @@ module Neovim
 
     def handle_response(payload)
       reqid, (_, error), result = payload
-      @pending_requests.delete(reqid).call(error, result)
+      callback = @pending_requests.delete(reqid) || Proc.new {}
+      callback.call(error, result)
     end
 
     def handle_notification(payload, callback)
