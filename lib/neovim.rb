@@ -2,6 +2,7 @@ require "neovim/client"
 require "neovim/host"
 require "neovim/session"
 require "neovim/plugin"
+require "neovim/version"
 
 # The main entrypoint to the +Neovim+ gem. It allows you to connect to a
 # running +nvim+ instance programmatically or define a remote plugin to be
