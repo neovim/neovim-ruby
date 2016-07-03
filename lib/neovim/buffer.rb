@@ -56,7 +56,7 @@ module Neovim
     #
     # @return [Fixnum]
     def count
-      lines.to_a.size
+      line_count
     end
 
     # Get the number of lines.
@@ -66,21 +66,21 @@ module Neovim
       count
     end
 
-    # Get the line at the given index.
+    # Get the given line (1-indexed).
     #
     # @param index [Fixnum]
     # @return [String]
     def [](index)
-      lines[index]
+      lines[index-1]
     end
 
-    # Set the line at the given index.
+    # Set the given line (1-indexed).
     #
     # @param index [Fixnum]
     # @param str [String]
     # @return [String]
     def []=(index, str)
-      lines[index] = str
+      lines[index-1] = str
     end
 
     # Delete the line at the given index.

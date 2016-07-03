@@ -63,19 +63,19 @@ module Neovim
       end
 
       describe "#[]" do
-        it "returns the line at the given index" do
+        it "returns the given line" do
           buffer.lines = ["one", "two", "three"]
-          expect(buffer[1]).to eq("two")
+          expect(buffer[2]).to eq("two")
         end
       end
 
       describe "#[]=" do
-        it "sets the line at the given index" do
-          buffer.lines = ["one", "two"]
+        it "sets the given line" do
+          buffer.lines = ["first", "second"]
 
           expect {
-            buffer[0] = "first"
-          }.to change { buffer.lines }.to(["first", "two"])
+            buffer[2] = "last"
+          }.to change { buffer.lines.to_a }.to(["first", "last"])
         end
 
         it "returns the line" do
