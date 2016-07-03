@@ -59,6 +59,7 @@ module Neovim
     # @see EventLoop#run
     def run(session=nil, &callback)
       @msgpack_stream.run(session) do |msg|
+        debug("received #{msg.inspect}")
         kind, *payload = msg
 
         case kind

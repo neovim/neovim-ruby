@@ -1,12 +1,15 @@
 require "neovim/api"
 require "neovim/async_session"
 require "neovim/event_loop"
+require "neovim/logging"
 require "neovim/msgpack_stream"
 require "fiber"
 
 module Neovim
   # Wraps an +AsyncSession+ in a synchronous API using +Fiber+s.
   class Session
+    include Logging
+
     # Connect to a TCP socket.
     #
     # @param host [String] The hostname or IP address
@@ -115,8 +118,10 @@ module Neovim
     # @raise [ArgumentError] An error returned from +nvim+
     def request(method, *args)
       if @in_handler
+        debug("yielding request to fiber")
         err, res = running_request(method, *args)
       else
+        debug("handling blocking request")
         err, res = stopped_request(method, *args)
       end
 
