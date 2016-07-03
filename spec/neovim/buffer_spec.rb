@@ -117,6 +117,8 @@ module Neovim
         it "returns the current line on an active buffer" do
           buffer.lines = ["one", "two"]
           expect(buffer.line).to eq("one")
+          client.command("normal j")
+          expect(buffer.line).to eq("two")
         end
 
         it "returns nil on an inactive buffer" do

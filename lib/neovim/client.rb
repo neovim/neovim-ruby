@@ -50,6 +50,16 @@ module Neovim
       @current ||= Current.new(@session)
     end
 
+    # Evaluate the VimL expression (alias for +vim_eval+).
+    #
+    # @param expr [String] A VimL expression.
+    # @return [Object]
+    # @example Return a list from VimL
+    #   client.evaluate('[1, 2]') # => [1, 2]
+    def evaluate(expr)
+      @api.function(:vim_eval).call(@session, expr)
+    end
+
     private
 
     def rpc_methods

@@ -17,12 +17,28 @@ module Neovim
     def self.current
       ::VIM.current.buffer
     end
+
+    def self.count
+      ::VIM.get_buffers.size
+    end
+
+    def self.[](index)
+      ::VIM.get_buffers[index]
+    end
   end
 
   # Make +VIM::Window.current+ return the current buffer.
   class Window
     def self.current
       ::VIM.current.window
+    end
+
+    def self.count
+      ::VIM.get_windows.size
+    end
+
+    def self.[](index)
+      ::VIM.get_windows[index]
     end
   end
 
