@@ -1,3 +1,12 @@
+# 0.1.0
+- Add --version, -V to neovim-ruby-host executable
+- Update object interfaces to be compatible with Vim :ruby API
+- `NVIM_RUBY_LOG_LEVEL` now takes strings, e.g. `DEBUG`
+- Add `rpc` plugin DSL method for exposing top-level functions
+- Add `ruby_provider.rb` for Vim :ruby API compatibility
+- Remove Cursor class
+- Remove vendored `neovim`
+
 # 0.0.6
 - Update Session with improved Fiber coordination
 - Documentation
