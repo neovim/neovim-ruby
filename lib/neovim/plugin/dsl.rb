@@ -52,6 +52,20 @@ module Neovim
         register_handler(:autocmd, event, options, block)
       end
 
+      # Register a top-level remote procedure call (RPC).
+      #
+      # This can be used to directly expose an RPC call without a namespace.
+      # This is used primarily for exposing legacy ruby provider calls.
+      #
+      # @option options [Boolean] :sync (false)
+      def rpc(name, options={}, &block)
+        sync = options.delete(:sync)
+
+        @plugin.handlers.push(
+          Handler.unqualified(name, sync, options, block)
+        )
+      end
+
       private
 
       def register_handler(type, name, _options, block)

@@ -62,6 +62,47 @@ module Neovim
           :opts => {:range => "", :nargs => 1},
         )
       end
+
+      it "registers a top level RPC" do
+        cmd_block = Proc.new {}
+
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.rpc("Foo", :sync => true, &cmd_block)
+        end
+
+        expect(plugin.handlers.size).to be(1)
+        handler = plugin.handlers.first
+
+        expect(handler.block).to eq(cmd_block)
+        expect(handler.qualified_name).to eq("Foo")
+      end
+    end
+
+    describe "#specs" do
+      it "returns specs for plugin handlers" do
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.command("Foo", :sync => true, :nargs => 2)
+        end
+
+        expect(plugin.specs).to eq(
+          [
+            {
+              :type => :command,
+              :name => "Foo",
+              :sync => true,
+              :opts=> {:nargs => 2}
+            }
+          ]
+        )
+      end
+
+      it "doesn't include specs for top-level RPCs" do
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.rpc("Foo", :sync => true)
+        end
+
+        expect(plugin.specs).to eq([])
+      end
     end
   end
 end
