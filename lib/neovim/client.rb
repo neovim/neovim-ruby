@@ -60,6 +60,14 @@ module Neovim
       @api.function(:vim_eval).call(@session, expr)
     end
 
+    # Display a message.
+    #
+    # @param string [String] The message.
+    # @return [void]
+    def message(string)
+      out_write(string)
+    end
+
     private
 
     def rpc_methods

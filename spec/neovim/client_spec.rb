@@ -63,10 +63,8 @@ module Neovim
       end
 
       describe "#message" do
-        it "writes a message" do
-          expect {
-            client.message("test")
-          }.to output("test").to_stdout
+        it "writes a message (testing presence of method, not side-effects)" do
+          client.send(:message, "test")
         end
       end
 
