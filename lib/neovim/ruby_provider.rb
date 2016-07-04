@@ -54,7 +54,7 @@ module Neovim
     def self.define_ruby_execute(plug)
       plug.rpc(:ruby_execute, sync: true) do |nvim, ruby|
         wrap_client(nvim) do |_binding|
-          eval(ruby, _binding, __FILE__, __LINE__)
+          _binding.eval(ruby, __FILE__, __LINE__)
         end
       end
     end
@@ -63,7 +63,7 @@ module Neovim
     def self.define_ruby_execute_file(plug)
       plug.rpc(:ruby_execute_file, sync: true) do |nvim, path|
         wrap_client(nvim) do |_binding|
-          eval(File.read(path), _binding, __FILE__, __LINE__)
+          _binding.eval(File.read(path), __FILE__, __LINE__)
         end
       end
     end
@@ -81,8 +81,8 @@ module Neovim
 
             lines.map! do |line|
               _binding.eval("$_ = #{line.inspect}")
-              eval(ruby, _binding, __FILE__, __LINE__)
-              _binding.eval("$_").to_s
+              _binding.eval(ruby, __FILE__, __LINE__)
+              _binding.eval("$_")
             end
 
             buffer.set_lines(_start, _stop, true, lines)
