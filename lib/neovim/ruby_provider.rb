@@ -72,24 +72,20 @@ module Neovim
     def self.define_ruby_do_range(plug)
       plug.rpc(:ruby_do_range, sync: true) do |nvim, *args|
         wrap_client(nvim) do |_binding|
-          begin
-            start, stop, ruby = args
-            buffer = nvim.current.buffer
+          start, stop, ruby = args
+          buffer = nvim.current.buffer
 
-            (start..stop).each_slice(5000) do |linenos|
-              _start, _stop = linenos[0]-1, linenos[-1]
-              lines = buffer.get_lines(_start, _stop, true)
+          (start..stop).each_slice(5000) do |linenos|
+            _start, _stop = linenos[0]-1, linenos[-1]
+            lines = buffer.get_lines(_start, _stop, true)
 
-              lines.map! do |line|
-                _binding.eval("$_ = #{line.inspect}")
-                eval(ruby, _binding, __FILE__, __LINE__)
-                _binding.eval("$_").to_s
-              end
-
-              buffer.set_lines(_start, _stop, true, lines)
+            lines.map! do |line|
+              _binding.eval("$_ = #{line.inspect}")
+              eval(ruby, _binding, __FILE__, __LINE__)
+              _binding.eval("$_").to_s
             end
-          ensure
-            _binding.eval("$_ = nil")
+
+            buffer.set_lines(_start, _stop, true, lines)
           end
         end
       end
