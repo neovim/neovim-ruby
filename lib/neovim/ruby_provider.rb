@@ -53,8 +53,8 @@ module Neovim
 
     def self.define_ruby_execute(plug)
       plug.rpc(:ruby_execute, sync: true) do |nvim, ruby|
-        wrap_client(nvim) do
-          eval(ruby, binding, __FILE__, __LINE__)
+        wrap_client(nvim) do |_binding|
+          eval(ruby, _binding, __FILE__, __LINE__)
         end
       end
     end
@@ -62,8 +62,8 @@ module Neovim
 
     def self.define_ruby_execute_file(plug)
       plug.rpc(:ruby_execute_file, sync: true) do |nvim, path|
-        wrap_client(nvim) do
-          eval(File.read(path), binding, __FILE__, __LINE__)
+        wrap_client(nvim) do |_binding|
+          eval(File.read(path), _binding, __FILE__, __LINE__)
         end
       end
     end
@@ -71,34 +71,36 @@ module Neovim
 
     def self.define_ruby_do_range(plug)
       plug.rpc(:ruby_do_range, sync: true) do |nvim, *args|
-        begin
-          start, stop, ruby = args
-          buffer = nvim.current.buffer
+        wrap_client(nvim) do |_binding|
+          begin
+            start, stop, ruby = args
+            buffer = nvim.current.buffer
 
-          (start..stop).each_slice(5000) do |linenos|
-            _start, _stop = linenos[0]-1, linenos[-1]
-            lines = buffer.get_lines(_start, _stop, true)
+            (start..stop).each_slice(5000) do |linenos|
+              _start, _stop = linenos[0]-1, linenos[-1]
+              lines = buffer.get_lines(_start, _stop, true)
 
-            lines.map! do |line|
-              $_ = line
-              eval(ruby, binding, __FILE__, __LINE__)
-              String($_)
+              lines.map! do |line|
+                _binding.eval("$_ = #{line.inspect}")
+                eval(ruby, _binding, __FILE__, __LINE__)
+                _binding.eval("$_").to_s
+              end
+
+              buffer.set_lines(_start, _stop, true, lines)
             end
-
-            buffer.set_lines(_start, _stop, true, lines)
+          ensure
+            $_ = nil
           end
-        ensure
-          $_ = nil
         end
       end
     end
     private_class_method :define_ruby_do_range
 
-    def self.wrap_client(client)
-      with_globals(client) do
-        with_vim_constant(client) do
-          with_redirect_streams(client) do
-            yield
+    def self.wrap_client(__client)
+      with_globals(__client) do
+        with_vim_constant(__client) do
+          with_redirect_streams(__client) do
+            yield binding
           end
         end
       end
