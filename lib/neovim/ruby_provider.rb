@@ -89,7 +89,7 @@ module Neovim
               buffer.set_lines(_start, _stop, true, lines)
             end
           ensure
-            $_ = nil
+            _binding.eval("$_ = nil")
           end
         end
       end
