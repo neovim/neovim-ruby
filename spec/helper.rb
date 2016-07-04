@@ -1,5 +1,4 @@
 require "bundler/setup"
-require "mkmf"
 require "neovim"
 require "pry"
 require "timeout"
@@ -11,7 +10,7 @@ if ENV["REPORT_COVERAGE"]
   Coveralls.wear!
 end
 
-unless find_executable0("nvim")
+unless system("nvim -nu NONE +q")
   warn("Can't find `nvim` executable. See installation instructions:")
   warn("https://github.com/neovim/neovim/wiki/Installing-Neovim")
   exit(1)
