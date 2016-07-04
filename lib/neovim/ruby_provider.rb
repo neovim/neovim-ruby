@@ -102,6 +102,7 @@ module Neovim
           end
         end
       end
+      nil
     end
     private_class_method :wrap_client
 
