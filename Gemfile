@@ -1,8 +1,12 @@
 source "https://rubygems.org"
 gemspec
 
-if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new("2.0.0")
-  gem "pry-byebug"
-else
-  gem "pry-debugger"
+group :development do
+  if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new("2.0.0")
+    gem "coveralls"
+    gem "pry-byebug"
+  else
+    gem "coveralls", "0.8.13"
+    gem "pry-debugger"
+  end
 end
