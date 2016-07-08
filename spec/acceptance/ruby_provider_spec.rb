@@ -89,6 +89,14 @@ RSpec.describe "ruby_provider" do
         nvim.eval("rpcrequest(host, 'ruby_execute', #{ruby})")
       }.to change { nvim.current.window.width }.to(12)
     end
+
+    it "persists state between requests" do
+      nvim.eval("rpcrequest(host, 'ruby_execute', 'def foo; VIM.command(\"let g:called = 1\"); end')")
+      expect { nvim.get_var("called") }.to raise_error(/key not found/i)
+
+      nvim.eval("rpcrequest(host, 'ruby_execute', 'foo')")
+      expect(nvim.get_var("called")).to be(1)
+    end
   end
 
   describe "ruby_execute_file" do
@@ -173,6 +181,15 @@ RSpec.describe "ruby_provider" do
       expect {
         nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
       }.to change { nvim.current.window.width }.to(12)
+    end
+
+    it "persists state between requests" do
+      File.write(script_path, "def foo; VIM.command(\"let g:called = 1\"); end")
+      nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
+      expect { nvim.get_var("called") }.to raise_error(/key not found/i)
+
+      nvim.eval("rpcrequest(host, 'ruby_execute', 'foo')")
+      expect(nvim.get_var("called")).to be(1)
     end
   end
 
