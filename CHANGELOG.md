@@ -1,3 +1,12 @@
+# 0.2.0
+- Backwards incompatible, but we're pre-1.0.0 so going with minor bump instead
+- Make legacy ruby functions 1-indexed
+- Add Client#evaluate and Client#message
+- Make ruby functions affect global scope
+- Add VIM::{Buffer,Window}.{count,index}
+- Add minor debug logging to Session and AsyncSession
+- Remove race condition in Session fiber handling
+
 # 0.1.0
 - Add --version, -V to neovim-ruby-host executable
 - Update object interfaces to be compatible with Vim :ruby API
