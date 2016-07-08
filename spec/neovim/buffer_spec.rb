@@ -94,7 +94,7 @@ module Neovim
           buffer.lines = ["one", "two"]
 
           expect {
-            buffer.delete(0)
+            buffer.delete(1)
           }.to change { buffer.lines }.to(["two"])
         end
       end
@@ -104,7 +104,7 @@ module Neovim
           buffer.lines = ["one"]
 
           expect {
-            buffer.append(0, "two")
+            buffer.append(1, "two")
           }.to change { buffer.lines.to_a }.to(["one", "two"])
         end
 

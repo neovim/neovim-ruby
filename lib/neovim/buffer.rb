@@ -83,21 +83,21 @@ module Neovim
       lines[index-1] = str
     end
 
-    # Delete the line at the given index.
+    # Delete the given line (1-indexed).
     #
     # @param index [Fixnum]
     # @return [void]
     def delete(index)
-      lines.delete(index)
+      lines.delete(index-1)
     end
 
-    # Append a line after the given index.
+    # Append a line after the given line (1-indexed).
     #
     # @param index [Fixnum]
     # @param str [String]
     # @return [String]
     def append(index, str)
-      lines[index, 1] = [lines[index], str]
+      lines[index-1, 1] = [lines[index-1], str]
       str
     end
 
