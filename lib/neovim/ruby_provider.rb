@@ -107,46 +107,35 @@ module Neovim
     private_class_method :wrap_client
 
     def self.with_globals(client)
-      $curwin = client.current.window
       $curbuf = client.current.buffer
-
-      begin
-        yield
-      ensure
-        $curwin = $curbuf = nil
-      end
+      $curwin = client.current.window
+      yield
     end
     private_class_method :with_globals
 
     def self.with_vim_constant(client)
       ::VIM.__client = client
-
-      begin
-        yield
-      ensure
-        ::VIM.__client = nil
-      end
+      yield
     end
     private_class_method :with_vim_constant
 
     def self.with_redirect_streams(client)
-      old_out_write = $stdout.method(:write)
-      old_err_write = $stderr.method(:write)
+      @with_redirect_streams ||= begin
+        old_out_write = $stdout.method(:write)
+        old_err_write = $stderr.method(:write)
 
-      $stdout.define_singleton_method(:write) do |string|
-        client.out_write(string)
+        $stdout.define_singleton_method(:write) do |string|
+          client.out_write(string)
+        end
+
+        $stderr.define_singleton_method(:write) do |string|
+          client.err_write(string)
+        end
+
+        true
       end
 
-      $stderr.define_singleton_method(:write) do |string|
-        client.err_write(string)
-      end
-
-      begin
-        yield
-      ensure
-        $stdout.define_singleton_method(:write, &old_out_write)
-        $stderr.define_singleton_method(:write, &old_err_write)
-      end
+      yield
     end
     private_class_method :with_redirect_streams
   end
