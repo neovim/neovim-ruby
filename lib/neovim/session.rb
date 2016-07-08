@@ -57,7 +57,7 @@ module Neovim
     def initialize(async_session)
       @async_session = async_session
       @pending_messages = []
-      @in_handler = false
+      @main_fiber = Fiber.current
       @running = false
     end
 
@@ -89,13 +89,13 @@ module Neovim
       @running = true
 
       while message = @pending_messages.shift
-        in_handler_fiber { yield message if block_given? }
+        Fiber.new { yield message if block_given? }.resume
       end
 
       return unless @running
 
       @async_session.run(self) do |message|
-        in_handler_fiber { yield message if block_given? }
+        Fiber.new { yield message if block_given? }.resume
       end
     ensure
       stop
@@ -117,12 +117,12 @@ module Neovim
     # @return [Object] The response from the RPC call
     # @raise [ArgumentError] An error returned from +nvim+
     def request(method, *args)
-      if @in_handler
-        debug("yielding request to fiber")
-        err, res = running_request(method, *args)
-      else
+      if Fiber.current == @main_fiber
         debug("handling blocking request")
         err, res = stopped_request(method, *args)
+      else
+        debug("yielding request to fiber")
+        err, res = running_request(method, *args)
       end
 
       err ? raise(ArgumentError, err) : res
@@ -164,17 +164,6 @@ module Neovim
     end
 
     private
-
-    def in_handler_fiber(&block)
-      Fiber.new do
-        @in_handler = true
-        begin
-          block.call
-        ensure
-          @in_handler = false
-        end
-      end.resume
-    end
 
     def running_request(method, *args)
       fiber = Fiber.current
