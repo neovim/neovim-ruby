@@ -144,6 +144,10 @@ module Neovim
   @param [Object] value
   @return [Object]
 
+@method del_var(name)
+  @param [String] name
+  @return [Object]
+
 @method get_vvar(name)
   @param [String] name
   @return [Object]
