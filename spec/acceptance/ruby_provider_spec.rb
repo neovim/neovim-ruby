@@ -97,20 +97,6 @@ RSpec.describe "ruby_provider" do
       nvim.eval("rpcrequest(host, 'ruby_execute', 'foo')")
       expect(nvim.get_var("called")).to be(1)
     end
-
-    it "fails on multithreaded requests" do
-      ruby = <<-RUBY.inspect
-        VIM.command("let g:parent_var = 1")
-        Thread.new { VIM.command("let g:thread_var = 2") }.join
-      RUBY
-
-      expect {
-        nvim.eval("rpcrequest(host, 'ruby_execute', #{ruby})")
-      }.to raise_error(/failed to evaluate expression/i)
-
-      expect(nvim.get_var("parent_var")).to be(1)
-      expect { nvim.get_var("thread_var") }.to raise_error(/key not found/i)
-    end
   end
 
   describe "ruby_execute_file" do
@@ -204,20 +190,6 @@ RSpec.describe "ruby_provider" do
 
       nvim.eval("rpcrequest(host, 'ruby_execute', 'foo')")
       expect(nvim.get_var("called")).to be(1)
-    end
-
-    it "fails on multithreaded requests" do
-      File.write(script_path, <<-RUBY)
-        VIM.command("let g:parent_var = 1")
-        Thread.new { VIM.command("let g:thread_var = 2") }.join
-      RUBY
-
-      expect {
-        nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
-      }.to raise_error(/failed to evaluate expression/i)
-
-      expect(nvim.get_var("parent_var")).to be(1)
-      expect { nvim.get_var("thread_var") }.to raise_error(/key not found/i)
     end
   end
 

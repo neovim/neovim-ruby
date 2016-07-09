@@ -31,6 +31,12 @@ module Neovim
           session.request(:vim_set_current_line, large_str)
           expect(session.request(:vim_get_current_line)).to eq(large_str)
         end
+
+        it "fails outside of the main thread" do
+          expect {
+            Thread.new { session.request(:vim_strwidth, "foo") }.join
+          }.to raise_error(/outside of the main thread/)
+        end
       end
 
       describe "#notify" do
@@ -48,6 +54,12 @@ module Neovim
           large_str = Array.new(1024 * 17) { SecureRandom.hex(1) }.join
           session.notify(:vim_set_current_line, large_str)
           expect(session.request(:vim_get_current_line)).to eq(large_str)
+        end
+
+        it "fails outside of the main thread" do
+          expect {
+            Thread.new { session.notify(:vim_set_current_line, "foo") }.join
+          }.to raise_error(/outside of the main thread/)
         end
       end
 
@@ -105,7 +117,7 @@ module Neovim
         Process.waitpid(nvim_pid)
       end
 
-      let(:session) { Session.tcp("0.0.0.0", nvim_port) }
+      let!(:session) { Session.tcp("0.0.0.0", nvim_port) }
       include_context "session behavior"
     end
 
@@ -132,12 +144,12 @@ module Neovim
         Process.waitpid(nvim_pid)
       end
 
-      let(:session) { Session.unix(socket_path) }
+      let!(:session) { Session.unix(socket_path) }
       include_context "session behavior"
     end
 
     context "child" do
-      let(:session) { Session.child(["nvim", "-n", "-u", "NONE"]) }
+      let!(:session) { Session.child(["nvim", "-n", "-u", "NONE"]) }
       include_context "session behavior"
     end
   end

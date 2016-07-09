@@ -4,23 +4,13 @@ Thread.abort_on_exception = true
 class VIM < BasicObject
   class << self
     attr_accessor :__client
-    attr_writer :__parent_thread
   end
 
   Buffer = ::Neovim::Buffer
   Window = ::Neovim::Window
 
-  self.__parent_thread = ::Thread.current
-
   def self.method_missing(method, *args, &block)
-    if @__parent_thread == ::Thread.current
-      @__client.public_send(method, *args, &block)
-    else
-      raise(
-        "A Ruby plugin attempted to call neovim outside of the main thread, " +
-        "which is not yet supported by the neovim gem."
-      )
-    end
+    @__client.public_send(method, *args, &block)
   end
 end
 

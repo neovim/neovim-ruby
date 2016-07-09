@@ -57,6 +57,7 @@ module Neovim
     def initialize(async_session)
       @async_session = async_session
       @pending_messages = []
+      @main_thread = Thread.current
       @main_fiber = Fiber.current
       @running = false
     end
@@ -117,15 +118,17 @@ module Neovim
     # @return [Object] The response from the RPC call
     # @raise [ArgumentError] An error returned from +nvim+
     def request(method, *args)
-      if Fiber.current == @main_fiber
-        debug("handling blocking request")
-        err, res = stopped_request(method, *args)
-      else
-        debug("yielding request to fiber")
-        err, res = running_request(method, *args)
-      end
+      main_thread_only do
+        if Fiber.current == @main_fiber
+          debug("handling blocking request")
+          err, res = stopped_request(method, *args)
+        else
+          debug("yielding request to fiber")
+          err, res = running_request(method, *args)
+        end
 
-      err ? raise(ArgumentError, err) : res
+        err ? raise(ArgumentError, err) : res
+      end
     end
 
     # Make an RPC notification.
@@ -134,8 +137,10 @@ module Neovim
     # @param *args [Array] The RPC method arguments
     # @return [nil]
     def notify(method, *args)
-      @async_session.notify(method, *args)
-      nil
+      main_thread_only do
+        @async_session.notify(method, *args)
+        nil
+      end
     end
 
     # Stop the event loop.
@@ -184,6 +189,17 @@ module Neovim
       end
 
       [error, result]
+    end
+
+    def main_thread_only
+      if Thread.current == @main_thread
+        yield if block_given?
+      else
+        raise(
+          "A Ruby plugin attempted to call neovim outside of the main thread, " +
+          "which is not yet supported by the neovim gem."
+        )
+      end
     end
   end
 end
