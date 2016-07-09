@@ -1,16 +1,22 @@
 require "helper"
 
 RSpec.describe "ruby_provider" do
-  let(:nvim) do
-    Neovim.attach_child(["nvim", "--headless", "-u", "NONE", "-N", "-n"])
+  let!(:nvim) do
+    Neovim.attach_child(["nvim", "-u", "NONE", "-n"])
   end
 
-  before do
+  around do |spec|
     provider_path = Support.file_path("provider.rb")
     File.write(provider_path, "require 'neovim/ruby_provider'")
     host_exe = File.expand_path("../../../bin/neovim-ruby-host", __FILE__)
     nvim.current.buffer.lines = ["line1", "line2"]
     nvim.command("let host = rpcstart('#{host_exe}', ['#{provider_path}'])")
+
+    begin
+      spec.run
+    ensure
+      nvim.command("call rpcstop(host) | qa!")
+    end
   end
 
   describe "ruby_execute" do

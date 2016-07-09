@@ -85,7 +85,7 @@ module Neovim
         yield message if block_given?
       end
     rescue EOFError
-      warn("got EOFError")
+      info("got EOFError")
     rescue => e
       fatal("got unexpected error #{e}")
       debug(e.backtrace.join("\n"))
