@@ -70,6 +70,8 @@ end
 
 After a call to `:UpdateRemotePlugins`, plugins will be auto-loaded from the `$VIMRUNTIME/rplugin/ruby` directory.
 
+Neovim also supports the legacy Vim commands `:ruby`, `:rubyfile`, and `:rubydo`. A detailed description of their usage can be found with `:help ruby`.
+
 ## Links
 
 * Source: <http://github.com/alexgenco/neovim-ruby>
