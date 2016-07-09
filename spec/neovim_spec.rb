@@ -1,7 +1,7 @@
 require "helper"
 
 RSpec.describe Neovim do
-  let(:nvim_argv) { %w(nvim --headless -u NONE -i NONE -N -n) }
+  let(:nvim_argv) { %w(nvim --embed -u NONE -i NONE -n) }
 
   describe ".attach_tcp" do
     it "attaches to a TCP socket" do

@@ -13,7 +13,7 @@ namespace :neovim do
     buffer_docs = []
     window_docs = []
     tabpage_docs = []
-    session = Neovim::Session.child(%w(nvim -u NONE -n -N))
+    session = Neovim::Session.child(%w(nvim -u NONE -n))
 
     session.request(:vim_get_api_info)[1]["functions"].each do |func|
       prefix, method_name = func["name"].split("_", 2)

@@ -28,7 +28,7 @@ RSpec.describe "neovim-ruby-host" do
       end
     RUBY
 
-    nvim = Neovim.attach_child(["nvim", "--headless", "-u", "NONE", "-N", "-n"])
+    nvim = Neovim.attach_child(["nvim", "-u", "NONE", "-n"])
 
     host_exe = File.expand_path("../../../bin/neovim-ruby-host", __FILE__)
     nvim.command("let host = rpcstart('#{host_exe}', ['#{plugin1_path}', '#{plugin2_path}'])")
