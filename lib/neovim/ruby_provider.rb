@@ -25,9 +25,7 @@ module Neovim
 
     def self.define_ruby_execute_file(plug)
       plug.rpc(:ruby_execute_file, sync: true) do |nvim, path|
-        wrap_client(nvim) do
-          TOPLEVEL_BINDING.eval(File.read(path), __FILE__, __LINE__)
-        end
+        wrap_client(nvim) { load(path) }
       end
     end
     private_class_method :define_ruby_execute_file

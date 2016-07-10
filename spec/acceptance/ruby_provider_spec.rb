@@ -85,6 +85,17 @@ RSpec.describe "ruby_provider" do
       nvim.eval("rpcrequest(host, 'ruby_execute', 'foo')")
       expect(nvim.get_var("called")).to be(1)
     end
+
+    it "can run the same file multiple times" do
+      nvim.set_var("called", 0)
+      File.write(script_path, "VIM.command(\"let g:called += 1\")")
+
+      nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
+      expect(nvim.get_var("called")).to be(1)
+
+      nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
+      expect(nvim.get_var("called")).to be(2)
+    end
   end
 
   describe "ruby_do_range" do
