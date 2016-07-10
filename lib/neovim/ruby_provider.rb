@@ -17,7 +17,7 @@ module Neovim
     def self.define_ruby_execute(plug)
       plug.rpc(:ruby_execute, sync: true) do |nvim, ruby|
         wrap_client(nvim) do
-          TOPLEVEL_BINDING.eval(ruby, __FILE__, __LINE__)
+          eval(ruby, TOPLEVEL_BINDING, __FILE__, __LINE__)
         end
       end
     end
@@ -30,17 +30,17 @@ module Neovim
     end
     private_class_method :define_ruby_execute_file
 
-    def self.define_ruby_do_range(plug)
-      plug.rpc(:ruby_do_range, sync: true) do |nvim, *args|
-        wrap_client(nvim) do
-          start, stop, ruby = args
-          buffer = nvim.get_current_buffer
+    def self.define_ruby_do_range(__plug)
+      __plug.rpc(:ruby_do_range, sync: true) do |__nvim, *__args|
+        wrap_client(__nvim) do
+          __start, __stop, __ruby = __args
+          __buffer = __nvim.get_current_buffer
 
-          update_lines_in_chunks(buffer, start, stop, 5000) do |lines|
-            lines.map do |line|
-              TOPLEVEL_BINDING.eval("$_ = #{line.inspect}")
-              TOPLEVEL_BINDING.eval(ruby, __FILE__, __LINE__)
-              TOPLEVEL_BINDING.eval("$_")
+          __update_lines_in_chunks(__buffer, __start, __stop, 5000) do |__lines|
+            __lines.map do |__line|
+              $_ = __line
+              eval(__ruby, binding, __FILE__, __LINE__)
+              $_
             end
           end
         end
@@ -93,7 +93,7 @@ module Neovim
     end
     private_class_method :with_redirect_streams
 
-    def self.update_lines_in_chunks(buffer, start, stop, size)
+    def self.__update_lines_in_chunks(buffer, start, stop, size)
       (start..stop).each_slice(size) do |linenos|
         _start, _stop = linenos[0]-1, linenos[-1]
         lines = buffer.get_lines(_start, _stop, true)
@@ -101,7 +101,7 @@ module Neovim
         buffer.set_lines(_start, _stop, true, yield(lines))
       end
     end
-    private_class_method :update_lines_in_chunks
+    private_class_method :__update_lines_in_chunks
   end
 end
 
