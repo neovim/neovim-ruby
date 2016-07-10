@@ -1,50 +1,10 @@
-$__ruby_provider_scope = binding
 Thread.abort_on_exception = true
 
-class VIM < BasicObject
-  class << self
-    attr_accessor :__client
-  end
-
-  Buffer = ::Neovim::Buffer
-  Window = ::Neovim::Window
-
-  def self.method_missing(method, *args, &block)
-    @__client.public_send(method, *args, &block)
-  end
-end
+require "neovim/ruby_provider/vim"
+require "neovim/ruby_provider/buffer_ext"
+require "neovim/ruby_provider/window_ext"
 
 module Neovim
-  # Make +VIM::Buffer.current+ return the current buffer.
-  class Buffer
-    def self.current
-      ::VIM.current.buffer
-    end
-
-    def self.count
-      ::VIM.get_buffers.size
-    end
-
-    def self.[](index)
-      ::VIM.get_buffers[index]
-    end
-  end
-
-  # Make +VIM::Window.current+ return the current buffer.
-  class Window
-    def self.current
-      ::VIM.current.window
-    end
-
-    def self.count
-      ::VIM.get_windows.size
-    end
-
-    def self.[](index)
-      ::VIM.get_windows[index]
-    end
-  end
-
   module RubyProvider
     def self.define_plugin!
       Neovim.plugin do |plug|
@@ -57,7 +17,7 @@ module Neovim
     def self.define_ruby_execute(plug)
       plug.rpc(:ruby_execute, sync: true) do |nvim, ruby|
         wrap_client(nvim) do
-          $__ruby_provider_scope.eval(ruby, __FILE__, __LINE__)
+          TOPLEVEL_BINDING.eval(ruby, __FILE__, __LINE__)
         end
       end
     end
@@ -66,7 +26,7 @@ module Neovim
     def self.define_ruby_execute_file(plug)
       plug.rpc(:ruby_execute_file, sync: true) do |nvim, path|
         wrap_client(nvim) do
-          $__ruby_provider_scope.eval(File.read(path), __FILE__, __LINE__)
+          TOPLEVEL_BINDING.eval(File.read(path), __FILE__, __LINE__)
         end
       end
     end
@@ -76,19 +36,14 @@ module Neovim
       plug.rpc(:ruby_do_range, sync: true) do |nvim, *args|
         wrap_client(nvim) do
           start, stop, ruby = args
-          buffer = nvim.current.buffer
+          buffer = nvim.get_current_buffer
 
-          (start..stop).each_slice(5000) do |linenos|
-            _start, _stop = linenos[0]-1, linenos[-1]
-            lines = buffer.get_lines(_start, _stop, true)
-
-            lines.map! do |line|
-              $__ruby_provider_scope.eval("$_ = #{line.inspect}")
-              $__ruby_provider_scope.eval(ruby, __FILE__, __LINE__)
-              $__ruby_provider_scope.eval("$_")
+          update_lines_in_chunks(buffer, start, stop, 5000) do |lines|
+            lines.map do |line|
+              TOPLEVEL_BINDING.eval("$_ = #{line.inspect}")
+              TOPLEVEL_BINDING.eval(ruby, __FILE__, __LINE__)
+              TOPLEVEL_BINDING.eval("$_")
             end
-
-            buffer.set_lines(_start, _stop, true, lines)
           end
         end
       end
@@ -108,8 +63,8 @@ module Neovim
     private_class_method :wrap_client
 
     def self.with_globals(client)
-      $curbuf = client.current.buffer
-      $curwin = client.current.window
+      $curbuf = client.get_current_buffer
+      $curwin = client.get_current_window
       yield
     end
     private_class_method :with_globals
@@ -139,6 +94,16 @@ module Neovim
       yield
     end
     private_class_method :with_redirect_streams
+
+    def self.update_lines_in_chunks(buffer, start, stop, size)
+      (start..stop).each_slice(size) do |linenos|
+        _start, _stop = linenos[0]-1, linenos[-1]
+        lines = buffer.get_lines(_start, _stop, true)
+
+        buffer.set_lines(_start, _stop, true, yield(lines))
+      end
+    end
+    private_class_method :update_lines_in_chunks
   end
 end
 

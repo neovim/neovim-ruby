@@ -42,60 +42,6 @@ RSpec.describe "ruby_provider" do
       }.to change { nvim.current.buffer.lines.to_a }.to(["line"])
     end
 
-    it "exposes VIM::Buffer.current" do
-      expect {
-        ruby = "VIM::Buffer.current.lines = ['line']".inspect
-        nvim.eval("rpcrequest(host, 'ruby_execute', #{ruby})")
-      }.to change { nvim.current.buffer.lines.to_a }.to(["line"])
-    end
-
-    it "exposes VIM::Buffer.count" do
-      ruby = "VIM.set_var('count', VIM::Buffer.count)".inspect
-      nvim.eval("rpcrequest(host, 'ruby_execute', #{ruby})")
-      expect(nvim.get_var("count")).to eq(1)
-
-      nvim.command("tabe")
-
-      ruby = "VIM.set_var('count', VIM::Buffer.count)".inspect
-      nvim.eval("rpcrequest(host, 'ruby_execute', #{ruby})")
-      expect(nvim.get_var("count")).to eq(2)
-    end
-
-    it "exposes VIM::Buffer[]" do
-      expect {
-        ruby = "VIM::Buffer[0].lines = ['line']".inspect
-        nvim.eval("rpcrequest(host, 'ruby_execute', #{ruby})")
-      }.to change { nvim.current.buffer.lines.to_a }.to(["line"])
-    end
-
-    it "exposes VIM::Window.current" do
-      nvim.command("vsplit")
-      expect {
-        ruby = "VIM::Window.current.width = 12".inspect
-        nvim.eval("rpcrequest(host, 'ruby_execute', #{ruby})")
-      }.to change { nvim.current.window.width }.to(12)
-    end
-
-    it "exposes VIM::Window.count" do
-      ruby = "VIM.set_var('count', VIM::Window.count)".inspect
-      nvim.eval("rpcrequest(host, 'ruby_execute', #{ruby})")
-      expect(nvim.get_var("count")).to eq(1)
-
-      nvim.command("vsplit")
-
-      ruby = "VIM.set_var('count', VIM::Window.count)".inspect
-      nvim.eval("rpcrequest(host, 'ruby_execute', #{ruby})")
-      expect(nvim.get_var("count")).to eq(2)
-    end
-
-    it "exposes VIM::Window[]" do
-      nvim.command("vsplit")
-      expect {
-        ruby = "VIM::Window[0].width = 12".inspect
-        nvim.eval("rpcrequest(host, 'ruby_execute', #{ruby})")
-      }.to change { nvim.current.window.width }.to(12)
-    end
-
     it "persists state between requests" do
       nvim.eval("rpcrequest(host, 'ruby_execute', 'def foo; VIM.command(\"let g:called = 1\"); end')")
       expect { nvim.get_var("called") }.to raise_error(/key not found/i)
@@ -131,64 +77,6 @@ RSpec.describe "ruby_provider" do
       }.to change { nvim.current.buffer.lines.to_a }.to(["line"])
     end
 
-    it "exposes VIM::Buffer.current" do
-      File.write(script_path, "VIM::Buffer.current.lines = ['line']")
-
-      expect {
-        nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
-      }.to change { nvim.current.buffer.lines.to_a }.to(["line"])
-    end
-
-    it "exposes VIM::Buffer.count" do
-      File.write(script_path, "VIM.set_var('count', VIM::Buffer.count)")
-      nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
-      expect(nvim.get_var("count")).to eq(1)
-
-      nvim.command("tabe")
-
-      File.write(script_path, "VIM.set_var('count', VIM::Buffer.count)")
-      nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
-      expect(nvim.get_var("count")).to eq(2)
-    end
-
-    it "exposes VIM::Buffer[]" do
-      File.write(script_path, "VIM::Buffer[0].lines = ['line']")
-
-      expect {
-        nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
-      }.to change { nvim.current.buffer.lines.to_a }.to(["line"])
-    end
-
-    it "exposes VIM::Window.current" do
-      nvim.command("vsplit")
-      File.write(script_path, "VIM::Window.current.width = 12")
-
-      expect {
-        nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
-      }.to change { nvim.current.window.width }.to(12)
-    end
-
-    it "exposes VIM::Window.count" do
-      File.write(script_path, "VIM.set_var('count', VIM::Window.count)")
-      nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
-      expect(nvim.get_var("count")).to eq(1)
-
-      nvim.command("vsplit")
-
-      File.write(script_path, "VIM.set_var('count', VIM::Window.count)")
-      nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
-      expect(nvim.get_var("count")).to eq(2)
-    end
-
-    it "exposes VIM::Window[]" do
-      nvim.command("vsplit")
-      File.write(script_path, "VIM::Window[0].width = 12")
-
-      expect {
-        nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
-      }.to change { nvim.current.window.width }.to(12)
-    end
-
     it "persists state between requests" do
       File.write(script_path, "def foo; VIM.command(\"let g:called = 1\"); end")
       nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
@@ -206,6 +94,16 @@ RSpec.describe "ruby_provider" do
       expect {
         nvim.eval("rpcrequest(host, 'ruby_do_range', 2, 3, '$_.upcase!; 42')")
       }.to change { nvim.current.buffer.lines.to_a }.to(["a", "B", "C", "d"])
+    end
+
+    it "handles large amounts of lines" do
+      xs = Array.new(6000, "x")
+      ys = Array.new(6000, "y")
+      nvim.current.buffer.lines = xs
+
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_do_range', 1, 6000, '$_.succ!')")
+      }.to change { nvim.current.buffer.lines.to_a }.to(ys)
     end
   end
 end
