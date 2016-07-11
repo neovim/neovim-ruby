@@ -1,3 +1,7 @@
+# 0.2.1
+- Fix race condition in Fiber handling
+- General improvements to ruby\_provider.rb
+
 # 0.2.0
 - Backwards incompatible, but we're pre-1.0.0 so going with minor bump instead
 - Make legacy ruby functions 1-indexed
