@@ -72,7 +72,19 @@ module Neovim
         it "sets an option" do
           expect {
             client.set_option("makeprg", "rake")
-          }.to change { client.get_option("makeprg") }
+          }.to change { client.get_option("makeprg") }.to("rake")
+        end
+
+        it "sets an option as a single string" do
+          expect {
+            client.set_option("makeprg=rake")
+          }.to change { client.get_option("makeprg") }.to("rake")
+        end
+
+        it "sets an integer option as a single string" do
+          expect {
+            client.set_option("timeoutlen=0")
+          }.to change { client.get_option("timeoutlen") }.to(0)
         end
       end
 

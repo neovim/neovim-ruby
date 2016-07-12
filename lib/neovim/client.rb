@@ -68,6 +68,26 @@ module Neovim
       out_write(string)
     end
 
+    # Set an option.
+    #
+    # @overload set_option(key, value)
+    #   @param [String] key
+    #   @param [String] value
+    #
+    # @overload set_option(optstr)
+    #   @param [String] optstr
+    #
+    # @example Set the +timeoutlen+ option
+    #   client.set_option("timeoutlen", 0)
+    #   client.set_option("timeoutlen=0")
+    def set_option(*args)
+      if args.size > 1
+        @api.function("vim_set_option").call(@session, *args)
+      else
+        @api.function("vim_command").call(@session, "set #{args.first}")
+      end
+    end
+
     private
 
     def rpc_methods
