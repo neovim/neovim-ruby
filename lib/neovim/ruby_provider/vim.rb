@@ -1,7 +1,7 @@
 require "neovim/buffer"
 require "neovim/window"
 
-class VIM < BasicObject
+module VIM
   Buffer = ::Neovim::Buffer
   Window = ::Neovim::Window
 
