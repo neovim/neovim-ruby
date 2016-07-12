@@ -1,3 +1,7 @@
+# 0.2.2
+- Make `VIM` constant a module instead of a class
+- Make `Client#set_option` accept a single string argument
+
 # 0.2.1
 - Fix race condition in Fiber handling
 - General improvements to ruby\_provider.rb
