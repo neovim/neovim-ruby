@@ -176,11 +176,6 @@ module Neovim
   @param [String] name
   @return [Object]
 
-@method set_option(name, value)
-  @param [String] name
-  @param [Object] value
-  @return [void]
-
 @method out_write(str)
   @param [String] str
   @return [void]

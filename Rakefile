@@ -14,9 +14,25 @@ namespace :neovim do
     window_docs = []
     tabpage_docs = []
     session = Neovim::Session.child(%w(nvim -u NONE -n))
+    vim_defs = Neovim::Client.instance_methods(false)
+    buffer_defs = Neovim::Buffer.instance_methods(false)
+    tabpage_defs = Neovim::Tabpage.instance_methods(false)
+    window_defs = Neovim::Window.instance_methods(false)
 
     session.request(:vim_get_api_info)[1]["functions"].each do |func|
       prefix, method_name = func["name"].split("_", 2)
+
+      case prefix
+      when "vim"
+        next if vim_defs.include?(method_name.to_sym)
+      when "buffer"
+        next if buffer_defs.include?(method_name.to_sym)
+      when "tabpage"
+        next if tabpage_defs.include?(method_name.to_sym)
+      when "window"
+        next if window_defs.include?(method_name.to_sym)
+      end
+
       return_type = func["return_type"]
       params = func["parameters"]
       params.shift unless prefix == "vim"
