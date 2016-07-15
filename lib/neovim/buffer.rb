@@ -97,7 +97,11 @@ module Neovim
     # @param str [String]
     # @return [String]
     def append(index, str)
-      lines[index-1, 1] = [lines[index-1], str]
+      if index < 0
+        raise ArgumentError, "Index out of bounds"
+      else
+        lines.insert(index, str)
+      end
       str
     end
 

@@ -112,6 +112,12 @@ module Neovim
     end
 
     # @param index [Fixnum]
+    # @param line [String]
+    def insert(index, lines)
+      @buffer.insert(index, Array(lines))
+    end
+
+    # @param index [Fixnum]
     def delete(index)
       @buffer.del_line(abs_line(index))
     end

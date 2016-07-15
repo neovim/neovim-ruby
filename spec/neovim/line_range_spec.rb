@@ -4,7 +4,7 @@ module Neovim
   RSpec.describe LineRange do
     let(:client) { Neovim.attach_child(["nvim", "-n", "-u", "NONE"]) }
     let(:buffer) { client.current.buffer }
-    let(:line_range) { LineRange.new(buffer, 0, 3) }
+    let(:line_range) { LineRange.new(buffer, 0, -1) }
     let(:sub_range) { LineRange.new(buffer, 1, 2) }
 
     before do
@@ -114,6 +114,46 @@ module Neovim
       it "replaces a subset of lines" do
         sub_range.replace(["5", "6"])
         expect(buffer.lines.to_a).to eq(["1", "5", "6", "4"])
+      end
+    end
+
+    describe "#insert" do
+      before { line_range.replace(["1", "2"]) }
+
+      it "inserts lines at the beginning" do
+        expect {
+          line_range.insert(0, "z")
+        }.to change { line_range.to_a }.to(["z", "1", "2"])
+
+        expect {
+          line_range.insert(0, ["x", "y"])
+        }.to change { line_range.to_a }.to(["x", "y", "z", "1", "2"])
+      end
+
+      it "inserts lines in the middle" do
+        expect {
+          line_range.insert(1, "z")
+        }.to change { line_range.to_a }.to(["1", "z", "2"])
+
+        expect {
+          line_range.insert(1, ["x", "y"])
+        }.to change { line_range.to_a }.to(["1", "x", "y", "z", "2"])
+      end
+
+      it "inserts lines at the end" do
+        expect {
+          line_range.insert(-1, "x")
+        }.to change { line_range.to_a }.to(["1", "2", "x"])
+
+        expect {
+          line_range.insert(-1, ["y", "z"])
+        }.to change { line_range.to_a }.to(["1", "2", "x", "y", "z"])
+      end
+
+      it "raises on out of bounds indexes" do
+        expect {
+          line_range.insert(10, "x")
+        }.to raise_error(/out of bounds/i)
       end
     end
 

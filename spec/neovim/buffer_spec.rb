@@ -109,6 +109,25 @@ module Neovim
           }.to change { buffer.lines.to_a }.to(["one", "two"])
         end
 
+        it "unshifts buffer lines using index 0" do
+          buffer.lines = []
+
+          expect {
+            buffer.append(0, "two")
+            buffer.append(0, "one")
+          }.to change { buffer.lines.to_a }.to(["one", "two", ""])
+        end
+
+        it "raises for out of bounds indexes" do
+          expect {
+            buffer.append(-1, "err")
+          }.to raise_error(/out of bounds/i)
+
+          expect {
+            buffer.append(10, "err")
+          }.to raise_error(/out of bounds/i)
+        end
+
         it "returns the appended line" do
           expect(buffer.append(0, "two")).to eq("two")
         end
