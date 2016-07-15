@@ -56,7 +56,7 @@ module Neovim
         @manifest.handle(msg, client)
       end
     rescue => e
-      fatal("got unexpected error #{e}")
+      fatal("got unexpected error #{e.inspect}")
       debug(e.backtrace.join("\n"))
     end
 

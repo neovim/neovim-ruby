@@ -90,7 +90,7 @@ module Neovim
     rescue EOFError
       info("got EOFError")
     rescue => e
-      fatal("got unexpected error #{e}")
+      fatal("got unexpected error #{e.inspect}")
       debug(e.backtrace.join("\n"))
     end
 
