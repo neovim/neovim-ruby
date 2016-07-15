@@ -15,4 +15,4 @@ before_install:
   - eval "$(curl -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64"
 
 env: REPORT_COVERAGE=1
-script: bundle exec rake --trace spec
+script: travis_retry bundle exec rake --trace spec
