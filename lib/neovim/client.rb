@@ -88,6 +88,10 @@ module Neovim
       end
     end
 
+    def shutdown
+      @session.shutdown
+    end
+
     private
 
     def rpc_methods

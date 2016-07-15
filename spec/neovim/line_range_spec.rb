@@ -14,6 +14,8 @@ module Neovim
       client.command("normal o4")
     end
 
+    after { client.shutdown }
+
     it "is enumerable" do
       expect(line_range).to be_an(Enumerable)
       expect(line_range).to respond_to(:each)

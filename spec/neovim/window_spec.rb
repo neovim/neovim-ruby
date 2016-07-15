@@ -4,6 +4,7 @@ module Neovim
   RSpec.describe Window do
     let(:client) { Neovim.attach_child(["nvim", "-n", "-u", "NONE"]) }
     let(:window) { client.current.window }
+    after { client.shutdown }
 
     describe "if_ruby compatibility" do
       describe "#buffer" do

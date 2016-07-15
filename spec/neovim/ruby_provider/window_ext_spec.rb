@@ -9,6 +9,8 @@ module Neovim
       end
     end
 
+    after { nvim.shutdown }
+
     describe ".current" do
       it "returns the current window from the global VIM client" do
         expect(Window.current).to eq(nvim.get_current_window)

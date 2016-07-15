@@ -9,6 +9,8 @@ module Neovim
       end
     end
 
+    after { nvim.shutdown }
+
     describe ".current" do
       it "returns the current buffer from the global VIM client" do
         expect(Buffer.current).to eq(nvim.get_current_buffer)

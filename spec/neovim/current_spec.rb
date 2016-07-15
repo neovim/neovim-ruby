@@ -4,6 +4,7 @@ module Neovim
   RSpec.describe Current do
     let(:client) { Neovim.attach_child(["nvim", "-n", "-u", "NONE"]) }
     let(:current) { client.current }
+    after { client.shutdown }
 
     describe "#line" do
       it "returns an empty string if the current line is empty" do

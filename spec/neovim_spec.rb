@@ -47,7 +47,12 @@ RSpec.describe Neovim do
 
   describe ".attach_child" do
     it "spawns and attaches to a child process" do
-      expect(Neovim.attach_child(nvim_argv).strwidth("hi")).to eq(2)
+      begin
+        client = Neovim.attach_child(nvim_argv)
+        expect(client.strwidth("hi")).to eq(2)
+      ensure
+        client.shutdown
+      end
     end
   end
 

@@ -151,6 +151,7 @@ module Neovim
     context "child" do
       let!(:session) { Session.child(["nvim", "-n", "-u", "NONE"]) }
       include_context "session behavior"
+      after { session.shutdown }
     end
   end
 end

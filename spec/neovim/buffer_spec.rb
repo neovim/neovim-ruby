@@ -4,6 +4,7 @@ module Neovim
   RSpec.describe Buffer do
     let(:client) { Neovim.attach_child(["nvim", "-n", "-u", "NONE"]) }
     let(:buffer) { client.current.buffer }
+    after { client.shutdown }
 
     describe "#lines" do
       it "returns a LineRange" do
