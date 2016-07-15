@@ -99,7 +99,7 @@ module Neovim
       let!(:nvim_pid) do
         pid = Process.spawn(
           {"NVIM_LISTEN_ADDRESS" => "0.0.0.0:#{nvim_port}"},
-          "nvim --embed -n -u NONE",
+          "nvim --headless -n -u NONE",
           [:out, :err] => "/dev/null"
         )
 
@@ -126,7 +126,7 @@ module Neovim
       let!(:nvim_pid) do
         pid = Process.spawn(
           {"NVIM_LISTEN_ADDRESS" => socket_path},
-          "nvim --embed -n -u NONE",
+          "nvim --headless -n -u NONE",
           [:out, :err] => "/dev/null"
         )
 
