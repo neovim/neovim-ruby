@@ -32,7 +32,10 @@ module Neovim
     # @param argv [Array] The arguments to pass to the spawned process
     # @return [EventLoop]
     def self.child(argv)
-      io = IO.popen(argv | ["--embed"], "rb+")
+      io = IO.popen(argv | ["--embed"], "rb+").tap do |_io|
+        Process.detach(_io.pid)
+      end
+
       new(io)
     end
 
