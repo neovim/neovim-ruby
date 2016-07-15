@@ -7,7 +7,7 @@
 
 Ruby bindings for [Neovim](https://github.com/neovim/neovim).
 
-*Warning*: This project is currently incomplete and unstable.
+*Warning*: This project follows [Semantic Versioning](http://semver.org/), thus its API should be considered unstable until it reaches v1.0.0 ([spec](http://semver.org/#spec-item-4)).
 
 ## Installation
 
