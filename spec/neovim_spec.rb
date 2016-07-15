@@ -8,7 +8,6 @@ RSpec.describe Neovim do
       port = Support.port
       env = {"NVIM_LISTEN_ADDRESS" => "0.0.0.0:#{port}"}
       pid = Process.spawn(env, *nvim_argv, [:out, :err] => "/dev/null")
-      Process.detach(pid)
 
       begin
         TCPSocket.open("0.0.0.0", port).close
@@ -16,7 +15,12 @@ RSpec.describe Neovim do
         retry
       end
 
-      expect(Neovim.attach_tcp("0.0.0.0", port).strwidth("hi")).to eq(2)
+      begin
+        expect(Neovim.attach_tcp("0.0.0.0", port).strwidth("hi")).to eq(2)
+      ensure
+        Process.kill(:TERM, pid)
+        Process.waitpid(pid)
+      end
     end
   end
 
@@ -25,7 +29,6 @@ RSpec.describe Neovim do
       socket_path = Support.socket_path
       env = {"NVIM_LISTEN_ADDRESS" => socket_path}
       pid = Process.spawn(env, *nvim_argv, [:out, :err] => "/dev/null")
-      Process.detach(pid)
 
       begin
         UNIXSocket.new(socket_path).close
@@ -33,7 +36,12 @@ RSpec.describe Neovim do
         retry
       end
 
-      expect(Neovim.attach_unix(socket_path).strwidth("hi")).to eq(2)
+      begin
+        expect(Neovim.attach_unix(socket_path).strwidth("hi")).to eq(2)
+      ensure
+        Process.kill(:TERM, pid)
+        Process.waitpid(pid)
+      end
     end
   end
 

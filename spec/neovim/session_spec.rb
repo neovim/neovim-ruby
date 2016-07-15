@@ -102,7 +102,6 @@ module Neovim
           "nvim --embed -n -u NONE",
           [:out, :err] => "/dev/null"
         )
-        Process.detach(pid)
 
         begin
           TCPSocket.open("0.0.0.0", nvim_port).close
@@ -111,6 +110,11 @@ module Neovim
         end
 
         pid
+      end
+
+      after do
+        Process.kill(:TERM, nvim_pid)
+        Process.waitpid(nvim_pid)
       end
 
       let!(:session) { Session.tcp("0.0.0.0", nvim_port) }
@@ -125,7 +129,6 @@ module Neovim
           "nvim --embed -n -u NONE",
           [:out, :err] => "/dev/null"
         )
-        Process.detach(pid)
 
         begin
           UNIXSocket.new(socket_path).close
@@ -134,6 +137,11 @@ module Neovim
         end
 
         pid
+      end
+
+      after do
+        Process.kill(:TERM, nvim_pid)
+        Process.waitpid(nvim_pid)
       end
 
       let!(:session) { Session.unix(socket_path) }
