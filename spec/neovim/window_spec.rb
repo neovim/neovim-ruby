@@ -52,12 +52,22 @@ module Neovim
       end
 
       describe "#cursor=" do
-        it "sets the cursor coodinates" do
+        it "uses 1-index for line numbers" do
           window.buffer.lines = ["one", "two"]
+          client.command("normal G")
 
           expect {
-            window.cursor = [2, 2]
-          }.to change { window.cursor }.to([2, 2])
+            window.cursor = [1, 2]
+          }.to change { client.current.line }.from("two").to("one")
+        end
+
+        it "uses 0-index for column numbers" do
+          window.buffer.lines = ["one", "two"]
+          window.cursor = [1, 1]
+
+          expect {
+            client.command("normal ix")
+          }.to change { client.current.line }.to("oxne")
         end
       end
     end
