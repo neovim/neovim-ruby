@@ -1,48 +1,40 @@
 require "neovim/logging"
-require "neovim/manifest"
+require "neovim/host/manifest"
 
 module Neovim
   class Host
     include Logging
 
-    attr_reader :manifest
+    attr_reader :manifest, :plugin_path
 
-    # Load plugin definitions and instantiate a new +Host+. This temporarily
-    # mutates global state on the +Neovim+ module so that +Neovim.plugin+ calls
-    # will be registered correctly with the provided +Manifest+.
-    #
-    # @overload load_from_files(rplugin_paths)
-    #   @param rplugin_paths [Array<String>] The remote plugin paths.
-    #
-    # @overload load_from_files(rplugin_paths, target_manifest)
-    #   @param rplugin_paths [Array<String>] The remote plugin paths.
-    #   @param target_manifest [Manifest] The plugin manifest.
-    #
-    # @return [Host]
-    # @see Neovim.start_host
-    # @see Neovim.plugin
-    def self.load_from_files(rplugin_paths, target_manifest=Manifest.new)
-      old_manifest = Neovim.__configured_plugin_manifest
-      old_path = Neovim.__configured_plugin_path
-
-      begin
-        Neovim.__configured_plugin_manifest = target_manifest
-
-        rplugin_paths.each do |rplugin_path|
-          Neovim.__configured_plugin_path = rplugin_path
-          Kernel.load(rplugin_path, true)
-        end
-
-        new(target_manifest)
-      ensure
-        Neovim.__configured_plugin_manifest = old_manifest
-        Neovim.__configured_plugin_path = old_path
-      end
+    def self.bare
+      new(Manifest.new, Session.stdio)
     end
 
-    def initialize(manifest, session=nil)
-      @session = session || Session.stdio
+    def initialize(manifest, session)
       @manifest = manifest
+      @session = session
+    end
+
+    # Load plugin definitions from +rplugin_paths+.
+    #
+    # @param rplugin_paths [Array<String>]
+    # @see Neovim.start_host
+    # @see Neovim.plugin
+    def load_files(rplugin_paths)
+      rplugin_paths.each do |rplugin_path|
+        @plugin_path = rplugin_path
+        Kernel.load(rplugin_path, true)
+      end
+    ensure
+      @plugin_path = nil
+    end
+
+    # Register a plugin, adding it to the manifest.
+    #
+    # @param plugin [Plugin]
+    def register(plugin)
+      @manifest.register(plugin)
     end
 
     # Run the event loop, passing received messages to the manifest.

@@ -2,26 +2,27 @@ require "helper"
 
 module Neovim
   RSpec.describe Host do
-    describe ".load_from_files" do
-      it "loads the defined plugins into a manifest" do
+    let(:manifest) { Host::Manifest.new }
+    let(:host) { Host.new(manifest, double(:session)) }
+    before { allow(Neovim).to receive(:plugin_host).and_return(host) }
+
+    describe "#load_files" do
+      it "registers defined plugins in its manifest" do
         plug1 = Support.file_path("plug1.rb")
         plug2 = Support.file_path("plug2.rb")
 
         File.write(plug1, "Neovim.plugin")
         File.write(plug2, "Neovim.plugin; Neovim.plugin")
 
-        manifest = Manifest.new
-
         expect(manifest).to receive(:register).exactly(3).times
-        host = Host.load_from_files([plug1, plug2], manifest)
-        expect(host.manifest).to eq(manifest)
+        host.load_files([plug1, plug2])
       end
 
       it "doesn't load plugin code into the global namespace" do
         plug = Support.file_path("plug.rb")
         File.write(plug, "class FooClass; end")
 
-        host = Host.load_from_files([plug])
+        host.load_files([plug])
         expect(Kernel.const_defined?("FooClass")).to be(false)
       end
     end
@@ -29,7 +30,7 @@ module Neovim
     describe "#run" do
       it "delegates messages to the manifest" do
         messages = []
-        manifest = instance_double(Manifest)
+        manifest = instance_double(Host::Manifest)
         session = Session.child(["nvim", "-n", "-u", "NONE"])
 
         host = Host.new(manifest, session)
@@ -39,7 +40,7 @@ module Neovim
           expect(msg.arguments).to eq(["arg"])
           expect(client).to be_a(Client)
 
-          session.stop
+          session.shutdown
         end
 
         session.request(:vim_subscribe, "my_event")

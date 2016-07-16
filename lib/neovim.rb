@@ -56,12 +56,7 @@ require "neovim/version"
 module Neovim
   class << self
     # @api private
-    # @return [Manifest, nil]
-    attr_accessor :__configured_plugin_manifest
-
-    # @api private
-    # @return [String, nil]
-    attr_accessor :__configured_plugin_path
+    attr_reader :plugin_host
   end
 
   # Connect to a running +nvim+ instance over TCP.
@@ -92,19 +87,6 @@ module Neovim
     Client.new Session.child(argv)
   end
 
-  # Define an +nvim+ remote plugin using the plugin DSL.
-  #
-  # @yield [Plugin::DSL]
-  # @return [Plugin]
-  # @see Plugin::DSL
-  def self.plugin(&block)
-    Plugin.from_config_block(__configured_plugin_path, &block).tap do |plugin|
-      if __configured_plugin_manifest.respond_to?(:register)
-        __configured_plugin_manifest.register(plugin)
-      end
-    end
-  end
-
   # Start a plugin host. This is called by the +nvim-ruby-host+ executable,
   # which is spawned by +nvim+ to discover and run Ruby plugins, and acts as
   # the bridge between +nvim+ and the plugin.
@@ -113,7 +95,26 @@ module Neovim
   # @return [void]
   # @see Host
   def self.start_host(rplugin_paths)
-    Host.load_from_files(rplugin_paths).run
+    @plugin_host = Host.bare
+    @plugin_host.load_files(rplugin_paths)
+    @plugin_host.run
+  ensure
+    @plugin_host = nil
+  end
+
+  # Define a remote plugin using the plugin DSL.
+  #
+  # @yield [Plugin::DSL]
+  # @return [Plugin]
+  # @see Plugin::DSL
+  def self.plugin(&block)
+    if plugin_host.nil?
+      raise "Can't call Neovim.plugin outside of a plugin host."
+    end
+
+    Plugin.from_config_block(plugin_host.plugin_path, &block).tap do |plugin|
+      plugin_host.register(plugin)
+    end
   end
 
   # Set the Neovim global logger.
