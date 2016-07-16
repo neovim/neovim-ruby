@@ -99,7 +99,7 @@ module Neovim
         Fiber.new { yield message if block_given? }.resume
       end
     ensure
-      stop
+      shutdown
     end
 
     # Make an RPC request and return its response.
