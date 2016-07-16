@@ -6,6 +6,8 @@ module Neovim
   # This class is used to define a +Neovim::Plugin+ to act as a backend for the
   # legacy +:ruby+, +:rubyfile+, and +:rubydo+ Vim commands. It is autoloaded
   # from +nvim+ and not intended to be loaded directly.
+  #
+  # @api private
   module RubyProvider
     def self.__define_plugin!
       Thread.abort_on_exception = true

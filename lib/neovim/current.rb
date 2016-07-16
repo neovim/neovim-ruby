@@ -4,7 +4,9 @@ require "neovim/window"
 
 module Neovim
   # Support for +client.current+ chaining.
+  #
   # @see Client#current
+  # @api private
   class Current
     def initialize(session)
       @session = session

@@ -1,5 +1,7 @@
 module Neovim
   # Provide an enumerable interface for dealing with ranges of lines.
+  #
+  # @api private
   class LineRange
     include Enumerable
 

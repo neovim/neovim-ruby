@@ -1,4 +1,5 @@
 module Neovim
+  # @api private
   class API
     # Represents an unknown API. Used as a stand-in when the API hasn't been
     # discovered yet via the +vim_get_api_info+ RPC call.

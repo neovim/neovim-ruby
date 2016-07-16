@@ -2,6 +2,7 @@ require "neovim/logging"
 
 module Neovim
   class Host
+    # @api private
     class Manifest
       include Logging
 

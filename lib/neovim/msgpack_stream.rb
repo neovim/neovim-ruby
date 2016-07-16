@@ -3,7 +3,9 @@ require "msgpack"
 
 module Neovim
   # Handles serializing RPC messages to MessagePack and passing them to
-  # the event loop
+  # the event loop.
+  #
+  # @api private
   class MsgpackStream
     include Logging
 

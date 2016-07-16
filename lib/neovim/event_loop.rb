@@ -3,6 +3,8 @@ require "socket"
 
 module Neovim
   # The lowest level interface to reading from and writing to +nvim+.
+  #
+  # @api private
   class EventLoop
     include Logging
 

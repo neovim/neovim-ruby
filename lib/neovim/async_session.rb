@@ -6,6 +6,8 @@ module Neovim
   # Handles formatting RPC requests and writing them to the
   # +MsgpackStream+. This exposes an asynchronous API, in which responses
   # are handled in callbacks.
+  #
+  # @api private
   class AsyncSession
     include Logging
 

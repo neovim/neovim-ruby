@@ -1,6 +1,7 @@
 require "neovim/plugin/dsl"
 
 module Neovim
+  # @api private
   class Plugin
     attr_accessor :handlers
     attr_reader :source

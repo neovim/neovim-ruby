@@ -2,6 +2,7 @@ require "logger"
 
 module Neovim
   # Mixed into classes for unified logging helper methods.
+  # @api private
   module Logging
     class << self
       attr_writer :logger

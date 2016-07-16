@@ -7,6 +7,8 @@ require "fiber"
 
 module Neovim
   # Wraps an +AsyncSession+ in a synchronous API using +Fiber+s.
+  #
+  # @api private
   class Session
     include Logging
 
