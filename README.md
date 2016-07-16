@@ -25,20 +25,20 @@ Or install it yourself as:
 
 ## Usage
 
-You can control a running `nvim` process by connecting to `$NVIM_LISTEN_ADDRESS`. Start it up like this:
+You can control a running `nvim` process by connecting to `$NVIM_LISTEN_ADDRESS`. For example, to connect to `nvim` over a UNIX domain socket, start it up like this:
 
 ```shell
 $ NVIM_LISTEN_ADDRESS=/tmp/nvim.sock nvim
 ```
 
-You can then connect to that socket to get a `Neovim::Client`:
+You can then connect to that socket path to get a `Neovim::Client`:
 
 ```ruby
 require "neovim"
 client = Neovim.attach_unix("/tmp/nvim.sock")
 ```
 
-The client's interface is generated at runtime from the `vim_get_api_info` RPC call. Refer to the [docs](http://www.rubydoc.info/github/alexgenco/neovim-ruby/master/Neovim/Client) for details.
+Refer to the [`Neovim` docs](http://www.rubydoc.info/github/alexgenco/neovim-ruby/master/Neovim) for other ways to connect to `nvim`, and the [`Neovim::Client` docs](http://www.rubydoc.info/github/alexgenco/neovim-ruby/master/Neovim/Client) for a summary of the client interface.
 
 ### Plugins
 
@@ -68,9 +68,7 @@ Neovim.plugin do |plug|
 end
 ```
 
-After a call to `:UpdateRemotePlugins`, plugins will be auto-loaded from the `$VIMRUNTIME/rplugin/ruby` directory.
-
-Neovim also supports the legacy Vim commands `:ruby`, `:rubyfile`, and `:rubydo`. A detailed description of their usage can be found with `:help ruby`.
+Ruby plugins go in the `$VIMRUNTIME/rplugin/ruby` directory, and are auto-loaded after calling `:UpdateRemotePlugins`. Refer to the [`Neovim::Plugin::DSL` docs](http://www.rubydoc.info/github/alexgenco/neovim-ruby/master/Neovim/Plugin/DSL) for a more complete overview.
 
 ## Links
 
