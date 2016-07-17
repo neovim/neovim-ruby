@@ -7,7 +7,8 @@ module Neovim
       end
 
       # Load the provided Ruby files while temporarily overriding
-      # +Neovim.plugin+.
+      # +Neovim.plugin+ to expose the remote plugin DSL and register the result
+      # to the host.
       #
       # @param paths [Array<String>]
       def load(paths)

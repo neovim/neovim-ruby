@@ -102,6 +102,7 @@ module Neovim
   # temporarily overwritten in +Host#load_files+.
   #
   # @see Host#load_files
+  # @see Plugin::DSL
   def self.plugin
     raise "Can't call Neovim.plugin outside of a plugin host."
   end

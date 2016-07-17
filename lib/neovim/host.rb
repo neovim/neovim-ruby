@@ -13,14 +13,18 @@ module Neovim
     # @param rplugin_paths [Array<String>]
     # @return [Host]
     # @see Loader#load
-    def self.load_from_files(rplugin_paths)
-      new(Session.stdio).tap do |host|
+    def self.load_from_files(rplugin_paths, options={})
+      session = options.fetch(:session) { Session.stdio }
+      client = options.fetch(:client) { Client.new(session) }
+
+      new(session, client).tap do |host|
         Loader.new(host).load(rplugin_paths)
       end
     end
 
-    def initialize(session)
+    def initialize(session, client)
       @session = session
+      @client = client
       @handlers = {"poll" => poll_handler, "specs" => specs_handler}
       @specs = {}
     end
@@ -41,12 +45,7 @@ module Neovim
     #
     # @return [void]
     def run
-      @session.discover_api
-
-      @session.run do |msg|
-        debug("received #{msg.inspect}")
-        handle(msg, client)
-      end
+      @session.run { |msg| handle(msg) }
     rescue => e
       fatal("got unexpected error #{e.inspect}")
       debug(e.backtrace.join("\n"))
@@ -57,9 +56,12 @@ module Neovim
     #
     # @param message [Neovim::Request, Neovim::Notification]
     # @param client [Neovim::Client]
-    def handle(message, client)
-      default_handler = message.sync? ? default_sync_handler : default_async_handler
-      @handlers.fetch(message.method_name, default_handler).call(client, message)
+    def handle(message)
+      debug("received #{message.inspect}")
+
+      @handlers.
+        fetch(message.method_name, default_handler).
+        call(@client, message)
     rescue => e
       fatal("got unexpected error #{e.inspect}")
       debug(e.backtrace.join("\n"))
@@ -87,12 +89,12 @@ module Neovim
       end
     end
 
-    def default_sync_handler
-      @default_sync_handler ||= Proc.new { |_, req| req.error("Unknown request #{req.method_name}") }
-    end
-
-    def default_async_handler
-      @default_async_handler ||= Proc.new {}
+    def default_handler
+      @default_handler ||= Proc.new do |_, message|
+        if message.sync?
+          message.error("Unknown request #{message.method_name}")
+        end
+      end
     end
 
     def wrap_sync(handler)
@@ -109,14 +111,14 @@ module Neovim
 
     def wrap_async(handler)
       Proc.new do |client, notification|
-        debug("received #{notification.inspect}")
-        args = notification.arguments.flatten(1)
-        handler.call(client, *args)
+        begin
+          debug("received #{notification.inspect}")
+          args = notification.arguments.flatten(1)
+          handler.call(client, *args)
+        rescue => e
+          warn("got unexpected error #{e.inspect}")
+        end
       end
-    end
-
-    def client
-      @client ||= Client.new(@session)
     end
   end
 end
