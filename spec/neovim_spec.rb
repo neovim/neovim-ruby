@@ -58,36 +58,15 @@ RSpec.describe Neovim do
 
   describe ".start_host" do
     it "loads and runs a Host" do
-      host = double(:host)
       paths = ["/foo", "/bar"]
+      host = double(:host)
 
-      expect(Neovim::Host).to receive(:new).and_return(host)
-      expect(host).to receive(:load_files).with(paths)
+      expect(Neovim::Host).to receive(:load_from_files).
+        with(paths).
+        and_return(host)
+
       expect(host).to receive(:run)
-
       Neovim.start_host(paths)
-    end
-  end
-
-  describe ".plugin" do
-    it "loads a plugin and registers it to the host" do
-      host = double(:host, :plugin_path => "/foo/bar")
-      plugin = double(:plugin)
-      allow(Neovim).to receive(:plugin_host).and_return(host)
-
-      expect(Neovim::Plugin).to receive(:from_config_block).
-        with("/foo/bar").
-        and_return(plugin)
-
-      expect(host).to receive(:register).with(plugin)
-
-      Neovim.plugin
-    end
-
-    it "raises an exception outside of a plugin host" do
-      expect {
-        Neovim.plugin
-      }.to raise_error(/outside of a plugin host/i)
     end
   end
 end

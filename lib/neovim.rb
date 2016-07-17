@@ -95,26 +95,16 @@ module Neovim
   # @return [void]
   # @see Host
   def self.start_host(rplugin_paths)
-    @plugin_host = Host.bare
-    @plugin_host.load_files(rplugin_paths)
-    @plugin_host.run
-  ensure
-    @plugin_host = nil
+    Host.load_from_files(rplugin_paths).run
   end
 
-  # Define a remote plugin using the plugin DSL.
+  # Placeholder method for exposing the remote plugin DSL. This gets
+  # temporarily overwritten in +Host#load_files+.
   #
-  # @yield [Plugin::DSL]
-  # @return [Plugin]
+  # @see Host#load_files
   # @see Plugin::DSL
-  def self.plugin(&block)
-    if plugin_host.nil?
-      raise "Can't call Neovim.plugin outside of a plugin host."
-    end
-
-    Plugin.from_config_block(plugin_host.plugin_path, &block).tap do |plugin|
-      plugin_host.register(plugin)
-    end
+  def self.plugin
+    raise "Can't call Neovim.plugin outside of a plugin host."
   end
 
   # Set the Neovim global logger.

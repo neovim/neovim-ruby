@@ -2,51 +2,138 @@ require "helper"
 
 module Neovim
   RSpec.describe Host do
-    let(:manifest) { Host::Manifest.new }
-    let(:host) { Host.new(manifest, double(:session)) }
-    before { allow(Neovim).to receive(:plugin_host).and_return(host) }
+    let(:session) { instance_double(Session) }
+    let(:client) { instance_double(Client) }
+    let(:host) { Host.new(session, client) }
 
-    describe "#load_files" do
-      it "registers defined plugins in its manifest" do
-        plug1 = Support.file_path("plug1.rb")
-        plug2 = Support.file_path("plug2.rb")
+    describe ".load_from_files" do
+      it "instantiates with a session and loads plugins" do
+        paths = ["/foo", "/bar"]
+        loader = instance_double(Host::Loader)
 
-        File.write(plug1, "Neovim.plugin")
-        File.write(plug2, "Neovim.plugin; Neovim.plugin")
+        expect(Host::Loader).to receive(:new).
+          with(kind_of(Host)).
+          and_return(loader)
+        expect(loader).to receive(:load).with(paths)
 
-        expect(manifest).to receive(:register).exactly(3).times
-        host.load_files([plug1, plug2])
-      end
-
-      it "doesn't load plugin code into the global namespace" do
-        plug = Support.file_path("plug.rb")
-        File.write(plug, "class FooClass; end")
-
-        host.load_files([plug])
-        expect(Kernel.const_defined?("FooClass")).to be(false)
+        Host.load_from_files(paths, :session => session, :client => client)
       end
     end
 
-    describe "#run" do
-      it "delegates messages to the manifest" do
-        messages = []
-        manifest = instance_double(Host::Manifest)
-        session = Session.child(["nvim", "-n", "-u", "NONE"])
+    describe "#handlers" do
+      it "has a default poll handler" do
+        expect(host.handlers["poll"]).to respond_to(:call)
+      end
+    end
 
-        host = Host.new(manifest, session)
+    describe "#specs" do
+      it "has default specs" do
+        expect(host.specs).to eq({})
+      end
+    end
 
-        expect(manifest).to receive(:handle) do |msg, client|
-          expect(msg.method_name).to eq("my_event")
-          expect(msg.arguments).to eq(["arg"])
-          expect(client).to be_a(Client)
-
-          session.shutdown
+    describe "#register" do
+      it "adds specs" do
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.command(:Foo)
         end
 
-        session.request(:vim_subscribe, "my_event")
-        session.request(:vim_command, "call rpcnotify(0, 'my_event', 'arg')")
+        expect {
+          host.register(plugin)
+        }.to change { host.specs }.from({}).to("source" => plugin.specs)
+      end
 
-        host.run
+      it "adds plugin handlers" do
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.command(:Foo)
+        end
+
+        expect {
+          host.register(plugin)
+        }.to change {
+          host.handlers["source:command:Foo"]
+        }.from(nil).to(kind_of(Proc))
+      end
+
+      it "doesn't add top-level RPCs to specs" do
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.rpc(:Foo)
+        end
+
+        expect {
+          host.register(plugin)
+        }.to change { host.specs }.from({}).to("source" => [])
+      end
+    end
+
+    describe "#handle" do
+      it "calls the poll handler" do
+        message = double(:message, :method_name => "poll", :sync? => true)
+
+        expect(message).to receive(:respond).with("ok")
+        host.handle(message)
+      end
+
+      it "calls the specs handler" do
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.command(:Foo)
+        end
+        host.register(plugin)
+
+        message = double(:message, :method_name => "specs", :sync? => true, :arguments => ["source"])
+
+        expect(message).to receive(:respond).with(plugin.specs)
+        host.handle(message)
+      end
+
+      it "calls a plugin sync handler" do
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.command(:Foo, :sync => true) { |client, arg| [client, arg] }
+        end
+        host.register(plugin)
+
+        message = double(:message, :method_name => "source:command:Foo", :sync? => true, :arguments => [:arg])
+
+        expect(message).to receive(:respond).with([client, :arg])
+        host.handle(message)
+      end
+
+      it "rescues plugin sync handler exceptions" do
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.command(:Foo, :sync => true) { raise "BOOM" }
+        end
+        host.register(plugin)
+
+        message = double(:message, :method_name => "source:command:Foo", :sync? => true, :arguments => [])
+
+        expect(message).to receive(:error).with("BOOM")
+        host.handle(message)
+      end
+
+      it "calls a plugin async handler" do
+        async_proc = Proc.new {}
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.command(:Foo, &async_proc)
+        end
+        host.register(plugin)
+
+        message = double(:message, :method_name => "source:command:Foo", :sync? => false, :arguments => [:arg])
+
+        expect(async_proc).to receive(:call).with(client, :arg)
+        host.handle(message)
+      end
+
+      it "calls a default sync handler" do
+        message = double(:message, :method_name => "foobar", :sync? => true)
+
+        expect(message).to receive(:error).with("Unknown request foobar")
+        host.handle(message)
+      end
+
+      it "calls a default async handler" do
+        message = double(:message, :method_name => "foobar", :sync? => false)
+
+        host.handle(message)
       end
     end
   end
