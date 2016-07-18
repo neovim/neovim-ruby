@@ -34,8 +34,7 @@ module Neovim
     # @param plugin [Plugin]
     def register(plugin)
       plugin.handlers.each do |handler|
-        wrapped_handler = handler.sync? ? wrap_sync(handler) : wrap_async(handler)
-        @handlers[handler.qualified_name] = wrapped_handler
+        @handlers[handler.qualified_name] = wrap_plugin_handler(handler)
       end
 
       @specs[plugin.source] = plugin.specs
@@ -97,26 +96,16 @@ module Neovim
       end
     end
 
-    def wrap_sync(handler)
-      Proc.new do |client, request|
+    def wrap_plugin_handler(handler)
+      Proc.new do |client, message|
         begin
-          debug("received #{request.inspect}")
-          args = request.arguments.flatten(1)
-          request.respond(handler.call(client, *args))
-        rescue => e
-          request.error(e.message)
-        end
-      end
-    end
-
-    def wrap_async(handler)
-      Proc.new do |client, notification|
-        begin
-          debug("received #{notification.inspect}")
-          args = notification.arguments.flatten(1)
-          handler.call(client, *args)
+          debug("received #{message.inspect}")
+          args = message.arguments.flatten(1)
+          result = handler.call(client, *args)
+          message.respond(result) if message.sync?
         rescue => e
           warn("got unexpected error #{e.inspect}")
+          message.error(e.message) if message.sync?
         end
       end
     end

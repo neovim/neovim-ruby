@@ -38,4 +38,5 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 end
 
+Neovim.logger.level = Logger::FATAL
 Thread.abort_on_exception = true
