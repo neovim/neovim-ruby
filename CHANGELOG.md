@@ -1,3 +1,8 @@
+# 0.2.3
+- Detach child processes in `Neovim::EventLoop.child`
+- Improve performance/compatibility of `Buffer#append`
+- Various improvements around `Host` loading
+
 # 0.2.2
 - Make `VIM` constant a module instead of a class
 - Make `Client#set_option` accept a single string argument
