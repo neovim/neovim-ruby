@@ -54,11 +54,6 @@ require "neovim/version"
 # @see Client
 # @see Plugin::DSL
 module Neovim
-  class << self
-    # @api private
-    attr_reader :plugin_host
-  end
-
   # Connect to a running +nvim+ instance over TCP.
   #
   # @param host [String] The hostname or IP address
