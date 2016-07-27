@@ -15,7 +15,7 @@ RSpec.describe "ruby_provider" do
     begin
       spec.run
     ensure
-      nvim.command("call rpcstop(host) | qa!")
+      nvim.session.shutdown
     end
   end
 
