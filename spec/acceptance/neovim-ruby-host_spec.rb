@@ -60,10 +60,12 @@ RSpec.describe "neovim-ruby-host" do
 
     expect {
       nvim.command("call rpcnotify(host, '#{plugin_path}:autocmd:BufEnter:*.rb')")
+      sleep 0.01
     }.to change { nvim.current.buffer.lines.to_a }.from([""]).to(["Ruby file, eh?"])
 
     expect {
       nvim.command("call rpcnotify(host, '#{plugin_path}:command:AsyncSetLine', ['foo'])")
+      sleep 0.01
     }.to change { nvim.current.buffer.lines.to_a }.from(["Ruby file, eh?"]).to(["foo"])
 
     expect {
