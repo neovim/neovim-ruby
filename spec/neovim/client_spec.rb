@@ -5,6 +5,12 @@ module Neovim
     let(:client) { Neovim.attach_child(["nvim", "-n", "-u", "NONE"]) }
     after { client.shutdown }
 
+    specify do
+      client.strwidth("foo")
+      client.strwidth("bar")
+      client.command("echom 'hi'")
+    end
+
     describe "#respond_to?" do
       it "returns true for vim functions" do
         expect(client).to respond_to(:strwidth)

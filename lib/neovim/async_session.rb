@@ -49,6 +49,17 @@ module Neovim
       self
     end
 
+    # Pass the discovered API through to the MsgpackStream for registering ext
+    # types.
+    #
+    # @param api [API]
+    # @param session [Session]
+    # @see Session#discover_api
+    # @see MsgpackStream#discover_api
+    def discover_api(api, session)
+      @msgpack_stream.discover_api(api, session)
+    end
+
     # Run the event loop, yielding received RPC messages to the block. RPC
     # requests and notifications from +nvim+ will be wrapped in +Request+
     # and +Notification+ objects, respectively, and responses will be
@@ -59,8 +70,8 @@ module Neovim
     # @return [void]
     # @see MsgpackStream#run
     # @see EventLoop#run
-    def run(session=nil, &callback)
-      @msgpack_stream.run(session) do |msg|
+    def run(&callback)
+      @msgpack_stream.run do |msg|
         debug("received #{msg.inspect}")
         kind, *payload = msg
 

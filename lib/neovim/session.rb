@@ -73,12 +73,15 @@ module Neovim
       @api ||= API.null
     end
 
-    # Discover the +nvim+ API as described in the +vim_get_api_info+ call.
+    # Discover the +nvim+ API as described in the +vim_get_api_info+ call,
+    # propagating it down to lower layers of the stack.
     #
     # @return [API]
     # @see API
     def discover_api
-      @api = API.new(request(:vim_get_api_info))
+      @api = API.new(request(:vim_get_api_info)).tap do |api|
+        @async_session.discover_api(api, self)
+      end
     end
 
     # Run the event loop, handling messages in a +Fiber+.
@@ -97,7 +100,7 @@ module Neovim
 
       return unless @running
 
-      @async_session.run(self) do |message|
+      @async_session.run do |message|
         Fiber.new { yield message if block_given? }.resume
       end
     ensure
@@ -186,7 +189,7 @@ module Neovim
       @async_session.request(method, *args) do |err, res|
         error, result = err, res
         stop
-      end.run(self) do |message|
+      end.run do |message|
         @pending_messages << message
       end
 

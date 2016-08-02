@@ -32,9 +32,7 @@ module Neovim
     #   described by the +vim_get_api_info+ call
     # @return [void]
     # @see EventLoop#run
-    def run(session=nil)
-      register_types(session)
-
+    def run
       @event_loop.run do |data|
         @unpacker.feed_each(data) do |msg|
           debug("received #{msg.inspect}")
@@ -62,12 +60,14 @@ module Neovim
       @event_loop.shutdown
     end
 
-    private
-
-    def register_types(session)
-      return unless session && session.api
-
-      session.api.types.each do |type, info|
+    # Register msgpack ext types using the provided API and session
+    #
+    # @param api [API]
+    # @param session [Session]
+    # @see Session#discover_api
+    def discover_api(api, session)
+      info("registering msgpack ext types")
+      api.types.each do |type, info|
         klass = Neovim.const_get(type)
         id = info.fetch("id")
 
