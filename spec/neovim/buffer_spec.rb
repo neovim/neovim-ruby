@@ -118,6 +118,12 @@ module Neovim
           }.to change { buffer.lines.to_a }.to(["one", "two", ""])
         end
 
+        it "leaves the cursor unchanged" do
+          expect {
+            buffer.append(0, "one")
+          }.not_to change { client.current.window.cursor }
+        end
+
         it "raises for out of bounds indexes" do
           expect {
             buffer.append(-1, "err")
