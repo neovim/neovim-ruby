@@ -117,46 +117,6 @@ module Neovim
       end
     end
 
-    describe "#insert" do
-      before { line_range.replace(["1", "2"]) }
-
-      it "inserts lines at the beginning" do
-        expect {
-          line_range.insert(0, "z")
-        }.to change { line_range.to_a }.to(["z", "1", "2"])
-
-        expect {
-          line_range.insert(0, ["x", "y"])
-        }.to change { line_range.to_a }.to(["x", "y", "z", "1", "2"])
-      end
-
-      it "inserts lines in the middle" do
-        expect {
-          line_range.insert(1, "z")
-        }.to change { line_range.to_a }.to(["1", "z", "2"])
-
-        expect {
-          line_range.insert(1, ["x", "y"])
-        }.to change { line_range.to_a }.to(["1", "x", "y", "z", "2"])
-      end
-
-      it "inserts lines at the end" do
-        expect {
-          line_range.insert(-1, "x")
-        }.to change { line_range.to_a }.to(["1", "2", "x"])
-
-        expect {
-          line_range.insert(-1, ["y", "z"])
-        }.to change { line_range.to_a }.to(["1", "2", "x", "y", "z"])
-      end
-
-      it "raises on out of bounds indexes" do
-        expect {
-          line_range.insert(10, "x")
-        }.to raise_error(/out of bounds/i)
-      end
-    end
-
     describe "#delete" do
       it "deletes the line at the given index" do
         expect {

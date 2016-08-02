@@ -100,7 +100,7 @@ module Neovim
       if index < 0
         raise ArgumentError, "Index out of bounds"
       else
-        lines.insert(index, str)
+        insert(index, Array(str))
       end
       str
     end

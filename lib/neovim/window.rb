@@ -2,14 +2,6 @@ require "neovim/remote_object"
 
 module Neovim
   class Window < RemoteObject
-    # Interface for interacting with the cursor position.
-    #
-    # @return [Cursor]
-    # @see Cursor
-    def cursor
-      @cursor ||= Cursor.new(self)
-    end
-
     # Get the buffer displayed in the window
     #
     # @return [Buffer]
