@@ -93,14 +93,21 @@ module Neovim
 
     # Append a line after the given line (1-indexed).
     #
+    # To maintain backwards compatibility with +vim+, the cursor is forced back
+    # to its previous position after inserting the line.
+    #
     # @param index [Fixnum]
     # @param str [String]
     # @return [String]
     def append(index, str)
+      window = @session.request(:vim_get_current_window)
+      cursor = window.cursor
+
       if index < 0
         raise ArgumentError, "Index out of bounds"
       else
-        insert(index, [str])
+        set_lines(index, index, true, [str])
+        window.set_cursor(cursor)
       end
       str
     end
