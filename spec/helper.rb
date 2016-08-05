@@ -1,6 +1,7 @@
 require "bundler/setup"
 require "neovim"
 require "pry"
+require "stringio"
 require "timeout"
 
 require File.expand_path("../support.rb", __FILE__)
@@ -32,6 +33,17 @@ RSpec.configure do |config|
       Timeout.timeout(5) { spec.run }
     ensure
       Support.teardown_workspace
+    end
+  end
+
+  config.around(:example, :silence_logging) do |spec|
+    old_logger = Neovim.logger
+
+    begin
+      Neovim.logger = Logger.new(StringIO.new)
+      spec.run
+    ensure
+      Neovim.logger = old_logger
     end
   end
 
