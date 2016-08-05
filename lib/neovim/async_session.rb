@@ -11,6 +11,8 @@ module Neovim
   class AsyncSession
     include Logging
 
+    attr_reader :msgpack_stream
+
     def initialize(msgpack_stream)
       @msgpack_stream = msgpack_stream
       @request_id = 0
@@ -47,17 +49,6 @@ module Neovim
     def notify(method, *args)
       @msgpack_stream.write([2, method, args])
       self
-    end
-
-    # Pass the discovered API through to the MsgpackStream for registering ext
-    # types.
-    #
-    # @param api [API]
-    # @param session [Session]
-    # @see Session#discover_api
-    # @see MsgpackStream#discover_api
-    def discover_api(api, session)
-      @msgpack_stream.discover_api(api, session)
     end
 
     # Run the event loop, yielding received RPC messages to the block. RPC

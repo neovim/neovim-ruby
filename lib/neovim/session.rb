@@ -80,7 +80,7 @@ module Neovim
     # @see API
     def discover_api
       @api = API.new(request(:vim_get_api_info)).tap do |api|
-        @async_session.discover_api(api, self)
+        @async_session.msgpack_stream.register_types(api, self)
       end
     end
 

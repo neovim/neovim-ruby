@@ -65,7 +65,7 @@ module Neovim
     # @param api [API]
     # @param session [Session]
     # @see Session#discover_api
-    def discover_api(api, session)
+    def register_types(api, session)
       info("registering msgpack ext types")
       api.types.each do |type, info|
         klass = Neovim.const_get(type)
