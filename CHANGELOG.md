@@ -1,3 +1,7 @@
+# 0.2.4
+- Maintain cursor position on Buffer#append for compatibility with vim
+- Fix excessive fetching of API metadata
+
 # 0.2.3
 - Detach child processes in `Neovim::EventLoop.child`
 - Improve performance/compatibility of `Buffer#append`
