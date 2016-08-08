@@ -6,8 +6,8 @@ module Neovim
       it "returns an empty API object" do
         api = API.null
 
-        expect(api.types).to eq([])
-        expect(api.functions).to eq([])
+        expect(api.types).to be_empty
+        expect(api.functions).to be_empty
       end
     end
 
@@ -29,10 +29,14 @@ module Neovim
     describe "#functions_with_prefix" do
       it "returns relevant functions" do
         api = API.new(
-          [nil, {"functions" => [{"name" => "vim_strwidth"}]}]
+          [nil, {"functions" => [
+            {"name" => "vim_strwidth"},
+            {"name" => "buffer_get_lines"}
+          ]}]
         )
 
         functions = api.functions_with_prefix("vim_")
+        expect(functions.size).to be(1)
         expect(functions.first.name).to eq("vim_strwidth")
       end
     end

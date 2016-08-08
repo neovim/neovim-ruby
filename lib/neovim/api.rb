@@ -1,6 +1,8 @@
 module Neovim
   # @api private
   class API
+    attr_reader :channel_id
+
     # Represents an unknown API. Used as a stand-in when the API hasn't been
     # discovered yet via the +vim_get_api_info+ RPC call.
     #
@@ -9,17 +11,19 @@ module Neovim
       new([nil, {"functions" => [], "types" => []}])
     end
 
-    def initialize(data)
-      @data = data
+    def initialize(api_info)
+      @channel_id, @api_info = api_info
     end
 
-    # Return all functions defined by the API, as +Function+ objects.
+    # Return all functions defined by the API.
     #
-    # @return [Array<Function>]
+    # @return [Hash{String => Function}] A +Hash+ mapping function names to
+    #   +Function+ objects.
     # @see Function
     def functions
-      @functions ||= @data.fetch(1).fetch("functions").map do |func|
-        Function.new(func["name"], func["async"])
+      @functions ||= @api_info.fetch("functions").inject({}) do |acc, func|
+        name, async = func.values_at("name", "async")
+        acc.merge(name => Function.new(name, async))
       end
     end
 
@@ -28,14 +32,7 @@ module Neovim
     #
     # @return [Hash]
     def types
-      @types ||= @data.fetch(1).fetch("types")
-    end
-
-    # Return the channel ID of the current RPC session.
-    #
-    # @return [Fixnum, nil]
-    def channel_id
-      @channel_id ||= @data.fetch(0)
+      @types ||= @api_info.fetch("types")
     end
 
     # Return a list of functions with the given name prefix.
@@ -43,8 +40,8 @@ module Neovim
     # @param prefix [String] The function prefix
     # @return [Array<Function>]
     def functions_with_prefix(prefix)
-      functions.select do |function|
-        function.name =~ /\A#{prefix}/
+      functions.inject([]) do |acc, (name, function)|
+        name =~ /\A#{prefix}/ ? acc.push(function) : acc
       end
     end
 
@@ -53,9 +50,7 @@ module Neovim
     # @param name [String] The name of the function
     # @return [Function, nil]
     def function(name)
-      functions.find do |func|
-        func.name == name.to_s
-      end
+      functions[name.to_s]
     end
 
     # Truncate the output of inspect so console sessions are more pleasant.
