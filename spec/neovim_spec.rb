@@ -10,13 +10,13 @@ RSpec.describe Neovim do
       pid = Process.spawn(env, *nvim_argv, [:out, :err] => "/dev/null")
 
       begin
-        TCPSocket.open("0.0.0.0", port).close
+        client = Neovim.attach_tcp("0.0.0.0", port)
       rescue Errno::ECONNREFUSED
         retry
       end
 
       begin
-        expect(Neovim.attach_tcp("0.0.0.0", port).strwidth("hi")).to eq(2)
+        expect(client.strwidth("hi")).to eq(2)
       ensure
         Process.kill(:TERM, pid)
         Process.waitpid(pid)
@@ -31,13 +31,13 @@ RSpec.describe Neovim do
       pid = Process.spawn(env, *nvim_argv, [:out, :err] => "/dev/null")
 
       begin
-        UNIXSocket.new(socket_path).close
+        client = Neovim.attach_unix(socket_path)
       rescue Errno::ENOENT, Errno::ECONNREFUSED
         retry
       end
 
       begin
-        expect(Neovim.attach_unix(socket_path).strwidth("hi")).to eq(2)
+        expect(client.strwidth("hi")).to eq(2)
       ensure
         Process.kill(:TERM, pid)
         Process.waitpid(pid)

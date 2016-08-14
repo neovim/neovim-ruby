@@ -11,7 +11,12 @@ module Support
 
   def self.port
     server = TCPServer.new("0.0.0.0", 0)
-    server.addr[1].tap { server.close }
+
+    begin
+      server.addr[1]
+    ensure
+      server.close
+    end
   end
 
   def self.file_path(name)

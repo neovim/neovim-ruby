@@ -87,10 +87,9 @@ module Neovim
         response = nil
         event_loop.write(input).run do |msg|
           response = msg
-          event_loop.stop
+          event_loop.shutdown
         end
 
-        event_loop.shutdown
         expect(response).to eq(MessagePack.pack([1, 0, nil, 2]))
       end
     end
