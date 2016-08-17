@@ -84,8 +84,20 @@ module Neovim
 
     # @api private
     def self.__with_globals(client)
-      $curbuf = client.get_current_buffer
-      $curwin = client.get_current_window
+      @__buffer_cache ||= {}
+      @__window_cache ||= {}
+
+      __bufnr = client.evaluate("bufnr('%')")
+      __winnr = client.evaluate("winnr()")
+
+      $curbuf = @__buffer_cache.fetch(__bufnr) do
+        @__buffer_cache[__bufnr] = client.get_current_buffer
+      end
+
+      $curwin = @__window_cache.fetch(__winnr) do
+        @__window_cache[__winnr] = client.get_current_window
+      end
+
       yield
     end
     private_class_method :__with_globals
