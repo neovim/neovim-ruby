@@ -1,3 +1,8 @@
+# 0.2.5
+- Optimize remote function lookup
+- Fix bug where $curbuf and $curwin weren't persisting instance state between
+  requests
+
 # 0.2.4
 - Maintain cursor position on Buffer#append for compatibility with vim
 - Fix excessive fetching of API metadata
