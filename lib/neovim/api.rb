@@ -11,8 +11,8 @@ module Neovim
       new([nil, {"functions" => [], "types" => []}])
     end
 
-    def initialize(api_info)
-      @channel_id, @api_info = api_info
+    def initialize(payload)
+      @channel_id, @api_info = payload
     end
 
     # Return all functions defined by the API.

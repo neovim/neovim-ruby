@@ -5,7 +5,7 @@ require "neovim/ruby_provider/window_ext"
 module Neovim
   # This class is used to define a +Neovim::Plugin+ to act as a backend for the
   # legacy +:ruby+, +:rubyfile+, and +:rubydo+ Vim commands. It is autoloaded
-  # from +nvim+ and not intended to be loaded directly.
+  # from +nvim+ and not intended to be required directly.
   #
   # @api private
   module RubyProvider
