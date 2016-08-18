@@ -87,15 +87,14 @@ module Neovim
       @__buffer_cache ||= {}
       @__window_cache ||= {}
 
-      __bufnr = client.evaluate("bufnr('%')")
-      __winnr = client.evaluate("winnr()")
+      bufnr, winnr = client.evaluate("[bufnr('%'), winnr()]")
 
-      $curbuf = @__buffer_cache.fetch(__bufnr) do
-        @__buffer_cache[__bufnr] = client.get_current_buffer
+      $curbuf = @__buffer_cache.fetch(bufnr) do
+        @__buffer_cache[bufnr] = client.get_current_buffer
       end
 
-      $curwin = @__window_cache.fetch(__winnr) do
-        @__window_cache[__winnr] = client.get_current_window
+      $curwin = @__window_cache.fetch(winnr) do
+        @__window_cache[winnr] = client.get_current_window
       end
 
       yield
