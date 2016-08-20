@@ -1,8 +1,8 @@
-require "neovim/api"
 require "neovim/logging"
+require "neovim/session/api"
 require "neovim/session/event_loop"
-require "neovim/session/serializer"
 require "neovim/session/rpc"
+require "neovim/session/serializer"
 require "fiber"
 
 module Neovim

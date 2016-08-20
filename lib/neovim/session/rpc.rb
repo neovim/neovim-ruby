@@ -1,6 +1,6 @@
 require "neovim/logging"
-require "neovim/request"
-require "neovim/notification"
+require "neovim/session/request"
+require "neovim/session/notification"
 
 module Neovim
   class Session
