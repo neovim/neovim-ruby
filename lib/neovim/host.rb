@@ -102,9 +102,12 @@ module Neovim
           debug("received #{message.inspect}")
           args = message.arguments.flatten(1)
           result = handler.call(client, *args)
+
           message.respond(result) if message.sync?
         rescue => e
           warn("got unexpected error #{e.inspect}")
+          debug(e.backtrace.join("\n"))
+
           message.error(e.message) if message.sync?
         end
       end
