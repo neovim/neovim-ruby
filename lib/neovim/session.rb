@@ -1,12 +1,12 @@
 require "neovim/api"
-require "neovim/async_session"
-require "neovim/event_loop"
 require "neovim/logging"
-require "neovim/msgpack_stream"
+require "neovim/session/event_loop"
+require "neovim/session/serializer"
+require "neovim/session/rpc"
 require "fiber"
 
 module Neovim
-  # Wraps an +AsyncSession+ in a synchronous API using +Fiber+s.
+  # Wraps a +Session::RPC+ in a synchronous API using +Fiber+s.
   #
   # @api private
   class Session
@@ -50,14 +50,14 @@ module Neovim
     end
 
     def self.from_event_loop(event_loop)
-      msgpack_stream = MsgpackStream.new(event_loop)
-      async_session = AsyncSession.new(msgpack_stream)
-      new(async_session)
+      serializer = Serializer.new(event_loop)
+      rpc = RPC.new(serializer)
+      new(rpc)
     end
     private_class_method :from_event_loop
 
-    def initialize(async_session)
-      @async_session = async_session
+    def initialize(rpc)
+      @rpc = rpc
       @pending_messages = []
       @main_thread = Thread.current
       @main_fiber = Fiber.current
@@ -80,7 +80,7 @@ module Neovim
     # @see API
     def discover_api
       @api = API.new(request(:vim_get_api_info)).tap do |api|
-        @async_session.msgpack_stream.register_types(api, self)
+        @rpc.serializer.register_types(api, self)
       end
     end
 
@@ -88,8 +88,8 @@ module Neovim
     #
     # @yield [Object]
     # @return [void]
-    # @see AsyncSession#run
-    # @see MsgpackStream#run
+    # @see RPC#run
+    # @see Serializer#run
     # @see EventLoop#run
     def run
       @running = true
@@ -100,7 +100,7 @@ module Neovim
 
       return unless @running
 
-      @async_session.run do |message|
+      @rpc.run do |message|
         Fiber.new { yield message if block_given? }.resume
       end
     ensure
@@ -143,7 +143,7 @@ module Neovim
     # @return [nil]
     def notify(method, *args)
       main_thread_only do
-        @async_session.notify(method, *args)
+        @rpc.notify(method, *args)
         nil
       end
     end
@@ -154,7 +154,7 @@ module Neovim
     # @see EventLoop#stop
     def stop
       @running = false
-      @async_session.stop
+      @rpc.stop
     end
 
     # Shut down the event loop.
@@ -163,7 +163,7 @@ module Neovim
     # @see EventLoop#shutdown
     def shutdown
       @running = false
-      @async_session.shutdown
+      @rpc.shutdown
     end
 
     # Return the channel ID if registered via +vim_get_api_info+.
@@ -177,7 +177,7 @@ module Neovim
 
     def running_request(method, *args)
       fiber = Fiber.current
-      @async_session.request(method, *args) do |err, res|
+      @rpc.request(method, *args) do |err, res|
         fiber.resume(err, res)
       end
       Fiber.yield
@@ -186,7 +186,7 @@ module Neovim
     def stopped_request(method, *args)
       error, result = nil
 
-      @async_session.request(method, *args) do |err, res|
+      @rpc.request(method, *args) do |err, res|
         error, result = err, res
         stop
       end.run do |message|

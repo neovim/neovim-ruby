@@ -5,10 +5,10 @@ module Neovim
   class Request
     attr_reader :method_name, :arguments
 
-    def initialize(method_name, args, msgpack_stream, request_id)
+    def initialize(method_name, args, serializer, request_id)
       @method_name = method_name.to_s
       @arguments = args
-      @msgpack_stream = msgpack_stream
+      @serializer = serializer
       @request_id = request_id
     end
 
@@ -17,12 +17,12 @@ module Neovim
     end
 
     def respond(value)
-      @msgpack_stream.write([1, @request_id, nil, value])
+      @serializer.write([1, @request_id, nil, value])
       self
     end
 
     def error(message)
-      @msgpack_stream.write([1, @request_id, message, nil])
+      @serializer.write([1, @request_id, message, nil])
       self
     end
   end
