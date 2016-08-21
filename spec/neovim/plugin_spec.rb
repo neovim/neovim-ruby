@@ -67,7 +67,7 @@ module Neovim
         cmd_block = Proc.new {}
 
         plugin = Plugin.from_config_block("source") do |plug|
-          plug.rpc("Foo", :sync => true, &cmd_block)
+          plug.__send__(:rpc, "Foo", &cmd_block)
         end
 
         expect(plugin.handlers.size).to be(1)
@@ -98,7 +98,7 @@ module Neovim
 
       it "doesn't include specs for top-level RPCs" do
         plugin = Plugin.from_config_block("source") do |plug|
-          plug.rpc("Foo", :sync => true)
+          plug.__send__(:rpc, "Foo")
         end
 
         expect(plugin.specs).to eq([])

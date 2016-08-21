@@ -12,28 +12,18 @@ module Neovim
       private_class_method :new
 
       # Connect to a TCP socket.
-      #
-      # @param host [String] The hostname or IP address
-      # @param port [Fixnum] The port
-      # @return [EventLoop]
       def self.tcp(host, port)
         socket = TCPSocket.new(host, port)
         new(socket)
       end
 
       # Connect to a UNIX domain socket.
-      #
-      # @param path [String] The socket path
-      # @return [EventLoop]
       def self.unix(path)
         socket = UNIXSocket.new(path)
         new(socket)
       end
 
       # Spawn and connect to a child +nvim+ process.
-      #
-      # @param argv [Array] The arguments to pass to the spawned process
-      # @return [EventLoop]
       def self.child(argv)
         io = IO.popen(argv | ["--embed"], "rb+").tap do |_io|
           Process.detach(_io.pid)
@@ -44,8 +34,6 @@ module Neovim
 
       # Connect to the current process's standard streams. This is used to
       # promote the current process to a Ruby plugin host.
-      #
-      # @return [EventLoop]
       def self.stdio
         new(STDIN, STDOUT)
       end
@@ -57,9 +45,6 @@ module Neovim
 
       # Write data to the underlying +IO+. This will block until all the
       # data has been written.
-      #
-      # @param data [String] The data to write (typically message-packed)
-      # @return [self]
       def write(data)
         start = 0
         size = data.size
@@ -78,9 +63,6 @@ module Neovim
 
       # Run the event loop, reading from the underlying +IO+ and yielding
       # received messages to the block.
-      #
-      # @yield [String]
-      # @return [void]
       def run
         @running = true
 
@@ -98,15 +80,11 @@ module Neovim
       end
 
       # Stop the event loop.
-      #
-      # @return [void]
       def stop
         @running = false
       end
 
       # Stop the event loop and close underlying +IO+s.
-      #
-      # @return [void]
       def shutdown
         stop
 

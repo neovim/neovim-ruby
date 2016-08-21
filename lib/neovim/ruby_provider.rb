@@ -24,7 +24,7 @@ module Neovim
     #
     # This is used by the +:ruby+ command.
     def self.__define_ruby_execute(plug)
-      plug.rpc(:ruby_execute, sync: true) do |nvim, ruby|
+      plug.__send__(:rpc, :ruby_execute) do |nvim, ruby|
         __wrap_client(nvim) do
           eval(ruby, TOPLEVEL_BINDING, __FILE__, __LINE__)
         end
@@ -37,7 +37,7 @@ module Neovim
     #
     # This is used by the +:rubyfile+ command.
     def self.__define_ruby_execute_file(plug)
-      plug.rpc(:ruby_execute_file, sync: true) do |nvim, path|
+      plug.__send__(:rpc, :ruby_execute_file) do |nvim, path|
         __wrap_client(nvim) { load(path) }
       end
     end
@@ -52,7 +52,7 @@ module Neovim
     #
     # This is used by the +:rubydo+ command.
     def self.__define_ruby_do_range(__plug)
-      __plug.rpc(:ruby_do_range, sync: true) do |__nvim, *__args|
+      __plug.__send__(:rpc, :ruby_do_range) do |__nvim, *__args|
         __wrap_client(__nvim) do
           __start, __stop, __ruby = __args
           __buffer = __nvim.get_current_buffer
@@ -69,7 +69,6 @@ module Neovim
     end
     private_class_method :__define_ruby_do_range
 
-    # @api private
     def self.__wrap_client(client)
       __with_globals(client) do
         __with_vim_constant(client) do
@@ -82,7 +81,6 @@ module Neovim
     end
     private_class_method :__wrap_client
 
-    # @api private
     def self.__with_globals(client)
       @__buffer_cache ||= {}
       @__window_cache ||= {}
@@ -101,14 +99,12 @@ module Neovim
     end
     private_class_method :__with_globals
 
-    # @api private
     def self.__with_vim_constant(client)
       ::VIM.__client = client
       yield
     end
     private_class_method :__with_vim_constant
 
-    # @api private
     def self.__with_redirect_streams(client)
       @__with_redirect_streams ||= begin
         $stdout.define_singleton_method(:write) do |string|
@@ -126,7 +122,6 @@ module Neovim
     end
     private_class_method :__with_redirect_streams
 
-    # @api private
     def self.__update_lines_in_chunks(buffer, start, stop, size)
       (start..stop).each_slice(size) do |linenos|
         _start, _stop = linenos[0]-1, linenos[-1]

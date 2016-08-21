@@ -13,38 +13,22 @@ module Neovim
     include Logging
 
     # Connect to a TCP socket.
-    #
-    # @param host [String] The hostname or IP address
-    # @param port [Fixnum] The port
-    # @return [Session]
-    # @see EventLoop.tcp
     def self.tcp(host, port)
       from_event_loop(EventLoop.tcp(host, port))
     end
 
     # Connect to a UNIX domain socket.
-    #
-    # @param socket_path [String] The socket path
-    # @return [Session]
-    # @see EventLoop.unix
     def self.unix(socket_path)
       from_event_loop(EventLoop.unix(socket_path))
     end
 
     # Spawn and connect to a child +nvim+ process.
-    #
-    # @param argv [Array] The arguments to pass to the spawned process
-    # @return [Session]
-    # @see EventLoop.child
     def self.child(argv)
       from_event_loop(EventLoop.child(argv))
     end
 
     # Connect to the current process's standard streams. This is used to
     # promote the current process to a Ruby plugin host.
-    #
-    # @return [Session]
-    # @see EventLoop.stdio
     def self.stdio
       from_event_loop(EventLoop.stdio)
     end
@@ -66,18 +50,12 @@ module Neovim
 
     # Return the +nvim+ API as described in the +vim_get_api_info+ call.
     # Defaults to empty API information.
-    #
-    # @return [API]
-    # @see API.null
     def api
       @api ||= API.null
     end
 
     # Discover the +nvim+ API as described in the +vim_get_api_info+ call,
     # propagating it down to lower layers of the stack.
-    #
-    # @return [API]
-    # @see API
     def discover_api
       @api = API.new(request(:vim_get_api_info)).tap do |api|
         @rpc.serializer.register_types(api, self)
@@ -85,12 +63,6 @@ module Neovim
     end
 
     # Run the event loop, handling messages in a +Fiber+.
-    #
-    # @yield [Object]
-    # @return [void]
-    # @see RPC#run
-    # @see Serializer#run
-    # @see EventLoop#run
     def run
       @running = true
 
@@ -117,11 +89,6 @@ module Neovim
     # If this method is called outside a callback, write to the stream and
     # run the event loop until a response is received. Messages received
     # in the meantime are enqueued to be handled later.
-    #
-    # @param method [String, Symbol] The RPC method name
-    # @param *args [Array] The RPC method arguments
-    # @return [Object] The response from the RPC call
-    # @raise [ArgumentError] An error returned from +nvim+
     def request(method, *args)
       main_thread_only do
         if Fiber.current == @main_fiber
@@ -136,11 +103,7 @@ module Neovim
       end
     end
 
-    # Make an RPC notification.
-    #
-    # @param method [String, Symbol] The RPC method name
-    # @param *args [Array] The RPC method arguments
-    # @return [nil]
+    # Make an RPC notification. +nvim+ will not block waiting for a response.
     def notify(method, *args)
       main_thread_only do
         @rpc.notify(method, *args)
@@ -148,29 +111,19 @@ module Neovim
       end
     end
 
-    # Stop the event loop.
-    #
-    # @return [void]
-    # @see EventLoop#stop
+    # Return the channel ID if registered via +vim_get_api_info+.
+    def channel_id
+      api.channel_id
+    end
+
     def stop
       @running = false
       @rpc.stop
     end
 
-    # Shut down the event loop.
-    #
-    # @return [void]
-    # @see EventLoop#shutdown
     def shutdown
       @running = false
       @rpc.shutdown
-    end
-
-    # Return the channel ID if registered via +vim_get_api_info+.
-    #
-    # @return [Fixnum, nil]
-    def channel_id
-      api.channel_id
     end
 
     private
