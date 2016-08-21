@@ -9,10 +9,6 @@ module Neovim
     attr_reader :handlers, :specs
 
     # Initialize and populate a +Host+ from a list of plugin paths.
-    #
-    # @param rplugin_paths [Array<String>]
-    # @return [Host]
-    # @see Loader#load
     def self.load_from_files(rplugin_paths, options={})
       session = options.fetch(:session) { Session.stdio }
       client = options.fetch(:client) { Client.new(session) }
@@ -30,8 +26,6 @@ module Neovim
     end
 
     # Register a +Plugin+ to receive +Host+ messages.
-    #
-    # @param plugin [Plugin]
     def register(plugin)
       plugin.handlers.each do |handler|
         @handlers[handler.qualified_name] = wrap_plugin_handler(handler)
@@ -41,8 +35,6 @@ module Neovim
     end
 
     # Run the event loop, passing received messages to the appropriate handler.
-    #
-    # @return [void]
     def run
       @session.run { |msg| handle(msg) }
     rescue => e
@@ -52,9 +44,6 @@ module Neovim
 
     # Handle messages received from the host. Sends a +Neovim::Client+ along
     # with the message to be used in plugin callbacks.
-    #
-    # @param message [Neovim::Request, Neovim::Notification]
-    # @param client [Neovim::Client]
     def handle(message)
       debug("received #{message.inspect}")
 

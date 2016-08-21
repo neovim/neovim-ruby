@@ -22,14 +22,6 @@ module Neovim
 
       # Send an RPC request and enqueue it's callback to be called when a
       # response is received.
-      #
-      # @param method [Symbol, String] The RPC method name
-      # @param *args [Array] The arguments to the RPC method
-      # @return [self]
-      # @example
-      #   rpc.request(:vim_strwidth, "foobar") do |response|
-      #     $stderr.puts("Got a response #{response}")
-      #   end
       def request(method, *args, &response_cb)
         reqid = @request_id
         @request_id += 1
@@ -41,12 +33,6 @@ module Neovim
 
       # Send an RPC notification. Notifications don't receive a response
       # from +nvim+.
-      #
-      # @param method [Symbol, String] The RPC method name
-      # @param *args [Array] The arguments to the RPC method
-      # @return [self]
-      # @example
-      #   rpc.notify(:vim_input, "jk")
       def notify(method, *args)
         @serializer.write([2, method, args])
         self
@@ -56,12 +42,6 @@ module Neovim
       # requests and notifications from +nvim+ will be wrapped in +Request+
       # and +Notification+ objects, respectively, and responses will be
       # passed to their callbacks with optional errors.
-      #
-      # @param session [Session] The current session
-      # @yield [Object]
-      # @return [void]
-      # @see Serializer#run
-      # @see EventLoop#run
       def run(&callback)
         @serializer.run do |msg|
           debug("received #{msg.inspect}")
@@ -82,17 +62,11 @@ module Neovim
       end
 
       # Stop the event loop.
-      #
-      # @return [void]
-      # @see EventLoop#stop
       def stop
         @serializer.stop
       end
 
       # Shut down the event loop.
-      #
-      # @return [void]
-      # @see EventLoop#shutdown
       def shutdown
         @serializer.shutdown
       end

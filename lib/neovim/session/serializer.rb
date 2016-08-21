@@ -16,11 +16,6 @@ module Neovim
       end
 
       # Serialize an RPC message to and write it to the event loop.
-      #
-      # @param msg [Array] The RPC message
-      # @return [self]
-      # @example Write an RPC request
-      #   serializer.write([0, 1, :vim_strwidth, ["foobar"]])
       def write(msg)
         debug("writing #{msg.inspect}")
         @event_loop.write(MessagePack.pack(msg))
@@ -28,9 +23,6 @@ module Neovim
       end
 
       # Run the event loop, yielding deserialized messages to the block.
-      #
-      # @return [void]
-      # @see EventLoop#run
       def run
         @event_loop.run do |data|
           @unpacker.feed_each(data) do |msg|
@@ -44,26 +36,16 @@ module Neovim
       end
 
       # Stop the event loop.
-      #
-      # @return [void]
-      # @see EventLoop#stop
       def stop
         @event_loop.stop
       end
 
       # Shut down the event loop.
-      #
-      # @return [void]
-      # @see EventLoop#shutdown
       def shutdown
         @event_loop.shutdown
       end
 
       # Register msgpack ext types using the provided API and session
-      #
-      # @param api [API]
-      # @param session [Session]
-      # @see Session#discover_api
       def register_types(api, session)
         info("registering msgpack ext types")
         api.types.each do |type, info|
