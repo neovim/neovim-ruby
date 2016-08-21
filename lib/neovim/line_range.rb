@@ -1,7 +1,5 @@
 module Neovim
   # Provide an enumerable interface for dealing with ranges of lines.
-  #
-  # @api private
   class LineRange
     include Enumerable
 
@@ -11,17 +9,23 @@ module Neovim
       @end = _end
     end
 
+    # Resolve to an array of lines as strings.
+    #
     # @return [Array<String>]
     def to_a
       @buffer.get_line_slice(@begin, @end, true, true)
     end
 
+    # Yield each line in the range.
+    #
     # @yield [String] The current line
     # @return [Array<String>]
     def each(&block)
       to_a.each(&block)
     end
 
+    # Access the line at the given index within the range.
+    #
     # @overload [](index)
     #   @param index [Fixnum]
     #
@@ -60,6 +64,8 @@ module Neovim
     end
     alias_method :slice, :[]
 
+    # Set the line at the given index within the range.
+    #
     # @overload []=(index, string)
     #   @param index [Fixnum]
     #   @param string [String]
@@ -107,18 +113,24 @@ module Neovim
       end
     end
 
+    # Replace the range of lines.
+    #
     # @param other [Array] The replacement lines
     def replace(other)
       self[0..-1] = other
       self
     end
 
+    # Insert line(s) at the given index within the range.
+    #
     # @param index [Fixnum]
     # @param lines [String]
     def insert(index, lines)
       @buffer.insert(index, Array(lines))
     end
 
+    # Delete the line at the given index within the range.
+    #
     # @param index [Fixnum]
     def delete(index)
       @buffer.del_line(abs_line(index))
