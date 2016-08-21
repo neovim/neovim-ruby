@@ -1,3 +1,13 @@
+# 0.3.0
+- Mark `Plugin::DSL#rpc` private
+- Rename Session constants:
+  - `Neovim::EventLoop` -> `Neovim::Session::EventLoop`
+  - `Neovim::MsgpackStream` -> `Neovim::Session::Serializer`
+  - `Neovim::AsyncSession` -> `Neovim::Session::RPC`
+  - `Neovim::API` -> `Neovim::Session::API`
+  - `Neovim::Request` -> `Neovim::Session::Request`
+  - `Neovim::Notification` -> `Neovim::Session::Notification`
+
 # 0.2.5
 - Optimize remote function lookup
 - Fix bug where $curbuf and $curwin weren't persisting instance state between
