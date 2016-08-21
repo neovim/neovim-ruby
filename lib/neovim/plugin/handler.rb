@@ -4,15 +4,8 @@ module Neovim
     class Handler
       attr_reader :block
 
-      def self.unqualified(name, sync, options, block)
-        new(
-          nil,
-          nil,
-          name,
-          sync,
-          options.merge(:qualified => false),
-          block
-        )
+      def self.unqualified(name, block)
+        new(nil, nil, name, true, {:qualified => false}, block)
       end
 
       def initialize(source, type, name, sync, options, block)

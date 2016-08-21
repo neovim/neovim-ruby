@@ -57,7 +57,7 @@ module Neovim
 
       it "doesn't add top-level RPCs to specs" do
         plugin = Plugin.from_config_block("source") do |plug|
-          plug.rpc(:Foo)
+          plug.__send__(:rpc, :Foo)
         end
 
         expect {
