@@ -74,7 +74,7 @@ module Neovim
             session.shutdown
           end
 
-          expect(message).to be_a(Notification)
+          expect(message).to be_a(Session::Notification)
           expect(message.method_name).to eq("my_event")
           expect(message.arguments).to eq(["foo"])
         end
