@@ -4,7 +4,7 @@ require "neovim/ruby_provider/buffer_ext"
 module Neovim
   RSpec.describe Buffer do
     let!(:nvim) do
-      Neovim.attach_child(["nvim", "-i", "NONE", "-u", "NONE", "-n"]).tap do |nvim|
+      Neovim.attach_child(Support.child_argv).tap do |nvim|
         stub_const("::VIM", nvim)
       end
     end

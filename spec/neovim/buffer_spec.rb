@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe Buffer do
-    let(:client) { Neovim.attach_child(["nvim", "-i", "NONE", "-u", "NONE", "-n"]) }
+    let(:client) { Neovim.attach_child(Support.child_argv) }
     let(:buffer) { client.current.buffer }
     after { client.shutdown }
 

@@ -99,7 +99,7 @@ module Neovim
       let!(:nvim_pid) do
         pid = Process.spawn(
           {"NVIM_LISTEN_ADDRESS" => "0.0.0.0:#{nvim_port}"},
-          "nvim --headless -i NONE -u NONE -n",
+          "#{Support.child_argv.join(" ")} --headless",
           [:out, :err] => "/dev/null"
         )
 
@@ -126,7 +126,7 @@ module Neovim
       let!(:nvim_pid) do
         pid = Process.spawn(
           {"NVIM_LISTEN_ADDRESS" => socket_path},
-          "nvim --headless -i NONE -u NONE -n",
+          "#{Support.child_argv.join(" ")} --headless",
           [:out, :err] => "/dev/null"
         )
 
@@ -149,7 +149,7 @@ module Neovim
     end
 
     context "child" do
-      let!(:session) { Session.child(["nvim", "-i", "NONE", "-u", "NONE", "-n"]) }
+      let!(:session) { Session.child(Support.child_argv) }
       include_context "session behavior"
       after { session.shutdown }
     end
