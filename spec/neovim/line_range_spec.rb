@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe LineRange do
-    let(:client) { Neovim.attach_child(["nvim", "-n", "-u", "NONE"]) }
+    let(:client) { Neovim.attach_child(["nvim", "-i", "NONE", "-u", "NONE", "-n"]) }
     let(:buffer) { client.current.buffer }
     let(:line_range) { LineRange.new(buffer, 0, -1) }
     let(:sub_range) { LineRange.new(buffer, 1, 2) }

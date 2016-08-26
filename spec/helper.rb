@@ -10,7 +10,7 @@ if ENV["REPORT_COVERAGE"]
   Coveralls.wear!
 end
 
-unless system("nvim -nu NONE +q")
+unless system("nvim -i NONE -u NONE -n +q")
   warn("Can't find `nvim` executable. See installation instructions:")
   warn("https://github.com/neovim/neovim/wiki/Installing-Neovim")
   exit(1)

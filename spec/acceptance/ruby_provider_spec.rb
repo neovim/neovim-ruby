@@ -2,7 +2,7 @@ require "helper"
 
 RSpec.describe "ruby_provider" do
   let!(:nvim) do
-    Neovim.attach_child(["nvim", "-u", "NONE", "-n"])
+    Neovim.attach_child(["nvim", "-i", "NONE", "-u", "NONE", "-n"])
   end
 
   around do |spec|
