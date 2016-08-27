@@ -24,8 +24,10 @@ module Neovim
       end
 
       # Spawn and connect to a child +nvim+ process.
-      def self.child(argv)
-        io = IO.popen(argv | ["--embed"], "rb+").tap do |_io|
+      def self.child(_argv)
+        argv = _argv.include?("--embed") ? _argv : _argv + ["--embed"]
+
+        io = IO.popen(argv, "rb+").tap do |_io|
           Process.detach(_io.pid)
         end
 
