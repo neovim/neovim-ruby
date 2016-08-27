@@ -95,11 +95,11 @@ module Neovim
     end
 
     context "tcp" do
-      let!(:nvim_port) { Support.port }
+      let!(:nvim_port) { Support.tcp_port }
       let!(:nvim_pid) do
         pid = Process.spawn(
           {"NVIM_LISTEN_ADDRESS" => "0.0.0.0:#{nvim_port}"},
-          "#{Support.child_argv.join(" ")} --headless",
+          Support.child_argv.join(" "),
           [:out, :err] => "/dev/null"
         )
 
@@ -126,7 +126,7 @@ module Neovim
       let!(:nvim_pid) do
         pid = Process.spawn(
           {"NVIM_LISTEN_ADDRESS" => socket_path},
-          "#{Support.child_argv.join(" ")} --headless",
+          Support.child_argv.join(" "),
           [:out, :err] => "/dev/null"
         )
 

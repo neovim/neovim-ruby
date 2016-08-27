@@ -19,7 +19,7 @@ module Support
     file_path("nvim.sock")
   end
 
-  def self.port
+  def self.tcp_port
     server = TCPServer.new("0.0.0.0", 0)
 
     begin
@@ -42,7 +42,7 @@ module Support
   end
 
   def self.child_argv
-    ["nvim", "-i", "NONE", "-u", "NONE", "-n"]	
+    ["nvim", "--headless", "-i", "NONE", "-u", "NONE", "-n"]
   end
 end
 
