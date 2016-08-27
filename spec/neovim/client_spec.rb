@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe Client do
-    let(:client) { Neovim.attach_child(["nvim", "-n", "-u", "NONE"]) }
+    let(:client) { Neovim.attach_child(Support.child_argv) }
     after { client.shutdown }
 
     specify do

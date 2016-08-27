@@ -10,7 +10,43 @@ if ENV["REPORT_COVERAGE"]
   Coveralls.wear!
 end
 
-unless system("nvim -nu NONE +q")
+module Support
+  def self.workspace
+    File.expand_path("../workspace", __FILE__)
+  end
+
+  def self.socket_path
+    file_path("nvim.sock")
+  end
+
+  def self.port
+    server = TCPServer.new("0.0.0.0", 0)
+
+    begin
+      server.addr[1]
+    ensure
+      server.close
+    end
+  end
+
+  def self.file_path(name)
+    File.join(workspace, name)
+  end
+
+  def self.setup_workspace
+    FileUtils.mkdir_p(workspace)
+  end
+
+  def self.teardown_workspace
+    FileUtils.rm_rf(workspace)
+  end
+
+  def self.child_argv
+    ["nvim", "-i", "NONE", "-u", "NONE", "-n"]	
+  end
+end
+
+unless system("#{Support.child_argv.join(" ")} +q")
   warn("Can't find `nvim` executable. See installation instructions:")
   warn("https://github.com/neovim/neovim/wiki/Installing-Neovim")
   exit(1)
@@ -47,38 +83,6 @@ RSpec.configure do |config|
   end
 
   Kernel.srand config.seed
-end
-
-module Support
-  def self.workspace
-    File.expand_path("../workspace", __FILE__)
-  end
-
-  def self.socket_path
-    file_path("nvim.sock")
-  end
-
-  def self.port
-    server = TCPServer.new("0.0.0.0", 0)
-
-    begin
-      server.addr[1]
-    ensure
-      server.close
-    end
-  end
-
-  def self.file_path(name)
-    File.join(workspace, name)
-  end
-
-  def self.setup_workspace
-    FileUtils.mkdir_p(workspace)
-  end
-
-  def self.teardown_workspace
-    FileUtils.rm_rf(workspace)
-  end
 end
 
 Thread.abort_on_exception = true

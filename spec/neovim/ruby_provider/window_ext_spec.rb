@@ -4,7 +4,7 @@ require "neovim/ruby_provider/window_ext"
 module Neovim
   RSpec.describe Window do
     let!(:nvim) do
-      Neovim.attach_child(["nvim", "-u", "NONE", "-n"]).tap do |nvim|
+      Neovim.attach_child(Support.child_argv).tap do |nvim|
         stub_const("::VIM", nvim)
       end
     end
