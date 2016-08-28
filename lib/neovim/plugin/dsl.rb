@@ -42,7 +42,7 @@ module Neovim
       # @param options [Hash] Function options.
       # @param &block [Proc, nil] The body of the function.
       #
-      # @option options [String, Boolean] :range The range argument. 
+      # @option options [String, Boolean] :range The range argument.
       #   See +:h command-range+.
       # @option options [String] :eval An +nvim+ expression. Gets evaluated and
       #   passed as an argument to the block.
