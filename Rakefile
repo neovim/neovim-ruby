@@ -6,5 +6,5 @@ task :default => :spec
 
 desc "Generate Neovim remote API docs"
 task :docs do
-  sh File.expand_path("../bin/generate_docs", __FILE__)
+  sh File.expand_path("../script/generate_docs", __FILE__)
 end
