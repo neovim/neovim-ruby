@@ -55,7 +55,7 @@ module Neovim
           LineRange.new(
             @buffer,
             abs_line(pos),
-            abs_line(pos + len -1)
+            abs_line(pos + len - 1)
           )
         else
           @buffer.get_line(abs_line(pos))

@@ -66,8 +66,8 @@ module Neovim
     def run
       @running = true
 
-      while message = @pending_messages.shift
-        Fiber.new { yield message if block_given? }.resume
+      while pending = @pending_messages.shift
+        Fiber.new { yield pending if block_given? }.resume
       end
 
       return unless @running
