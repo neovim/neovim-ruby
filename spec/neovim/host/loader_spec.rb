@@ -1,4 +1,6 @@
 require "helper"
+require "neovim/host"
+require "neovim/host/loader"
 
 module Neovim
   class Host

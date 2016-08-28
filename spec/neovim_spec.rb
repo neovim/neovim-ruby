@@ -53,18 +53,4 @@ RSpec.describe Neovim do
       end
     end
   end
-
-  describe ".start_host" do
-    it "loads and runs a Host" do
-      paths = ["/foo", "/bar"]
-      host = double(:host)
-
-      expect(Neovim::Host).to receive(:load_from_files).
-        with(paths).
-        and_return(host)
-
-      expect(host).to receive(:run)
-      Neovim.start_host(paths)
-    end
-  end
 end

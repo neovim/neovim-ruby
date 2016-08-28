@@ -1,4 +1,5 @@
 require "helper"
+require "neovim/host"
 
 module Neovim
   RSpec.describe Host do
@@ -6,17 +7,21 @@ module Neovim
     let(:client) { instance_double(Client) }
     let(:host) { Host.new(session, client) }
 
-    describe ".load_from_files" do
-      it "instantiates with a session and loads plugins" do
+    describe ".run" do
+      it "loads plugins and runs the host event loop" do
         paths = ["/foo", "/bar"]
+
+        expect(Host).to receive(:new).and_return(host)
+        expect(host).to receive(:run)
+
         loader = instance_double(Host::Loader)
 
-        expect(Host::Loader).to receive(:new).
-          with(kind_of(Host)).
-          and_return(loader)
         expect(loader).to receive(:load).with(paths)
+        expect(Host::Loader).to receive(:new).
+          with(host).
+          and_return(loader)
 
-        Host.load_from_files(paths, :session => session, :client => client)
+        Host.run(paths, :session => session, :client => client)
       end
     end
 

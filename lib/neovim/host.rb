@@ -1,4 +1,4 @@
-require "neovim/logging"
+require "neovim"
 require "neovim/host/loader"
 
 module Neovim
@@ -8,14 +8,16 @@ module Neovim
 
     attr_reader :handlers, :specs
 
-    # Initialize and populate a +Host+ from a list of plugin paths.
-    def self.load_from_files(rplugin_paths, options={})
+    # Start a plugin host. This is called by the +nvim-ruby-host+ executable,
+    # which is spawned by +nvim+ to discover and run Ruby plugins, and acts as
+    # the bridge between +nvim+ and the plugin.
+    def self.run(rplugin_paths, options={})
       session = options.fetch(:session) { Session.stdio }
       client = options.fetch(:client) { Client.new(session) }
 
       new(session, client).tap do |host|
         Loader.new(host).load(rplugin_paths)
-      end
+      end.run
     end
 
     def initialize(session, client)

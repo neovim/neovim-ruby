@@ -1,7 +1,7 @@
 require "neovim/client"
-require "neovim/host"
-require "neovim/session"
+require "neovim/logging"
 require "neovim/plugin"
+require "neovim/session"
 require "neovim/version"
 
 # The main entrypoint to the +Neovim+ gem. It allows you to connect to a
@@ -82,21 +82,10 @@ module Neovim
     Client.new Session.child(argv)
   end
 
-  # Start a plugin host. This is called by the +nvim-ruby-host+ executable,
-  # which is spawned by +nvim+ to discover and run Ruby plugins, and acts as
-  # the bridge between +nvim+ and the plugin.
-  #
-  # @param rplugin_paths [Array<String>] The paths to remote plugin files
-  # @return [void]
-  # @see Host
-  def self.start_host(rplugin_paths)
-    Host.load_from_files(rplugin_paths).run
-  end
-
   # Placeholder method for exposing the remote plugin DSL. This gets
-  # temporarily overwritten in +Host#load_files+.
+  # temporarily overwritten in +Host::Loader#load+.
   #
-  # @see Host#load_files
+  # @see Host::Loader#load
   # @see Plugin::DSL
   def self.plugin
     raise "Can't call Neovim.plugin outside of a plugin host."

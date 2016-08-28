@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-require "neovim"
+
+require "neovim/host"
 
 ARGV.each do |arg|
   break if arg == "--"
@@ -13,5 +14,5 @@ end
 if STDIN.tty?
   abort("Can't run neovim-ruby-host interactively.")
 else
-  Neovim.start_host(ARGV)
+  Neovim::Host.run(ARGV)
 end
