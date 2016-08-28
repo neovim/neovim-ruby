@@ -15,17 +15,12 @@ RSpec.describe "neovim-ruby-host" do
   end
 
   it "fails when attached to a TTY" do
-    yielded = false
-
     PTY.spawn(host_exe) do |rd, wr, pid|
-      yielded = true
       expect(rd.gets).to match(/can't run.+interactively/i)
 
       _, status = Process.waitpid2(pid)
       expect(status.exitstatus).to be(1)
     end
-
-    expect(yielded).to be(true)
   end
 
   it "loads and runs plugins from Ruby source files" do
