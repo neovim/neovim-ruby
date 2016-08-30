@@ -94,6 +94,26 @@ module Neovim
           expect(response).to eq(MessagePack.pack([1, 0, nil, 2]))
         end
       end
+
+      describe "#run" do
+        it "handles EOF" do
+          rd, wr = IO.pipe
+          wr.close
+          event_loop = EventLoop.new(rd, wr)
+          expect(event_loop).to receive(:info).with(/EOFError/)
+
+          event_loop.run
+        end
+
+        it "handles other errors" do
+          rd, wr = IO.pipe
+          rd.close
+          event_loop = EventLoop.new(rd, wr)
+          expect(event_loop).to receive(:fatal).with(/IOError/)
+
+          event_loop.run
+        end
+      end
     end
   end
 end

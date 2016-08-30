@@ -9,8 +9,6 @@ module Neovim
     class EventLoop
       include Logging
 
-      private_class_method :new
-
       # Connect to a TCP socket.
       def self.tcp(host, port)
         socket = TCPSocket.new(host, port)
