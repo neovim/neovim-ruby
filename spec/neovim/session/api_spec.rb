@@ -13,7 +13,7 @@ module Neovim
       end
 
       describe "#function" do
-        it "returns a sync Function object" do
+        it "returns a sync function object" do
           api = API.new(
             [nil, {"functions" => [
               {"name" => "vim_sync", "async" => false}
@@ -21,12 +21,15 @@ module Neovim
           )
 
           function = api.function("vim_sync")
-          expect(function).to be_a(API::Function)
           expect(function.name).to eq("vim_sync")
           expect(function.async).to be(false)
+
+          session = instance_double(Session)
+          expect(session).to receive(:request).with("vim_sync", "msg")
+          function.call(session, "msg")
         end
 
-        it "returns an async Function object" do
+        it "returns an async function object" do
           api = API.new(
             [nil, {"functions" => [
               {"name" => "vim_async", "async" => true}
@@ -34,9 +37,12 @@ module Neovim
           )
 
           function = api.function("vim_async")
-          expect(function).to be_a(API::Function)
           expect(function.name).to eq("vim_async")
           expect(function.async).to be(true)
+
+          session = instance_double(Session)
+          expect(session).to receive(:notify).with("vim_async", "msg")
+          function.call(session, "msg")
         end
       end
 
