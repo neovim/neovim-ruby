@@ -1,4 +1,5 @@
 require "helper"
+require "neovim/plugin"
 
 module Neovim
   RSpec.describe Plugin do

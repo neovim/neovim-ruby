@@ -1,3 +1,5 @@
+require "neovim/plugin"
+
 module Neovim
   class Host
     # @api private

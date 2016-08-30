@@ -1,6 +1,5 @@
 require "neovim/client"
 require "neovim/logging"
-require "neovim/plugin"
 require "neovim/session"
 require "neovim/version"
 
