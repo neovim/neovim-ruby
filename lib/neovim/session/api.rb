@@ -45,7 +45,13 @@ module Neovim
         "#<#{self.class}:0x%x @types={...} @functions={...}>" % (object_id << 1)
       end
 
-      class Function < Struct.new(:name, :async)
+      class Function
+        attr_reader :name, :async
+
+        def initialize(name, async)
+          @name, @async = name, async
+        end
+
         # Apply this function to a running RPC session. Sends either a request if
         # +async+ is +false+ or a notification if +async+ is +true+.
         def call(session, *args)
