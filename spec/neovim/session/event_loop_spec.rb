@@ -114,6 +114,19 @@ module Neovim
           event_loop.run
         end
       end
+
+      describe "#write" do
+        it "retries when writes would block" do
+          rd, wr = IO.pipe
+          event_loop = EventLoop.new(rd, wr)
+
+          expect(wr).to receive(:write_nonblock).and_raise(IO::EAGAINWaitWritable)
+          expect(wr).to receive(:write_nonblock).and_call_original
+
+          event_loop.write("a")
+          expect(rd.readpartial(1)).to eq("a")
+        end
+      end
     end
   end
 end
