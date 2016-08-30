@@ -25,6 +25,21 @@ module Neovim
       end
     end
 
+    describe "#run" do
+      it "runs the session event loop and handles messages" do
+        message = double(:message)
+        expect(session).to receive(:run).and_yield(message)
+        expect(host).to receive(:handle).with(message)
+
+        host.run
+      end
+
+      it "rescues session exceptions", :silence_logging do
+        expect(session).to receive(:run).and_raise("BOOM")
+        expect { host.run }.not_to raise_error
+      end
+    end
+
     describe "#handlers" do
       it "has a default poll handler" do
         expect(host.handlers["poll"]).to respond_to(:call)
