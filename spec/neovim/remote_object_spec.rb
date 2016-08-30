@@ -28,7 +28,7 @@ module Neovim
         end
 
         it "falls back to super" do
-          expect(window.inspect).to respond_to(:to_str)
+          expect { window.foobar }.to raise_error(NoMethodError)
         end
       end
 
