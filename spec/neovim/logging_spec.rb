@@ -6,7 +6,7 @@ module Neovim
       old_logger = Logging.logger
 
       begin
-        Logging.remove_instance_variable(:@logger)
+        Logging.send(:remove_instance_variable, :@logger)
         spec.run
       ensure
         Logging.logger = old_logger
