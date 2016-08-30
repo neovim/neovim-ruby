@@ -11,16 +11,16 @@ module Neovim
     # Return the value of @logger, or construct it from the environment.
     # $NVIM_RUBY_LOG_FILE specifies a file to log to (default +STDOUT+), while
     # NVIM_RUBY_LOG_LEVEL specifies the level (default +WARN+)
-    def self.logger
+    def self.logger(env=ENV)
       return @logger if instance_variable_defined?(:@logger)
 
-      if env_file = ENV["NVIM_RUBY_LOG_FILE"]
+      if env_file = env["NVIM_RUBY_LOG_FILE"]
         @logger = Logger.new(env_file)
       else
         @logger = Logger.new(STDERR)
       end
 
-      if env_level = ENV["NVIM_RUBY_LOG_LEVEL"]
+      if env_level = env["NVIM_RUBY_LOG_LEVEL"]
         if Logger.const_defined?(env_level.upcase)
           @logger.level = Logger.const_get(env_level.upcase)
         else
