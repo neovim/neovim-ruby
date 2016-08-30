@@ -15,7 +15,7 @@ RSpec.describe "ruby_provider" do
     begin
       spec.run
     ensure
-      nvim.session.shutdown
+      nvim.shutdown
     end
   end
 
