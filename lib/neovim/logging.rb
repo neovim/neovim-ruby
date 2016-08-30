@@ -21,10 +21,10 @@ module Neovim
       end
 
       if env_level = env["NVIM_RUBY_LOG_LEVEL"]
-        if Logger.const_defined?(env_level.upcase)
-          @logger.level = Logger.const_get(env_level.upcase)
-        else
+        begin
           @logger.level = Integer(env_level)
+        rescue ArgumentError
+          @logger.level = Logger.const_get(env_level.upcase)
         end
       else
         @logger.level = Logger::WARN

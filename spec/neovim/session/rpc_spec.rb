@@ -103,6 +103,18 @@ module Neovim
 
         include_context "rpc behavior"
       end
+
+      describe "#run" do
+        it "logs exceptions" do
+          serializer = instance_double(Serializer)
+          rpc = RPC.new(serializer)
+
+          expect(serializer).to receive(:run).and_raise("BOOM")
+          expect(rpc).to receive(:fatal).with(/BOOM/)
+
+          rpc.run
+        end
+      end
     end
   end
 end

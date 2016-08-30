@@ -13,17 +13,30 @@ module Neovim
       end
 
       describe "#function" do
-        it "returns a corresponding Function object" do
+        it "returns a sync Function object" do
           api = API.new(
             [nil, {"functions" => [
-              {"name" => "vim_strwidth", "async" => false}
+              {"name" => "vim_sync", "async" => false}
             ]}]
           )
 
-          function = api.function("vim_strwidth")
+          function = api.function("vim_sync")
           expect(function).to be_a(API::Function)
-          expect(function.name).to eq("vim_strwidth")
+          expect(function.name).to eq("vim_sync")
           expect(function.async).to be(false)
+        end
+
+        it "returns an async Function object" do
+          api = API.new(
+            [nil, {"functions" => [
+              {"name" => "vim_async", "async" => true}
+            ]}]
+          )
+
+          function = api.function("vim_async")
+          expect(function).to be_a(API::Function)
+          expect(function.name).to eq("vim_async")
+          expect(function.async).to be(true)
         end
       end
 

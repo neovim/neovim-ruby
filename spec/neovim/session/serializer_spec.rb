@@ -43,6 +43,20 @@ module Neovim
 
         include_context "serializer behavior"
       end
+
+      describe "#run" do
+        it "logs exceptions" do
+          unpacker = instance_double(MessagePack::Unpacker)
+          event_loop = instance_double(EventLoop)
+          serializer = Serializer.new(event_loop, unpacker)
+
+          expect(event_loop).to receive(:run).and_yield("data")
+          expect(unpacker).to receive(:feed_each).with("data").and_raise("BOOM")
+          expect(serializer).to receive(:fatal).with(/BOOM/)
+
+          serializer.run
+        end
+      end
     end
   end
 end

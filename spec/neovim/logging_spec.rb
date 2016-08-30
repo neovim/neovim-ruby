@@ -28,11 +28,19 @@ module Neovim
         expect(Logging.logger).to be(logger)
       end
 
-      it "fetches the level from $NVIM_RUBY_LOG_LEVEL" do
+      it "fetches the level from $NVIM_RUBY_LOG_LEVEL as a string" do
         logger = instance_double(Logger)
         expect(Logger).to receive(:new).and_return(logger)
         expect(logger).to receive(:level=).with(Logger::DEBUG)
         Logging.logger("NVIM_RUBY_LOG_LEVEL" => "DEBUG")
+        expect(Logging.logger).to be(logger)
+      end
+
+      it "fetches the level from $NVIM_RUBY_LOG_LEVEL as an integer" do
+        logger = instance_double(Logger)
+        expect(Logger).to receive(:new).and_return(logger)
+        expect(logger).to receive(:level=).with(0)
+        Logging.logger("NVIM_RUBY_LOG_LEVEL" => "0")
         expect(Logging.logger).to be(logger)
       end
 

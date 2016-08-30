@@ -10,9 +10,9 @@ module Neovim
     class Serializer
       include Logging
 
-      def initialize(event_loop)
+      def initialize(event_loop, unpacker=nil)
         @event_loop = event_loop
-        @unpacker = MessagePack::Unpacker.new
+        @unpacker = unpacker || MessagePack::Unpacker.new
       end
 
       # Serialize an RPC message to and write it to the event loop.

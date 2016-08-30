@@ -26,6 +26,10 @@ module Neovim
         it "enables window_* function calls" do
           expect(window.get_cursor).to eq([1, 0])
         end
+
+        it "falls back to super" do
+          expect(window.inspect).to respond_to(:to_str)
+        end
       end
 
       describe "#methods" do
