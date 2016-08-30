@@ -128,6 +128,25 @@ module Neovim
           expect(rd.readpartial(1)).to eq("a")
         end
       end
+
+      describe "#shutdown" do
+        it "closes IO handles" do
+          rd, wr = IO.pipe
+          EventLoop.new(rd, wr).shutdown
+
+          expect(rd).to be_closed
+          expect(wr).to be_closed
+        end
+
+        it "kills spawned processes" do
+          io = IO.popen("cat", "rb+")
+          pid = io.pid
+          expect(pid).to respond_to(:to_int)
+
+          EventLoop.new(io).shutdown
+          expect { Process.kill(0, pid) }.to raise_error(Errno::ESRCH)
+        end
+      end
     end
   end
 end

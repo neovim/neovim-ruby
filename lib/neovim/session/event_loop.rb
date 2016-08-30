@@ -93,14 +93,6 @@ module Neovim
             io.close
           rescue IOError
           end
-
-          begin
-            if pid = io.pid
-              Process.kill(:TERM, pid)
-              Process.waitpid(pid)
-            end
-          rescue IOError, Errno::ESRCH, Errno::ECHILD
-          end
         end
       end
     end
