@@ -18,7 +18,7 @@ module Neovim
 
     it "is enumerable" do
       expect(line_range).to be_an(Enumerable)
-      expect(line_range).to respond_to(:each)
+      expect(line_range.each.to_a).to eq(["1", "2", "3", "4"])
     end
 
     describe "#to_a" do
