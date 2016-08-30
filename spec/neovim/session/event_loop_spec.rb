@@ -119,8 +119,9 @@ module Neovim
         it "retries when writes would block" do
           rd, wr = IO.pipe
           event_loop = EventLoop.new(rd, wr)
+          err_class = Class.new(RuntimeError) { include IO::WaitWritable }
 
-          expect(wr).to receive(:write_nonblock).and_raise(IO::EAGAINWaitWritable)
+          expect(wr).to receive(:write_nonblock).and_raise(err_class)
           expect(wr).to receive(:write_nonblock).and_call_original
 
           event_loop.write("a")
