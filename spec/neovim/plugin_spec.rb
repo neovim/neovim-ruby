@@ -14,6 +14,8 @@ module Neovim
         expect(plugin.handlers.size).to be(1)
         handler = plugin.handlers.first
 
+        expect(handler.sync?).to be(false)
+        expect(handler.qualified?).to be(true)
         expect(handler.block).to eq(cmd_block)
         expect(handler.qualified_name).to eq("source:command:Foo")
         expect(handler.to_spec).to eq(
@@ -34,6 +36,8 @@ module Neovim
         expect(plugin.handlers.size).to be(1)
         handler = plugin.handlers.first
 
+        expect(handler.sync?).to be(false)
+        expect(handler.qualified?).to be(true)
         expect(handler.block).to eq(au_block)
         expect(handler.qualified_name).to eq("source:autocmd:BufEnter:*.rb")
         expect(handler.to_spec).to eq(
@@ -54,6 +58,8 @@ module Neovim
         expect(plugin.handlers.size).to be(1)
         handler = plugin.handlers.first
 
+        expect(handler.sync?).to be(false)
+        expect(handler.qualified?).to be(true)
         expect(handler.block).to eq(fun_block)
         expect(handler.qualified_name).to eq("source:function:Foo")
         expect(handler.to_spec).to eq(
@@ -74,6 +80,8 @@ module Neovim
         expect(plugin.handlers.size).to be(1)
         handler = plugin.handlers.first
 
+        expect(handler.sync?).to be(true)
+        expect(handler.qualified?).to be(false)
         expect(handler.block).to eq(cmd_block)
         expect(handler.qualified_name).to eq("Foo")
       end
