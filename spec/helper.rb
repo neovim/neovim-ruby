@@ -1,14 +1,15 @@
 require "bundler/setup"
-require "neovim"
-require "pry"
-require "stringio"
-require "timeout"
-require "fileutils"
 
 if ENV["REPORT_COVERAGE"]
   require "coveralls"
   Coveralls.wear!
 end
+
+require "fileutils"
+require "neovim"
+require "pry"
+require "stringio"
+require "timeout"
 
 module Support
   def self.workspace
