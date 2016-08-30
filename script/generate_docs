@@ -35,11 +35,12 @@ session.request(:vim_get_api_info)[1]["functions"].each do |func|
   param_names = params.map(&:last)
   param_str = params.empty? ? "" : "(#{param_names.join(", ")})"
   method_decl = "@method #{method_name}#{param_str}"
+  method_desc = "  Send the +#{method_name}+ RPC to +nvim+"
   param_docs = params.map do |type, name|
     "  @param [#{type}] #{name}"
   end
   return_doc = "  @return [#{return_type}]\n"
-  method_doc = [method_decl, *param_docs, return_doc].join("\n")
+  method_doc = [method_decl, method_desc, *param_docs, return_doc].join("\n")
   method_doc.gsub!(/ArrayOf\((\w+)[^)]*\)/, 'Array<\1>')
   method_doc.gsub!(/Integer/, "Fixnum")
 
