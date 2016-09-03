@@ -2,6 +2,7 @@ require "logger"
 
 module Neovim
   # Mixed into classes for unified logging helper methods.
+  #
   # @api private
   module Logging
     class << self
@@ -9,7 +10,7 @@ module Neovim
     end
 
     # Return the value of @logger, or construct it from the environment.
-    # $NVIM_RUBY_LOG_FILE specifies a file to log to (default +STDOUT+), while
+    # $NVIM_RUBY_LOG_FILE specifies a file to log to (default +STDERR+), while
     # NVIM_RUBY_LOG_LEVEL specifies the level (default +WARN+)
     def self.logger(env=ENV)
       return @logger if instance_variable_defined?(:@logger)
