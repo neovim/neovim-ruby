@@ -20,10 +20,9 @@ RSpec.describe "ruby_provider" do
   end
 
   describe "ruby_execute" do
-    it "runs ruby directly" do
-      ruby = "VIM.command('let myvar = [1, 2]')".inspect
+    it "exposes the VIM constant" do
+      ruby = "VIM.equal?(Vim) || raise".inspect
       nvim.eval("rpcrequest(host, 'ruby_execute', #{ruby})")
-      expect(nvim.eval("g:myvar")).to eq([1, 2])
     end
 
     it "exposes the $curwin variable" do
@@ -43,7 +42,7 @@ RSpec.describe "ruby_provider" do
     end
 
     it "persists state between requests" do
-      nvim.eval("rpcrequest(host, 'ruby_execute', 'def foo; VIM.command(\"let g:called = 1\"); end')")
+      nvim.eval("rpcrequest(host, 'ruby_execute', 'def foo; Vim.command(\"let g:called = 1\"); end')")
       expect { nvim.get_var("called") }.to raise_error(/key not found/i)
 
       nvim.eval("rpcrequest(host, 'ruby_execute', 'foo')")
@@ -52,12 +51,12 @@ RSpec.describe "ruby_provider" do
 
     it "persists instance state in globals" do
       nvim.eval("rpcrequest(host, 'ruby_execute', '$curbuf.instance_variable_set(:@foo, 123)')")
-      nvim.eval("rpcrequest(host, 'ruby_execute', 'VIM.command(\"let g:foo = \#{$curbuf.instance_variable_get(:@foo)}\")')")
+      nvim.eval("rpcrequest(host, 'ruby_execute', 'Vim.command(\"let g:foo = \#{$curbuf.instance_variable_get(:@foo)}\")')")
 
       expect(nvim.get_var("foo")).to be(123)
 
       nvim.eval("rpcrequest(host, 'ruby_execute', '$curwin.instance_variable_set(:@bar, 456)')")
-      nvim.eval("rpcrequest(host, 'ruby_execute', 'VIM.command(\"let g:bar = \#{$curwin.instance_variable_get(:@bar)}\")')")
+      nvim.eval("rpcrequest(host, 'ruby_execute', 'Vim.command(\"let g:bar = \#{$curwin.instance_variable_get(:@bar)}\")')")
 
       expect(nvim.get_var("bar")).to be(456)
     end
@@ -66,8 +65,13 @@ RSpec.describe "ruby_provider" do
   describe "ruby_execute_file" do
     let(:script_path) { Support.file_path("script.rb") }
 
+    it "exposes the VIM constant" do
+      File.write(script_path, "VIM.equal?(Vim) || raise")
+      nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
+    end
+
     it "runs ruby from a file" do
-      File.write(script_path, "VIM.command('let myvar = [1, 2]')")
+      File.write(script_path, "Vim.command('let myvar = [1, 2]')")
       nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
       expect(nvim.eval("g:myvar")).to eq([1, 2])
     end
@@ -90,7 +94,7 @@ RSpec.describe "ruby_provider" do
     end
 
     it "persists state between requests" do
-      File.write(script_path, "def foo; VIM.command(\"let g:called = 1\"); end")
+      File.write(script_path, "def foo; Vim.command(\"let g:called = 1\"); end")
       nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
       expect { nvim.get_var("called") }.to raise_error(/key not found/i)
 
@@ -100,7 +104,7 @@ RSpec.describe "ruby_provider" do
 
     it "can run the same file multiple times" do
       nvim.set_var("called", 0)
-      File.write(script_path, "VIM.command(\"let g:called += 1\")")
+      File.write(script_path, "Vim.command(\"let g:called += 1\")")
 
       nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
       expect(nvim.get_var("called")).to be(1)
@@ -116,7 +120,7 @@ RSpec.describe "ruby_provider" do
           @foo += 1
         end
 
-        VIM.command("let g:foo = \#{$curbuf.foo}")
+        Vim.command("let g:foo = \#{$curbuf.foo}")
       RUBY
 
       nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
@@ -131,7 +135,7 @@ RSpec.describe "ruby_provider" do
           @bar += 1
         end
 
-        VIM.command("let g:bar = \#{$curwin.bar}")
+        Vim.command("let g:bar = \#{$curwin.bar}")
       RUBY
 
       nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")

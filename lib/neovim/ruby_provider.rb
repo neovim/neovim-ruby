@@ -19,7 +19,7 @@ module Neovim
       end
     end
 
-    # Evaluate the provided Ruby code, exposing the +VIM+ constant for
+    # Evaluate the provided Ruby code, exposing the +Vim+ constant for
     # interactions with the editor.
     #
     # This is used by the +:ruby+ command.
@@ -32,7 +32,7 @@ module Neovim
     end
     private_class_method :__define_ruby_execute
 
-    # Evaluate the provided Ruby file, exposing the +VIM+ constant for
+    # Evaluate the provided Ruby file, exposing the +Vim+ constant for
     # interactions with the editor.
     #
     # This is used by the +:rubyfile+ command.
@@ -100,7 +100,7 @@ module Neovim
     private_class_method :__with_globals
 
     def self.__with_vim_constant(client)
-      ::VIM.__client = client
+      ::Vim.__client = client
       yield
     end
     private_class_method :__with_vim_constant

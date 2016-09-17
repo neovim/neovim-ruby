@@ -3,7 +3,7 @@ require "neovim/window"
 
 # The VIM module provides backwards compatibility for the legacy +:ruby+,
 # +:rubyfile+, and +:rubydo+ +vim+ functions.
-module VIM
+module Vim
   Buffer = ::Neovim::Buffer
   Window = ::Neovim::Window
 
@@ -16,3 +16,5 @@ module VIM
     @__client.public_send(method, *args, &block)
   end
 end
+
+VIM = Vim
