@@ -69,6 +69,18 @@ module Neovim
             client.command("normal ix")
           }.to change { client.current.line }.to("oxne")
         end
+
+        it "supports out of range indexes" do
+          window.buffer.lines = ["x", "xx"]
+
+          expect {
+            window.cursor = [10, 10]
+          }.to change { window.cursor }.to([2, 1])
+        end
+
+        it "returns the cursor array" do
+          expect(window.cursor = [10, 10]).to eq([10, 10])
+        end
       end
     end
   end
