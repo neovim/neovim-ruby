@@ -24,7 +24,7 @@ module Neovim
       it "defaults the output to STDERR" do
         logger = instance_double(Logger, :level= => nil)
         expect(Logger).to receive(:new).with(STDERR).and_return(logger)
-        Logging.logger
+        Logging.logger({})
         expect(Logging.logger).to be(logger)
       end
 
@@ -48,7 +48,7 @@ module Neovim
         logger = instance_double(Logger)
         expect(Logger).to receive(:new).and_return(logger)
         expect(logger).to receive(:level=).with(Logger::WARN)
-        Logging.logger
+        Logging.logger({})
         expect(Logging.logger).to be(logger)
       end
     end
