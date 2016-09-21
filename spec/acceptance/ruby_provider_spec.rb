@@ -49,16 +49,11 @@ RSpec.describe "ruby_provider" do
       expect(nvim.get_var("called")).to be(1)
     end
 
-    it "persists instance state in globals" do
+    it "persists instance state in $curbuf" do
       nvim.eval("rpcrequest(host, 'ruby_execute', '$curbuf.instance_variable_set(:@foo, 123)')")
       nvim.eval("rpcrequest(host, 'ruby_execute', 'Vim.command(\"let g:foo = \#{$curbuf.instance_variable_get(:@foo)}\")')")
 
       expect(nvim.get_var("foo")).to be(123)
-
-      nvim.eval("rpcrequest(host, 'ruby_execute', '$curwin.instance_variable_set(:@bar, 456)')")
-      nvim.eval("rpcrequest(host, 'ruby_execute', 'Vim.command(\"let g:bar = \#{$curwin.instance_variable_get(:@bar)}\")')")
-
-      expect(nvim.get_var("bar")).to be(456)
     end
   end
 
@@ -113,7 +108,7 @@ RSpec.describe "ruby_provider" do
       expect(nvim.get_var("called")).to be(2)
     end
 
-    it "persists instance state in globals" do
+    it "persists instance state in $curbuf" do
       File.write(script_path, <<-RUBY)
         def $curbuf.foo
           @foo ||= 0
@@ -128,21 +123,6 @@ RSpec.describe "ruby_provider" do
 
       nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
       expect(nvim.get_var("foo")).to be(2)
-
-      File.write(script_path, <<-RUBY)
-        def $curwin.bar
-          @bar ||= 0
-          @bar += 1
-        end
-
-        Vim.command("let g:bar = \#{$curwin.bar}")
-      RUBY
-
-      nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
-      expect(nvim.get_var("bar")).to be(1)
-
-      nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
-      expect(nvim.get_var("bar")).to be(2)
     end
   end
 
