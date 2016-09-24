@@ -72,17 +72,6 @@ RSpec.configure do |config|
     end
   end
 
-  config.around(:example, :silence_logging) do |spec|
-    old_logger = Neovim.logger
-
-    begin
-      Neovim.logger = Logger.new(StringIO.new)
-      spec.run
-    ensure
-      Neovim.logger = old_logger
-    end
-  end
-
   Kernel.srand config.seed
 end
 
