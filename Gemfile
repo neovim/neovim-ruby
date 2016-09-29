@@ -6,6 +6,7 @@ group :development do
     gem "coveralls"
     gem "pry-byebug"
   else
+    gem "term-ansicolor", "1.3.2"
     gem "coveralls", "0.8.13"
     gem "pry-debugger"
   end
