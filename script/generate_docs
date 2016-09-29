@@ -35,7 +35,7 @@ session.request(:vim_get_api_info)[1]["functions"].each do |func|
   param_names = params.map(&:last)
   param_str = params.empty? ? "" : "(#{param_names.join(", ")})"
   method_decl = "@method #{method_name}#{param_str}"
-  method_desc = "  Send the +#{method_name}+ RPC to +nvim+"
+  method_desc = "  Send the +#{prefix}_#{method_name}+ RPC to +nvim+"
   param_docs = params.map do |type, name|
     "  @param [#{type}] #{name}"
   end
