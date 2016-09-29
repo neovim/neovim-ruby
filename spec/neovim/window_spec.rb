@@ -76,6 +76,10 @@ module Neovim
           expect {
             window.cursor = [10, 10]
           }.to change { window.cursor }.to([2, 1])
+
+          expect {
+            window.cursor = [0, -1]
+          }.to change { window.cursor }.to([1, 0])
         end
 
         it "returns the cursor array" do

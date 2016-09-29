@@ -53,8 +53,10 @@ module Neovim
     # @param coords [Array(Fixnum, Fixnum)]
     # @return [Array(Fixnum, Fixnum)]
     def cursor=(coords)
-      x, y = coords
-      @session.request(:vim_eval, "cursor(#{x}, #{y + 1})")
+      _x, _y = coords
+      x = [_x, 1].max
+      y = [_y, 0].max + 1
+      @session.request(:vim_eval, "cursor(#{x}, #{y})")
     end
 
 # The following methods are dynamically generated.
