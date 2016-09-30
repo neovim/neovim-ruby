@@ -77,7 +77,7 @@ module Neovim
   # @param argv [Array] The arguments to pass to the spawned process
   # @return [Client]
   # @see Session.child
-  def self.attach_child(argv=[])
+  def self.attach_child(argv=["nvim"])
     Client.new Session.child(argv)
   end
 
