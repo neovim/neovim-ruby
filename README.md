@@ -72,6 +72,8 @@ end
 
 Ruby plugins go in the `$VIMRUNTIME/rplugin/ruby` directory, and are auto-loaded after calling `:UpdateRemotePlugins`. Refer to the [`Neovim::Plugin::DSL` docs](http://www.rubydoc.info/github/alexgenco/neovim-ruby/master/Neovim/Plugin/DSL) for a more complete overview.
 
+### Legacy Plugin Support
+
 The Neovim gem also acts as a compatibility layer for Ruby plugins written for legacy `vim`. The `:ruby`, `:rubyfile`, and `:rubydo` commands are intended to behave the same as they did in `vim`, and their documentation can be found [here](https://neovim.io/doc/user/if_ruby.html).
 
 ## Links
