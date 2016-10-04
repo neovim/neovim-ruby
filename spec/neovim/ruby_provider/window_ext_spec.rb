@@ -23,13 +23,27 @@ module Neovim
           nvim.command("new")
         }.to change { Window.count }.by(1)
       end
+
+      it "only includes windows within a tabpage" do
+        expect {
+          nvim.command("tabnew")
+        }.not_to change { Window.count }.from(1)
+      end
     end
 
     describe ".[]" do
-      it "returns the window from the global Vim client at the given index" do
-        expect(Window[0]).to eq(nvim.get_current_window)
-        nvim.command("tabnew")
-        expect(Window[1]).to eq(nvim.get_current_window)
+      it "returns the window at the given index" do
+        expect {
+          nvim.command("new")
+        }.to change { Window[1] }.from(nil).to(kind_of(Window))
+      end
+
+      it "only includes windows within a tabpage" do
+        nvim.command("new")
+
+        expect {
+          nvim.command("tabnew")
+        }.to change { Window[1] }.from(kind_of(Window)).to(nil)
       end
     end
   end

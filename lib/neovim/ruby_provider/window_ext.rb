@@ -7,11 +7,11 @@ module Neovim
     end
 
     def self.count
-      ::Vim.get_windows.size
+      ::Vim.get_current_tabpage.get_windows.size
     end
 
     def self.[](index)
-      ::Vim.get_windows[index]
+      ::Vim.get_current_tabpage.get_windows[index]
     end
   end
 end
