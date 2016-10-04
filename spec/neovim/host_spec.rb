@@ -34,7 +34,7 @@ module Neovim
         host.run
       end
 
-      it "rescues session exceptions" do
+      it "rescues session exceptions", :silence_logging do
         expect(session).to receive(:run).and_raise("BOOM")
         expect { host.run }.not_to raise_error
       end
@@ -118,7 +118,7 @@ module Neovim
         host.handle(message)
       end
 
-      it "rescues plugin sync handler exceptions" do
+      it "rescues plugin sync handler exceptions", :silence_logging do
         plugin = Plugin.from_config_block("source") do |plug|
           plug.command(:Foo, :sync => true) { raise "BOOM" }
         end
