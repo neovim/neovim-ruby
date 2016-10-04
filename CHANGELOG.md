@@ -1,3 +1,11 @@
+# 0.3.1
+- Remove window caching to fix incompatibilities with command-t
+- Add `Vim` module alias
+- Fix `Window.count` and `Window.[]` to work with tabpages
+- Fix `EventLoop.child` bug with repeated arguments
+- Fix `Window#cursor=` incompatibilities
+- Make `Neovim.attach_child` have default argv of `["nvim"]`
+
 # 0.3.0
 - Mark `Plugin::DSL#rpc` private
 - Rename Session constants:
