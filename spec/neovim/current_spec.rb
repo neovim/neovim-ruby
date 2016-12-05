@@ -69,12 +69,12 @@ module Neovim
 
     describe "#window=" do
       it "sets the current window from an integer" do
+        start_index = current.window.index
         client.command("vsp")
-        expect(current.window.index).not_to eq(1)
 
         expect {
-          current.window = 1
-        }.to change { current.window.index }.to(1)
+          current.window = start_index
+        }.to change { current.window.index }.to(start_index)
       end
 
       it "sets the current window from a Window" do
