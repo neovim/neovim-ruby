@@ -21,7 +21,7 @@ module Support
   end
 
   def self.tcp_port
-    server = TCPServer.new("0.0.0.0", 0)
+    server = TCPServer.new("127.0.0.1", 0)
 
     begin
       server.addr[1]
