@@ -11,13 +11,13 @@ module Neovim
 
       # Connect to a TCP socket.
       def self.tcp(host, port)
-        socket = TCPSocket.new(host, port)
+        socket = Socket.tcp(host, port)
         new(socket)
       end
 
       # Connect to a UNIX domain socket.
       def self.unix(path)
-        socket = UNIXSocket.new(path)
+        socket = Socket.unix(path)
         new(socket)
       end
 
