@@ -8,6 +8,7 @@ end
 require "fileutils"
 require "neovim"
 require "pry"
+require "shellwords"
 require "stringio"
 require "timeout"
 
@@ -43,12 +44,13 @@ module Support
   end
 
   def self.child_argv
-    ["nvim", "--headless", "-i", "NONE", "-u", "NONE", "-n"]
+    nvim_exe = ENV.fetch("NVIM_EXECUTABLE", "nvim")
+    [nvim_exe, "--headless", "-i", "NONE", "-u", "NONE", "-n"]
   end
 end
 
-unless system("#{Support.child_argv.join(" ")} +q")
-  warn("Can't find `nvim` executable. See installation instructions:")
+unless system("#{Support.child_argv.shelljoin} --version | grep -q NVIM")
+  warn("Failed to load nvim. See installation instructions:")
   warn("https://github.com/neovim/neovim/wiki/Installing-Neovim")
   exit(1)
 end
