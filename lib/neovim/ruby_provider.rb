@@ -75,7 +75,11 @@ module Neovim
       __with_globals(client) do
         __with_vim_constant(client) do
           __with_redirect_streams(client) do
-            yield
+            begin
+              yield
+            rescue SyntaxError => e
+              client.err_write(e.message)
+            end
           end
         end
       end

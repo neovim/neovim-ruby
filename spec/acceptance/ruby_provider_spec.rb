@@ -55,6 +55,16 @@ RSpec.describe "ruby_provider" do
 
       expect(nvim.get_var("foo")).to be(123)
     end
+
+    it "handles malformed ruby" do
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_execute', 'puts[')")
+      }.to raise_error(ArgumentError)
+
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_execute', 'puts \"12\"')")
+      }.not_to raise_error
+    end
   end
 
   describe "ruby_execute_file" do
@@ -124,6 +134,20 @@ RSpec.describe "ruby_provider" do
       nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
       expect(nvim.get_var("foo")).to be(2)
     end
+
+    it "handles malformed ruby" do
+      File.write(script_path, "puts[")
+
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
+      }.to raise_error(ArgumentError)
+
+      File.write(script_path, "12")
+
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
+      }.not_to raise_error
+    end
   end
 
   describe "ruby_do_range" do
@@ -143,6 +167,18 @@ RSpec.describe "ruby_provider" do
       expect {
         nvim.eval("rpcrequest(host, 'ruby_do_range', 1, 6000, '$_.succ!')")
       }.to change { nvim.current.buffer.lines.to_a }.to(ys)
+    end
+
+    it "handles malformed ruby" do
+      nvim.current.buffer.lines = ["a", "b"]
+
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_do_range', 1, 1, 'puts[')")
+      }.to raise_error(ArgumentError)
+
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_do_range', 1, 1, 'puts')")
+      }.not_to raise_error
     end
   end
 end
