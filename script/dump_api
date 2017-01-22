@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+$:.unshift File.expand_path("../../lib", __FILE__)
+
+require "neovim"
+require "pp"
+
+session = Neovim::Session.child(%w(nvim -u NONE -n))
+pp session.request(:vim_get_api_info)
