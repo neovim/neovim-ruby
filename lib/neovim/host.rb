@@ -33,6 +33,7 @@ module Neovim
         @handlers[handler.qualified_name] = wrap_plugin_handler(handler)
       end
 
+      plugin.setup(@client)
       @specs[plugin.source] = plugin.specs
     end
 

@@ -3,7 +3,7 @@ require "neovim/plugin/dsl"
 module Neovim
   # @api private
   class Plugin
-    attr_accessor :handlers
+    attr_accessor :handlers, :setup_blocks
     attr_reader :source
 
     # Entrypoint to the +Neovim.plugin+ DSL.
@@ -16,6 +16,7 @@ module Neovim
     def initialize(source)
       @handlers = []
       @source = source
+      @setup_blocks = []
     end
 
     # Return specs used by +nvim+ to register plugins.
@@ -23,6 +24,10 @@ module Neovim
       @handlers.inject([]) do |acc, handler|
         handler.qualified? ? acc + [handler.to_spec] : acc
       end
+    end
+
+    def setup(client)
+      @setup_blocks.each { |bl| bl.call(client) }
     end
   end
 end

@@ -68,6 +68,10 @@ module Neovim
 
       private
 
+      def setup(&block)
+        @plugin.setup_blocks << block
+      end
+
       # Directly define a synchronous RPC call without a namespace. This is
       # used for exposing legacy ruby provider calls, and not meant to be used
       # publicly in plugin definitions.
