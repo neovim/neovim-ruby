@@ -18,6 +18,7 @@ module Neovim
         __define_ruby_execute(plug)
         __define_ruby_execute_file(plug)
         __define_ruby_do_range(plug)
+        __define_ruby_chdir(plug)
       end
     end
 
@@ -70,6 +71,18 @@ module Neovim
       end
     end
     private_class_method :__define_ruby_do_range
+
+    def self.__define_ruby_chdir(plug)
+      plug.__send__(:setup) do |client|
+        cid = client.channel_id
+        client.command("au DirChanged * call rpcrequest(#{cid}, 'ruby_chdir', v:event)")
+      end
+
+      plug.__send__(:rpc, :ruby_chdir) do |nvim, event|
+        Dir.chdir(event.fetch("cwd"))
+      end
+    end
+    private_class_method :__define_ruby_chdir
 
     def self.__wrap_client(client)
       __with_globals(client) do

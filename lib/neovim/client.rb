@@ -10,13 +10,14 @@ module Neovim
   # @see Window
   # @see Tabpage
   class Client
-    attr_reader :session
+    attr_reader :session, :channel_id
 
     def initialize(session)
       session.discover_api
 
       @session = session
       @api = session.api
+      @channel_id = session.channel_id
     end
 
     # Intercept method calls and delegate to appropriate RPC methods.

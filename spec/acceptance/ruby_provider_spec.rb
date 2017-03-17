@@ -56,6 +56,22 @@ RSpec.describe "ruby_provider" do
       expect(nvim.get_var("foo")).to be(123)
     end
 
+    it "handles explicit directory changes" do
+      expect {
+        nvim.command("cd /")
+      }.to change {
+        nvim.command_output("call rpcrequest(host, 'ruby_execute', 'puts Dir.pwd')").strip
+      }.from(Dir.pwd).to("/")
+    end
+
+    it "handles implicit directory changes" do
+      expect {
+        nvim.command("split | lcd / | wincmd p")
+      }.not_to change {
+        nvim.command_output("call rpcrequest(host, 'ruby_execute', 'puts Dir.pwd')").strip
+      }.from(Dir.pwd)
+    end
+
     it "handles malformed ruby" do
       expect {
         nvim.eval("rpcrequest(host, 'ruby_execute', 'puts[')")
@@ -133,6 +149,26 @@ RSpec.describe "ruby_provider" do
 
       nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
       expect(nvim.get_var("foo")).to be(2)
+    end
+
+    it "handles explicit directory changes" do
+      File.write(script_path, "puts Dir.pwd")
+
+      expect {
+        nvim.command("cd /")
+      }.to change {
+        nvim.command_output("call rpcrequest(host, 'ruby_execute_file', '#{script_path}')").strip
+      }.from(Dir.pwd).to("/")
+    end
+
+    it "handles implicit directory changes" do
+      File.write(script_path, "puts Dir.pwd")
+
+      expect {
+        nvim.command("split | lcd / | wincmd p")
+      }.not_to change {
+        nvim.command_output("call rpcrequest(host, 'ruby_execute_file', '#{script_path}')").strip
+      }.from(Dir.pwd)
     end
 
     it "handles malformed ruby" do
