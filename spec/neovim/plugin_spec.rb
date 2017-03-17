@@ -70,6 +70,24 @@ module Neovim
         )
       end
 
+      it "registers setup callbacks" do
+        yielded = []
+
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.__send__(:setup) do |client|
+            yielded << client
+          end
+
+          plug.__send__(:setup) do |_|
+            yielded << :other
+          end
+        end
+
+        expect {
+          plugin.setup(:client)
+        }.to change { yielded }.from([]).to([:client, :other])
+      end
+
       it "registers a top level RPC" do
         cmd_block = Proc.new {}
 

@@ -75,6 +75,24 @@ module Neovim
         }.from(nil).to(kind_of(Proc))
       end
 
+      it "yields a client to the plugin setup blocks" do
+        yielded = []
+
+        plugin = Plugin.from_config_block("source") do |plug|
+          plug.__send__(:setup) do |client|
+            yielded << client
+          end
+
+          plug.__send__(:setup) do |_|
+            yielded << :other
+          end
+        end
+
+        expect {
+          host.register(plugin)
+        }.to change { yielded }.from([]).to([client, :other])
+      end
+
       it "doesn't add top-level RPCs to specs" do
         plugin = Plugin.from_config_block("source") do |plug|
           plug.__send__(:rpc, :Foo)
