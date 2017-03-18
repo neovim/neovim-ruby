@@ -5,5 +5,6 @@ $:.unshift File.expand_path("../../lib", __FILE__)
 require "neovim"
 require "pp"
 
-session = Neovim::Session.child(%w(nvim -u NONE -n))
+nvim_exe = ENV.fetch("NVIM_EXECUTABLE", "nvim")
+session = Neovim::Session.child([nvim_exe, "-u", "NONE", "-n"])
 pp session.request(:vim_get_api_info)
