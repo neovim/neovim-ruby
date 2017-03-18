@@ -76,10 +76,14 @@ RSpec.configure do |config|
 
   config.around(:example, :silence_logging) do |spec|
     old_logger = Neovim.logger
+    log_target = StringIO.new
+    Neovim.logger = Logger.new(log_target)
 
     begin
-      Neovim.logger = Logger.new(StringIO.new)
       spec.run
+
+      expect(log_target.string).not_to be_empty,
+        ":silence_logging used but nothing logged"
     ensure
       Neovim.logger = old_logger
     end
