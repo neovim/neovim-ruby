@@ -1,3 +1,6 @@
+# 0.3.2
+- Fix directory tracking in legacy Ruby provider
+
 # 0.3.1
 - Remove window caching to fix incompatibilities with command-t
 - Add `Vim` module alias
