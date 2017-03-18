@@ -27,14 +27,14 @@ module Neovim
     # Access the line at the given index within the range.
     #
     # @overload [](index)
-    #   @param index [Fixnum]
+    #   @param index [Integer]
     #
     # @overload [](range)
     #   @param range [Range]
     #
     # @overload [](index, length)
-    #   @param index [Fixnum]
-    #   @param length [Fixnum]
+    #   @param index [Integer]
+    #   @param length [Integer]
     #
     # @example Get the first line using an index
     #   line_range[0] # => "first"
@@ -67,12 +67,12 @@ module Neovim
     # Set the line at the given index within the range.
     #
     # @overload []=(index, string)
-    #   @param index [Fixnum]
+    #   @param index [Integer]
     #   @param string [String]
     #
     # @overload []=(index, length, strings)
-    #   @param index [Fixnum]
-    #   @param length [Fixnum]
+    #   @param index [Integer]
+    #   @param length [Integer]
     #   @param strings [Array<String>]
     #
     # @overload []=(range, strings)
@@ -123,7 +123,7 @@ module Neovim
 
     # Insert line(s) at the given index within the range.
     #
-    # @param index [Fixnum]
+    # @param index [Integer]
     # @param lines [String]
     def insert(index, lines)
       @buffer.insert(index, Array(lines))
@@ -131,7 +131,7 @@ module Neovim
 
     # Delete the line at the given index within the range.
     #
-    # @param index [Fixnum]
+    # @param index [Integer]
     def delete(index)
       @buffer.del_line(abs_line(index))
     end

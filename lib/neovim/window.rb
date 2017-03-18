@@ -11,15 +11,15 @@ module Neovim
 
     # Get the height of the window
     #
-    # @return [Fixnum]
+    # @return [Integer]
     def height
       get_height
     end
 
     # Set the height of the window
     #
-    # @param height [Fixnum]
-    # @return [Fixnum]
+    # @param height [Integer]
+    # @return [Integer]
     def height=(height)
       set_height(height)
       height
@@ -27,15 +27,15 @@ module Neovim
 
     # Get the width of the window
     #
-    # @return [Fixnum]
+    # @return [Integer]
     def width
       get_width
     end
 
     # Set the width of the window
     #
-    # @param width [Fixnum]
-    # @return [Fixnum]
+    # @param width [Integer]
+    # @return [Integer]
     def width=(width)
       set_width(width)
       width
@@ -43,15 +43,15 @@ module Neovim
 
     # Get the cursor coordinates
     #
-    # @return [Array(Fixnum, Fixnum)]
+    # @return [Array(Integer, Integer)]
     def cursor
       get_cursor
     end
 
     # Set the cursor coodinates
     #
-    # @param coords [Array(Fixnum, Fixnum)]
-    # @return [Array(Fixnum, Fixnum)]
+    # @param coords [Array(Integer, Integer)]
+    # @return [Array(Integer, Integer)]
     def cursor=(coords)
       _x, _y = coords
       x = [_x, 1].max
@@ -61,42 +61,6 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
-@method get_buffer
-  Send the +window_get_buffer+ RPC to +nvim+
-  @return [Buffer]
-
-@method get_cursor
-  Send the +window_get_cursor+ RPC to +nvim+
-  @return [Array<Fixnum>]
-
-@method set_cursor(pos)
-  Send the +window_set_cursor+ RPC to +nvim+
-  @param [Array<Fixnum>] pos
-  @return [void]
-
-@method get_height
-  Send the +window_get_height+ RPC to +nvim+
-  @return [Fixnum]
-
-@method set_height(height)
-  Send the +window_set_height+ RPC to +nvim+
-  @param [Fixnum] height
-  @return [void]
-
-@method get_width
-  Send the +window_get_width+ RPC to +nvim+
-  @return [Fixnum]
-
-@method set_width(width)
-  Send the +window_set_width+ RPC to +nvim+
-  @param [Fixnum] width
-  @return [void]
-
-@method get_var(name)
-  Send the +window_get_var+ RPC to +nvim+
-  @param [String] name
-  @return [Object]
-
 @method set_var(name, value)
   Send the +window_set_var+ RPC to +nvim+
   @param [String] name
@@ -105,6 +69,42 @@ module Neovim
 
 @method del_var(name)
   Send the +window_del_var+ RPC to +nvim+
+  @param [String] name
+  @return [Object]
+
+@method get_buffer
+  Send the +window_get_buffer+ RPC to +nvim+
+  @return [Buffer]
+
+@method get_cursor
+  Send the +window_get_cursor+ RPC to +nvim+
+  @return [Array<Integer>]
+
+@method set_cursor(pos)
+  Send the +window_set_cursor+ RPC to +nvim+
+  @param [Array<Integer>] pos
+  @return [void]
+
+@method get_height
+  Send the +window_get_height+ RPC to +nvim+
+  @return [Integer]
+
+@method set_height(height)
+  Send the +window_set_height+ RPC to +nvim+
+  @param [Integer] height
+  @return [void]
+
+@method get_width
+  Send the +window_get_width+ RPC to +nvim+
+  @return [Integer]
+
+@method set_width(width)
+  Send the +window_set_width+ RPC to +nvim+
+  @param [Integer] width
+  @return [void]
+
+@method get_var(name)
+  Send the +window_get_var+ RPC to +nvim+
   @param [String] name
   @return [Object]
 
@@ -121,7 +121,7 @@ module Neovim
 
 @method get_position
   Send the +window_get_position+ RPC to +nvim+
-  @return [Array<Fixnum>]
+  @return [Array<Integer>]
 
 @method get_tabpage
   Send the +window_get_tabpage+ RPC to +nvim+

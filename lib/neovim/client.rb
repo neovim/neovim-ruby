@@ -104,9 +104,20 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
-@method command(str)
+@method set_var(name, value)
+  Send the +vim_set_var+ RPC to +nvim+
+  @param [String] name
+  @param [Object] value
+  @return [Object]
+
+@method del_var(name)
+  Send the +vim_del_var+ RPC to +nvim+
+  @param [String] name
+  @return [Object]
+
+@method command(command)
   Send the +vim_command+ RPC to +nvim+
-  @param [String] str
+  @param [String] command
   @return [void]
 
 @method feedkeys(keys, mode, escape_csi)
@@ -119,7 +130,7 @@ module Neovim
 @method input(keys)
   Send the +vim_input+ RPC to +nvim+
   @param [String] keys
-  @return [Fixnum]
+  @return [Integer]
 
 @method replace_termcodes(str, from_part, do_lt, special)
   Send the +vim_replace_termcodes+ RPC to +nvim+
@@ -134,9 +145,9 @@ module Neovim
   @param [String] str
   @return [String]
 
-@method eval(str)
+@method eval(expr)
   Send the +vim_eval+ RPC to +nvim+
-  @param [String] str
+  @param [String] expr
   @return [Object]
 
 @method call_function(fname, args)
@@ -148,7 +159,7 @@ module Neovim
 @method strwidth(str)
   Send the +vim_strwidth+ RPC to +nvim+
   @param [String] str
-  @return [Fixnum]
+  @return [Integer]
 
 @method list_runtime_paths
   Send the +vim_list_runtime_paths+ RPC to +nvim+
@@ -174,17 +185,6 @@ module Neovim
 
 @method get_var(name)
   Send the +vim_get_var+ RPC to +nvim+
-  @param [String] name
-  @return [Object]
-
-@method set_var(name, value)
-  Send the +vim_set_var+ RPC to +nvim+
-  @param [String] name
-  @param [Object] value
-  @return [Object]
-
-@method del_var(name)
-  Send the +vim_del_var+ RPC to +nvim+
   @param [String] name
   @return [Object]
 
@@ -265,7 +265,7 @@ module Neovim
 @method name_to_color(name)
   Send the +vim_name_to_color+ RPC to +nvim+
   @param [String] name
-  @return [Fixnum]
+  @return [Integer]
 
 @method get_color_map
   Send the +vim_get_color_map+ RPC to +nvim+

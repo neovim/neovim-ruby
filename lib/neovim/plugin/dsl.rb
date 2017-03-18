@@ -16,11 +16,11 @@ module Neovim
       # @param options [Hash] Command options.
       # @param &block [Proc, nil] The body of the command.
       #
-      # @option options [Fixnum] :nargs The number of arguments to accept. See
+      # @option options [Integer] :nargs The number of arguments to accept. See
       #   +:h command-nargs+.
       # @option options [String, Boolean] :range The range argument.
       #   See +:h command-range+.
-      # @option options [Fixnum] :count The default count argument.
+      # @option options [Integer] :count The default count argument.
       #   See +:h command-count+.
       # @option options [Boolean] :bang Whether the command can take a +!+
       #   modifier. See +:h command-bang+.

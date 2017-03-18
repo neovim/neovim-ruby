@@ -56,7 +56,7 @@ module Neovim
   # Connect to a running +nvim+ instance over TCP.
   #
   # @param host [String] The hostname or IP address
-  # @param port [Fixnum] The port
+  # @param port [Integer] The port
   # @return [Client]
   # @see Session.tcp
   def self.attach_tcp(host, port)

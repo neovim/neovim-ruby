@@ -5,15 +5,6 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
-@method get_windows
-  Send the +tabpage_get_windows+ RPC to +nvim+
-  @return [Array<Window>]
-
-@method get_var(name)
-  Send the +tabpage_get_var+ RPC to +nvim+
-  @param [String] name
-  @return [Object]
-
 @method set_var(name, value)
   Send the +tabpage_set_var+ RPC to +nvim+
   @param [String] name
@@ -22,6 +13,15 @@ module Neovim
 
 @method del_var(name)
   Send the +tabpage_del_var+ RPC to +nvim+
+  @param [String] name
+  @return [Object]
+
+@method get_windows
+  Send the +tabpage_get_windows+ RPC to +nvim+
+  @return [Array<Window>]
+
+@method get_var(name)
+  Send the +tabpage_get_var+ RPC to +nvim+
   @param [String] name
   @return [Object]
 

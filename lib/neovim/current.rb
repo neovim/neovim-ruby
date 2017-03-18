@@ -38,8 +38,8 @@ module Neovim
 
     # Set the active buffer.
     #
-    # @param buffer [Buffer, Fixnum] The target buffer or index.
-    # @return [Buffer, Fixnum]
+    # @param buffer [Buffer, Integer] The target buffer or index.
+    # @return [Buffer, Integer]
     def buffer=(buffer)
       @session.request(:vim_set_current_buffer, buffer)
     end
@@ -53,8 +53,8 @@ module Neovim
 
     # Set the active window.
     #
-    # @param window [Window, Fixnum] The target window or index.
-    # @return [Window, Fixnum]
+    # @param window [Window, Integer] The target window or index.
+    # @return [Window, Integer]
     def window=(window)
       @session.request(:vim_set_current_window, window)
     end
@@ -68,8 +68,8 @@ module Neovim
 
     # Set the active tabpage.
     #
-    # @param tabpage [Tabpage, Fixnum] The target tabpage or index.
-    # @return [Tabpage, Fixnum]
+    # @param tabpage [Tabpage, Integer] The target tabpage or index.
+    # @return [Tabpage, Integer]
     def tabpage=(tabpage)
       @session.request(:vim_set_current_tabpage, tabpage)
     end
