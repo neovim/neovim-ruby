@@ -26,6 +26,7 @@ module Neovim
       end
     end
 
+    # Run all registered setup blocks.
     def setup(client)
       @setup_blocks.each { |bl| bl.call(client) }
     end
