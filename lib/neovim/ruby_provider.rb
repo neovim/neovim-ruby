@@ -29,7 +29,7 @@ module Neovim
     def self.__define_ruby_execute(plug)
       plug.__send__(:rpc, :ruby_execute) do |nvim, ruby|
         __wrap_client(nvim) do
-          eval(ruby, TOPLEVEL_BINDING, __FILE__, __LINE__)
+          eval(ruby, TOPLEVEL_BINDING, "eval")
         end
       end
     end
@@ -63,7 +63,7 @@ module Neovim
           __update_lines_in_chunks(__buffer, __start, __stop, 5000) do |__lines|
             __lines.map do |__line|
               $_ = __line
-              eval(__ruby, binding, __FILE__, __LINE__)
+              eval(__ruby, binding, "eval")
               $_
             end
           end
@@ -88,10 +88,8 @@ module Neovim
       __with_globals(client) do
         __with_vim_constant(client) do
           __with_redirect_streams(client) do
-            begin
+            __with_exception_handling(client) do
               yield
-            rescue SyntaxError => e
-              client.err_write(e.message)
             end
           end
         end
@@ -126,7 +124,7 @@ module Neovim
         end
 
         $stderr.define_singleton_method(:write) do |string|
-          client.err_write(string)
+          client.report_error(string)
         end
 
         true
@@ -135,6 +133,15 @@ module Neovim
       yield
     end
     private_class_method :__with_redirect_streams
+
+    def self.__with_exception_handling(client)
+      begin
+        yield
+      rescue SyntaxError, StandardError => e
+        msg = [e.class, e.message].join(": ")
+        client.report_error(msg.lines.first.strip)
+      end
+    end
 
     def self.__update_lines_in_chunks(buffer, start, stop, size)
       (start..stop).each_slice(size) do |linenos|
