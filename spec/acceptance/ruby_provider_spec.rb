@@ -72,13 +72,23 @@ RSpec.describe "ruby_provider" do
       }.from(Dir.pwd)
     end
 
-    it "handles malformed ruby" do
+    it "handles standard errors" do
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_execute', 'raise')")
+      }.to raise_error(ArgumentError)
+
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_execute', '12')")
+      }.not_to raise_error
+    end
+
+    it "handles syntax errors" do
       expect {
         nvim.eval("rpcrequest(host, 'ruby_execute', 'puts[')")
       }.to raise_error(ArgumentError)
 
       expect {
-        nvim.eval("rpcrequest(host, 'ruby_execute', 'puts \"12\"')")
+        nvim.eval("rpcrequest(host, 'ruby_execute', '12')")
       }.not_to raise_error
     end
   end
@@ -171,7 +181,21 @@ RSpec.describe "ruby_provider" do
       }.from(Dir.pwd)
     end
 
-    it "handles malformed ruby" do
+    it "handles standard errors" do
+      File.write(script_path, "raise")
+
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
+      }.to raise_error(ArgumentError)
+
+      File.write(script_path, "12")
+
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_execute_file', '#{script_path}')")
+      }.not_to raise_error
+    end
+
+    it "handles syntax errors" do
       File.write(script_path, "puts[")
 
       expect {
@@ -205,7 +229,19 @@ RSpec.describe "ruby_provider" do
       }.to change { nvim.current.buffer.lines.to_a }.to(ys)
     end
 
-    it "handles malformed ruby" do
+    it "handles standard errors" do
+      nvim.current.buffer.lines = ["a", "b"]
+
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_do_range', 1, 1, 'raise')")
+      }.to raise_error(ArgumentError)
+
+      expect {
+        nvim.eval("rpcrequest(host, 'ruby_do_range', 1, 1, '12')")
+      }.not_to raise_error
+    end
+
+    it "handles syntax errors" do
       nvim.current.buffer.lines = ["a", "b"]
 
       expect {
@@ -213,7 +249,7 @@ RSpec.describe "ruby_provider" do
       }.to raise_error(ArgumentError)
 
       expect {
-        nvim.eval("rpcrequest(host, 'ruby_do_range', 1, 1, 'puts')")
+        nvim.eval("rpcrequest(host, 'ruby_do_range', 1, 1, '12')")
       }.not_to raise_error
     end
   end
