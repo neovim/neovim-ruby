@@ -74,8 +74,13 @@ module Neovim
 
     def self.__define_ruby_chdir(plug)
       plug.__send__(:setup) do |client|
-        cid = client.channel_id
-        client.command("au DirChanged * call rpcrequest(#{cid}, 'ruby_chdir', v:event)")
+        begin
+          cid = client.channel_id
+          client.command("au DirChanged * call rpcrequest(#{cid}, 'ruby_chdir', v:event)")
+        rescue ArgumentError
+          # Swallow this exception for now. This means the nvim installation is
+          # from before DirChanged was implemented.
+        end
       end
 
       plug.__send__(:rpc, :ruby_chdir) do |nvim, event|
