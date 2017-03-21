@@ -1,3 +1,6 @@
+# 0.3.3
+- Hotfix older nvim clients' inability to hook into DirChanged
+
 # 0.3.2
 - Fix directory tracking in legacy Ruby provider
 
