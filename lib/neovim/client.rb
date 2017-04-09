@@ -6,6 +6,8 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
+  # The methods documented here were generated using NVIM v0.1.7
+  #
   # @see Buffer
   # @see Window
   # @see Tabpage
