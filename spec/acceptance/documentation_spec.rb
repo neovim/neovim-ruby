@@ -1,16 +1,13 @@
 require "json"
 require "net/http"
-require "uri"
+require "open-uri"
 
 RSpec.describe "neovim-ruby documentation" do
   it "has up-to-date generated method docs" do
     begin
-      latest_release_uri = URI.parse(
-        "https://api.github.com/repos/neovim/neovim/releases/latest"
-      )
-      response = JSON.parse(
-        Net::HTTP.get_response(latest_release_uri).body
-      )
+      url = "https://api.github.com/repos/neovim/neovim/releases/latest"
+      response = open(url) { |json| JSON.load(json) }
+
       client_file = File.read(
         File.expand_path("../../../lib/neovim/client.rb", __FILE__)
       )
