@@ -56,7 +56,7 @@ RSpec.describe "ruby_provider" do
       expect(nvim.get_var("foo")).to be(123)
     end
 
-    it "handles explicit directory changes" do
+    it "handles explicit directory changes", :nvim_version => ">= 0.2.0.pre.dev" do
       expect {
         nvim.command("cd /")
       }.to change {
@@ -161,7 +161,7 @@ RSpec.describe "ruby_provider" do
       expect(nvim.get_var("foo")).to be(2)
     end
 
-    it "handles explicit directory changes" do
+    it "handles explicit directory changes", :nvim_version => ">= 0.2.0.pre.dev" do
       File.write(script_path, "puts Dir.pwd")
 
       expect {

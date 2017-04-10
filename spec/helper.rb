@@ -49,10 +49,8 @@ module Support
   end
 end
 
-unless system("#{Support.child_argv.shelljoin} --version | grep -q NVIM")
-  warn("Failed to load nvim. See installation instructions:")
-  warn("https://github.com/neovim/neovim/wiki/Installing-Neovim")
-  exit(1)
+IO.popen([*Support.child_argv, "--version"]) do |io|
+  NVIM_VERSION = io.gets[/\ANVIM v?(.+)$/, 1]
 end
 
 RSpec.configure do |config|
@@ -87,6 +85,15 @@ RSpec.configure do |config|
         ":silence_warnings used but nothing logged at WARN level"
     ensure
       Neovim.logger = old_logger
+    end
+  end
+
+  config.before(:example, :nvim_version) do |spec|
+    vrs = Gem::Version.new(NVIM_VERSION)
+    req = Gem::Requirement.new(spec.metadata[:nvim_version])
+
+    unless req.satisfied_by?(vrs)
+      pending "Pending: installed nvim (#{vrs}) doesn't satisfy '#{req}'."
     end
   end
 
