@@ -89,8 +89,15 @@ RSpec.configure do |config|
   end
 
   config.before(:example, :nvim_version) do |spec|
-    vrs = Gem::Version.new(NVIM_VERSION)
-    req = Gem::Requirement.new(spec.metadata[:nvim_version])
+    required = spec.metadata.fetch(:nvim_version)
+
+    begin
+      vrs = Gem::Version.new(NVIM_VERSION)
+      req = Gem::Requirement.new(required)
+    rescue ArgumentError
+      vrs = Gem::Version.new(NVIM_VERSION.gsub("-", "."))
+      req = Gem::Requirement.new(required.gsub("-", "."))
+    end
 
     unless req.satisfied_by?(vrs)
       pending "Pending: installed nvim (#{vrs}) doesn't satisfy '#{req}'."
