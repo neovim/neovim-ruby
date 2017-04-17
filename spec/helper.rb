@@ -8,7 +8,7 @@ end
 require "fileutils"
 require "neovim"
 require "pry"
-require "shellwords"
+require "rubygems"
 require "stringio"
 require "timeout"
 
@@ -44,13 +44,24 @@ module Support
   end
 
   def self.child_argv
-    nvim_exe = ENV.fetch("NVIM_EXECUTABLE", "nvim")
-    [nvim_exe, "--headless", "-i", "NONE", "-u", "NONE", "-n"]
+    [nvim_executable, "--headless", "-i", "NONE", "-u", "NONE", "-n"]
+  end
+
+  def self.nvim_executable
+    ENV.fetch("NVIM_EXECUTABLE", "nvim")
+  end
+
+  def self.nvim_version
+    @nvim_version ||= IO.popen([nvim_executable, "--version"]) do |io|
+      io.gets[/\ANVIM v?(.+)$/, 1]
+    end
   end
 end
 
-IO.popen([*Support.child_argv, "--version"]) do |io|
-  NVIM_VERSION = io.gets[/\ANVIM v?(.+)$/, 1]
+begin
+  Support.nvim_version
+rescue => e
+  abort("Failed to load nvim: #{e}")
 end
 
 RSpec.configure do |config|
@@ -89,18 +100,17 @@ RSpec.configure do |config|
   end
 
   config.before(:example, :nvim_version) do |spec|
-    required = spec.metadata.fetch(:nvim_version)
+    req = Gem::Requirement.new(spec.metadata[:nvim_version])
 
     begin
-      vrs = Gem::Version.new(NVIM_VERSION)
-      req = Gem::Requirement.new(required)
-    rescue ArgumentError
-      vrs = Gem::Version.new(NVIM_VERSION.gsub("-", "."))
-      req = Gem::Requirement.new(required.gsub("-", "."))
+      nvim_vrs = Support.nvim_version
+      vrs = Gem::Version.new(nvim_vrs)
+    rescue
+      vrs = Gem::Version.new(nvim_vrs.gsub("-", "."))
     end
 
-    unless req.satisfied_by?(vrs)
-      pending "Pending: installed nvim (#{vrs}) doesn't satisfy '#{req}'."
+    unless req.satisfied_by?(vrs.release)
+      pending "Pending: Installed nvim (#{vrs}) doesn't satisfy '#{req}'."
     end
   end
 
