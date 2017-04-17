@@ -105,7 +105,7 @@ RSpec.configure do |config|
     begin
       nvim_vrs = Support.nvim_version
       vrs = Gem::Version.new(nvim_vrs)
-    rescue
+    rescue ArgumentError
       vrs = Gem::Version.new(nvim_vrs.gsub("-", "."))
     end
 
