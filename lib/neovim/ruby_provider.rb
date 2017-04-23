@@ -9,8 +9,6 @@ module Neovim
   #
   # @api private
   module RubyProvider
-    @__buffer_cache = {}
-
     def self.__define_plugin!
       Thread.abort_on_exception = true
 
@@ -104,14 +102,7 @@ module Neovim
     private_class_method :__wrap_client
 
     def self.__with_globals(client)
-      bufnr = client.evaluate("bufnr('%')")
-
-      $curbuf = @__buffer_cache.fetch(bufnr) do
-        @__buffer_cache[bufnr] = client.get_current_buffer
-      end
-
-      $curwin = client.get_current_window
-
+      Vim.__refresh_globals(client)
       yield
     end
     private_class_method :__with_globals
