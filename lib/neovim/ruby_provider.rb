@@ -13,10 +13,35 @@ module Neovim
       Thread.abort_on_exception = true
 
       Neovim.plugin do |plug|
+        __define_setup(plug)
         __define_ruby_execute(plug)
         __define_ruby_execute_file(plug)
         __define_ruby_do_range(plug)
         __define_ruby_chdir(plug)
+      end
+    end
+
+    # Bootstrap the provider client:
+    #
+    # 1. Monkeypatch +$stdout+ and +$stderr+ to write to +nvim+.
+    # 2. Define the +DirChanged+ event to update the provider's pwd.
+    def self.__define_setup(plug)
+      plug.__send__(:setup) do |client|
+        $stdout.define_singleton_method(:write) do |string|
+          client.out_write(string)
+        end
+
+        $stderr.define_singleton_method(:write) do |string|
+          client.report_error(string)
+        end
+
+        begin
+          cid = client.channel_id
+          client.command("au DirChanged * call rpcrequest(#{cid}, 'ruby_chdir', v:event)")
+        rescue ArgumentError
+          # Swallow this exception for now. This means the nvim installation is
+          # from before DirChanged was implemented.
+        end
       end
     end
 
@@ -71,64 +96,22 @@ module Neovim
     private_class_method :__define_ruby_do_range
 
     def self.__define_ruby_chdir(plug)
-      plug.__send__(:setup) do |client|
-        begin
-          cid = client.channel_id
-          client.command("au DirChanged * call rpcrequest(#{cid}, 'ruby_chdir', v:event)")
-        rescue ArgumentError
-          # Swallow this exception for now. This means the nvim installation is
-          # from before DirChanged was implemented.
-        end
-      end
-
-      plug.__send__(:rpc, :ruby_chdir) do |nvim, event|
+      plug.__send__(:rpc, :ruby_chdir) do |_, event|
         Dir.chdir(event.fetch("cwd"))
       end
     end
     private_class_method :__define_ruby_chdir
 
     def self.__wrap_client(client)
-      __with_globals(client) do
-        __with_vim_constant(client) do
-          __with_redirect_streams(client) do
-            __with_exception_handling(client) do
-              yield
-            end
-          end
-        end
+      Vim.__client = client
+      Vim.__refresh_globals(client)
+
+      __with_exception_handling(client) do
+        yield
       end
       nil
     end
     private_class_method :__wrap_client
-
-    def self.__with_globals(client)
-      Vim.__refresh_globals(client)
-      yield
-    end
-    private_class_method :__with_globals
-
-    def self.__with_vim_constant(client)
-      ::Vim.__client = client
-      yield
-    end
-    private_class_method :__with_vim_constant
-
-    def self.__with_redirect_streams(client)
-      @__with_redirect_streams ||= begin
-        $stdout.define_singleton_method(:write) do |string|
-          client.out_write(string)
-        end
-
-        $stderr.define_singleton_method(:write) do |string|
-          client.report_error(string)
-        end
-
-        true
-      end
-
-      yield
-    end
-    private_class_method :__with_redirect_streams
 
     def self.__with_exception_handling(client)
       begin
