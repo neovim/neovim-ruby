@@ -53,4 +53,10 @@ RSpec.describe Neovim do
       end
     end
   end
+
+  describe ".executable" do
+    it "returns the current executable" do
+      expect(Neovim.executable).to be_a(Neovim::Executable)
+    end
+  end
 end

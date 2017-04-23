@@ -1,4 +1,5 @@
 require "neovim/client"
+require "neovim/executable"
 require "neovim/logging"
 require "neovim/session"
 require "neovim/version"
@@ -77,7 +78,7 @@ module Neovim
   # @param argv [Array] The arguments to pass to the spawned process
   # @return [Client]
   # @see Session.child
-  def self.attach_child(argv=["nvim"])
+  def self.attach_child(argv=[executable.path])
     Client.new Session.child(argv)
   end
 
@@ -88,6 +89,14 @@ module Neovim
   # @see Plugin::DSL
   def self.plugin
     raise "Can't call Neovim.plugin outside of a plugin host."
+  end
+
+  # Return a +Neovim::Executable+ representing the active +nvim+ executable.
+  #
+  # @return [Executable]
+  # @see Executable
+  def self.executable
+    @executable ||= Executable.new(ENV)
   end
 
   # Set the Neovim global logger.

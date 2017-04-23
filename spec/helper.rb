@@ -13,6 +13,10 @@ require "stringio"
 require "timeout"
 
 module Support
+  class << self
+    attr_accessor :nvim_version
+  end
+
   def self.workspace
     File.expand_path("../workspace", __FILE__)
   end
@@ -44,22 +48,12 @@ module Support
   end
 
   def self.child_argv
-    [nvim_executable, "--headless", "-i", "NONE", "-u", "NONE", "-n"]
-  end
-
-  def self.nvim_executable
-    ENV.fetch("NVIM_EXECUTABLE", "nvim")
-  end
-
-  def self.nvim_version
-    @nvim_version ||= IO.popen([nvim_executable, "--version"]) do |io|
-      io.gets[/\ANVIM v?(.+)$/, 1]
-    end
+    [Neovim.executable.path, "--headless", "-i", "NONE", "-u", "NONE", "-n"]
   end
 end
 
 begin
-  Support.nvim_version
+  Support.nvim_version = Neovim::Executable.new(ENV).version
 rescue => e
   abort("Failed to load nvim: #{e}")
 end
