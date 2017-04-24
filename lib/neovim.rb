@@ -96,7 +96,7 @@ module Neovim
   # @return [Executable]
   # @see Executable
   def self.executable
-    @executable ||= Executable.new(ENV)
+    @executable ||= Executable.from_env
   end
 
   # Set the Neovim global logger.

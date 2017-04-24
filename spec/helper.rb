@@ -53,7 +53,7 @@ module Support
 end
 
 begin
-  Support.nvim_version = Neovim::Executable.new(ENV).version
+  Support.nvim_version = Neovim.executable.version
 rescue => e
   abort("Failed to load nvim: #{e}")
 end

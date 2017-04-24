@@ -2,27 +2,26 @@ require "helper"
 
 module Neovim
   RSpec.describe Executable do
-    let(:executable) { Executable.new(ENV) }
-
-    describe "#path" do
-      it "returns the value of env['NVIM_EXECUTABLE']" do
-        executable = Executable.new("NVIM_EXECUTABLE" => "/foo/nvim")
+    describe ".from_env" do
+      it "respects NVIM_EXECUTABLE" do
+        executable = Executable.from_env("NVIM_EXECUTABLE" => "/foo/nvim")
         expect(executable.path).to eq("/foo/nvim")
       end
 
-      it "defaults to 'nvim'" do
-        executable = Executable.new({})
+      it "returns a default path" do
+        executable = Executable.from_env({})
         expect(executable.path).to eq("nvim")
       end
     end
 
     describe "#version" do
       it "returns the current nvim version" do
-        expect(executable.version.size).to be > 0
+        executable = Executable.from_env
+        expect(executable.version).to match(/^\d+\.\d+\.\d+/)
       end
 
       it "raises with an invalid executable path" do
-        executable = Executable.new("NVIM_EXECUTABLE" => "/dev/null")
+        executable = Executable.new("/dev/null")
 
         expect {
           executable.version
