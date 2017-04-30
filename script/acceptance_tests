@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+$:.unshift File.expand_path("../../lib", __FILE__)
+
+require "neovim"
+require "shellwords"
+require "tempfile"
+require File.expand_path("../../spec/support.rb", __FILE__)
+
+nvim = Neovim.executable.path
+vader = File.expand_path("../../vendor/vader.vim", __FILE__)
+specs = File.expand_path("../../spec/acceptance/*_spec.vim", __FILE__)
+root = File.expand_path("../..", __FILE__)
+exitstatus = 0
+
+Dir.glob(specs) do |vader_spec|
+  Tempfile.open("vader.out") do |tmp|
+    Dir.chdir(root) do
+      system(
+        {
+          "VADER_OUTPUT_FILE" => tmp.path,
+          "NVIM_RPLUGIN_MANIFEST" => "spec/acceptance/runtime/rplugin.vim"
+        },
+        "bash", "-c",
+        "#{nvim} --headless -nu spec/acceptance/runtime/init.vim +'Vader! #{vader_spec}'"
+      )
+    end
+
+    if $?.success?
+      puts "[✔] #{vader_spec}"
+    else
+      exitstatus = $?.exitstatus
+      IO.copy_stream(tmp, $stderr)
+      puts "[✘] #{vader_spec}"
+    end
+  end
+end
+
+if exitstatus == 0
+  puts "[✔] Acceptance tests passed."
+else
+  puts "[✘] Acceptance tests failed."
+end
+
+exit(exitstatus)
