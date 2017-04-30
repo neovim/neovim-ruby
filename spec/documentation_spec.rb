@@ -9,7 +9,7 @@ RSpec.describe "neovim-ruby documentation" do
       response = open(url) { |json| JSON.load(json) }
 
       client_file = File.read(
-        File.expand_path("../../../lib/neovim/client.rb", __FILE__)
+        File.expand_path("../../lib/neovim/client.rb", __FILE__)
       )
       docs_version = client_file[
         /The methods documented here were generated using (.+)$/,
