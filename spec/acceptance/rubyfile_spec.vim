@@ -27,8 +27,8 @@ Execute (Access `$curwin` global variable):
   rubyfile ./spec/acceptance/rubyfile/curwin.rb
 
 Expect:
-  first
-  two
+  one
+  second
 
 Execute (Define a Ruby method):
   rubyfile ./spec/acceptance/rubyfile/define_foo.rb

@@ -25,11 +25,11 @@ Expect:
   two
 
 Execute (Access `$curwin` global variable):
-  ruby $curwin.buffer[1] = "first"
+  ruby $curwin.buffer[2] = "second"
 
 Expect:
-  first
-  two
+  one
+  second
 
 Execute (Define a Ruby method):
   ruby def foo; Vim.command("let g:called = 1"); end

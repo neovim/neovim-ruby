@@ -1,1 +1,1 @@
-$curwin.buffer[1] = "first"
+$curwin.buffer[2] = "second"
