@@ -25,6 +25,12 @@ Expect:
 Execute (Update all lines using `$_`):
   %rubydo $_.upcase!
 
+Expect:
+  A
+  B
+  C
+  D
+
 Execute (Raise a Ruby standard error):
   try
     1rubydo raise "BOOM"
