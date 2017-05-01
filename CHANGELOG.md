@@ -1,3 +1,9 @@
+# 0.4.0
+- Add `Neovim.executable` for accessing `nvim` info
+- Fix bug where `$curwin` and `$curbuf` got out of sync after `Vim.command`
+  invocations
+- Use vader.vim for running vimscript acceptance tests
+
 # 0.3.3
 - Hotfix older nvim clients' inability to hook into DirChanged
 

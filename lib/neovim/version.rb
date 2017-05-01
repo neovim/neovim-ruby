@@ -1,3 +1,3 @@
 module Neovim
-  VERSION = Gem::Version.new("0.3.3")
+  VERSION = Gem::Version.new("0.4.0")
 end
