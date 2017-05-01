@@ -67,6 +67,7 @@ Execute (Add a large number of lines):
   silent normal 6000p
   %rubydo $_.succ!
 
+Then:
   AssertEqual "y", getline(1)
   AssertEqual "y", getline(6001)
   AssertEqual "", getline(6002)
