@@ -26,7 +26,11 @@ Execute (Update all lines using `$_`):
   %rubydo $_.upcase!
 
 Execute (Raise a Ruby standard error):
-  AssertThrows '1rubydo raise "BOOM"'
+  try
+    1rubydo raise "BOOM"
+  catch /BOOM/
+  endtry
+
   1rubydo $_.replace("still works")
 
 Expect:
@@ -36,7 +40,11 @@ Expect:
   d
 
 Execute (Raise a Ruby syntax error):
-  AssertThrows '1rubydo puts['
+  try
+    1rubydo puts[
+  catch /SyntaxError/
+  endtry
+
   1rubydo $_.replace("still works")
 
 Expect:

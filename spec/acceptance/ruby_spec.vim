@@ -70,7 +70,11 @@ Then:
   endif
 
 Execute (Raise a Ruby standard error):
-  AssertThrows 'ruby raise "BOOM"'
+  try
+    ruby raise "BOOM"
+  catch /BOOM/
+  endtry
+
   ruby $curbuf[1] = "still works"
 
 Expect:
@@ -78,7 +82,11 @@ Expect:
   two
 
 Execute (Raise a Ruby syntax error):
-  AssertThrows 'ruby puts['
+  try
+    ruby puts[
+  catch /SyntaxError/
+  endtry
+
   ruby $curbuf[1] = "still works"
 
 Expect:
