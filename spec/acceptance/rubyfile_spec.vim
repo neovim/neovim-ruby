@@ -74,6 +74,18 @@ Then:
     AssertNotEqual g:pwd_before, g:pwd_after
   endif
 
+Execute (Raise a Ruby load error):
+  try
+    rubyfile /foo/bar/baz
+  catch /LoadError/
+  endtry
+
+  ruby $curbuf[1] = "still works"
+
+Expect:
+  still works
+  two
+
 Execute (Raise a Ruby standard error):
   try
     rubyfile ./spec/acceptance/rubyfile/raise_standard_error.rb
