@@ -18,6 +18,7 @@ argv = [nvim, "--headless", "-u", vimrc]
 exitstatus = 0
 
 FileUtils.rm_f(rp_manifest)
+at_exit { FileUtils.rm_f(rp_manifest) }
 
 system(
   {"NVIM_RPLUGIN_MANIFEST" => rp_manifest},
@@ -51,5 +52,4 @@ else
   puts "[✘] Acceptance tests failed."
 end
 
-FileUtils.rm_f(rp_manifest)
 exit(exitstatus)
