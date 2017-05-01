@@ -1,35 +1,35 @@
 Given:
-  a
-  b
-  c
-  d
+  one
+  two
+  three
+  four
 
 Execute (Update one line using `$_`):
   2rubydo $_.upcase!
 
 Expect:
-  a
-  B
-  c
-  d
+  one
+  TWO
+  three
+  four
 
 Execute (Update a range of lines using `$_`):
   2,3rubydo $_.upcase!
 
 Expect:
-  a
-  B
-  C
-  d
+  one
+  TWO
+  THREE
+  four
 
 Execute (Update all lines using `$_`):
   %rubydo $_.upcase!
 
 Expect:
-  A
-  B
-  C
-  D
+  ONE
+  TWO
+  THREE
+  FOUR
 
 Execute (Raise a Ruby standard error):
   try
@@ -41,9 +41,9 @@ Execute (Raise a Ruby standard error):
 
 Expect:
   still works
-  b
-  c
-  d
+  two
+  three
+  four
 
 Execute (Raise a Ruby syntax error):
   try
@@ -55,9 +55,9 @@ Execute (Raise a Ruby syntax error):
 
 Expect:
   still works
-  b
-  c
-  d
+  two
+  three
+  four
 
 Given:
   x
