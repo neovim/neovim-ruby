@@ -8,13 +8,11 @@ require "fileutils"
 require "tempfile"
 require File.expand_path("../../spec/support.rb", __FILE__)
 
-nvim = Neovim.executable.path
 root = File.expand_path("../..", __FILE__)
-vader = File.join(root, "vendor/vader.vim")
 specs = File.join(root, "spec/acceptance/*_spec.vim")
 vimrc = File.join(root, "spec/acceptance/runtime/init.vim")
 rp_manifest = File.join(root, "spec/acceptance/runtime/rplugin.vim")
-argv = [nvim, "--headless", "-n", "-u", vimrc]
+argv = [Neovim.executable.path, "--headless", "-n", "-u", vimrc]
 exitstatus = 0
 
 FileUtils.rm_f(rp_manifest)
