@@ -14,7 +14,7 @@ vader = File.join(root, "vendor/vader.vim")
 specs = File.join(root, "spec/acceptance/*_spec.vim")
 vimrc = File.join(root, "spec/acceptance/runtime/init.vim")
 rp_manifest = File.join(root, "spec/acceptance/runtime/rplugin.vim")
-argv = [nvim, "--headless", "-u", vimrc]
+argv = [nvim, "--headless", "-n", "-u", vimrc]
 exitstatus = 0
 
 FileUtils.rm_f(rp_manifest)
@@ -22,7 +22,7 @@ at_exit { FileUtils.rm_f(rp_manifest) }
 
 system(
   {"NVIM_RPLUGIN_MANIFEST" => rp_manifest},
-  *argv, "+silent UpdateRemotePlugins", "+qa!"
+  *argv, "-c", "silent UpdateRemotePlugins", "-c", "qa!"
 )
 
 exit($?.exitstatus) unless $?.success?
@@ -32,7 +32,7 @@ Dir.glob(specs) do |vader_spec|
     Dir.chdir(root) do
       system(
         {"VADER_OUTPUT_FILE" => tmp.path, "NVIM_RPLUGIN_MANIFEST" => rp_manifest},
-        *argv, "+Vader! #{vader_spec}"
+        *argv, "-c", "Vader! #{vader_spec}"
       )
     end
 
