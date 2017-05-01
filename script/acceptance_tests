@@ -4,26 +4,34 @@
 $:.unshift File.expand_path("../../lib", __FILE__)
 
 require "neovim"
-require "shellwords"
+require "fileutils"
 require "tempfile"
 require File.expand_path("../../spec/support.rb", __FILE__)
 
 nvim = Neovim.executable.path
-vader = File.expand_path("../../vendor/vader.vim", __FILE__)
-specs = File.expand_path("../../spec/acceptance/*_spec.vim", __FILE__)
 root = File.expand_path("../..", __FILE__)
+vader = File.join(root, "vendor/vader.vim")
+specs = File.join(root, "spec/acceptance/*_spec.vim")
+vimrc = File.join(root, "spec/acceptance/runtime/init.vim")
+rp_manifest = File.join(root, "spec/acceptance/runtime/rplugin.vim")
+argv = [nvim, "--headless", "-u", vimrc]
 exitstatus = 0
+
+FileUtils.rm_f(rp_manifest)
+
+system(
+  {"NVIM_RPLUGIN_MANIFEST" => rp_manifest},
+  *argv, "+silent UpdateRemotePlugins", "+qa!"
+)
+
+exit($?.exitstatus) unless $?.success?
 
 Dir.glob(specs) do |vader_spec|
   Tempfile.open("vader.out") do |tmp|
     Dir.chdir(root) do
       system(
-        {
-          "VADER_OUTPUT_FILE" => tmp.path,
-          "NVIM_RPLUGIN_MANIFEST" => "spec/acceptance/runtime/rplugin.vim"
-        },
-        "bash", "-c",
-        "#{nvim} --headless -nu spec/acceptance/runtime/init.vim +'Vader! #{vader_spec}'"
+        {"VADER_OUTPUT_FILE" => tmp.path, "NVIM_RPLUGIN_MANIFEST" => rp_manifest},
+        *argv, "+Vader! #{vader_spec}"
       )
     end
 
@@ -43,4 +51,5 @@ else
   puts "[✘] Acceptance tests failed."
 end
 
+FileUtils.rm_f(rp_manifest)
 exit(exitstatus)
