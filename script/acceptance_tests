@@ -26,6 +26,8 @@ system(
 exit($?.exitstatus) unless $?.success?
 
 Dir.glob(specs) do |vader_spec|
+  print "#{File.basename(vader_spec)}... "
+
   Tempfile.open("vader.out") do |tmp|
     Dir.chdir(root) do
       system(
@@ -35,19 +37,19 @@ Dir.glob(specs) do |vader_spec|
     end
 
     if $?.success?
-      puts "[✔] #{vader_spec}"
+      puts "✔"
     else
+      puts "✘"
       exitstatus = $?.exitstatus
       IO.copy_stream(tmp, $stderr)
-      puts "[✘] #{vader_spec}"
     end
   end
 end
 
 if exitstatus == 0
-  puts "[✔] Acceptance tests passed."
+  puts "Acceptance tests passed. ✔"
 else
-  puts "[✘] Acceptance tests failed."
+  puts "Acceptance tests failed. ✘"
 end
 
 exit(exitstatus)
