@@ -89,7 +89,7 @@ module Neovim
         if type == :autocmd
           options = _options.dup
         else
-          options = standardize_range(_options.dup)
+          options = standardize(_options.dup)
         end
 
         sync = options.delete(:sync)
@@ -99,10 +99,18 @@ module Neovim
         )
       end
 
-      def standardize_range(options)
+      def standardize(options)
         if options.key?(:range)
           options[:range] = "" if options[:range] == true
           options[:range] = ::Kernel.String(options[:range])
+        end
+
+        [:bang, :register].each do |opt|
+          if options[opt]
+            options[opt] = ""
+          elsif options.key?(opt)
+            options.delete(opt)
+          end
         end
 
         options

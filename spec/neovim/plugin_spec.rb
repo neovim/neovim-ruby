@@ -8,7 +8,14 @@ module Neovim
         cmd_block = Proc.new {}
 
         plugin = Plugin.from_config_block("source") do |plug|
-          plug.command("Foo", :range => true, :nargs => 1, &cmd_block)
+          plug.command(
+            "Foo",
+            :nargs => 1,
+            :range => true,
+            :bang => true,
+            :register => true,
+            &cmd_block
+          )
         end
 
         expect(plugin.handlers.size).to be(1)
@@ -22,7 +29,12 @@ module Neovim
           :type => :command,
           :name => "Foo",
           :sync => false,
-          :opts => {:range => "", :nargs => 1},
+          :opts => {
+            :nargs => 1,
+            :range => "",
+            :bang => "",
+            :register => "",
+          },
         )
       end
 
