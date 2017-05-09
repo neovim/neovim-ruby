@@ -8,48 +8,68 @@ require "fileutils"
 require "tempfile"
 require File.expand_path("../../spec/support.rb", __FILE__)
 
-root = File.expand_path("../..", __FILE__)
-specs = File.join(root, "spec/acceptance/*_spec.vim")
-vimrc = File.join(root, "spec/acceptance/runtime/init.vim")
-rp_manifest = File.join(root, "spec/acceptance/runtime/rplugin.vim")
-argv = [Neovim.executable.path, "--headless", "-n", "-u", vimrc]
-exitstatus = 0
+def run_nvim(env, vimrc, *opts)
+  system(env, Neovim.executable.path, "--headless", "-n", "-u", vimrc, *opts)
+end
 
-FileUtils.rm_f(rp_manifest)
-at_exit { FileUtils.rm_f(rp_manifest) }
+def generate_rplugin_manifest(vimrc, manifest_path)
+  run_nvim(
+    {"NVIM_RPLUGIN_MANIFEST" => manifest_path},
+    vimrc,
+    "-c", "silent UpdateRemotePlugins", "-c", "qa!"
+  )
 
-system(
-  {"NVIM_RPLUGIN_MANIFEST" => rp_manifest},
-  *argv, "-c", "silent UpdateRemotePlugins", "-c", "qa!"
-)
+  exit($?.exitstatus) unless $?.success?
+end
 
-exit($?.exitstatus) unless $?.success?
+def run_spec(vimrc, test_path, out_path, manifest_path)
+  run_nvim(
+    {"VADER_OUTPUT_FILE" => out_path, "NVIM_RPLUGIN_MANIFEST" => manifest_path},
+    vimrc,
+    "-c", "Vader! #{test_path}"
+  )
 
-Dir.glob(specs) do |vader_spec|
-  print "#{File.basename(vader_spec)}... "
+  yield $?
+end
 
-  Tempfile.open("vader.out") do |tmp|
-    Dir.chdir(root) do
-      system(
-        {"VADER_OUTPUT_FILE" => tmp.path, "NVIM_RPLUGIN_MANIFEST" => rp_manifest},
-        *argv, "-c", "Vader! #{vader_spec}"
-      )
+def main
+  root = File.expand_path("../..", __FILE__)
+  specs = File.join(root, "spec/acceptance/*_spec.vim")
+  vimrc = File.join(root, "spec/acceptance/runtime/init.vim")
+  rp_manifest = File.join(root, "spec/acceptance/runtime/rplugin.vim")
+  exitstatus = 0
+
+  begin
+    generate_rplugin_manifest(vimrc, rp_manifest)
+
+    Dir.glob(specs) do |vader_spec|
+      print "#{File.basename(vader_spec)}... "
+
+      Tempfile.open("vader.out") do |tmp|
+        Dir.chdir(root) do
+          run_spec(vimrc, vader_spec, tmp.path, rp_manifest) do |status|
+            if status.success?
+              puts "✔"
+            else
+              puts "✘"
+              exitstatus = status.exitstatus
+              IO.copy_stream(tmp, $stderr)
+            end
+          end
+        end
+      end
     end
-
-    if $?.success?
-      puts "✔"
-    else
-      puts "✘"
-      exitstatus = $?.exitstatus
-      IO.copy_stream(tmp, $stderr)
-    end
+  ensure
+    FileUtils.rm_f(rp_manifest)
   end
+
+  if exitstatus == 0
+    puts "Acceptance tests passed. ✔"
+  else
+    puts "Acceptance tests failed. ✘"
+  end
+
+  exit(exitstatus)
 end
 
-if exitstatus == 0
-  puts "Acceptance tests passed. ✔"
-else
-  puts "Acceptance tests failed. ✘"
-end
-
-exit(exitstatus)
+main if __FILE__ == $0
