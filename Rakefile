@@ -11,13 +11,17 @@ task :api do
   sh File.expand_path("../script/dump_api", __FILE__)
 end
 
+desc "Initialize and update git submodules"
+task :submodules do
+  sh "git submodule update --init"
+end
+
 namespace :spec do
   desc "Run functional tests"
   RSpec::Core::RakeTask.new(:functional)
 
   desc "Run acceptance tests"
-  task :acceptance do
-    sh "git submodule update --init"
+  task :acceptance => :submodules do
     sh File.expand_path("../script/acceptance_tests", __FILE__)
   end
 end
