@@ -77,6 +77,7 @@ Then:
 Execute (Raise a Ruby load error):
   try
     rubyfile /foo/bar/baz
+    throw "Nothing raised"
   catch /LoadError/
   endtry
 
@@ -89,6 +90,7 @@ Expect:
 Execute (Raise a Ruby standard error):
   try
     rubyfile ./spec/acceptance/rubyfile/raise_standard_error.rb
+    throw "Nothing raised"
   catch /BOOM/
   endtry
 
@@ -101,6 +103,7 @@ Expect:
 Execute (Raise a Ruby syntax error):
   try
     rubyfile ./spec/acceptance/rubyfile/raise_syntax_error.rb
+    throw "Nothing raised"
   catch /SyntaxError/
   endtry
 

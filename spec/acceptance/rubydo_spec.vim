@@ -34,6 +34,7 @@ Expect:
 Execute (Raise a Ruby standard error):
   try
     1rubydo raise "BOOM"
+    throw "Nothing raised"
   catch /BOOM/
   endtry
 
@@ -48,6 +49,7 @@ Expect:
 Execute (Raise a Ruby syntax error):
   try
     1rubydo puts[
+    throw "Nothing raised"
   catch /SyntaxError/
   endtry
 

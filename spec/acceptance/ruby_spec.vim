@@ -72,6 +72,7 @@ Then:
 Execute (Raise a Ruby standard error):
   try
     ruby raise "BOOM"
+    throw "Nothing raised"
   catch /BOOM/
   endtry
 
@@ -84,6 +85,7 @@ Expect:
 Execute (Raise a Ruby syntax error):
   try
     ruby puts[
+    throw "Nothing raised"
   catch /SyntaxError/
   endtry
 
