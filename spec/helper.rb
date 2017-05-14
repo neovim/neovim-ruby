@@ -25,9 +25,10 @@ RSpec.configure do |config|
 
   config.around(:example) do |spec|
     Support.setup_workspace
+    timeout = spec.metadata.fetch(:timeout, 3)
 
     begin
-      Timeout.timeout(5) { spec.run }
+      Timeout.timeout(timeout) { spec.run }
     ensure
       Support.teardown_workspace
     end

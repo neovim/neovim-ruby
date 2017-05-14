@@ -3,7 +3,7 @@ ENV.delete("VIMRUNTIME")
 
 require "helper"
 
-RSpec.describe "acceptance tests" do
+RSpec.describe "acceptance tests", :timeout => 30 do
   describe "vim compatibility" do
     ["ruby", "rubyfile", "rubydo"].each do |ex_cmd|
       specify ":#{ex_cmd}" do
