@@ -16,15 +16,5 @@ task :submodules do
   sh "git submodule update --init"
 end
 
-namespace :spec do
-  desc "Run functional tests"
-  RSpec::Core::RakeTask.new(:functional)
-
-  desc "Run acceptance tests"
-  task :acceptance => :submodules do
-    sh File.expand_path("../script/acceptance_tests", __FILE__)
-  end
-end
-
-task :spec => "spec:functional"
-task :default => ["spec:acceptance", "spec:functional"]
+RSpec::Core::RakeTask.new(:spec)
+task :default => [:submodules, :spec]

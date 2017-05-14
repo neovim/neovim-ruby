@@ -10,46 +10,46 @@ Given:
   two
 
 Execute (Access `Vim` and `VIM` constants):
-  rubyfile ./spec/acceptance/rubyfile/vim_constants.rb
+  rubyfile ./rubyfile/vim_constants.rb
 
 Expect:
   first
   second
 
 Execute (Access `$curbuf` global variable):
-  rubyfile ./spec/acceptance/rubyfile/curbuf.rb
+  rubyfile ./rubyfile/curbuf.rb
 
 Expect:
   first
   two
 
 Execute (Access `$curwin` global variable):
-  rubyfile ./spec/acceptance/rubyfile/curwin.rb
+  rubyfile ./rubyfile/curwin.rb
 
 Expect:
   one
   second
 
 Execute (Define a Ruby method):
-  rubyfile ./spec/acceptance/rubyfile/define_foo.rb
+  rubyfile ./rubyfile/define_foo.rb
 
 Execute (Call a Ruby method):
-  rubyfile ./spec/acceptance/rubyfile/call_foo.rb
+  rubyfile ./rubyfile/call_foo.rb
 
 Then:
   AssertEqual 1, g:called
 
 Execute (Update instance state on $curbuf):
-  rubyfile ./spec/acceptance/rubyfile/curbuf_ivar_set.rb
+  rubyfile ./rubyfile/curbuf_ivar_set.rb
 
 Execute (Access instance state on $curbuf):
-  rubyfile ./spec/acceptance/rubyfile/curbuf_ivar_get.rb
+  rubyfile ./rubyfile/curbuf_ivar_get.rb
 
 Then:
   AssertEqual 123, g:foo
 
 Execute (Change the working directory explicitly):
-  let g:rubyfile = getcwd() . "/spec/acceptance/rubyfile/set_pwd_before.rb"
+  let g:rubyfile = getcwd() . "/rubyfile/set_pwd_before.rb"
   cd /
   exec "rubyfile " . g:rubyfile
   cd -
@@ -60,8 +60,8 @@ Then:
   endif
 
 Execute (Change the working directory implicitly):
-  let g:before_file = getcwd() . "/spec/acceptance/rubyfile/set_pwd_before.rb"
-  let g:after_file = getcwd() . "/spec/acceptance/rubyfile/set_pwd_after.rb"
+  let g:before_file = getcwd() . "/rubyfile/set_pwd_before.rb"
+  let g:after_file = getcwd() . "/rubyfile/set_pwd_after.rb"
 
   split | lcd /
   exec "rubyfile " . g:before_file
@@ -89,7 +89,7 @@ Expect:
 
 Execute (Raise a Ruby standard error):
   try
-    rubyfile ./spec/acceptance/rubyfile/raise_standard_error.rb
+    rubyfile ./rubyfile/raise_standard_error.rb
     throw "Nothing raised"
   catch /BOOM/
   endtry
@@ -102,7 +102,7 @@ Expect:
 
 Execute (Raise a Ruby syntax error):
   try
-    rubyfile ./spec/acceptance/rubyfile/raise_syntax_error.rb
+    rubyfile ./rubyfile/raise_syntax_error.rb
     throw "Nothing raised"
   catch /SyntaxError/
   endtry
