@@ -1,1 +1,1 @@
-set rtp=../../vendor/vader.vim,./runtime,$VIMRUNTIME
+set rtp=./runtime,./runtime/vader.vim,$VIMRUNTIME
