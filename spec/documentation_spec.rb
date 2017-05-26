@@ -17,7 +17,7 @@ RSpec.describe "neovim-ruby documentation" do
       ]
 
       expect(docs_version).to eq(response["name"])
-    rescue SocketError => e
+    rescue SocketError, OpenURI::HTTPError => e
       skip "Skipping: #{e}"
     end
   end
