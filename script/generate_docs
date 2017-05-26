@@ -5,7 +5,7 @@ $:.unshift File.expand_path("../../lib", __FILE__)
 require "neovim"
 require "pathname"
 
-vim_docs = []
+nvim_docs = []
 buffer_docs = []
 window_docs = []
 tabpage_docs = []
@@ -13,32 +13,42 @@ nvim_exe = ENV.fetch("NVIM_EXECUTABLE", "nvim")
 nvim_vrs = %x(#{nvim_exe} --version).split("\n").first
 
 session = Neovim::Session.child([nvim_exe, "-u", "NONE", "-n"])
-vim_defs = Neovim::Client.instance_methods(false)
+nvim_defs = Neovim::Client.instance_methods(false)
 buffer_defs = Neovim::Buffer.instance_methods(false)
 tabpage_defs = Neovim::Tabpage.instance_methods(false)
 window_defs = Neovim::Window.instance_methods(false)
 
-session.request(:vim_get_api_info)[1]["functions"].each do |func|
-  prefix, method_name = func["name"].split("_", 2)
+def add_method(docs, defs, method_name)
+  return if defs.include?(method_name.to_s)
+end
 
-  case prefix
-  when "vim"
-    next if vim_defs.include?(method_name.to_sym)
-  when "buffer"
+session.request(:nvim_get_api_info)[1]["functions"].each do |func|
+  func_name = func["name"]
+  params = func["parameters"]
+
+  case func_name
+  when /^nvim_buf_(.+)/
+    method_name = $1
     next if buffer_defs.include?(method_name.to_sym)
-  when "tabpage"
-    next if tabpage_defs.include?(method_name.to_sym)
-  when "window"
+  when /^nvim_win_(.+)/
+    method_name = $1
     next if window_defs.include?(method_name.to_sym)
+  when /^nvim_tabpage_(.+)/
+    method_name = $1
+    next if tabpage_defs.include?(method_name.to_sym)
+  when /^nvim_(.+)/
+    method_name = $1
+    params.shift
+    next if nvim_defs.include?(method_name.to_sym)
+  else
+    next
   end
 
   return_type = func["return_type"]
-  params = func["parameters"]
-  params.shift unless prefix == "vim"
   param_names = params.map(&:last)
   param_str = params.empty? ? "" : "(#{param_names.join(", ")})"
   method_decl = "@method #{method_name}#{param_str}"
-  method_desc = "  Send the +#{prefix}_#{method_name}+ RPC to +nvim+"
+  method_desc = "  See +:h #{func_name}()+"
   param_docs = params.map do |type, name|
     "  @param [#{type}] #{name}"
   end
@@ -46,21 +56,23 @@ session.request(:vim_get_api_info)[1]["functions"].each do |func|
   method_doc = [method_decl, method_desc, *param_docs, return_doc].join("\n")
   method_doc.gsub!(/ArrayOf\((\w+)[^)]*\)/, 'Array<\1>')
 
-  case prefix
-  when "vim"
-    vim_docs << method_doc
-  when "buffer"
+  case func_name
+  when /nvim_buf_(.+)/
     buffer_docs << method_doc
-  when "tabpage"
-    tabpage_docs << method_doc
-  when "window"
+  when /nvim_win_(.+)/
     window_docs << method_doc
+  when /nvim_tabpage_(.+)/
+    tabpage_docs << method_doc
+  when /nvim_(.+)/
+    nvim_docs << method_doc
+  else
+    raise "Unexpected function #{func_name.inspect}"
   end
 end
 
 lib_dir = Pathname.new(File.expand_path("../../lib/neovim", __FILE__))
 {
-  "client.rb" => vim_docs,
+  "client.rb" => nvim_docs,
   "buffer.rb" => buffer_docs,
   "tabpage.rb" => tabpage_docs,
   "window.rb" => window_docs,
