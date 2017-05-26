@@ -22,24 +22,6 @@ module Neovim
       lines[0..-1] = strs
     end
 
-    # A +LineRange+ object representing the buffer's selection range.
-    #
-    # @return [LineRange]
-    # @see LineRange
-    def range
-      @range ||= LineRange.new(self, 0, -1)
-    end
-
-    # Set the buffer's current selection range.
-    #
-    # @param _range [Range] The replacement range
-    # @return [LineRange]
-    # @see LineRange
-    def range=(_range)
-      _end = _range.exclude_end? ? _range.end - 1 : _range.end
-      @range = LineRange.new(self, _range.begin, _end)
-    end
-
     # Get the buffer name.
     #
     # @return [String]

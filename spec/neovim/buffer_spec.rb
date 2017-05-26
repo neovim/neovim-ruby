@@ -19,20 +19,6 @@ module Neovim
       end
     end
 
-    describe "#range" do
-      it "returns a LineRange" do
-        expect(buffer.range).to be_a(LineRange)
-      end
-    end
-
-    describe "#range=" do
-      it "updates the buffer's range" do
-        buffer.lines = ["one", "two", "three"]
-        buffer.range = (0..1)
-        expect(buffer.range.to_a).to eq(["one", "two"])
-      end
-    end
-
     describe "if_ruby compatibility" do
       describe "#name" do
         it "returns the buffer path as a string" do

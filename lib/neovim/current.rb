@@ -9,7 +9,6 @@ module Neovim
   class Current
     def initialize(session)
       @session = session
-      @range = (0..-1)
     end
 
     # Get the line under the cursor.
@@ -31,9 +30,7 @@ module Neovim
     #
     # @return [Buffer]
     def buffer
-      @session.request(:vim_get_current_buffer).tap do |buf|
-        buf.range = @range
-      end
+      @session.request(:vim_get_current_buffer)
     end
 
     # Set the active buffer.
@@ -72,13 +69,6 @@ module Neovim
     # @return [Tabpage, Integer]
     def tabpage=(tabpage)
       @session.request(:vim_set_current_tabpage, tabpage)
-    end
-
-    # Set the current line range of the current buffer.
-    #
-    # @param range [Range] The target range
-    def range=(range)
-      @range = range
     end
   end
 end

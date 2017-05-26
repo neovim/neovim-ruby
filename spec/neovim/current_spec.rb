@@ -135,13 +135,5 @@ module Neovim
         expect(current.tabpage = tp0).to eq(tp0)
       end
     end
-
-    describe "#range=" do
-      it "sets the line range of the current buffer" do
-        current.buffer.lines = ["one", "two", "three", "four"]
-        current.range = (1..2)
-        expect(current.buffer.range.to_a).to eq(["two", "three"])
-      end
-    end
   end
 end
