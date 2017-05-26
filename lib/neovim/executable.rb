@@ -23,11 +23,11 @@ module Neovim
     #
     # @return [String]
     def version
-      @version ||= IO.popen([path, "--version"]) do |io|
+      @version ||= IO.popen([@path, "--version"]) do |io|
         io.gets[VERSION_PATTERN, 1]
       end
     rescue => e
-      raise Error, "Couldn't load #{path}: #{e}"
+      raise Error, "Couldn't load #{@path}: #{e}"
     end
   end
 end
