@@ -6,12 +6,11 @@ module Neovim
   #
   # The methods documented here were generated using NVIM v0.2.0
   class Buffer < RemoteObject
-    # A +LineRange+ object representing the buffer's lines.
-    #
-    # @return [LineRange]
-    # @see LineRange
-    def lines
-      @lines ||= LineRange.new(self, 0, -1)
+    attr_reader :lines
+
+    def initialize(*args)
+      super
+      @lines = LineRange.new(self)
     end
 
     # Replace all the lines of the buffer.
@@ -19,7 +18,7 @@ module Neovim
     # @param strs [Array<String>] The replacement lines
     # @return [Array<String>]
     def lines=(strs)
-      lines[0..-1] = strs
+      @lines[0..-1] = strs
     end
 
     # Get the buffer name.
@@ -55,7 +54,7 @@ module Neovim
     # @param index [Integer]
     # @return [String]
     def [](index)
-      lines[index-1]
+      @lines[index-1]
     end
 
     # Set the given line (1-indexed).
@@ -64,7 +63,7 @@ module Neovim
     # @param str [String]
     # @return [String]
     def []=(index, str)
-      lines[index-1] = str
+      @lines[index-1] = str
     end
 
     # Delete the given line (1-indexed).
@@ -72,7 +71,8 @@ module Neovim
     # @param index [Integer]
     # @return [void]
     def delete(index)
-      lines.delete(index-1)
+      @lines.delete(index-1)
+      nil
     end
 
     # Append a line after the given line (1-indexed).
@@ -84,7 +84,7 @@ module Neovim
     # @param str [String]
     # @return [String]
     def append(index, str)
-      window = @session.request(:vim_get_current_window)
+      window = @session.request(:nvim_get_current_win)
       cursor = window.cursor
 
       if index < 0
@@ -101,7 +101,7 @@ module Neovim
     # @return [String, nil]
     def line
       if active?
-        @session.request(:vim_get_current_line)
+        @session.request(:nvim_get_current_line)
       end
     end
 
@@ -111,7 +111,7 @@ module Neovim
     # @return [String, nil]
     def line=(str)
       if active?
-        @session.request(:vim_set_current_line, str)
+        @session.request(:nvim_set_current_line, str)
       end
     end
 
@@ -120,8 +120,7 @@ module Neovim
     # @return [Integer, nil]
     def line_number
       if active?
-        window = @session.request(:vim_get_current_window)
-        @session.request(:window_get_cursor, window)[0]
+        @session.request(:nvim_get_current_win).get_cursor[0]
       end
     end
 

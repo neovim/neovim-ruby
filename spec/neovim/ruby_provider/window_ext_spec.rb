@@ -13,7 +13,7 @@ module Neovim
 
     describe ".current" do
       it "returns the current window from the global Vim client" do
-        expect(Window.current).to eq(nvim.get_current_window)
+        expect(Window.current).to eq(nvim.get_current_win)
       end
     end
 

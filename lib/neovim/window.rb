@@ -9,7 +9,7 @@ module Neovim
     #
     # @return [Buffer]
     def buffer
-      get_buffer
+      get_buf
     end
 
     # Get the height of the window

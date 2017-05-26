@@ -12,52 +12,57 @@ module Neovim
         end
       end
 
-      describe "#function" do
-        it "returns a sync function object" do
-          api = API.new(
-            [nil, {"functions" => [
-              {"name" => "vim_sync", "async" => false}
-            ]}]
-          )
+      let(:client) { Neovim.attach_child(Support.child_argv) }
 
-          function = api.function("vim_sync")
-          expect(function.name).to eq("vim_sync")
-          expect(function.async).to be(false)
+      let(:api) do
+        API.new(
+          [
+            nil,
+            {
+              "functions" => [
+                {"name" => "nvim_func"},
+                {"name" => "nvim_buf_func"},
+                {"name" => "nvim_win_func"},
+                {"name" => "nvim_tabpage_func"},
+              ]
+            }
+          ]
+        )
+      end
 
-          session = instance_double(Session)
-          expect(session).to receive(:request).with("vim_sync", "msg")
-          function.call(session, "msg")
-        end
+      describe "#functions_for_object_method" do
+        it "returns relevant functions" do
+          function = api.function_for_object_method(client, :func)
+          expect(function.name).to eq("nvim_func")
 
-        it "returns an async function object" do
-          api = API.new(
-            [nil, {"functions" => [
-              {"name" => "vim_async", "async" => true}
-            ]}]
-          )
+          function = api.function_for_object_method(client.get_current_buf, :func)
+          expect(function.name).to eq("nvim_buf_func")
 
-          function = api.function("vim_async")
-          expect(function.name).to eq("vim_async")
-          expect(function.async).to be(true)
+          function = api.function_for_object_method(client.get_current_win, :func)
+          expect(function.name).to eq("nvim_win_func")
 
-          session = instance_double(Session)
-          expect(session).to receive(:notify).with("vim_async", "msg")
-          function.call(session, "msg")
+          function = api.function_for_object_method(client.get_current_tabpage, :func)
+          expect(function.name).to eq("nvim_tabpage_func")
         end
       end
 
-      describe "#functions_with_prefix" do
+      describe "#functions_for_object" do
         it "returns relevant functions" do
-          api = API.new(
-            [nil, {"functions" => [
-              {"name" => "vim_strwidth"},
-              {"name" => "buffer_get_lines"}
-            ]}]
-          )
-
-          functions = api.functions_with_prefix("vim_")
+          functions = api.functions_for_object(client)
           expect(functions.size).to be(1)
-          expect(functions.first.name).to eq("vim_strwidth")
+          expect(functions.first.name).to eq("nvim_func")
+
+          functions = api.functions_for_object(client.get_current_buf)
+          expect(functions.size).to be(1)
+          expect(functions.first.name).to eq("nvim_buf_func")
+
+          functions = api.functions_for_object(client.get_current_win)
+          expect(functions.size).to be(1)
+          expect(functions.first.name).to eq("nvim_win_func")
+
+          functions = api.functions_for_object(client.get_current_tabpage)
+          expect(functions.size).to be(1)
+          expect(functions.first.name).to eq("nvim_tabpage_func")
         end
       end
     end

@@ -24,10 +24,10 @@ module Vim
     bufnr = client.evaluate("bufnr('%')")
 
     $curbuf = @__buffer_cache.fetch(bufnr) do
-      @__buffer_cache[bufnr] = client.get_current_buffer
+      @__buffer_cache[bufnr] = client.get_current_buf
     end
 
-    $curwin = client.get_current_window
+    $curwin = client.get_current_win
   end
 end
 

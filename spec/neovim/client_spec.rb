@@ -26,7 +26,7 @@ module Neovim
     end
 
     describe "#method_missing" do
-      it "enables vim_* function calls" do
+      it "enables nvim_* function calls" do
         expect(client.strwidth("hi")).to eq(2)
       end
 
@@ -99,7 +99,7 @@ module Neovim
         it "runs the provided command" do
           expect {
             client.command("normal ix")
-          }.to change { client.current.buffer.lines }.to(["x"])
+          }.to change { client.current.buffer.lines.to_a }.to(["x"])
         end
       end
     end

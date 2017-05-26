@@ -3,28 +3,35 @@ module Neovim
   class LineRange
     include Enumerable
 
-    def initialize(buffer, _begin, _end)
+    def initialize(buffer)
       @buffer = buffer
-      @begin = _begin
-      @end = _end
+    end
+
+    # Satisfy the +Enumerable+ interface by yielding each line.
+    #
+    # @yieldparam line [String]
+    def each(&block)
+      (0...@buffer.count).each_slice(5000) do |linenos|
+        _start, _stop = linenos[0], linenos[-1] + 1
+        @buffer.get_lines(_start, _stop, true).each(&block)
+      end
     end
 
     # Resolve to an array of lines as strings.
     #
     # @return [Array<String>]
     def to_a
-      @buffer.get_line_slice(@begin, @end, true, true)
+      map { |line| line }
     end
 
-    # Yield each line in the range.
+    # Override +#==+ to compare contents of lines.
     #
-    # @yield [String] The current line
-    # @return [Array<String>]
-    def each(&block)
-      to_a.each(&block)
+    # @return Boolean
+    def ==(other)
+      to_a == other.to_a
     end
 
-    # Access the line at the given index within the range.
+    # Access a line or line range.
     #
     # @overload [](index)
     #   @param index [Integer]
@@ -43,28 +50,17 @@ module Neovim
     # @example Get the first two lines using an index and length
     #   line_range[0, 2] # => ["first", "second"]
     def [](pos, len=nil)
-      case pos
-      when Range
-        LineRange.new(
-          @buffer,
-          abs_line(pos.begin),
-          abs_line(pos.exclude_end? ? pos.end - 1 : pos.end)
-        )
+      if Range === pos
+        @buffer.get_lines(*range_indices(pos), true)
       else
-        if len
-          LineRange.new(
-            @buffer,
-            abs_line(pos),
-            abs_line(pos + len - 1)
-          )
-        else
-          @buffer.get_line(abs_line(pos))
-        end
+        _begin, _end = length_indices(pos, len || 1)
+        lines = @buffer.get_lines(_begin, _end, true)
+        len ? lines : lines.first
       end
     end
     alias_method :slice, :[]
 
-    # Set the line at the given index within the range.
+    # Set a line or line range.
     #
     # @overload []=(index, string)
     #   @param index [Integer]
@@ -89,27 +85,11 @@ module Neovim
       *target, val = args
       pos, len = target
 
-      case pos
-      when Range
-        @buffer.set_line_slice(
-          abs_line(pos.begin),
-          abs_line(pos.end),
-          true,
-          !pos.exclude_end?,
-          val
-        )
+      if Range === pos
+        @buffer.set_lines(*range_indices(pos), true, Array(val))
       else
-        if len
-          @buffer.set_line_slice(
-            abs_line(pos),
-            abs_line(pos + len),
-            true,
-            false,
-            val
-          )
-        else
-          @buffer.set_line(abs_line(pos), val)
-        end
+        _begin, _end = length_indices(pos, len || 1)
+        @buffer.set_lines(_begin, _end, true, Array(val))
       end
     end
 
@@ -117,29 +97,38 @@ module Neovim
     #
     # @param other [Array] The replacement lines
     def replace(other)
-      self[0..-1] = other
+      self[0..-1] = other.to_ary
       self
-    end
-
-    # Insert line(s) at the given index within the range.
-    #
-    # @param index [Integer]
-    # @param lines [String]
-    def insert(index, lines)
-      @buffer.insert(index, Array(lines))
     end
 
     # Delete the line at the given index within the range.
     #
     # @param index [Integer]
     def delete(index)
-      @buffer.del_line(abs_line(index))
+      i = Integer(index)
+      self[i].tap { self[i, 1] = [] }
+    rescue TypeError
     end
 
     private
 
-    def abs_line(n)
-      n < 0 ? (@end + n + 1) : @begin + n
+    def range_indices(range)
+      _begin = adjust_index(range.begin)
+      _end = adjust_index(range.end)
+      _end += 1 unless range.exclude_end?
+
+      [_begin, _end]
+    end
+
+    def length_indices(index, len)
+      _begin = adjust_index(index)
+      _end = _begin < 0 ? [_begin + len, -1].min : _begin + len
+
+      [_begin, _end]
+    end
+
+    def adjust_index(i)
+      i < 0 ? i - 1 : i
     end
   end
 end

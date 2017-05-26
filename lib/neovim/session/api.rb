@@ -5,7 +5,7 @@ module Neovim
       attr_reader :channel_id
 
       # Represents an unknown API. Used as a stand-in when the API hasn't been
-      # discovered yet via the +vim_get_api_info+ RPC call.
+      # discovered yet via the +nvim_get_api_info+ RPC call.
       def self.null
         new([nil, {"functions" => [], "types" => []}])
       end
@@ -17,8 +17,8 @@ module Neovim
       # Return all functions defined by the API.
       def functions
         @functions ||= @api_info.fetch("functions").inject({}) do |acc, func|
-          name, async = func.values_at("name", "async")
-          acc.merge(name => Function.new(name, async))
+          function = Function.new(func)
+          acc.merge(function.name => function)
         end
       end
 
@@ -28,38 +28,66 @@ module Neovim
         @types ||= @api_info.fetch("types")
       end
 
-      # Return a list of functions with the given name prefix.
-      def functions_with_prefix(prefix)
-        functions.inject([]) do |acc, (name, function)|
-          name =~ /\A#{prefix}/ ? acc.push(function) : acc
-        end
+      def function_for_object_method(obj, method_name)
+        functions[function_name(obj, method_name)]
       end
 
-      # Find a function with the given name.
-      def function(name)
-        functions[name.to_s]
+      def functions_for_object(obj)
+        pattern = function_pattern(obj)
+        functions.values.select { |func| func.name =~ pattern }
       end
 
       # Truncate the output of inspect so console sessions are more pleasant.
       def inspect
-        "#<#{self.class}:0x%x @types={...} @functions={...}>" % (object_id << 1)
+        "#<#{self.class}:0x%x @channel_id=#{@channel_id.inspect} @types={...} @functions={...}>" % (object_id << 1)
+      end
+
+      private
+
+      def function_name(obj, method_name)
+        case obj
+        when Client
+          "nvim_#{method_name}"
+        when Buffer
+          "nvim_buf_#{method_name}"
+        when Window
+          "nvim_win_#{method_name}"
+        when Tabpage
+          "nvim_tabpage_#{method_name}"
+        else
+          raise "Unknown object #{obj.inspect}"
+        end
+      end
+
+      def function_pattern(obj)
+        case obj
+        when Client
+          /^nvim_(?!(buf|win|tabpage)_)/
+        when Buffer
+          /^nvim_buf_/
+        when Window
+          /^nvim_win_/
+        when Tabpage
+          /^nvim_tabpage_/
+        else
+          raise "Unknown object #{obj.inspect}"
+        end
       end
 
       class Function
-        attr_reader :name, :async
+        attr_reader :name
 
-        def initialize(name, async)
-          @name, @async = name, async
+        def initialize(attributes)
+          @name = attributes.fetch("name")
         end
 
-        # Apply this function to a running RPC session. Sends either a request if
-        # +async+ is +false+ or a notification if +async+ is +true+.
+        def method_name
+          @name.sub(/^nvim_(win_|buf_|tabpage_)?/, "").to_sym
+        end
+
+        # Apply this function to a running RPC session.
         def call(session, *args)
-          if async
-            session.notify(name, *args)
-          else
-            session.request(name, *args)
-          end
+          session.request(name, *args)
         end
       end
     end

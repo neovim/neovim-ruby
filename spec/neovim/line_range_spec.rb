@@ -4,21 +4,31 @@ module Neovim
   RSpec.describe LineRange do
     let(:client) { Neovim.attach_child(Support.child_argv) }
     let(:buffer) { client.current.buffer }
-    let(:line_range) { LineRange.new(buffer, 0, -1) }
-    let(:sub_range) { LineRange.new(buffer, 1, 2) }
+    let(:line_range) { LineRange.new(buffer) }
 
     before do
-      client.command("normal i1")
-      client.command("normal o2")
-      client.command("normal o3")
-      client.command("normal o4")
+      buffer.set_lines(0, -1, true, ["1", "2", "3", "4"])
     end
 
     after { client.shutdown }
 
-    it "is enumerable" do
-      expect(line_range).to be_an(Enumerable)
-      expect(line_range.each.to_a).to eq(["1", "2", "3", "4"])
+    describe "#each" do
+      it "yields each line" do
+        yielded = []
+        line_range.each { |line| yielded << line }
+
+        expect(yielded).to eq(["1", "2", "3", "4"])
+      end
+
+      it "yields a large number of lines" do
+        lines = Array.new(6000, "x")
+        buffer.set_lines(0, -1, true, lines)
+
+        yielded = []
+        line_range.each { |line| yielded << line }
+
+        expect(yielded).to eq(lines)
+      end
     end
 
     describe "#to_a" do
@@ -26,82 +36,99 @@ module Neovim
         expect(line_range.to_a).to eq(["1", "2", "3", "4"])
       end
 
-      it "returns a subset of lines as an array" do
-        expect(sub_range.to_a).to eq(["2", "3"])
+      it "returns a large number of lines as an array" do
+        lines = Array.new(6000, "x")
+        buffer.set_lines(0, -1, true, lines)
+        expect(line_range.to_a).to eq(lines)
+      end
+    end
+
+    describe "#==" do
+      it "compares line contents" do
+        client.command("new")
+        buffer2 = client.current.buffer
+
+        expect(buffer2.lines == buffer.lines).to eq(false)
+        buffer2.set_lines(0, -1, true, ["1", "2", "3", "4"])
+        expect(buffer2.lines == buffer.lines).to eq(true)
       end
     end
 
     describe "#[]" do
       it "accepts a single index" do
         expect(line_range[1]).to eq("2")
-      end
-
-      it "returns lines at an offset from the index" do
-        expect(sub_range[0]).to eq("2")
-      end
-
-      it "allows indexes beyond the bounds of a sub range" do
-        expect(sub_range[2]).to eq("4")
-      end
-
-      it "returns lines at an offset with a negative index" do
-        expect(sub_range[-1]).to eq("3")
+        expect(line_range[-1]).to eq("4")
+        expect(line_range[-2]).to eq("3")
       end
 
       it "accepts an index and length" do
-        expect(line_range[0, 2].to_a).to eq(["1", "2"])
-      end
+        expect(line_range[0, 2]).to eq(["1", "2"])
+        expect(line_range[-2, 2]).to eq(["3", "4"])
+        expect(line_range[-2, 3]).to eq(["3", "4"])
 
-      it "returns lines at an offset from an index and length" do
-        expect(sub_range[0, 2].to_a).to eq(["2", "3"])
+        expect {
+          line_range[2, 3]
+        }.to raise_error(/out of bounds/)
       end
 
       it "accepts a range" do
-        expect(line_range[0..1].to_a).to eq(["1", "2"])
-        expect(line_range[0...1].to_a).to eq(["1"])
-      end
+        expect(line_range[0..1]).to eq(["1", "2"])
+        expect(line_range[0...1]).to eq(["1"])
 
-      it "accepts a range with a negative end" do
-        expect(line_range[0..-1].to_a).to eq(["1", "2", "3", "4"])
-      end
+        expect(line_range[0..-1]).to eq(["1", "2", "3", "4"])
+        expect(line_range[0..-2]).to eq(["1", "2", "3"])
+        expect(line_range[-3..-2]).to eq(["2", "3"])
 
-      it "returns lines at an offset from a range" do
-        expect(sub_range[0..1].to_a).to eq(["2", "3"])
+        expect(line_range[0..-5]).to eq([])
+        expect(line_range[0...-4]).to eq([])
+        expect(line_range[-2..-3]).to eq([])
+
+        expect {
+          line_range[2..4]
+        }.to raise_error(/out of bounds/)
       end
     end
 
     describe "#[]=" do
       it "accepts a single index" do
-        line_range[0] = "foo"
+        expect(line_range[0] = "foo").to eq("foo")
         expect(line_range.to_a).to eq(["foo", "2", "3", "4"])
-      end
 
-      it "accepts a single index at an offset" do
-        sub_range[0] = "foo"
-        expect(buffer.lines.to_a).to eq(["1", "foo", "3", "4"])
+        expect(line_range[-1] = "bar").to eq("bar")
+        expect(line_range.to_a).to eq(["foo", "2", "3", "bar"])
+
+        expect {
+          line_range[-5] = "foo"
+        }.to raise_error(/out of bounds/)
       end
 
       it "accepts an index and length" do
-        line_range[0, 2] = ["foo"]
+        expect(line_range[0, 2] = ["foo"]).to eq(["foo"])
         expect(line_range.to_a).to eq(["foo", "3", "4"])
-      end
 
-      it "accepts an index and length at an offset" do
-        sub_range[0, 2] = ["foo"]
-        expect(buffer.lines.to_a).to eq(["1", "foo", "4"])
+        expect(line_range[-2, 2] = ["bar"]).to eq(["bar"])
+        expect(line_range.to_a).to eq(["foo", "bar"])
+
+        expect(line_range[0, 2] = "baz").to eq("baz")
+        expect(line_range.to_a).to eq(["baz"])
+
+        expect {
+          line_range[0, 5] = "foo"
+        }.to raise_error(/out of bounds/)
       end
 
       it "accepts a range" do
-        line_range[0..1] = ["foo"]
+        expect(line_range[0..1] = ["foo"]).to eq(["foo"])
         expect(line_range.to_a).to eq(["foo", "3", "4"])
 
-        line_range[0...1] = ["bar"]
+        expect(line_range[0...1] = ["bar"]).to eq(["bar"])
         expect(line_range.to_a).to eq(["bar", "3", "4"])
-      end
 
-      it "accepts a range at an offset" do
-        sub_range[0..1] = ["foo"]
-        expect(buffer.lines.to_a).to eq(["1", "foo", "4"])
+        expect(line_range[0..-2] = ["baz"]).to eq(["baz"])
+        expect(line_range.to_a).to eq(["baz", "4"])
+
+        expect(line_range[0...2] = "qux").to eq("qux")
+        expect(line_range.to_a).to eq(["qux"])
       end
     end
 
@@ -110,51 +137,6 @@ module Neovim
         line_range.replace(["4", "5"])
         expect(line_range.to_a).to eq(["4", "5"])
       end
-
-      it "replaces a subset of lines" do
-        sub_range.replace(["5", "6"])
-        expect(buffer.lines.to_a).to eq(["1", "5", "6", "4"])
-      end
-    end
-
-    describe "#insert" do
-      before { line_range.replace(["1", "2"]) }
-
-      it "inserts lines at the beginning" do
-        expect {
-          line_range.insert(0, "z")
-        }.to change { line_range.to_a }.to(["z", "1", "2"])
-
-        expect {
-          line_range.insert(0, ["x", "y"])
-        }.to change { line_range.to_a }.to(["x", "y", "z", "1", "2"])
-      end
-
-      it "inserts lines in the middle" do
-        expect {
-          line_range.insert(1, "z")
-        }.to change { line_range.to_a }.to(["1", "z", "2"])
-
-        expect {
-          line_range.insert(1, ["x", "y"])
-        }.to change { line_range.to_a }.to(["1", "x", "y", "z", "2"])
-      end
-
-      it "inserts lines at the end" do
-        expect {
-          line_range.insert(-1, "x")
-        }.to change { line_range.to_a }.to(["1", "2", "x"])
-
-        expect {
-          line_range.insert(-1, ["y", "z"])
-        }.to change { line_range.to_a }.to(["1", "2", "x", "y", "z"])
-      end
-
-      it "raises on out of bounds indexes" do
-        expect {
-          line_range.insert(10, "x")
-        }.to raise_error(/out of bounds/i)
-      end
     end
 
     describe "#delete" do
@@ -162,12 +144,25 @@ module Neovim
         expect {
           line_range.delete(0)
         }.to change { line_range.to_a }.to(["2", "3", "4"])
+
+        expect {
+          line_range.delete(-1)
+        }.to change { line_range.to_a }.to(["2", "3"])
+
+        expect {
+          line_range.delete(-2)
+        }.to change { line_range.to_a }.to(["3"])
       end
 
-      it "deletes the line at an offset" do
+      it "returns the line deleted" do
+        expect(line_range.delete(0)).to eq("1")
+        expect(line_range.delete(-1)).to eq("4")
+      end
+
+      it "returns nil if provided a non-integer" do
         expect {
-          sub_range.delete(0)
-        }.to change { buffer.lines.to_a }.to(["1", "3", "4"])
+          expect(line_range.delete(:foo)).to eq(nil)
+        }.not_to change { line_range.to_a }
       end
     end
   end

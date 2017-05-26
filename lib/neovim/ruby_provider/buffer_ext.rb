@@ -3,15 +3,15 @@ require "neovim/ruby_provider/vim"
 module Neovim
   class Buffer
     def self.current
-      ::Vim.get_current_buffer
+      ::Vim.get_current_buf
     end
 
     def self.count
-      ::Vim.get_buffers.size
+      ::Vim.list_bufs.size
     end
 
     def self.[](index)
-      ::Vim.get_buffers[index]
+      ::Vim.list_bufs[index]
     end
   end
 end

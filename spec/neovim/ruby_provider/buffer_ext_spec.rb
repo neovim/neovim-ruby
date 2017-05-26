@@ -13,7 +13,7 @@ module Neovim
 
     describe ".current" do
       it "returns the current buffer from the global Vim client" do
-        expect(Buffer.current).to eq(nvim.get_current_buffer)
+        expect(Buffer.current).to eq(nvim.get_current_buf)
       end
     end
 
@@ -27,9 +27,9 @@ module Neovim
 
     describe ".[]" do
       it "returns the buffer from the global Vim client at the given index" do
-        expect(Buffer[0]).to eq(nvim.get_current_buffer)
+        expect(Buffer[0]).to eq(nvim.get_current_buf)
         nvim.command("new")
-        expect(Buffer[1]).to eq(nvim.get_current_buffer)
+        expect(Buffer[1]).to eq(nvim.get_current_buf)
       end
     end
   end

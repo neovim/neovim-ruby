@@ -23,7 +23,7 @@ module Neovim
       end
 
       describe "#method_missing" do
-        it "enables window_* function calls" do
+        it "enables nvim_win_* function calls" do
           expect(window.get_cursor).to eq([1, 0])
         end
 
@@ -61,7 +61,7 @@ module Neovim
       end
 
       describe "#method_missing" do
-        it "enables tabpage_* function calls" do
+        it "enables nvim_tabpage_* function calls" do
           expect(tabpage.is_valid).to be(true)
         end
       end
@@ -72,7 +72,7 @@ module Neovim
         end
 
         it "returns api methods" do
-          expect(tabpage.methods).to include(:get_windows)
+          expect(tabpage.methods).to include(:list_wins)
         end
       end
     end
@@ -95,7 +95,7 @@ module Neovim
       end
 
       describe "#method_missing" do
-        it "enables buffer_* function calls" do
+        it "enables nvim_buf_* function calls" do
           expect(buffer.line_count).to be(1)
         end
       end

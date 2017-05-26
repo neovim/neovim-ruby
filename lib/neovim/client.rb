@@ -2,7 +2,7 @@ require "neovim/current"
 
 module Neovim
   # Client to a running +nvim+ instance. The interface is generated at
-  # runtime via the +vim_get_api_info+ RPC call. Some methods return
+  # runtime via the +nvim_get_api_info+ RPC call. Some methods return
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
@@ -24,7 +24,7 @@ module Neovim
 
     # Intercept method calls and delegate to appropriate RPC methods.
     def method_missing(method_name, *args)
-      if func = @api.function("vim_#{method_name}")
+      if func = @api.function_for_object_method(self, method_name)
         func.call(@session, *args)
       else
         super
@@ -53,14 +53,14 @@ module Neovim
       @current ||= Current.new(@session)
     end
 
-    # Evaluate the VimL expression (alias for +vim_eval+).
+    # Evaluate the VimL expression (alias for +nvim_eval+).
     #
     # @param expr [String] A VimL expression.
     # @return [Object]
     # @example Return a list from VimL
     #   client.evaluate('[1, 2]') # => [1, 2]
     def evaluate(expr)
-      @api.function(:vim_eval).call(@session, expr)
+      @api.function_for_object_method(self, :eval).call(@session, expr)
     end
 
     # Display a message.
@@ -85,9 +85,9 @@ module Neovim
     #   client.set_option("timeoutlen=0")
     def set_option(*args)
       if args.size > 1
-        @api.function("vim_set_option").call(@session, *args)
+        @api.function_for_object_method(self, :set_option).call(@session, *args)
       else
-        @api.function("vim_command").call(@session, "set #{args.first}")
+        @api.function_for_object_method(self, :command).call(@session, "set #{args.first}")
       end
     end
 

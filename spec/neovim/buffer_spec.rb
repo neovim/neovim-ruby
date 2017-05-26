@@ -54,6 +54,16 @@ module Neovim
           buffer.lines = ["one", "two", "three"]
           expect(buffer[2]).to eq("two")
         end
+
+        it "raises an out of bounds exception" do
+          expect {
+            buffer[-5]
+          }.to raise_error(/out of bounds/)
+
+          expect {
+            buffer[10]
+          }.to raise_error(/out of bounds/)
+        end
       end
 
       describe "#[]=" do
@@ -71,6 +81,10 @@ module Neovim
 
         it "raises an out of bounds exception" do
           expect {
+            buffer[-5] = "line"
+          }.to raise_error(/out of bounds/)
+
+          expect {
             buffer[10] = "line"
           }.to raise_error(/out of bounds/)
         end
@@ -82,7 +96,21 @@ module Neovim
 
           expect {
             buffer.delete(1)
-          }.to change { buffer.lines }.to(["two"])
+          }.to change { buffer.lines.to_a }.to(["two"])
+        end
+
+        it "returns nil" do
+          expect(buffer.delete(1)).to eq(nil)
+        end
+
+        it "raises an out of bounds exception" do
+          expect {
+            buffer.delete(-5)
+          }.to raise_error(/out of bounds/)
+
+          expect {
+            buffer.delete(10)
+          }.to raise_error(/out of bounds/)
         end
       end
 
@@ -144,7 +172,7 @@ module Neovim
         it "sets the current line on an active buffer" do
           expect {
             buffer.line = "line"
-          }.to change { buffer.lines }.to(["line"])
+          }.to change { buffer.lines.to_a }.to(["line"])
         end
 
         it "has no effect when called on an inactive buffer" do

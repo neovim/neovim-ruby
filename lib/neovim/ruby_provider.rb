@@ -32,7 +32,7 @@ module Neovim
         end
 
         $stderr.define_singleton_method(:write) do |string|
-          client.report_error(string)
+          client.err_writeln(string)
         end
 
         begin
@@ -81,7 +81,7 @@ module Neovim
       __plug.__send__(:rpc, :ruby_do_range) do |__nvim, *__args|
         __wrap_client(__nvim) do
           __start, __stop, __ruby = __args
-          __buffer = __nvim.get_current_buffer
+          __buffer = __nvim.get_current_buf
 
           __update_lines_in_chunks(__buffer, __start, __stop, 5000) do |__lines|
             __lines.map do |__line|
@@ -118,7 +118,7 @@ module Neovim
         yield
       rescue SyntaxError, LoadError, StandardError => e
         msg = [e.class, e.message].join(": ")
-        client.report_error(msg.lines.first.strip)
+        client.err_writeln(msg.lines.first.strip)
       end
     end
 

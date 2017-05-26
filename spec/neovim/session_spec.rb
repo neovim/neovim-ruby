@@ -17,56 +17,56 @@ module Neovim
 
       describe "#request" do
         it "synchronously returns a result" do
-          expect(session.request(:vim_strwidth, "foobar")).to be(6)
+          expect(session.request(:nvim_strwidth, "foobar")).to be(6)
         end
 
         it "raises an exception when there are errors" do
           expect {
-            session.request(:vim_strwidth, "too", "many")
+            session.request(:nvim_strwidth, "too", "many")
           }.to raise_error(/wrong number of arguments/i)
         end
 
         it "handles large data" do
           large_str = Array.new(1024 * 17) { SecureRandom.hex(1) }.join
-          session.request(:vim_set_current_line, large_str)
-          expect(session.request(:vim_get_current_line)).to eq(large_str)
+          session.request(:nvim_set_current_line, large_str)
+          expect(session.request(:nvim_get_current_line)).to eq(large_str)
         end
 
         it "fails outside of the main thread" do
           expect {
-            Thread.new { session.request(:vim_strwidth, "foo") }.join
+            Thread.new { session.request(:nvim_strwidth, "foo") }.join
           }.to raise_error(/outside of the main thread/)
         end
       end
 
       describe "#notify" do
         it "returns nil" do
-          expect(session.notify(:vim_input, "jk")).to be(nil)
+          expect(session.notify(:nvim_input, "jk")).to be(nil)
         end
 
         it "doesn't raise exceptions" do
           expect {
-            session.notify(:vim_strwidth, "too", "many")
+            session.notify(:nvim_strwidth, "too", "many")
           }.not_to raise_error
         end
 
         it "handles large data" do
           large_str = Array.new(1024 * 17) { SecureRandom.hex(1) }.join
-          session.notify(:vim_set_current_line, large_str)
-          expect(session.request(:vim_get_current_line)).to eq(large_str)
+          session.notify(:nvim_set_current_line, large_str)
+          expect(session.request(:nvim_get_current_line)).to eq(large_str)
         end
 
         it "fails outside of the main thread" do
           expect {
-            Thread.new { session.notify(:vim_set_current_line, "foo") }.join
+            Thread.new { session.notify(:nvim_set_current_line, "foo") }.join
           }.to raise_error(/outside of the main thread/)
         end
       end
 
       describe "#run" do
         it "enqueues messages received during blocking requests" do
-          session.request(:vim_subscribe, "my_event")
-          session.request(:vim_command, "call rpcnotify(0, 'my_event', 'foo')")
+          session.request(:nvim_subscribe, "my_event")
+          session.request(:nvim_command, "call rpcnotify(0, 'my_event', 'foo')")
 
           message = nil
           session.run do |msg|
@@ -80,12 +80,12 @@ module Neovim
         end
 
         it "supports requests within callbacks" do
-          session.request(:vim_subscribe, "my_event")
-          session.request(:vim_command, "call rpcnotify(0, 'my_event', 'foo')")
+          session.request(:nvim_subscribe, "my_event")
+          session.request(:nvim_command, "call rpcnotify(0, 'my_event', 'foo')")
 
           result = nil
           session.run do |msg|
-            result = session.request(:vim_strwidth, msg.arguments.first)
+            result = session.request(:nvim_strwidth, msg.arguments.first)
             session.shutdown
           end
 

@@ -48,16 +48,16 @@ module Neovim
       @running = false
     end
 
-    # Return the +nvim+ API as described in the +vim_get_api_info+ call.
+    # Return the +nvim+ API as described in the +nvim_get_api_info+ call.
     # Defaults to empty API information.
     def api
       @api ||= API.null
     end
 
-    # Discover the +nvim+ API as described in the +vim_get_api_info+ call,
+    # Discover the +nvim+ API as described in the +nvim_get_api_info+ call,
     # propagating it down to lower layers of the stack.
     def discover_api
-      @api = API.new(request(:vim_get_api_info)).tap do |api|
+      @api = API.new(request(:nvim_get_api_info)).tap do |api|
         @rpc.serializer.register_types(api, self)
       end
     end
@@ -111,7 +111,7 @@ module Neovim
       end
     end
 
-    # Return the channel ID if registered via +vim_get_api_info+.
+    # Return the channel ID if registered via +nvim_get_api_info+.
     def channel_id
       api.channel_id
     end
