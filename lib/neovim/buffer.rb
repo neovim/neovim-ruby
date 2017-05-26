@@ -128,120 +128,100 @@ module Neovim
     #
     # @return [Boolean]
     def active?
-      @session.request(:vim_get_current_buffer) == self
+      @session.request(:nvim_get_current_buf) == self
     end
 
 # The following methods are dynamically generated.
 =begin
-@method get_line(index)
-  Send the +buffer_get_line+ RPC to +nvim+
-  @param [Integer] index
-  @return [String]
-
-@method set_line(index, line)
-  Send the +buffer_set_line+ RPC to +nvim+
-  @param [Integer] index
-  @param [String] line
-  @return [void]
-
-@method del_line(index)
-  Send the +buffer_del_line+ RPC to +nvim+
-  @param [Integer] index
-  @return [void]
-
-@method get_line_slice(start, end, include_start, include_end)
-  Send the +buffer_get_line_slice+ RPC to +nvim+
-  @param [Integer] start
-  @param [Integer] end
-  @param [Boolean] include_start
-  @param [Boolean] include_end
-  @return [Array<String>]
-
-@method set_line_slice(start, end, include_start, include_end, replacement)
-  Send the +buffer_set_line_slice+ RPC to +nvim+
-  @param [Integer] start
-  @param [Integer] end
-  @param [Boolean] include_start
-  @param [Boolean] include_end
-  @param [Array<String>] replacement
-  @return [void]
-
-@method set_var(name, value)
-  Send the +buffer_set_var+ RPC to +nvim+
-  @param [String] name
-  @param [Object] value
-  @return [Object]
-
-@method del_var(name)
-  Send the +buffer_del_var+ RPC to +nvim+
-  @param [String] name
-  @return [Object]
-
-@method insert(lnum, lines)
-  Send the +buffer_insert+ RPC to +nvim+
-  @param [Integer] lnum
-  @param [Array<String>] lines
-  @return [void]
-
-@method line_count
-  Send the +buffer_line_count+ RPC to +nvim+
+@method line_count(buffer)
+  See +:h nvim_buf_line_count()+
+  @param [Buffer] buffer
   @return [Integer]
 
-@method get_lines(start, end, strict_indexing)
-  Send the +buffer_get_lines+ RPC to +nvim+
+@method get_lines(buffer, start, end, strict_indexing)
+  See +:h nvim_buf_get_lines()+
+  @param [Buffer] buffer
   @param [Integer] start
   @param [Integer] end
   @param [Boolean] strict_indexing
   @return [Array<String>]
 
-@method set_lines(start, end, strict_indexing, replacement)
-  Send the +buffer_set_lines+ RPC to +nvim+
+@method set_lines(buffer, start, end, strict_indexing, replacement)
+  See +:h nvim_buf_set_lines()+
+  @param [Buffer] buffer
   @param [Integer] start
   @param [Integer] end
   @param [Boolean] strict_indexing
   @param [Array<String>] replacement
   @return [void]
 
-@method get_var(name)
-  Send the +buffer_get_var+ RPC to +nvim+
+@method get_var(buffer, name)
+  See +:h nvim_buf_get_var()+
+  @param [Buffer] buffer
   @param [String] name
   @return [Object]
 
-@method get_option(name)
-  Send the +buffer_get_option+ RPC to +nvim+
-  @param [String] name
-  @return [Object]
+@method get_changedtick(buffer)
+  See +:h nvim_buf_get_changedtick()+
+  @param [Buffer] buffer
+  @return [Integer]
 
-@method set_option(name, value)
-  Send the +buffer_set_option+ RPC to +nvim+
+@method set_var(buffer, name, value)
+  See +:h nvim_buf_set_var()+
+  @param [Buffer] buffer
   @param [String] name
   @param [Object] value
   @return [void]
 
-@method get_number
-  Send the +buffer_get_number+ RPC to +nvim+
-  @return [Integer]
-
-@method get_name
-  Send the +buffer_get_name+ RPC to +nvim+
-  @return [String]
-
-@method set_name(name)
-  Send the +buffer_set_name+ RPC to +nvim+
+@method del_var(buffer, name)
+  See +:h nvim_buf_del_var()+
+  @param [Buffer] buffer
   @param [String] name
   @return [void]
 
-@method is_valid
-  Send the +buffer_is_valid+ RPC to +nvim+
+@method get_option(buffer, name)
+  See +:h nvim_buf_get_option()+
+  @param [Buffer] buffer
+  @param [String] name
+  @return [Object]
+
+@method set_option(buffer, name, value)
+  See +:h nvim_buf_set_option()+
+  @param [Buffer] buffer
+  @param [String] name
+  @param [Object] value
+  @return [void]
+
+@method get_number(buffer)
+  See +:h nvim_buf_get_number()+
+  @param [Buffer] buffer
+  @return [Integer]
+
+@method get_name(buffer)
+  See +:h nvim_buf_get_name()+
+  @param [Buffer] buffer
+  @return [String]
+
+@method set_name(buffer, name)
+  See +:h nvim_buf_set_name()+
+  @param [Buffer] buffer
+  @param [String] name
+  @return [void]
+
+@method is_valid(buffer)
+  See +:h nvim_buf_is_valid()+
+  @param [Buffer] buffer
   @return [Boolean]
 
-@method get_mark(name)
-  Send the +buffer_get_mark+ RPC to +nvim+
+@method get_mark(buffer, name)
+  See +:h nvim_buf_get_mark()+
+  @param [Buffer] buffer
   @param [String] name
   @return [Array<Integer>]
 
-@method add_highlight(src_id, hl_group, line, col_start, col_end)
-  Send the +buffer_add_highlight+ RPC to +nvim+
+@method add_highlight(buffer, src_id, hl_group, line, col_start, col_end)
+  See +:h nvim_buf_add_highlight()+
+  @param [Buffer] buffer
   @param [Integer] src_id
   @param [String] hl_group
   @param [Integer] line
@@ -249,8 +229,9 @@ module Neovim
   @param [Integer] col_end
   @return [Integer]
 
-@method clear_highlight(src_id, line_start, line_end)
-  Send the +buffer_clear_highlight+ RPC to +nvim+
+@method clear_highlight(buffer, src_id, line_start, line_end)
+  See +:h nvim_buf_clear_highlight()+
+  @param [Buffer] buffer
   @param [Integer] src_id
   @param [Integer] line_start
   @param [Integer] line_end

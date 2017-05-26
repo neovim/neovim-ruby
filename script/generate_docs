@@ -55,6 +55,7 @@ session.request(:nvim_get_api_info)[1]["functions"].each do |func|
   return_doc = "  @return [#{return_type}]\n"
   method_doc = [method_decl, method_desc, *param_docs, return_doc].join("\n")
   method_doc.gsub!(/ArrayOf\((\w+)[^)]*\)/, 'Array<\1>')
+  method_doc.gsub!(/Dictionary/, "Hash")
 
   case func_name
   when /nvim_buf_(.+)/

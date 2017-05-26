@@ -98,184 +98,186 @@ module Neovim
     private
 
     def rpc_methods
-      @api.functions_with_prefix("vim_").map do |func|
-        func.name.sub(/\Avim_/, "").to_sym
-      end
+      @api.functions_for_object(self).map(&:method_name)
     end
 
     public
 
 # The following methods are dynamically generated.
 =begin
-@method set_var(name, value)
-  Send the +vim_set_var+ RPC to +nvim+
-  @param [String] name
-  @param [Object] value
-  @return [Object]
-
-@method del_var(name)
-  Send the +vim_del_var+ RPC to +nvim+
-  @param [String] name
-  @return [Object]
-
-@method command(command)
-  Send the +vim_command+ RPC to +nvim+
-  @param [String] command
+@method ui_attach(height, options)
+  See +:h nvim_ui_attach()+
+  @param [Integer] height
+  @param [Hash] options
   @return [void]
 
-@method feedkeys(keys, mode, escape_csi)
-  Send the +vim_feedkeys+ RPC to +nvim+
-  @param [String] keys
+@method ui_detach
+  See +:h nvim_ui_detach()+
+  @return [void]
+
+@method ui_try_resize(height)
+  See +:h nvim_ui_try_resize()+
+  @param [Integer] height
+  @return [void]
+
+@method ui_set_option(value)
+  See +:h nvim_ui_set_option()+
+  @param [Object] value
+  @return [void]
+
+@method command
+  See +:h nvim_command()+
+  @return [void]
+
+@method feedkeys(mode, escape_csi)
+  See +:h nvim_feedkeys()+
   @param [String] mode
   @param [Boolean] escape_csi
   @return [void]
 
-@method input(keys)
-  Send the +vim_input+ RPC to +nvim+
-  @param [String] keys
+@method input
+  See +:h nvim_input()+
   @return [Integer]
 
-@method replace_termcodes(str, from_part, do_lt, special)
-  Send the +vim_replace_termcodes+ RPC to +nvim+
-  @param [String] str
+@method replace_termcodes(from_part, do_lt, special)
+  See +:h nvim_replace_termcodes()+
   @param [Boolean] from_part
   @param [Boolean] do_lt
   @param [Boolean] special
   @return [String]
 
-@method command_output(str)
-  Send the +vim_command_output+ RPC to +nvim+
-  @param [String] str
+@method command_output
+  See +:h nvim_command_output()+
   @return [String]
 
-@method eval(expr)
-  Send the +vim_eval+ RPC to +nvim+
-  @param [String] expr
+@method eval
+  See +:h nvim_eval()+
   @return [Object]
 
-@method call_function(fname, args)
-  Send the +vim_call_function+ RPC to +nvim+
-  @param [String] fname
+@method call_function(args)
+  See +:h nvim_call_function()+
   @param [Array] args
   @return [Object]
 
-@method strwidth(str)
-  Send the +vim_strwidth+ RPC to +nvim+
-  @param [String] str
+@method strwidth
+  See +:h nvim_strwidth()+
   @return [Integer]
 
 @method list_runtime_paths
-  Send the +vim_list_runtime_paths+ RPC to +nvim+
+  See +:h nvim_list_runtime_paths()+
   @return [Array<String>]
 
-@method change_directory(dir)
-  Send the +vim_change_directory+ RPC to +nvim+
-  @param [String] dir
+@method set_current_dir
+  See +:h nvim_set_current_dir()+
   @return [void]
 
 @method get_current_line
-  Send the +vim_get_current_line+ RPC to +nvim+
+  See +:h nvim_get_current_line()+
   @return [String]
 
-@method set_current_line(line)
-  Send the +vim_set_current_line+ RPC to +nvim+
-  @param [String] line
+@method set_current_line
+  See +:h nvim_set_current_line()+
   @return [void]
 
 @method del_current_line
-  Send the +vim_del_current_line+ RPC to +nvim+
+  See +:h nvim_del_current_line()+
   @return [void]
 
-@method get_var(name)
-  Send the +vim_get_var+ RPC to +nvim+
-  @param [String] name
+@method get_var
+  See +:h nvim_get_var()+
   @return [Object]
 
-@method get_vvar(name)
-  Send the +vim_get_vvar+ RPC to +nvim+
-  @param [String] name
+@method set_var(value)
+  See +:h nvim_set_var()+
+  @param [Object] value
+  @return [void]
+
+@method del_var
+  See +:h nvim_del_var()+
+  @return [void]
+
+@method get_vvar
+  See +:h nvim_get_vvar()+
   @return [Object]
 
-@method get_option(name)
-  Send the +vim_get_option+ RPC to +nvim+
-  @param [String] name
+@method get_option
+  See +:h nvim_get_option()+
   @return [Object]
 
-@method out_write(str)
-  Send the +vim_out_write+ RPC to +nvim+
-  @param [String] str
+@method out_write
+  See +:h nvim_out_write()+
   @return [void]
 
-@method err_write(str)
-  Send the +vim_err_write+ RPC to +nvim+
-  @param [String] str
+@method err_write
+  See +:h nvim_err_write()+
   @return [void]
 
-@method report_error(str)
-  Send the +vim_report_error+ RPC to +nvim+
-  @param [String] str
+@method err_writeln
+  See +:h nvim_err_writeln()+
   @return [void]
 
-@method get_buffers
-  Send the +vim_get_buffers+ RPC to +nvim+
+@method list_bufs
+  See +:h nvim_list_bufs()+
   @return [Array<Buffer>]
 
-@method get_current_buffer
-  Send the +vim_get_current_buffer+ RPC to +nvim+
+@method get_current_buf
+  See +:h nvim_get_current_buf()+
   @return [Buffer]
 
-@method set_current_buffer(buffer)
-  Send the +vim_set_current_buffer+ RPC to +nvim+
-  @param [Buffer] buffer
+@method set_current_buf
+  See +:h nvim_set_current_buf()+
   @return [void]
 
-@method get_windows
-  Send the +vim_get_windows+ RPC to +nvim+
+@method list_wins
+  See +:h nvim_list_wins()+
   @return [Array<Window>]
 
-@method get_current_window
-  Send the +vim_get_current_window+ RPC to +nvim+
+@method get_current_win
+  See +:h nvim_get_current_win()+
   @return [Window]
 
-@method set_current_window(window)
-  Send the +vim_set_current_window+ RPC to +nvim+
-  @param [Window] window
+@method set_current_win
+  See +:h nvim_set_current_win()+
   @return [void]
 
-@method get_tabpages
-  Send the +vim_get_tabpages+ RPC to +nvim+
+@method list_tabpages
+  See +:h nvim_list_tabpages()+
   @return [Array<Tabpage>]
 
 @method get_current_tabpage
-  Send the +vim_get_current_tabpage+ RPC to +nvim+
+  See +:h nvim_get_current_tabpage()+
   @return [Tabpage]
 
-@method set_current_tabpage(tabpage)
-  Send the +vim_set_current_tabpage+ RPC to +nvim+
-  @param [Tabpage] tabpage
+@method set_current_tabpage
+  See +:h nvim_set_current_tabpage()+
   @return [void]
 
-@method subscribe(event)
-  Send the +vim_subscribe+ RPC to +nvim+
-  @param [String] event
+@method subscribe
+  See +:h nvim_subscribe()+
   @return [void]
 
-@method unsubscribe(event)
-  Send the +vim_unsubscribe+ RPC to +nvim+
-  @param [String] event
+@method unsubscribe
+  See +:h nvim_unsubscribe()+
   @return [void]
 
-@method name_to_color(name)
-  Send the +vim_name_to_color+ RPC to +nvim+
-  @param [String] name
+@method get_color_by_name
+  See +:h nvim_get_color_by_name()+
   @return [Integer]
 
 @method get_color_map
-  Send the +vim_get_color_map+ RPC to +nvim+
-  @return [Dictionary]
+  See +:h nvim_get_color_map()+
+  @return [Hash]
+
+@method get_mode
+  See +:h nvim_get_mode()+
+  @return [Hash]
 
 @method get_api_info
-  Send the +vim_get_api_info+ RPC to +nvim+
+  See +:h nvim_get_api_info()+
+  @return [Array]
+
+@method call_atomic
+  See +:h nvim_call_atomic()+
   @return [Array]
 
 =end
