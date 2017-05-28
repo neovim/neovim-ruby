@@ -36,7 +36,7 @@ module Neovim
     end
 
     # Extend +methods+ to include RPC methods
-    def methods
+    def methods(*args)
       super | rpc_methods
     end
 
