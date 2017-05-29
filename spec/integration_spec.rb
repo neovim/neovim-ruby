@@ -15,26 +15,42 @@ RSpec.describe "integration tests", :timeout => 30 do
     Dir.chdir(root) { spec.run }
   end
 
-  ["vim", "buffer", "window"].each do |object|
-    describe "ruby_#{object}" do
-      specify ":ruby invocation" do
-        run_rspec("+ruby load('ruby_#{object}_spec.rb')") do |status, output|
-          expect($?).to be_success, lambda { output.read }
-        end
+  describe ":ruby" do
+    specify "vader specs" do
+      run_vader("ruby_spec.vim") do |status, output|
+        expect(status).to be_success, lambda { output.read }
       end
+    end
 
-      specify ":rubyfile invocation" do
-        run_rspec("+rubyfile ruby_#{object}_spec.rb") do |status, output|
-          expect($?).to be_success, lambda { output.read }
+    ["vim", "buffer", "window"].each do |object|
+      specify "ruby-#{object}" do
+        run_rspec("+ruby load('ruby_#{object}_spec.rb')") do |status, output|
+          expect(status).to be_success, lambda { output.read }
         end
       end
     end
   end
 
-  ["ruby", "rubyfile", "rubydo"].each do |ex_cmd|
-    specify ":#{ex_cmd}" do
-      run_vader("#{ex_cmd}_spec.vim") do |status, output|
-        expect(status.success?).to be(true), lambda { output.read }
+  describe ":rubyfile" do
+    specify "vader specs" do
+      run_vader("rubyfile_spec.vim") do |status, output|
+        expect(status).to be_success, lambda { output.read }
+      end
+    end
+
+    ["vim", "buffer", "window"].each do |object|
+      specify "ruby-#{object}" do
+        run_rspec("+rubyfile ruby_#{object}_spec.rb") do |status, output|
+          expect(status).to be_success, lambda { output.read }
+        end
+      end
+    end
+  end
+
+  describe ":rubydo" do
+    specify "vader specs" do
+      run_vader("rubydo_spec.vim") do |status, output|
+        expect(status).to be_success, lambda { output.read }
       end
     end
   end
@@ -50,7 +66,7 @@ RSpec.describe "integration tests", :timeout => 30 do
     ["command", "function", "autocmd"].each do |feature|
       specify "##{feature}" do
         run_vader("rplugin_#{feature}_spec.vim") do |status, output|
-          expect(status.success?).to be(true), lambda { output.read }
+          expect(status).to be_success, lambda { output.read }
         end
       end
     end
