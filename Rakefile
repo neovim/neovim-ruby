@@ -26,9 +26,7 @@ namespace :spec do
   RSpec::Core::RakeTask.new(:integration => :submodules) do |t|
     t.pattern = "spec/integration_spec.rb"
   end
-
-  desc "Run all tests"
-  RSpec::Core::RakeTask.new(:all => :submodules)
 end
 
-task :default => "spec:all"
+RSpec::Core::RakeTask.new(:spec => :submodules)
+task :default => :spec
