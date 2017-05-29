@@ -16,5 +16,19 @@ task :submodules do
   sh "git submodule update --init"
 end
 
-RSpec::Core::RakeTask.new(:spec)
-task :default => [:submodules, :spec]
+namespace :spec do
+  desc "Run functional specs"
+  RSpec::Core::RakeTask.new(:functional) do |t|
+    t.exclude_pattern = "spec/integration_spec.rb,spec/integration/**/*"
+  end
+
+  desc "Run integration specs"
+  RSpec::Core::RakeTask.new(:integration => :submodules) do |t|
+    t.pattern = "spec/integration_spec.rb"
+  end
+
+  desc "Run all tests"
+  RSpec::Core::RakeTask.new(:all => :submodules)
+end
+
+task :default => "spec:all"

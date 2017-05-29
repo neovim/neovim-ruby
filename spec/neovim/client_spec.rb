@@ -60,48 +60,5 @@ module Neovim
         expect(client.current.tabpage).to be_a(Tabpage)
       end
     end
-
-    describe "if_ruby compatibility" do
-      describe "#evaluate" do
-        it "evaluates the vim expression" do
-          client.command("let g:foo = [1, 2]")
-          expect(client.evaluate("g:foo")).to eq([1, 2])
-        end
-      end
-
-      describe "#message" do
-        it "writes a message (testing presence of method, not side-effects)" do
-          client.send(:message, "test")
-        end
-      end
-
-      describe "#set_option" do
-        it "sets an option" do
-          expect {
-            client.set_option("makeprg", "rake")
-          }.to change { client.get_option("makeprg") }.to("rake")
-        end
-
-        it "sets an option as a single string" do
-          expect {
-            client.set_option("makeprg=rake")
-          }.to change { client.get_option("makeprg") }.to("rake")
-        end
-
-        it "sets an integer option as a single string" do
-          expect {
-            client.set_option("timeoutlen=0")
-          }.to change { client.get_option("timeoutlen") }.to(0)
-        end
-      end
-
-      describe "#command" do
-        it "runs the provided command" do
-          expect {
-            client.command("normal ix")
-          }.to change { client.current.buffer.lines.to_a }.to(["x"])
-        end
-      end
-    end
   end
 end

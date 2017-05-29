@@ -54,6 +54,7 @@ module Neovim
     # @param index [Integer]
     # @return [String]
     def [](index)
+      check_index(index)
       @lines[index-1]
     end
 
@@ -63,6 +64,7 @@ module Neovim
     # @param str [String]
     # @return [String]
     def []=(index, str)
+      check_index(index)
       @lines[index-1] = str
     end
 
@@ -71,6 +73,7 @@ module Neovim
     # @param index [Integer]
     # @return [void]
     def delete(index)
+      check_index(index)
       @lines.delete(index-1)
       nil
     end
@@ -84,15 +87,12 @@ module Neovim
     # @param str [String]
     # @return [String]
     def append(index, str)
+      check_index(index)
       window = @session.request(:nvim_get_current_win)
       cursor = window.cursor
 
-      if index < 0
-        raise ArgumentError, "Index out of bounds"
-      else
-        set_lines(index, index, true, [str])
-        window.set_cursor(cursor)
-      end
+      set_lines(index, index, true, [str])
+      window.set_cursor(cursor)
       str
     end
 
@@ -130,6 +130,16 @@ module Neovim
     def active?
       @session.request(:nvim_get_current_buf) == self
     end
+
+    private
+
+    def check_index(index)
+      if index < 0
+        raise ArgumentError, "Index out of bounds"
+      end
+    end
+
+    public
 
 # The following methods are dynamically generated.
 =begin
