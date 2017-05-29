@@ -2,6 +2,9 @@ ENV.delete("VIM")
 ENV.delete("VIMRUNTIME")
 
 require "helper"
+require "json"
+require "net/http"
+require "open-uri"
 
 RSpec.describe "integration tests", :timeout => 30 do
   let(:root) { File.expand_path("../integration", __FILE__) }
@@ -50,6 +53,25 @@ RSpec.describe "integration tests", :timeout => 30 do
           expect(status.success?).to be(true), lambda { output.read }
         end
       end
+    end
+  end
+
+  specify "neovim-ruby has up-to-date generated method docs" do
+    begin
+      url = "https://api.github.com/repos/neovim/neovim/releases/latest"
+      response = open(url) { |json| JSON.load(json) }
+
+      client_file = File.read(
+        File.expand_path("../../lib/neovim/client.rb", __FILE__)
+      )
+      docs_version = client_file[
+        /The methods documented here were generated using (.+)$/,
+        1
+      ]
+
+      expect(docs_version).to eq(response["name"])
+    rescue SocketError, OpenURI::HTTPError => e
+      skip "Skipping: #{e}"
     end
   end
 
