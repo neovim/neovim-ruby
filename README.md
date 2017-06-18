@@ -44,10 +44,10 @@ Refer to the [`Neovim` docs](http://www.rubydoc.info/github/alexgenco/neovim-rub
 
 ### Plugins
 
-The `neovim-ruby-host` executable can be used to spawn Ruby plugins via the `rpcstart` command. A plugin can be defined like this:
+Plugins are Ruby files loaded from the `$VIMRUNTIME/rplugin/ruby/` directory. Here's an example plugin:
 
 ```ruby
-# $VIMRUNTIME/rplugin/ruby/my_plugin.rb
+# ~/.config/nvim/rplugin/ruby/example_plugin.rb
 
 Neovim.plugin do |plug|
   # Define a command called "SetLine" which sets the contents of the current
@@ -70,7 +70,9 @@ Neovim.plugin do |plug|
 end
 ```
 
-Ruby plugins go in the `$VIMRUNTIME/rplugin/ruby` directory, and are auto-loaded after calling `:UpdateRemotePlugins`. Refer to the [`Neovim::Plugin::DSL` docs](http://www.rubydoc.info/github/alexgenco/neovim-ruby/master/Neovim/Plugin/DSL) for a more complete overview.
+When you add or update a plugin, you will need to call `:UpdateRemotePlugins` to update the remote plugin manifest. See `:help remote-plugin-manifest` for more information.
+
+Refer to the [`Neovim::Plugin::DSL` docs](http://www.rubydoc.info/github/alexgenco/neovim-ruby/master/Neovim/Plugin/DSL) for a more complete overview of the `Neovim.plugin` DSL.
 
 ### Legacy Plugin Support
 
