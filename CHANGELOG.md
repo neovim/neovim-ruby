@@ -1,3 +1,11 @@
+# 0.5.0
+- Breaking API changes:
+  - Update generated methods to map to `nvim_` RPC functions, rather than the
+    deprecated `vim_` ones
+  - Remove `Current#range` API, simplifying `LineRange` interface
+- Regenerate docs to reflect nvim 0.2.0
+- Fix support for `:bang` and `:register` plugin DSL options
+
 # 0.4.0
 - Add `Neovim.executable` for accessing `nvim` info
 - Fix bug where `$curwin` and `$curbuf` got out of sync after `Vim.command`
