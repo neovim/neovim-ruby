@@ -1,3 +1,7 @@
+# 0.5.1
+- Convert vader.vim from submodule to subtree so it is included in gem
+  installations
+
 # 0.5.0
 - Breaking API changes:
   - Update generated methods to map to `nvim_` RPC functions, rather than the
