@@ -11,11 +11,6 @@ task :api do
   sh File.expand_path("../script/dump_api", __FILE__)
 end
 
-desc "Initialize and update git submodules"
-task :submodules do
-  sh "git submodule update --init"
-end
-
 namespace :spec do
   desc "Run functional specs"
   RSpec::Core::RakeTask.new(:functional) do |t|
@@ -23,10 +18,10 @@ namespace :spec do
   end
 
   desc "Run integration specs"
-  RSpec::Core::RakeTask.new(:integration => :submodules) do |t|
+  RSpec::Core::RakeTask.new(:integration) do |t|
     t.pattern = "spec/integration_spec.rb"
   end
 end
 
-RSpec::Core::RakeTask.new(:spec => :submodules)
+RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
