@@ -5,6 +5,7 @@ require "helper"
 require "json"
 require "net/http"
 require "open-uri"
+require "tempfile"
 
 RSpec.describe "integration tests", :timeout => 30 do
   let(:root) { File.expand_path("../integration", __FILE__) }
