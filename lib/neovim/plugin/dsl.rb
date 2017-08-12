@@ -26,8 +26,8 @@ module Neovim
       #   modifier. See +:h command-bang+.
       # @option options [Boolean] :register Whether the command can accept a
       #   register name. See +:h command-register+.
-      # @option options [Boolean] :complete Set the completion attributes of
-      #   the command. See +:h command-completion+.
+      # @option options [String] :complete Set the completion attributes of the
+      #   command. See +:h command-completion+.
       # @option options [String] :eval An +nvim+ expression. Gets evaluated and
       #   passed as an argument to the block.
       # @option options [Boolean] :sync (false) Whether +nvim+ should receive
