@@ -28,7 +28,7 @@ module Neovim
     def self.__define_setup(plug)
       plug.__send__(:setup) do |client|
         $stdout.define_singleton_method(:write) do |string|
-          client.out_write(string)
+          client.out_write(string + "\n")
         end
 
         $stderr.define_singleton_method(:write) do |string|
