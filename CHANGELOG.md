@@ -95,7 +95,7 @@
 - Add support for loading Ruby remote plugins from nvim
 - Add Current#range to return a LineRange enumerable object
 - Support sending large messages
-- Remove unecessary #stop methods
+- Remove unnecessary #stop methods
 - Add setup callback support to event loop
 
 # 0.0.3
