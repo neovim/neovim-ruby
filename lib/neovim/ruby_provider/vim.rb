@@ -1,8 +1,8 @@
 require "neovim/buffer"
 require "neovim/window"
 
-# The VIM module provides backwards compatibility for the legacy +:ruby+,
-# +:rubyfile+, and +:rubydo+ +vim+ functions.
+# The VIM module provides backwards compatibility for the +:ruby+, +:rubyfile+,
+# and +:rubydo+ +vim+ functions.
 module Vim
   Buffer = ::Neovim::Buffer
   Window = ::Neovim::Window

@@ -20,7 +20,7 @@
 - Hotfix older nvim clients' inability to hook into DirChanged
 
 # 0.3.2
-- Fix directory tracking in legacy Ruby provider
+- Fix directory tracking in Ruby provider
 
 # 0.3.1
 - Remove window caching to fix incompatibilities with command-t
@@ -64,7 +64,7 @@
 
 # 0.2.0
 - Backwards incompatible, but we're pre-1.0.0 so going with minor bump instead
-- Make legacy ruby functions 1-indexed
+- Make vim ruby functions 1-indexed
 - Add Client#evaluate and Client#message
 - Make ruby functions affect global scope
 - Add VIM::{Buffer,Window}.{count,index}

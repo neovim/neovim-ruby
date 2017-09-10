@@ -71,16 +71,16 @@ module Neovim
       # Register a setup block to run once before the host starts. The block
       # should expect to receive a single argument, a +Neovim::Client+.
       #
-      # This is used for bootstrapping the legacy ruby provider, and not meant
-      # to be used publicly in plugin definitions.
+      # This is used for bootstrapping the ruby provider, and not meant to be
+      # used publicly in plugin definitions.
       def setup(&block)
         @plugin.setup_blocks << block
       end
 
       # Directly define a synchronous RPC call without a namespace.
       #
-      # This is used for exposing legacy ruby provider calls, and not meant to
-      # be used publicly in plugin definitions.
+      # This is used for exposing ruby provider calls, and not meant to be used
+      # publicly in plugin definitions.
       def rpc(name, &block)
         @plugin.handlers.push(Handler.unqualified(name, block))
       end
