@@ -26,7 +26,7 @@ deploy:
 before_install:
   - eval "$(curl -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64"
   - gem update --system
-  - gem version
+  - gem --version
 
 env: REPORT_COVERAGE=1
 script: bundle exec rake --trace
