@@ -14,8 +14,19 @@ rvm:
   - 2.4
   - ruby-head
 
+deploy:
+  provider: rubygems
+  api_key:
+    secure: M0WgaQp4Mtbfy9XOsETCrcp+KnNVjyXbsjsaAPNVzWHUoCeDxprTIZqViv595LzVQdICqB2xUNAO97utIIGlZ68Zmr14lZ4rgO1uUAXvAxSWQ1qJax/gms0FT4hghZpVGhN2EtyesM3eErwBeeXdv7Y3xGKtgMOMu9gr8b+yHFg=
+  gem: neovim
+  on:
+    tags: true
+    repo: alexgenco/neovim-ruby
+
 before_install:
   - eval "$(curl -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64"
+  - gem update --system
+  - gem version
 
 env: REPORT_COVERAGE=1
 script: bundle exec rake --trace
