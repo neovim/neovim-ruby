@@ -74,9 +74,9 @@ When you add or update a plugin, you will need to call `:UpdateRemotePlugins` to
 
 Refer to the [`Neovim::Plugin::DSL` docs](http://www.rubydoc.info/github/alexgenco/neovim-ruby/master/Neovim/Plugin/DSL) for a more complete overview of the `Neovim.plugin` DSL.
 
-### Legacy Plugin Support
+### Vim Plugin Support
 
-The Neovim gem also acts as a compatibility layer for Ruby plugins written for legacy `vim`. The `:ruby`, `:rubyfile`, and `:rubydo` commands are intended to behave the same as they did in `vim`, and their documentation can be found [here](https://neovim.io/doc/user/if_ruby.html).
+The Neovim gem also acts as a compatibility layer for Ruby plugins written for `vim`. The `:ruby`, `:rubyfile`, and `:rubydo` commands are intended to match their original behavior, and their documentation can be found [here](https://neovim.io/doc/user/if_ruby.html).
 
 ## Links
 
