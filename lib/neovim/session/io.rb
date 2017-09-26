@@ -6,7 +6,7 @@ module Neovim
     # The lowest level interface to reading from and writing to +nvim+.
     #
     # @api private
-    class EventLoop
+    class IO
       include Logging
 
       # Connect to a TCP socket.
@@ -25,7 +25,7 @@ module Neovim
       def self.child(_argv)
         argv = _argv.include?("--embed") ? _argv : _argv + ["--embed"]
 
-        io = IO.popen(argv, "rb+").tap do |_io|
+        io = ::IO.popen(argv, "rb+").tap do |_io|
           Process.detach(_io.pid)
         end
 
@@ -55,8 +55,8 @@ module Neovim
             start += @wr.write_nonblock(data[start..-1])
           end
           self
-        rescue IO::WaitWritable
-          IO.select(nil, [@wr], nil, 1)
+        rescue ::IO::WaitWritable
+          ::IO.select(nil, [@wr], nil, 1)
           retry
         end
       end
@@ -91,7 +91,7 @@ module Neovim
         [@rd, @wr].each do |io|
           begin
             io.close
-          rescue IOError
+          rescue ::IOError
           end
         end
       end

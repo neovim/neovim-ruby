@@ -1,6 +1,6 @@
 require "neovim/logging"
 require "neovim/session/api"
-require "neovim/session/event_loop"
+require "neovim/session/io"
 require "neovim/session/rpc"
 require "neovim/session/serializer"
 require "fiber"
@@ -14,31 +14,31 @@ module Neovim
 
     # Connect to a TCP socket.
     def self.tcp(host, port)
-      from_event_loop(EventLoop.tcp(host, port))
+      from_io(IO.tcp(host, port))
     end
 
     # Connect to a UNIX domain socket.
     def self.unix(socket_path)
-      from_event_loop(EventLoop.unix(socket_path))
+      from_io(IO.unix(socket_path))
     end
 
     # Spawn and connect to a child +nvim+ process.
     def self.child(argv)
-      from_event_loop(EventLoop.child(argv))
+      from_io(IO.child(argv))
     end
 
     # Connect to the current process's standard streams. This is used to
     # promote the current process to a Ruby plugin host.
     def self.stdio
-      from_event_loop(EventLoop.stdio)
+      from_io(IO.stdio)
     end
 
-    def self.from_event_loop(event_loop)
-      serializer = Serializer.new(event_loop)
+    def self.from_io(io)
+      serializer = Serializer.new(io)
       rpc = RPC.new(serializer)
       new(rpc)
     end
-    private_class_method :from_event_loop
+    private_class_method :from_io
 
     def initialize(rpc)
       @rpc = rpc

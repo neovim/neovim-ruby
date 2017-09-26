@@ -10,21 +10,21 @@ module Neovim
     class Serializer
       include Logging
 
-      def initialize(event_loop, unpacker=nil)
-        @event_loop = event_loop
+      def initialize(io, unpacker=nil)
+        @io = io
         @unpacker = unpacker || MessagePack::Unpacker.new
       end
 
       # Serialize an RPC message to and write it to the event loop.
       def write(msg)
         debug("writing #{msg.inspect}")
-        @event_loop.write(MessagePack.pack(msg))
+        @io.write(MessagePack.pack(msg))
         self
       end
 
       # Run the event loop, yielding deserialized messages to the block.
       def run
-        @event_loop.run do |data|
+        @io.run do |data|
           @unpacker.feed_each(data) do |msg|
             debug("received #{msg.inspect}")
             yield msg if block_given?
@@ -37,12 +37,12 @@ module Neovim
 
       # Stop the event loop.
       def stop
-        @event_loop.stop
+        @io.stop
       end
 
       # Shut down the event loop.
       def shutdown
-        @event_loop.shutdown
+        @io.shutdown
       end
 
       # Register msgpack ext types using the provided API and session

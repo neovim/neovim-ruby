@@ -5,7 +5,7 @@ module Neovim
     RSpec.describe RPC do
       shared_context "rpc behavior" do
         it "receives requests" do
-          serializer = Serializer.new(event_loop)
+          serializer = Serializer.new(io)
           rpc = RPC.new(serializer)
 
           server_thread = Thread.new do
@@ -31,7 +31,7 @@ module Neovim
         end
 
         it "receives notifications" do
-          serializer = Serializer.new(event_loop)
+          serializer = Serializer.new(io)
           rpc = RPC.new(serializer)
 
           server_thread = Thread.new do
@@ -57,7 +57,7 @@ module Neovim
         end
 
         it "receives responses to requests" do
-          serializer = Serializer.new(event_loop)
+          serializer = Serializer.new(io)
           rpc = RPC.new(serializer)
           request = nil
 
@@ -92,14 +92,14 @@ module Neovim
 
       context "tcp" do
         let!(:server) { TCPServer.new("0.0.0.0", 0) }
-        let!(:event_loop) { EventLoop.tcp("0.0.0.0", server.addr[1]) }
+        let!(:io) { IO.tcp("0.0.0.0", server.addr[1]) }
 
         include_context "rpc behavior"
       end
 
       context "unix" do
         let!(:server) { UNIXServer.new(Support.socket_path) }
-        let!(:event_loop) { EventLoop.unix(Support.socket_path) }
+        let!(:io) { IO.unix(Support.socket_path) }
 
         include_context "rpc behavior"
       end
