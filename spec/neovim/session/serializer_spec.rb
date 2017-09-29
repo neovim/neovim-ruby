@@ -1,60 +1,63 @@
-require "socket"
+require "msgpack"
+require "securerandom"
 require "helper"
 
 module Neovim
   class Session
     RSpec.describe Serializer do
-      shared_context "serializer behavior" do
-        it "sends and receives data" do
-          serializer = Serializer.new(io)
-          request = nil
+      let(:serializer) { Serializer.new }
 
-          server_thread = Thread.new do
-            client = server.accept
-            request = client.readpartial(1024)
-
-            client.write(MessagePack.pack(["res"]))
-            client.close
-            server.close
-          end
-
-          response = nil
-          serializer.write(["req"]).run do |message|
-            response = message
-            serializer.shutdown
-          end
-
-          server_thread.join
-          expect(request).to eq(MessagePack.pack(["req"]))
-          expect(response).to eq(["res"])
+      describe "write" do
+        it "yields msgpack" do
+          expect do |y|
+            serializer.write([1, :foo], &y)
+          end.to yield_with_args(MessagePack.pack([1, :foo]))
         end
       end
 
-      context "tcp" do
-        let!(:server) { TCPServer.new("0.0.0.0", 0) }
-        let!(:io) { IO.tcp("0.0.0.0", server.addr[1]) }
+      describe "read" do
+        it "yields an unpacked object" do
+          expect do |y|
+            serializer.read(MessagePack.pack([1, :foo]), &y)
+          end.to yield_with_args([1, "foo"])
+        end
 
-        include_context "serializer behavior"
+        it "accumulates chunks of data and yields a single object" do
+          object = Array.new(16) { SecureRandom.hex(4) }
+          msgpack = MessagePack.pack(object)
+
+          expect do |y|
+            msgpack.chars.each_slice(10) do |chunk|
+              serializer.read(chunk.join, &y)
+            end
+          end.to yield_with_args(object)
+        end
       end
 
-      context "unix" do
-        let!(:server) { UNIXServer.new(Support.socket_path) }
-        let!(:io) { IO.unix(Support.socket_path) }
+      describe "#register_type" do
+        it "registers a msgpack ext type" do
+          ext_class = Struct.new(:id) do
+            def self.from_msgpack_ext(data)
+              new(data.unpack('N')[0])
+            end
 
-        include_context "serializer behavior"
-      end
+            def to_msgpack_ext
+              [self.id].pack('C')
+            end
+          end
 
-      describe "#run" do
-        it "logs exceptions" do
-          unpacker = instance_double(MessagePack::Unpacker)
-          io = instance_double(IO)
-          serializer = Serializer.new(io, unpacker)
+          serializer.register_type(42) do |id|
+            ext_class.new(id)
+          end
 
-          expect(io).to receive(:run).and_yield("data")
-          expect(unpacker).to receive(:feed_each).with("data").and_raise("BOOM")
-          expect(serializer).to receive(:fatal).with(/BOOM/)
+          factory = MessagePack::Factory.new
+          factory.register_type(42, ext_class)
+          obj = ext_class.new(1)
+          msgpack = factory.packer.write(obj).flush.to_str
 
-          serializer.run
+          expect do |y|
+            serializer.read(msgpack, &y)
+          end.to yield_with_args(obj)
         end
       end
     end

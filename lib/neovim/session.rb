@@ -1,64 +1,29 @@
 require "neovim/logging"
 require "neovim/session/api"
-require "neovim/session/io"
-require "neovim/session/rpc"
-require "neovim/session/serializer"
 require "fiber"
 
 module Neovim
-  # Wraps a +Session::RPC+ in a synchronous API using +Fiber+s.
+  # Wraps an event loop in a synchronous API using +Fiber+s.
   #
   # @api private
   class Session
     include Logging
 
-    # Connect to a TCP socket.
-    def self.tcp(host, port)
-      from_io(IO.tcp(host, port))
-    end
+    attr_reader :api
 
-    # Connect to a UNIX domain socket.
-    def self.unix(socket_path)
-      from_io(IO.unix(socket_path))
-    end
-
-    # Spawn and connect to a child +nvim+ process.
-    def self.child(argv)
-      from_io(IO.child(argv))
-    end
-
-    # Connect to the current process's standard streams. This is used to
-    # promote the current process to a Ruby plugin host.
-    def self.stdio
-      from_io(IO.stdio)
-    end
-
-    def self.from_io(io)
-      serializer = Serializer.new(io)
-      rpc = RPC.new(serializer)
-      new(rpc)
-    end
-    private_class_method :from_io
-
-    def initialize(rpc)
-      @rpc = rpc
+    def initialize(event_loop)
+      @event_loop = event_loop
       @pending_messages = []
       @main_thread = Thread.current
       @main_fiber = Fiber.current
-      @running = false
-    end
-
-    # Return the +nvim+ API as described in the +nvim_get_api_info+ call.
-    # Defaults to empty API information.
-    def api
-      @api ||= API.null
+      @api = API.null
     end
 
     # Discover the +nvim+ API as described in the +nvim_get_api_info+ call,
-    # propagating it down to lower layers of the stack.
+    # then register msgpack ext types with the event loop.
     def discover_api
       @api = API.new(request(:nvim_get_api_info)).tap do |api|
-        @rpc.serializer.register_types(api, self)
+        @event_loop.register_types(api, self)
       end
     end
 
@@ -72,11 +37,11 @@ module Neovim
 
       return unless @running
 
-      @rpc.run do |message|
+      @event_loop.run do |message|
         Fiber.new { yield message if block_given? }.resume
       end
     ensure
-      shutdown
+      @event_loop.shutdown
     end
 
     # Make an RPC request and return its response.
@@ -93,22 +58,23 @@ module Neovim
       main_thread_only do
         if Fiber.current == @main_fiber
           debug("handling blocking request")
-          err, res = stopped_request(method, *args)
+          response = blocking_request(method, *args)
         else
           debug("yielding request to fiber")
-          err, res = running_request(method, *args)
+          response = yielding_request(method, *args)
         end
 
-        err ? raise(ArgumentError, err) : res
+        response.value
       end
+    end
+
+    def respond(request_id, value, error=nil)
+      @event_loop.respond(request_id, value, error)
     end
 
     # Make an RPC notification. +nvim+ will not block waiting for a response.
     def notify(method, *args)
-      main_thread_only do
-        @rpc.notify(method, *args)
-        nil
-      end
+      @event_loop.notify(method, *args)
     end
 
     # Return the channel ID if registered via +nvim_get_api_info+.
@@ -116,37 +82,39 @@ module Neovim
       api.channel_id
     end
 
-    def stop
-      @running = false
-      @rpc.stop
-    end
-
     def shutdown
       @running = false
-      @rpc.shutdown
+      @event_loop.shutdown
+    end
+
+    def stop
+      @running = false
+      @event_loop.stop
     end
 
     private
 
-    def running_request(method, *args)
+    def yielding_request(method, *args)
       fiber = Fiber.current
-      @rpc.request(method, *args) do |err, res|
-        fiber.resume(err, res)
+      @event_loop.request(method, *args) do |response|
+        fiber.resume(response)
       end
       Fiber.yield
     end
 
-    def stopped_request(method, *args)
-      error, result = nil
+    def blocking_request(method, *args)
+      response = nil
 
-      @rpc.request(method, *args) do |err, res|
-        error, result = err, res
+      @event_loop.request(method, *args) do |res|
+        response = res
         stop
-      end.run do |message|
+      end
+
+      @event_loop.run do |message|
         @pending_messages << message
       end
 
-      [error, result]
+      response
     end
 
     def main_thread_only

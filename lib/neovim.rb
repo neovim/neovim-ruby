@@ -1,4 +1,7 @@
 require "neovim/client"
+require "neovim/session"
+require "neovim/session/connection"
+require "neovim/session/event_loop"
 require "neovim/executable"
 require "neovim/logging"
 require "neovim/session"
@@ -61,7 +64,7 @@ module Neovim
   # @return [Client]
   # @see Session.tcp
   def self.attach_tcp(host, port)
-    Client.new Session.tcp(host, port)
+    client_from_connection Session::Connection.tcp(host, port)
   end
 
   # Connect to a running +nvim+ instance over a UNIX domain socket.
@@ -70,7 +73,7 @@ module Neovim
   # @return [Client]
   # @see Session.unix
   def self.attach_unix(socket_path)
-    Client.new Session.unix(socket_path)
+    client_from_connection Session::Connection.unix(socket_path)
   end
 
   # Spawn and connect to a child +nvim+ process.
@@ -79,7 +82,7 @@ module Neovim
   # @return [Client]
   # @see Session.child
   def self.attach_child(argv=[executable.path])
-    Client.new Session.child(argv)
+    client_from_connection Session::Connection.child(argv)
   end
 
   # Placeholder method for exposing the remote plugin DSL. This gets
@@ -115,4 +118,11 @@ module Neovim
   def self.logger
     Logging.logger
   end
+
+  def self.client_from_connection(connection)
+    event_loop = Session::EventLoop.new(connection)
+    session = Session.new(event_loop)
+    Client.new(session)
+  end
+  private_class_method :client_from_connection
 end

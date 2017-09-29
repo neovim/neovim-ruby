@@ -3,175 +3,110 @@ require "neovim/host"
 
 module Neovim
   RSpec.describe Host do
-    let(:session) { instance_double(Session) }
-    let(:client) { instance_double(Client) }
-    let(:host) { Host.new(session, client) }
+    let(:event_loop) { instance_double(Session::EventLoop) }
 
     describe ".run" do
-      it "loads plugins and runs the host event loop" do
-        paths = ["/foo", "/bar"]
+      let!(:push_pipe) { IO.pipe }
+      let!(:pull_pipe) { IO.pipe }
 
-        expect(Host).to receive(:new).and_return(host)
-        expect(host).to receive(:run)
+      let(:host_rd) { push_pipe[0] }
+      let(:host_wr) { pull_pipe[1] }
+      let(:nvim_rd) { pull_pipe[0] }
+      let(:nvim_wr) { push_pipe[1] }
 
-        loader = instance_double(Host::Loader)
+      let(:client) { double(:client, :strwidth => 2) }
 
-        expect(loader).to receive(:load).with(paths)
-        expect(Host::Loader).to receive(:new).
-          with(host).
-          and_return(loader)
+      let(:plugin_path) do
+        Support.file_path("my_plugin").tap do |path|
+          File.write(path, <<-PLUGIN)
+            Neovim.plugin do |plug|
+              plug.command(:StrWidth, :nargs => 1, :sync => true) do |client, arg|
+                client.strwidth(arg)
+              end
 
-        Host.run(paths, :session => session, :client => client)
-      end
-    end
-
-    describe "#run" do
-      it "runs the session event loop and handles messages" do
-        message = double(:message)
-        expect(session).to receive(:run).and_yield(message)
-        expect(host).to receive(:handle).with(message)
-
-        host.run
-      end
-
-      it "rescues session exceptions", :silence_warnings do
-        expect(session).to receive(:run).and_raise("BOOM")
-        expect { host.run }.not_to raise_error
-      end
-    end
-
-    describe "#handlers" do
-      it "has a default poll handler" do
-        expect(host.handlers["poll"]).to respond_to(:call)
-      end
-    end
-
-    describe "#specs" do
-      it "has default specs" do
-        expect(host.specs).to eq({})
-      end
-    end
-
-    describe "#register" do
-      it "adds specs" do
-        plugin = Plugin.from_config_block("source") do |plug|
-          plug.command(:Foo)
+              plug.command(:Boom, :sync => true) do |client|
+                raise "BOOM"
+              end
+            end
+          PLUGIN
         end
-
-        expect {
-          host.register(plugin)
-        }.to change { host.specs }.from({}).to("source" => plugin.specs)
       end
 
-      it "adds plugin handlers" do
-        plugin = Plugin.from_config_block("source") do |plug|
-          plug.command(:Foo)
+      let!(:host_pid) do
+        fork do
+          $stdout.reopen(host_wr)
+          $stdin.reopen(host_rd)
+
+          Host.run([plugin_path], :client => client)
         end
-
-        expect {
-          host.register(plugin)
-        }.to change {
-          host.handlers["source:command:Foo"]
-        }.from(nil).to(kind_of(Proc))
       end
 
-      it "yields a client to the plugin setup blocks" do
-        yielded = []
-
-        plugin = Plugin.from_config_block("source") do |plug|
-          plug.__send__(:setup) do |client|
-            yielded << client
-          end
-
-          plug.__send__(:setup) do |_|
-            yielded << :other
-          end
+      after do
+        begin
+          Process.kill(:TERM, host_pid)
+          Process.waitpid(host_pid)
+        rescue Errno::ESRCH, Errno::ECHILD
         end
-
-        expect {
-          host.register(plugin)
-        }.to change { yielded }.from([]).to([client, :other])
       end
 
-      it "doesn't add top-level RPCs to specs" do
-        plugin = Plugin.from_config_block("source") do |plug|
-          plug.__send__(:rpc, :Foo)
-        end
+      it "responds 'ok' to the 'poll' request" do
+        message = MessagePack.pack([0, 0, :poll, []])
+        nvim_wr.puts(message)
 
-        expect {
-          host.register(plugin)
-        }.to change { host.specs }.from({}).to("source" => [])
-      end
-    end
-
-    describe "#handle" do
-      it "calls the poll handler" do
-        message = double(:message, :method_name => "poll", :sync? => true)
-
-        expect(message).to receive(:respond).with("ok")
-        host.handle(message)
+        response = MessagePack.unpack(nvim_rd.readpartial(1024))
+        expect(response).to eq([1, 0, nil, "ok"])
       end
 
-      it "calls the specs handler" do
-        plugin = Plugin.from_config_block("source") do |plug|
-          plug.command(:Foo)
-        end
-        host.register(plugin)
+      it "responds with specs to the 'specs' request" do
+        message = MessagePack.pack([0, 0, :specs, [plugin_path]])
+        nvim_wr.puts(message)
 
-        message = double(:message, :method_name => "specs", :sync? => true, :arguments => ["source"])
-
-        expect(message).to receive(:respond).with(plugin.specs)
-        host.handle(message)
+        response = MessagePack.unpack(nvim_rd.readpartial(1024))
+        expect(response).to eq(
+          [
+            1,
+            0,
+            nil,
+            [
+              {
+                "type" => "command",
+                "name" => "StrWidth",
+                "sync" => true,
+                "opts" => {"nargs" => 1},
+              },
+              {
+                "type" => "command",
+                "name" => "Boom",
+                "sync" => true,
+                "opts" => {},
+              },
+            ],
+          ],
+        )
       end
 
-      it "calls a plugin sync handler" do
-        plugin = Plugin.from_config_block("source") do |plug|
-          plug.command(:Foo, :sync => true) { |client, arg| [client, arg] }
-        end
-        host.register(plugin)
+      it "delegates to plugin handlers" do
+        message = MessagePack.pack([0, 0, "#{plugin_path}:command:StrWidth", ["hi"]])
+        nvim_wr.puts(message)
 
-        message = double(:message, :method_name => "source:command:Foo", :sync? => true, :arguments => [:arg])
-
-        expect(message).to receive(:respond).with([client, :arg])
-        host.handle(message)
+        response = MessagePack.unpack(nvim_rd.readpartial(1024))
+        expect(response).to eq([1, 0, nil, 2])
       end
 
-      it "rescues plugin sync handler exceptions", :silence_warnings do
-        plugin = Plugin.from_config_block("source") do |plug|
-          plug.command(:Foo, :sync => true) { raise "BOOM" }
-        end
-        host.register(plugin)
+      it "handles exceptions in plugin handlers" do
+        message = MessagePack.pack([0, 0, "#{plugin_path}:command:Boom", ["hi"]])
+        nvim_wr.puts(message)
 
-        message = double(:message, :method_name => "source:command:Foo", :sync? => true, :arguments => [])
-
-        expect(message).to receive(:error).with("BOOM")
-        host.handle(message)
+        response = MessagePack.unpack(nvim_rd.readpartial(1024))
+        expect(response).to eq([1, 0, "BOOM", nil])
       end
 
-      it "calls a plugin async handler" do
-        async_proc = Proc.new {}
-        plugin = Plugin.from_config_block("source") do |plug|
-          plug.command(:Foo, &async_proc)
-        end
-        host.register(plugin)
+      it "handles unknown requests" do
+        message = MessagePack.pack([0, 0, "foobar", []])
+        nvim_wr.puts(message)
 
-        message = double(:message, :method_name => "source:command:Foo", :sync? => false, :arguments => [:arg])
-
-        expect(async_proc).to receive(:call).with(client, :arg)
-        host.handle(message)
-      end
-
-      it "calls a default sync handler" do
-        message = double(:message, :method_name => "foobar", :sync? => true)
-
-        expect(message).to receive(:error).with("Unknown request foobar")
-        host.handle(message)
-      end
-
-      it "calls a default async handler" do
-        message = double(:message, :method_name => "foobar", :sync? => false)
-
-        host.handle(message)
+        response = MessagePack.unpack(nvim_rd.readpartial(1024))
+        expect(response).to eq([1, 0, "Unknown request foobar", nil])
       end
     end
   end

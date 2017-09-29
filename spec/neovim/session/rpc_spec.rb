@@ -3,116 +3,99 @@ require "helper"
 module Neovim
   class Session
     RSpec.describe RPC do
-      shared_context "rpc behavior" do
-        it "receives requests" do
-          serializer = Serializer.new(io)
-          rpc = RPC.new(serializer)
+      let(:rpc) { RPC.new }
 
-          server_thread = Thread.new do
-            client = server.accept
-            client.write(
-              MessagePack.pack(
-                [0, 123, "func", [1, 2, 3]]
-              )
+      describe "#write" do
+        context "requests" do
+          it "yields a valid request message" do
+            expect do |y|
+              rpc.write(:request, :method, [1, 2], Proc.new {}, &y)
+            end.to yield_with_args([0, 1, :method, [1, 2]])
+          end
+
+          it "increments the request id" do
+            expect do |y|
+              rpc.write(:request, :method, [], Proc.new {}, &y)
+              rpc.write(:request, :method, [], Proc.new {}, &y)
+            end.to yield_successive_args(
+              [0, 1, :method, []],
+              [0, 2, :method, []]
             )
           end
-
-          request = nil
-          rpc.run do |msg|
-            request = msg
-            rpc.shutdown
-          end
-
-          server_thread.join
-
-          expect(request).to be_a(Request)
-          expect(request.method_name).to eq("func")
-          expect(request.arguments).to eq([1, 2, 3])
         end
 
-        it "receives notifications" do
-          serializer = Serializer.new(io)
-          rpc = RPC.new(serializer)
-
-          server_thread = Thread.new do
-            client = server.accept
-            client.write(
-              MessagePack.pack(
-                [2, "func", [1, 2, 3]]
-              )
-            )
+        context "responses" do
+          it "yields a valid response message" do
+            expect do |y|
+              rpc.write(:response, 2, :value, "error msg", &y)
+            end.to yield_with_args([1, 2, "error msg", :value])
           end
-
-          notification = nil
-          rpc.run do |message|
-            notification = message
-            rpc.shutdown
-          end
-
-          server_thread.join
-
-          expect(notification).to be_a(Notification)
-          expect(notification.method_name).to eq("func")
-          expect(notification.arguments).to eq([1, 2, 3])
         end
 
-        it "receives responses to requests" do
-          serializer = Serializer.new(io)
-          rpc = RPC.new(serializer)
-          request = nil
-
-          server_thread = Thread.new do
-            client = server.accept
-            request = client.readpartial(1024)
-
-            client.write(
-              MessagePack.pack(
-                [1, 0, [0, "error"], "result"]
-              )
-            )
+        context "notifications" do
+          it "yields a valid notification message" do
+            expect do |y|
+              rpc.write(:notification, :method, [1, 2], &y)
+            end.to yield_with_args([2, :method, [1, 2]])
           end
-
-          error, result = nil
-          rpc.request("func", 1, 2, 3) do |err, res|
-            error, result = err, res
-            rpc.shutdown
-          end.run
-
-          expect(error).to eq("error")
-          expect(result).to eq("result")
-
-          server_thread.join
-          rpc.shutdown
-
-          expect(request).to eq(
-            MessagePack.pack([0, 0, "func", [1, 2, 3]])
-          )
         end
       end
 
-      context "tcp" do
-        let!(:server) { TCPServer.new("0.0.0.0", 0) }
-        let!(:io) { IO.tcp("0.0.0.0", server.addr[1]) }
+      describe "#read" do
+        context "requests" do
+          it "yields a request object" do
+            request = nil
+            rpc.read([0, 1, :method, [1, 2]]) do |req|
+              request = req
+            end
 
-        include_context "rpc behavior"
-      end
+            expect(request.sync?).to eq(true)
+            expect(request.id).to eq(1)
+            expect(request.method_name).to eq("method")
+            expect(request.arguments).to eq([1, 2])
+          end
+        end
 
-      context "unix" do
-        let!(:server) { UNIXServer.new(Support.socket_path) }
-        let!(:io) { IO.unix(Support.socket_path) }
+        context "responses" do
+          it "calls the registered handler with a success response" do
+            response = nil
+            handler = Proc.new { |res| response = res }
 
-        include_context "rpc behavior"
-      end
+            rpc.write(:request, :method, [1, 2], handler) {}
+            rpc.read([1, 1, [nil, nil], :result])
 
-      describe "#run" do
-        it "logs exceptions" do
-          serializer = instance_double(Serializer)
-          rpc = RPC.new(serializer)
+            expect(response.request_id).to eq(1)
+            expect(response.value).to eq(:result)
+            expect(response.error).to eq(nil)
+          end
 
-          expect(serializer).to receive(:run).and_raise("BOOM")
-          expect(rpc).to receive(:fatal).with(/BOOM/)
+          it "calls the registered handler with an error response" do
+            response = nil
 
-          rpc.run
+            handler = Proc.new do |res|
+              response = res
+            end
+
+            rpc.write(:request, :method, [1, 2], handler) {}
+            rpc.read([1, 1, [:some_err, "BOOM"], nil])
+
+            expect(response.request_id).to eq(1)
+            expect(response.error).to eq("BOOM")
+            expect { response.value }.to raise_error("BOOM")
+          end
+        end
+
+        context "notifications" do
+          it "yields a notification object" do
+            notification = nil
+            rpc.read([2, :method, [1, 2]]) do |ntf|
+              notification = ntf
+            end
+
+            expect(notification.sync?).to eq(false)
+            expect(notification.method_name).to eq("method")
+            expect(notification.arguments).to eq([1, 2])
+          end
         end
       end
     end

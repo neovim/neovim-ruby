@@ -6,7 +6,7 @@ module Neovim
     # The lowest level interface to reading from and writing to +nvim+.
     #
     # @api private
-    class IO
+    class Connection
       include Logging
 
       # Connect to a TCP socket.
@@ -46,48 +46,32 @@ module Neovim
       # Write data to the underlying +IO+. This will block until all the
       # data has been written.
       def write(data)
-        start = 0
-        size = data.size
+        written = 0
+        total = data.bytesize
         debug("writing #{data.inspect}")
 
         begin
-          while start < size
-            start += @wr.write_nonblock(data[start..-1])
+          while written < total
+            written += @wr.write_nonblock(data[written..-1])
           end
-          self
         rescue ::IO::WaitWritable
           ::IO.select(nil, [@wr], nil, 1)
           retry
+        ensure
+          @wr.flush
         end
       end
 
-      # Run the event loop, reading from the underlying +IO+ and yielding
-      # received messages to the block.
-      def run
-        @running = true
-
-        loop do
-          break unless @running
-          message = @rd.readpartial(1024 * 16)
-          debug("received #{message.inspect}")
-          yield message if block_given?
+      def read
+        debug("reading")
+        @rd.readpartial(1024 * 16).tap do |bytes|
+          debug("received #{bytes.inspect}")
+          yield bytes
         end
-      rescue EOFError
-        info("got EOFError")
-      rescue => e
-        fatal("got unexpected error #{e.inspect}")
-        debug(e.backtrace.join("\n"))
       end
 
-      # Stop the event loop.
-      def stop
-        @running = false
-      end
-
-      # Stop the event loop and close underlying +IO+s.
-      def shutdown
-        stop
-
+      # Close underlying +IO+s.
+      def close
         [@rd, @wr].each do |io|
           begin
             io.close

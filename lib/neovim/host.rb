@@ -12,7 +12,12 @@ module Neovim
     # which is spawned by +nvim+ to discover and run Ruby plugins, and acts as
     # the bridge between +nvim+ and the plugin.
     def self.run(rplugin_paths, options={})
-      session = options.fetch(:session) { Session.stdio }
+      session = options.fetch(:session) do
+        connection = Session::Connection.stdio
+        event_loop = Session::EventLoop.new(connection)
+        Session.new(event_loop)
+      end
+
       client = options.fetch(:client) { Client.new(session) }
 
       new(session, client).tap do |host|
@@ -48,7 +53,7 @@ module Neovim
     # Handle messages received from the host. Sends a +Neovim::Client+ along
     # with the message to be used in plugin callbacks.
     def handle(message)
-      debug("received #{message.inspect}")
+      debug("handling #{message.inspect}")
 
       @handlers.
         fetch(message.method_name, default_handler).
@@ -62,29 +67,26 @@ module Neovim
 
     def poll_handler
       @poll_handler ||= Proc.new do |_, req|
-        debug("received 'poll' request #{req.inspect}")
-        req.respond("ok")
+        @session.respond(req.id, "ok")
       end
     end
 
     def specs_handler
       @specs_handler ||= Proc.new do |_, req|
-        debug("received 'specs' request #{req.inspect}")
         source = req.arguments.fetch(0)
 
         if @specs.key?(source)
-          req.respond(@specs.fetch(source))
+          @session.respond(req.id, @specs.fetch(source))
         else
-          req.error("Unknown plugin #{source}")
+          @session.respond(req.id, nil, "Unknown plugin #{source}")
         end
       end
     end
 
     def default_handler
       @default_handler ||= Proc.new do |_, message|
-        if message.sync?
-          message.error("Unknown request #{message.method_name}")
-        end
+        next unless message.sync?
+        @session.respond(message.id, nil, "Unknown request #{message.method_name}")
       end
     end
 
@@ -95,12 +97,12 @@ module Neovim
           args = message.arguments.flatten(1)
           result = handler.call(client, *args)
 
-          message.respond(result) if message.sync?
+          @session.respond(message.id, result) if message.sync?
         rescue => e
           warn("got unexpected error #{e.inspect}")
           debug(e.backtrace.join("\n"))
 
-          message.error(e.message) if message.sync?
+          @session.respond(message.id, nil, e.message) if message.sync?
         end
       end
     end
