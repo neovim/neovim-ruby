@@ -110,7 +110,7 @@ RSpec.describe "integration tests", :timeout => 5 do
   def run_vader(test_path)
     Tempfile.open("vader.out") do |out|
       run_nvim(
-        {"NVIM_RUBY_LOG_FILE" => "/dev/stderr", "NVIM_RPLUGIN_MANIFEST" => manifest, "VADER_OUTPUT_FILE" => out.path},
+        {"NVIM_RPLUGIN_MANIFEST" => manifest, "VADER_OUTPUT_FILE" => out.path},
         "-c", "Vader! #{test_path}"
       )
 
