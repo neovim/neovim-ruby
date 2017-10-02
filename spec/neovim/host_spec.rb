@@ -51,7 +51,8 @@ module Neovim
 
       it "responds 'ok' to the 'poll' request" do
         message = MessagePack.pack([0, 0, :poll, []])
-        nvim_wr.puts(message)
+        nvim_wr.write(message)
+        nvim_wr.flush
 
         response = MessagePack.unpack(nvim_rd.readpartial(1024))
         expect(response).to eq([1, 0, nil, "ok"])
@@ -59,7 +60,8 @@ module Neovim
 
       it "responds with specs to the 'specs' request" do
         message = MessagePack.pack([0, 0, :specs, [plugin_path]])
-        nvim_wr.puts(message)
+        nvim_wr.write(message)
+        nvim_wr.flush
 
         response = MessagePack.unpack(nvim_rd.readpartial(1024))
         expect(response).to eq(
@@ -87,7 +89,8 @@ module Neovim
 
       it "delegates to plugin handlers" do
         message = MessagePack.pack([0, 0, "#{plugin_path}:command:StrWidth", ["hi"]])
-        nvim_wr.puts(message)
+        nvim_wr.write(message)
+        nvim_wr.flush
 
         response = MessagePack.unpack(nvim_rd.readpartial(1024))
         expect(response).to eq([1, 0, nil, 2])
@@ -95,7 +98,8 @@ module Neovim
 
       it "handles exceptions in plugin handlers" do
         message = MessagePack.pack([0, 0, "#{plugin_path}:command:Boom", ["hi"]])
-        nvim_wr.puts(message)
+        nvim_wr.write(message)
+        nvim_wr.flush
 
         response = MessagePack.unpack(nvim_rd.readpartial(1024))
         expect(response).to eq([1, 0, "BOOM", nil])
@@ -103,7 +107,8 @@ module Neovim
 
       it "handles unknown requests" do
         message = MessagePack.pack([0, 0, "foobar", []])
-        nvim_wr.puts(message)
+        nvim_wr.write(message)
+        nvim_wr.flush
 
         response = MessagePack.unpack(nvim_rd.readpartial(1024))
         expect(response).to eq([1, 0, "Unknown request foobar", nil])
