@@ -48,7 +48,7 @@ module Neovim
       def write(data)
         written = 0
         total = data.bytesize
-        debug("writing #{data.inspect}")
+        debug("write #{data.inspect}")
 
         begin
           while written < total
@@ -63,9 +63,8 @@ module Neovim
       end
 
       def read
-        debug("reading")
         @rd.readpartial(1024 * 16).tap do |bytes|
-          debug("received #{bytes.inspect}")
+          debug("read #{bytes.inspect}")
           yield bytes
         end
       end

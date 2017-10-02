@@ -56,7 +56,7 @@ module Neovim
       end
 
       def write(type, *write_args)
-        debug("writing #{type} #{write_args}")
+        debug("write #{type} #{write_args}")
 
         case type
         when :request
@@ -76,21 +76,22 @@ module Neovim
         end
       end
 
-      def read(arr)
-        debug("received #{arr.inspect}")
-        kind, *payload = arr
-
+      def read((kind, *payload))
         case kind
         when 0
-          reqid, method, args = payload
-          yield Request.new(reqid, method, args)
+          message = Request.new(*payload)
+          debug("read #{message}")
+          yield message
+        when 2
+          message = Notification.new(*payload)
+          debug("read #{message}")
+          yield message
         when 1
           reqid, (_, error), result = payload
           handler = @pending_requests.delete(reqid) || Proc.new {}
-          handler.call(Response.new(reqid, result, error))
-        when 2
-          method, args = payload
-          yield Notification.new(method, args)
+          message = Response.new(reqid, result, error)
+          debug("read #{message}")
+          handler.call(message)
         end
       end
     end
