@@ -12,7 +12,9 @@ tabpage_docs = []
 nvim_exe = ENV.fetch("NVIM_EXECUTABLE", "nvim")
 nvim_vrs = %x(#{nvim_exe} --version).split("\n").first
 
-session = Neovim::Session.child([nvim_exe, "-u", "NONE", "-n"])
+connection = Neovim::Session::Connection.child([nvim_exe, "-u", "NONE", "-n"])
+event_loop = Neovim::Session::EventLoop.new(connection)
+session = Neovim::Session.new(event_loop)
 nvim_defs = Neovim::Client.instance_methods(false)
 buffer_defs = Neovim::Buffer.instance_methods(false)
 tabpage_defs = Neovim::Tabpage.instance_methods(false)
