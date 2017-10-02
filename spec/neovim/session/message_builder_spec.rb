@@ -2,8 +2,8 @@ require "helper"
 
 module Neovim
   class Session
-    RSpec.describe RPC do
-      let(:rpc) { RPC.new }
+    RSpec.describe MessageBuilder do
+      let(:rpc) { MessageBuilder.new }
 
       describe "#write" do
         context "requests" do

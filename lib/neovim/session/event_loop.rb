@@ -1,6 +1,6 @@
 require "neovim/logging"
 require "neovim/session/connection"
-require "neovim/session/rpc"
+require "neovim/session/message_builder"
 require "neovim/session/serializer"
 
 module Neovim
@@ -13,8 +13,8 @@ module Neovim
         @shutdown = false
         @connection = connection
         @serializer = Serializer.new
-        @rpc = RPC.new
-        @rpc_writers = []
+        @message_builder = MessageBuilder.new
+        @message_writers = []
       end
 
       def stop
@@ -45,13 +45,13 @@ module Neovim
           break if !@running
           break if @shutdown
 
-          while writer = @rpc_writers.shift
+          while writer = @message_writers.shift
             writer.call
           end
 
           @connection.read do |bytes|
             @serializer.read(bytes) do |obj|
-              @rpc.read(obj, &callback)
+              @message_builder.read(obj, &callback)
             end
           end
         end
@@ -80,10 +80,10 @@ module Neovim
       private
 
       def enqueue_rpc_writer(type, *args)
-        @rpc_writers << Proc.new do
+        @message_writers << Proc.new do
           debug("writing rpc #{type} #{args}")
 
-          @rpc.write(type, *args) do |arr|
+          @message_builder.write(type, *args) do |arr|
             @serializer.write(arr) do |bytes|
               @connection.write(bytes)
             end

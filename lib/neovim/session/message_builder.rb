@@ -9,7 +9,7 @@ module Neovim
     # requests.
     #
     # @api private
-    class RPC
+    class MessageBuilder
       class Request
         attr_reader :id, :method_name, :arguments
 
