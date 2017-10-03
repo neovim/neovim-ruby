@@ -3,20 +3,20 @@ require "helper"
 module Neovim
   class Session
     RSpec.describe MessageBuilder do
-      let(:rpc) { MessageBuilder.new }
+      let(:message_builder) { MessageBuilder.new }
 
       describe "#write" do
         context "requests" do
           it "yields a valid request message" do
             expect do |y|
-              rpc.write(:request, :method, [1, 2], Proc.new {}, &y)
+              message_builder.write(:request, :method, [1, 2], Proc.new {}, &y)
             end.to yield_with_args([0, 1, :method, [1, 2]])
           end
 
           it "increments the request id" do
             expect do |y|
-              rpc.write(:request, :method, [], Proc.new {}, &y)
-              rpc.write(:request, :method, [], Proc.new {}, &y)
+              message_builder.write(:request, :method, [], Proc.new {}, &y)
+              message_builder.write(:request, :method, [], Proc.new {}, &y)
             end.to yield_successive_args(
               [0, 1, :method, []],
               [0, 2, :method, []]
@@ -27,7 +27,7 @@ module Neovim
         context "responses" do
           it "yields a valid response message" do
             expect do |y|
-              rpc.write(:response, 2, :value, "error msg", &y)
+              message_builder.write(:response, 2, :value, "error msg", &y)
             end.to yield_with_args([1, 2, "error msg", :value])
           end
         end
@@ -35,7 +35,7 @@ module Neovim
         context "notifications" do
           it "yields a valid notification message" do
             expect do |y|
-              rpc.write(:notification, :method, [1, 2], &y)
+              message_builder.write(:notification, :method, [1, 2], &y)
             end.to yield_with_args([2, :method, [1, 2]])
           end
         end
@@ -45,7 +45,7 @@ module Neovim
         context "requests" do
           it "yields a request object" do
             request = nil
-            rpc.read([0, 1, :method, [1, 2]]) do |req|
+            message_builder.read([0, 1, :method, [1, 2]]) do |req|
               request = req
             end
 
@@ -61,8 +61,8 @@ module Neovim
             response = nil
             handler = Proc.new { |res| response = res }
 
-            rpc.write(:request, :method, [1, 2], handler) {}
-            rpc.read([1, 1, [nil, nil], :result])
+            message_builder.write(:request, :method, [1, 2], handler) {}
+            message_builder.read([1, 1, [nil, nil], :result])
 
             expect(response.request_id).to eq(1)
             expect(response.value).to eq(:result)
@@ -76,8 +76,8 @@ module Neovim
               response = res
             end
 
-            rpc.write(:request, :method, [1, 2], handler) {}
-            rpc.read([1, 1, [:some_err, "BOOM"], nil])
+            message_builder.write(:request, :method, [1, 2], handler) {}
+            message_builder.read([1, 1, [:some_err, "BOOM"], nil])
 
             expect(response.request_id).to eq(1)
             expect(response.error).to eq("BOOM")
@@ -88,7 +88,7 @@ module Neovim
         context "notifications" do
           it "yields a notification object" do
             notification = nil
-            rpc.read([2, :method, [1, 2]]) do |ntf|
+            message_builder.read([2, :method, [1, 2]]) do |ntf|
               notification = ntf
             end
 
