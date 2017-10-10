@@ -3,12 +3,6 @@ module Neovim
   class API
     attr_reader :channel_id
 
-    # Represents an unknown API. Used as a stand-in when the API hasn't been
-    # discovered yet via the +nvim_get_api_info+ RPC call.
-    def self.null
-      new([nil, {"functions" => [], "types" => []}])
-    end
-
     def initialize(payload)
       @channel_id, @api_info = payload
     end

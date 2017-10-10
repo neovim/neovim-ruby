@@ -9,22 +9,11 @@ module Neovim
   class Session
     include Logging
 
-    attr_reader :api
-
     def initialize(event_loop)
       @event_loop = event_loop
       @pending_messages = []
       @main_thread = Thread.current
       @main_fiber = Fiber.current
-      @api = API.null
-    end
-
-    # Discover the +nvim+ API as described in the +nvim_get_api_info+ call,
-    # then register msgpack ext types with the event loop.
-    def discover_api
-      @api = API.new(request(:nvim_get_api_info)).tap do |api|
-        @event_loop.register_types(api, self)
-      end
     end
 
     # Run the event loop, handling messages in a +Fiber+.

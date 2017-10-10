@@ -1,4 +1,6 @@
 require "neovim"
+require "neovim/event_loop"
+require "neovim/session"
 require "neovim/host/loader"
 
 module Neovim
@@ -6,27 +8,21 @@ module Neovim
   class Host
     include Logging
 
-    attr_reader :handlers, :specs
-
     # Start a plugin host. This is called by the +nvim-ruby-host+ executable,
     # which is spawned by +nvim+ to discover and run Ruby plugins, and acts as
     # the bridge between +nvim+ and the plugin.
-    def self.run(rplugin_paths, options={})
-      session = options.fetch(:session) do
-        event_loop = EventLoop.stdio
-        Session.new(event_loop)
-      end
+    def self.run(rplugin_paths)
+      event_loop = EventLoop.stdio
+      client = Client.from_event_loop(event_loop)
 
-      client = options.fetch(:client) { Client.new(session) }
-
-      new(session, client).tap do |host|
+      new(client).tap do |host|
         Loader.new(host).load(rplugin_paths)
       end.run
     end
 
-    def initialize(session, client)
-      @session = session
+    def initialize(client)
       @client = client
+      @session = client.session
       @handlers = {"poll" => poll_handler, "specs" => specs_handler}
       @specs = {}
     end

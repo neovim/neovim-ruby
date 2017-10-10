@@ -8,17 +8,6 @@ module Neovim
 
     after { session.shutdown }
 
-    describe "#channel_id" do
-      it "returns nil when the API hasn't been discovered" do
-        expect(session.channel_id).to be(nil)
-      end
-
-      it "returns the channel_id when the API has been discovered" do
-        session.discover_api
-        expect(session.channel_id).to respond_to(:to_int)
-      end
-    end
-
     describe "#request" do
       it "synchronously returns a result" do
         expect(session.request(:nvim_strwidth, "foobar")).to be(6)

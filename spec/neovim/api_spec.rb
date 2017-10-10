@@ -2,15 +2,6 @@ require "helper"
 
 module Neovim
   RSpec.describe API do
-    describe ".null" do
-      it "returns an empty API object" do
-        api = API.null
-
-        expect(api.types).to be_empty
-        expect(api.functions).to be_empty
-      end
-    end
-
     let(:client) { Neovim.attach_child(Support.child_argv) }
 
     let(:api) do

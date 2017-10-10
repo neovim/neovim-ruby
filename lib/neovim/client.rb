@@ -12,14 +12,19 @@ module Neovim
   # @see Window
   # @see Tabpage
   class Client
-    attr_reader :session, :channel_id
+    attr_reader :session, :api
 
-    def initialize(session)
-      session.discover_api
+    def self.from_event_loop(event_loop)
+      session = Session.new(event_loop)
+      api = API.new(session.request(:nvim_get_api_info))
+      event_loop.register_types(api, session)
 
+      new(session, api)
+    end
+
+    def initialize(session, api)
       @session = session
-      @api = session.api
-      @channel_id = session.channel_id
+      @api = api
     end
 
     # Intercept method calls and delegate to appropriate RPC methods.

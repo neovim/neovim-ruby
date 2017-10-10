@@ -92,7 +92,7 @@ module Neovim
         klass = Neovim.const_get(type)
 
         @serializer.register_type(id) do |index|
-          klass.new(index, session)
+          klass.new(index, session, api)
         end
       end
     end

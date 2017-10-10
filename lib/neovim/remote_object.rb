@@ -7,10 +7,10 @@ module Neovim
   class RemoteObject
     attr_reader :index
 
-    def initialize(index, session)
+    def initialize(index, session, api)
       @index = index
       @session = session
-      @api = session.api
+      @api = api
     end
 
     # Serialize object to MessagePack.

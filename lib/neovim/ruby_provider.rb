@@ -36,7 +36,7 @@ module Neovim
         end
 
         begin
-          cid = client.channel_id
+          cid = client.api.channel_id
           client.command("au DirChanged * call rpcrequest(#{cid}, 'ruby_chdir', v:event)")
         rescue ArgumentError
           # Swallow this exception for now. This means the nvim installation is
