@@ -7,6 +7,27 @@ module Neovim
   class EventLoop
     include Logging
 
+    # Connect to a TCP socket.
+    def self.tcp(host, port)
+      new Connection.tcp(host, port)
+    end
+
+    # Connect to a UNIX domain socket.
+    def self.unix(path)
+      new Connection.unix(path)
+    end
+
+    # Spawn and connect to a child +nvim+ process.
+    def self.child(argv)
+      new Connection.child(argv)
+    end
+
+    # Connect to the current process's standard streams. This is used to
+    # promote the current process to a Ruby plugin host.
+    def self.stdio
+      new Connection.stdio
+    end
+
     def initialize(connection)
       @running = false
       @shutdown = false

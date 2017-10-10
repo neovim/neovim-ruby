@@ -1,4 +1,5 @@
 require "helper"
+require "neovim/event_loop/message_builder"
 
 module Neovim
   class EventLoop

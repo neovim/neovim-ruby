@@ -13,8 +13,7 @@ module Neovim
     # the bridge between +nvim+ and the plugin.
     def self.run(rplugin_paths, options={})
       session = options.fetch(:session) do
-        connection = EventLoop::Connection.stdio
-        event_loop = EventLoop.new(connection)
+        event_loop = EventLoop.stdio
         Session.new(event_loop)
       end
 

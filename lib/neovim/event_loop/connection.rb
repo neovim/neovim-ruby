@@ -9,19 +9,16 @@ module Neovim
     class Connection
       include Logging
 
-      # Connect to a TCP socket.
       def self.tcp(host, port)
         socket = Socket.tcp(host, port)
         new(socket)
       end
 
-      # Connect to a UNIX domain socket.
       def self.unix(path)
         socket = Socket.unix(path)
         new(socket)
       end
 
-      # Spawn and connect to a child +nvim+ process.
       def self.child(_argv)
         argv = _argv.include?("--embed") ? _argv : _argv + ["--embed"]
 
@@ -32,8 +29,6 @@ module Neovim
         new(io)
       end
 
-      # Connect to the current process's standard streams. This is used to
-      # promote the current process to a Ruby plugin host.
       def self.stdio
         new(STDIN, STDOUT)
       end

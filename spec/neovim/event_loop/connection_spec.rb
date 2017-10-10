@@ -1,5 +1,6 @@
 require "helper"
 require "securerandom"
+require "neovim/event_loop/connection"
 
 module Neovim
   class EventLoop
