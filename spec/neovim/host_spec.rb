@@ -12,14 +12,12 @@ module Neovim
       let(:nvim_rd) { pull_pipe[0] }
       let(:nvim_wr) { push_pipe[1] }
 
-      let(:client) { double(:client, :strwidth => 2) }
-
       let(:plugin_path) do
         Support.file_path("my_plugin").tap do |path|
           File.write(path, <<-PLUGIN)
             Neovim.plugin do |plug|
               plug.command(:StrWidth, :nargs => 1, :sync => true) do |client, arg|
-                client.strwidth(arg)
+                arg.bytesize
               end
 
               plug.command(:Boom, :sync => true) do |client|
@@ -35,8 +33,20 @@ module Neovim
           $stdout.reopen(host_wr)
           $stdin.reopen(host_rd)
 
-          Host.run([plugin_path], :client => client)
+          Host.run([plugin_path])
         end
+      end
+
+      before do
+        _, reqid, method = MessagePack.unpack(nvim_rd.readpartial(1024))
+        expect(method).to eq("nvim_get_api_info")
+
+        session = Session.new(EventLoop.child(Support.child_argv))
+        api_info = session.request(:nvim_get_api_info)
+        session.shutdown
+
+        nvim_wr.write(MessagePack.pack([1, reqid, nil, api_info]))
+        nvim_wr.flush
       end
 
       after do
