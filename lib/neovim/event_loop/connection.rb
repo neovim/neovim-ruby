@@ -2,7 +2,7 @@ require "neovim/logging"
 require "socket"
 
 module Neovim
-  class Session
+  class EventLoop
     # The lowest level interface to reading from and writing to +nvim+.
     #
     # @api private

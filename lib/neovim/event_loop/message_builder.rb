@@ -1,7 +1,7 @@
 require "neovim/logging"
 
 module Neovim
-  class Session
+  class EventLoop
     # Handles formatting RPC messages and registering response callbacks for
     # requests.
     #

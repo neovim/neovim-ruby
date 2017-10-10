@@ -2,7 +2,7 @@ require "neovim/logging"
 require "msgpack"
 
 module Neovim
-  class Session
+  class EventLoop
     # Handles serializing RPC messages to and from MessagePack
     #
     # @api private

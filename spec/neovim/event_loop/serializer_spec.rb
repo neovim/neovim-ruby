@@ -3,7 +3,7 @@ require "securerandom"
 require "helper"
 
 module Neovim
-  class Session
+  class EventLoop
     RSpec.describe Serializer do
       let(:serializer) { Serializer.new }
 

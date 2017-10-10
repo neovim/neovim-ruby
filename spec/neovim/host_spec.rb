@@ -3,8 +3,6 @@ require "neovim/host"
 
 module Neovim
   RSpec.describe Host do
-    let(:event_loop) { instance_double(Session::EventLoop) }
-
     describe ".run" do
       let!(:push_pipe) { IO.pipe }
       let!(:pull_pipe) { IO.pipe }

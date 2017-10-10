@@ -2,7 +2,7 @@ require "helper"
 require "securerandom"
 
 module Neovim
-  class Session
+  class EventLoop
     RSpec.describe Connection do
       describe "#write" do
         it "writes to the underlying file descriptor" do

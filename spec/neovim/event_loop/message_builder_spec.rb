@@ -1,7 +1,7 @@
 require "helper"
 
 module Neovim
-  class Session
+  class EventLoop
     RSpec.describe MessageBuilder do
       let(:message_builder) { MessageBuilder.new }
 

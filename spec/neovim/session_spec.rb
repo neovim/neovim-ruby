@@ -3,8 +3,8 @@ require "securerandom"
 
 module Neovim
   RSpec.describe Session do
-    let(:connection) { Session::Connection.child(Support.child_argv) }
-    let(:event_loop) { Session::EventLoop.new(connection) }
+    let(:connection) { EventLoop::Connection.child(Support.child_argv) }
+    let(:event_loop) { EventLoop.new(connection) }
     let!(:session) { Session.new(event_loop) }
 
     after { session.shutdown }
