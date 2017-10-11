@@ -66,11 +66,6 @@ module Neovim
       @event_loop.notify(method, *args)
     end
 
-    # Return the channel ID if registered via +nvim_get_api_info+.
-    def channel_id
-      api.channel_id
-    end
-
     def shutdown
       @running = false
       @event_loop.shutdown
