@@ -1,5 +1,4 @@
 require "helper"
-require "neovim/event_loop"
 
 module Neovim
   RSpec.describe EventLoop do

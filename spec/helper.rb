@@ -11,6 +11,8 @@ require "pry"
 require "rubygems"
 require "stringio"
 require "timeout"
+require "securerandom"
+require "msgpack"
 
 require File.expand_path("../support.rb", __FILE__)
 

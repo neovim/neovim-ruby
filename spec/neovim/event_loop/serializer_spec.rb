@@ -1,7 +1,4 @@
-require "msgpack"
-require "securerandom"
 require "helper"
-require "neovim/event_loop/serializer"
 
 module Neovim
   class EventLoop

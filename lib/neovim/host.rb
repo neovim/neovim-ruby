@@ -1,6 +1,6 @@
 require "neovim"
+require "neovim/client"
 require "neovim/event_loop"
-require "neovim/session"
 require "neovim/host/loader"
 
 module Neovim

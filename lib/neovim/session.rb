@@ -1,5 +1,4 @@
 require "neovim/logging"
-require "neovim/api"
 require "fiber"
 
 module Neovim

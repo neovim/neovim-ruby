@@ -1,5 +1,4 @@
 require "helper"
-require "securerandom"
 
 module Neovim
   RSpec.describe Session do
