@@ -28,12 +28,12 @@ module Neovim
         end
       end
 
-      let!(:host_pid) do
-        fork do
-          $stdout.reopen(host_wr)
-          $stdin.reopen(host_rd)
+      let!(:host_thread) do
+        connection = EventLoop::Connection.new(host_rd, host_wr)
+        event_loop = EventLoop.new(connection)
 
-          Host.run([plugin_path])
+        Thread.new do
+          Host.run([plugin_path], event_loop)
         end
       end
 
@@ -50,11 +50,8 @@ module Neovim
       end
 
       after do
-        begin
-          Process.kill(:TERM, host_pid)
-          Process.waitpid(host_pid)
-        rescue Errno::ESRCH, Errno::ECHILD
-        end
+        host_thread.kill
+        host_thread.join
       end
 
       it "responds 'ok' to the 'poll' request" do
@@ -104,7 +101,7 @@ module Neovim
         expect(response).to eq([1, 0, nil, 2])
       end
 
-      it "handles exceptions in plugin handlers" do
+      it "handles exceptions in plugin handlers", :silence_warnings do
         message = MessagePack.pack([0, 0, "#{plugin_path}:command:Boom", ["hi"]])
         nvim_wr.write(message)
         nvim_wr.flush

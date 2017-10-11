@@ -11,8 +11,7 @@ module Neovim
     # Start a plugin host. This is called by the +nvim-ruby-host+ executable,
     # which is spawned by +nvim+ to discover and run Ruby plugins, and acts as
     # the bridge between +nvim+ and the plugin.
-    def self.run(rplugin_paths)
-      event_loop = EventLoop.stdio
+    def self.run(rplugin_paths, event_loop=EventLoop.stdio)
       client = Client.from_event_loop(event_loop)
 
       new(client).tap do |host|
@@ -54,7 +53,7 @@ module Neovim
         fetch(message.method_name, default_handler).
         call(@client, message)
     rescue => e
-      fatal("got unexpected error #{e.inspect}")
+      warn("got unexpected error #{e.inspect}")
       debug(e.backtrace.join("\n"))
     end
 
