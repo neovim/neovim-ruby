@@ -39,22 +39,23 @@ module Neovim
     # Run the event loop, passing received messages to the appropriate handler.
     def run
       @session.run { |msg| handle(msg) }
-    rescue => e
-      fatal("got unexpected error #{e.inspect}")
-      debug(e.backtrace.join("\n"))
+    ensure
+      @client.shutdown
+      @session.shutdown
     end
 
     # Handle messages received from the host. Sends a +Neovim::Client+ along
     # with the message to be used in plugin callbacks.
     def handle(message)
-      debug("handling #{message.inspect}")
+      log_debug(__method__, :message => message.to_h)
 
       @handlers.
         fetch(message.method_name, default_handler).
         call(@client, message)
-    rescue => e
-      warn("got unexpected error #{e.inspect}")
-      debug(e.backtrace.join("\n"))
+    rescue SignalException => ex
+      log_error(__method__, ex)
+    rescue => ex
+      log_fatal(__method__, ex)
     end
 
     private
@@ -87,15 +88,12 @@ module Neovim
     def wrap_plugin_handler(handler)
       Proc.new do |client, message|
         begin
-          debug("received #{message.inspect}")
           args = message.arguments.flatten(1)
           result = handler.call(client, *args)
 
           @session.respond(message.id, result) if message.sync?
         rescue => e
-          warn("got unexpected error #{e.inspect}")
-          debug(e.backtrace.join("\n"))
-
+          log_error(__method__, e)
           @session.respond(message.id, nil, e.message) if message.sync?
         end
       end

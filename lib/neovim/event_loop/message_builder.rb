@@ -7,44 +7,33 @@ module Neovim
     #
     # @api private
     class MessageBuilder
-      class Request
-        attr_reader :id, :method_name, :arguments
-
-        def initialize(id, method_name, args)
-          @id = id
-          @method_name = method_name.to_s
-          @arguments = args
-        end
-
+      class Request < Struct.new(:id, :method_name, :arguments)
         def sync?
           true
         end
+
+        def to_h
+          super.merge(:type => :request)
+        end
       end
 
-      class Notification
-        attr_reader :method_name, :arguments
-
-        def initialize(method_name, args)
-          @method_name = method_name.to_s
-          @arguments = args
-        end
-
+      class Notification < Struct.new(:method_name, :arguments)
         def sync?
           false
         end
+
+        def to_h
+          super.merge(:type => :notification)
+        end
       end
 
-      class Response
-        attr_reader :request_id, :error
-
-        def initialize(request_id, value, error)
-          @request_id = request_id
-          @value = value
-          @error = error
+      class Response < Struct.new(:request_id, :value, :error)
+        def value!
+          error ? raise(error) : value
         end
 
-        def value
-          @error ? raise(@error) : @value
+        def to_h
+          super.merge(:type => :response)
         end
       end
 
@@ -56,20 +45,44 @@ module Neovim
       end
 
       def write(type, *write_args)
-        debug("write #{type} #{write_args}")
-
         case type
         when :request
           method, args, response_handler = write_args
+
           @request_id += 1
           @pending_requests[@request_id] = response_handler
+
+          log_debug(
+            __method__,
+            :type => type,
+            :request_id => @request_id,
+            :method_name => method,
+            :arguments => args,
+          )
 
           yield [0, @request_id, method, args]
         when :response
           reqid, value, error = write_args
+
+          log_debug(
+            __method__,
+            :type => type,
+            :request_id => reqid,
+            :value => value,
+            :error => error,
+          )
+
           yield [1, reqid, error, value]
         when :notification
           method, args = write_args
+
+          log_debug(
+            __method__,
+            :type => type,
+            :method_name => method,
+            :arguments => args,
+          )
+
           yield [2, method, args]
         else
           raise "Unknown RPC message type #{type}"
@@ -80,17 +93,17 @@ module Neovim
         case kind
         when 0
           message = Request.new(*payload)
-          debug("read #{message}")
+          log_debug(__method__, message.to_h)
           yield message
         when 2
           message = Notification.new(*payload)
-          debug("read #{message}")
+          log_debug(__method__, message.to_h)
           yield message
         when 1
           reqid, (_, error), result = payload
           handler = @pending_requests.delete(reqid) || Proc.new {}
           message = Response.new(reqid, result, error)
-          debug("read #{message}")
+          log_debug(__method__, message.to_h)
           handler.call(message)
         end
       end

@@ -45,14 +45,14 @@ module Neovim
     def request(method, *args)
       main_thread_only do
         if Fiber.current == @main_fiber
-          debug("handling blocking request")
+          log_debug(__method__, :type => :blocking)
           response = blocking_request(method, *args)
         else
-          debug("yielding request to fiber")
+          log_debug(__method__, :type => :yielding)
           response = yielding_request(method, *args)
         end
 
-        response.value
+        response.value!
       end
     end
 

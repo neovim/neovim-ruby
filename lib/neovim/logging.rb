@@ -1,14 +1,11 @@
 require "logger"
+require "json"
 
 module Neovim
   # Mixed into classes for unified logging helper methods.
   #
   # @api private
   module Logging
-    class << self
-      attr_writer :logger
-    end
-
     # Return the value of @logger, or construct it from the environment.
     # $NVIM_RUBY_LOG_FILE specifies a file to log to (default +STDERR+), while
     # $NVIM_RUBY_LOG_LEVEL specifies the level (default +WARN+)
@@ -31,34 +28,69 @@ module Neovim
         @logger.level = Logger::WARN
       end
 
+      @logger.formatter = json_formatter
       @logger
+    end
+
+    def self.logger=(logger)
+      logger.formatter = json_formatter
+      @logger = logger
     end
 
     def self.included(base)
       base.send(:include, Helpers)
     end
 
+    def self.json_formatter
+      Proc.new do |level, time, _, fields|
+        JSON.generate(
+          {:_level => level, :_time => time}.merge!(fields)
+        ) << "\n"
+      end
+    end
+    private_class_method :json_formatter
+
     module Helpers
       private
 
-      def fatal(msg)
-        logger.fatal(self.class) { msg }
+      def log_error(_method, ex)
+        log(:error, _method, :exception => ex.class, :message => ex.message)
+        debug_backtrace(_method, ex)
       end
 
-      def warn(msg)
-        logger.warn(self.class) { msg }
+      def log_fatal(_method, ex)
+        log(:fatal, _method, :exception => ex.class, :message => ex.message)
+        debug_backtrace(_method, ex)
       end
 
-      def info(msg)
-        logger.info(self.class) { msg }
+      def log_warn(_method, fields)
+        log(:warn, _method, fields)
       end
 
-      def debug(msg)
-        logger.debug(self.class) { msg }
+      def log_debug(_method, fields)
+        log(:debug, _method, fields)
       end
 
-      def logger
-        Logging.logger
+      def debug_backtrace(_method, ex)
+        log(
+          :debug,
+          _method,
+          :exception => ex.class,
+          :message => ex.message,
+          :backtrace => ex.backtrace
+        )
+      end
+
+      def log(level, _method, fields)
+        base = {:_class => self.class, :_method => _method}
+
+        begin
+          Logging.logger.public_send(level, base.merge!(fields.to_hash))
+        rescue => ex
+          Logging.logger.error("failed to log: #{ex}")
+        end
+      rescue
+        # Inability to log shouldn't abort process
       end
     end
   end
