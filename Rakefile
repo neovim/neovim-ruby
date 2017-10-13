@@ -14,14 +14,14 @@ end
 namespace :spec do
   desc "Run functional specs"
   RSpec::Core::RakeTask.new(:functional) do |t|
-    t.exclude_pattern = "spec/integration_spec.rb,spec/integration/**/*"
+    t.exclude_pattern = "spec/acceptance_spec.rb,spec/acceptance/**/*"
   end
 
-  desc "Run integration specs"
-  RSpec::Core::RakeTask.new(:integration) do |t|
-    t.pattern = "spec/integration_spec.rb"
+  desc "Run acceptance specs"
+  RSpec::Core::RakeTask.new(:acceptance) do |t|
+    t.pattern = "spec/acceptance_spec.rb"
+    t.rspec_opts = "--format documentation"
   end
 end
 
-RSpec::Core::RakeTask.new(:spec)
-task :default => :spec
+task :default => ["spec:functional", "spec:acceptance"]
