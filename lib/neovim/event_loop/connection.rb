@@ -43,7 +43,7 @@ module Neovim
       def write(data)
         written = 0
         total = data.bytesize
-        log_debug(__method__, :bytes => data.bytesize)
+        log(:debug, __method__, :bytes => data.bytesize)
 
         begin
           while written < total
@@ -59,7 +59,7 @@ module Neovim
 
       def read
         @rd.readpartial(1024 * 16).tap do |bytes|
-          log_debug(__method__, :bytes => bytes.bytesize)
+          log(:debug, __method__, :bytes => bytes.bytesize)
           yield bytes
         end
       end

@@ -46,12 +46,13 @@ module Neovim
     end
 
     def request(method, *args, &response_handler)
-      log_debug(__method__, :name => method, :arguments => args)
+      log(:debug, __method__, :name => method, :arguments => args)
       write(:request, method, args, response_handler)
     end
 
     def respond(request_id, return_value, error)
-      log_debug(
+      log(
+        :debug,
         __method__,
         :request_id => request_id,
         :return_value => return_value,
@@ -62,7 +63,7 @@ module Neovim
     end
 
     def notify(method, *args)
-      log_debug(__method__, :name => method, :arguments => args)
+      log(:debug, __method__, :name => method, :arguments => args)
       write(:notification, method, args)
     end
 
@@ -80,9 +81,9 @@ module Neovim
         end
       end
     rescue EOFError => ex
-      log_error(__method__, ex)
+      log(:error, __method__, ex)
     rescue => ex
-      log_fatal(__method__, ex)
+      log(:fatal, __method__, ex)
     ensure
       @connection.close if @shutdown
     end
@@ -92,7 +93,7 @@ module Neovim
       api.types.each do |type, info|
         id = info.fetch("id")
         klass = Neovim.const_get(type)
-        log_debug(__method__, :type => type, :id => id)
+        log(:debug, __method__, :type => type, :id => id)
 
         @serializer.register_type(id) do |index|
           klass.new(index, session, api)

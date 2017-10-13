@@ -52,7 +52,8 @@ module Neovim
           @request_id += 1
           @pending_requests[@request_id] = response_handler
 
-          log_debug(
+          log(
+            :debug,
             __method__,
             :type => type,
             :request_id => @request_id,
@@ -64,7 +65,8 @@ module Neovim
         when :response
           reqid, value, error = write_args
 
-          log_debug(
+          log(
+            :debug,
             __method__,
             :type => type,
             :request_id => reqid,
@@ -76,7 +78,8 @@ module Neovim
         when :notification
           method, args = write_args
 
-          log_debug(
+          log(
+            :debug,
             __method__,
             :type => type,
             :method_name => method,
@@ -93,17 +96,17 @@ module Neovim
         case kind
         when 0
           message = Request.new(*payload)
-          log_debug(__method__, message.to_h)
+          log(:debug, __method__, message.to_h)
           yield message
         when 2
           message = Notification.new(*payload)
-          log_debug(__method__, message.to_h)
+          log(:debug, __method__, message.to_h)
           yield message
         when 1
           reqid, (_, error), result = payload
           handler = @pending_requests.delete(reqid) || Proc.new {}
           message = Response.new(reqid, result, error)
-          log_debug(__method__, message.to_h)
+          log(:debug, __method__, message.to_h)
           handler.call(message)
         end
       end

@@ -44,7 +44,7 @@ module Neovim
     def self.json_formatter
       Proc.new do |level, time, _, fields|
         JSON.generate(
-          {:_level => level, :_time => time}.merge!(fields)
+          {:_level => level, :_time => time.to_f}.merge!(fields)
         ) << "\n"
       end
     end
@@ -53,32 +53,10 @@ module Neovim
     module Helpers
       private
 
-      def log_error(_method, ex)
-        log(:error, _method, :exception => ex.class, :message => ex.message)
-        debug_backtrace(_method, ex)
-      end
-
-      def log_fatal(_method, ex)
-        log(:fatal, _method, :exception => ex.class, :message => ex.message)
-        debug_backtrace(_method, ex)
-      end
-
-      def log_warn(_method, fields)
-        log(:warn, _method, fields)
-      end
-
-      def log_debug(_method, fields)
-        log(:debug, _method, fields)
-      end
-
-      def debug_backtrace(_method, ex)
-        log(
-          :debug,
-          _method,
-          :exception => ex.class,
-          :message => ex.message,
-          :backtrace => ex.backtrace
-        )
+      def log_exception(level, _method, ex)
+        ex_fields = {:exception => ex.class, :message => ex.message}
+        log(level, _method, ex_fields)
+        log(:debug, _method, ex_fields.merge!(:backtrace => ex.backtrace))
       end
 
       def log(level, _method, fields)
