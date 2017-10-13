@@ -7,7 +7,15 @@ module Neovim
     #
     # @api private
     class MessageBuilder
+      module StructToH
+        def to_h
+          each_pair.inject({}) { |acc, (k, v)| acc.merge(k => v) }
+        end
+      end
+
       class Request < Struct.new(:id, :method_name, :arguments)
+        include StructToH
+
         def sync?
           true
         end
@@ -18,6 +26,8 @@ module Neovim
       end
 
       class Notification < Struct.new(:method_name, :arguments)
+        include StructToH
+
         def sync?
           false
         end
@@ -28,6 +38,8 @@ module Neovim
       end
 
       class Response < Struct.new(:request_id, :value, :error)
+        include StructToH
+
         def value!
           error ? raise(error) : value
         end
