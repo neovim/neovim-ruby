@@ -34,7 +34,7 @@ module Neovim
       @connection = connection
       @serializer = Serializer.new
       @message_builder = MessageBuilder.new
-      @message_writers = []
+      @write_queue = []
     end
 
     def stop
@@ -47,15 +47,15 @@ module Neovim
     end
 
     def request(method, *args, &response_handler)
-      enqueue_rpc_writer(:request, method, args, response_handler)
+      @write_queue.push([:request, method, args, response_handler])
     end
 
     def respond(request_id, return_value, error)
-      enqueue_rpc_writer(:response, request_id, return_value, error)
+      @write_queue.push([:response, request_id, return_value, error])
     end
 
     def notify(method, *args)
-      enqueue_rpc_writer(:notification, method, args)
+      @write_queue.push([:notification, method, args])
     end
 
     def run(&callback)
@@ -65,8 +65,12 @@ module Neovim
         break if !@running
         break if @shutdown
 
-        while writer = @message_writers.shift
-          writer.call
+        while write_args = @write_queue.shift
+          @message_builder.write(*write_args) do |arr|
+            @serializer.write(arr) do |bytes|
+              @connection.write(bytes)
+            end
+          end
         end
 
         @connection.read do |bytes|
@@ -93,20 +97,6 @@ module Neovim
 
         @serializer.register_type(id) do |index|
           klass.new(index, session, api)
-        end
-      end
-    end
-
-    private
-
-    def enqueue_rpc_writer(type, *args)
-      @message_writers << Proc.new do
-        debug("writing rpc #{type} #{args}")
-
-        @message_builder.write(type, *args) do |arr|
-          @serializer.write(arr) do |bytes|
-            @connection.write(bytes)
-          end
         end
       end
     end
