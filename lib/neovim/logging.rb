@@ -53,22 +53,29 @@ module Neovim
     module Helpers
       private
 
-      def log_exception(level, _method, ex)
-        ex_fields = {:exception => ex.class, :message => ex.message}
-        log(level, _method, ex_fields)
-        log(:debug, _method, ex_fields.merge!(:backtrace => ex.backtrace))
-      end
-
-      def log(level, _method, fields)
-        base = {:_class => self.class, :_method => _method}
-
+      def log(level, &block)
         begin
-          Logging.logger.public_send(level, base.merge!(fields.to_hash))
+          Logging.logger.public_send(level) do
+            {
+              :_class => self.class,
+              :_method => block.binding.eval("__method__"),
+            }.merge!(block.call)
+          end
         rescue => ex
-          Logging.logger.error("failed to log: #{ex}")
+          Logging.logger.error("failed to log: #{ex.inspect}")
         end
       rescue
         # Inability to log shouldn't abort process
+      end
+
+      def log_exception(level, ex)
+        log(level) do
+          {:exception => ex.class, :message => ex.message}
+        end
+
+        log(:debug) do
+          {:exception => ex.class, :message => ex.message, :backtrace => ex.backtrace}
+        end
       end
     end
   end

@@ -15,13 +15,13 @@ module Neovim
 
       # Serialize an RPC message
       def write(obj)
-        log(:debug, __method__, :object => obj)
+        log(:debug) { {:object => obj} }
         yield MessagePack.pack(obj)
       end
 
       def read(bytes)
         @unpacker.feed_each(bytes) do |obj|
-          log(:debug, __method__, :object => obj)
+          log(:debug) { {:object => obj} }
           yield obj
         end
       end

@@ -45,10 +45,8 @@ module Neovim
     def request(method, *args)
       main_thread_only do
         if Fiber.current == @main_fiber
-          log(:debug, __method__, :type => :blocking)
           response = blocking_request(method, *args)
         else
-          log(:debug, __method__, :type => :yielding)
           response = yielding_request(method, *args)
         end
 
@@ -78,6 +76,13 @@ module Neovim
     private
 
     def yielding_request(method, *args)
+      log(:debug) do
+        {
+          :method_name => method,
+          :arguments => args,
+        }
+      end
+
       fiber = Fiber.current
       @event_loop.request(method, *args) do |response|
         fiber.resume(response)
@@ -86,6 +91,13 @@ module Neovim
     end
 
     def blocking_request(method, *args)
+      log(:debug) do
+        {
+          :method_name => method,
+          :arguments => args,
+        }
+      end
+
       response = nil
 
       @event_loop.request(method, *args) do |res|

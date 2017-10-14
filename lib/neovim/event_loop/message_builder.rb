@@ -64,39 +64,39 @@ module Neovim
           @request_id += 1
           @pending_requests[@request_id] = response_handler
 
-          log(
-            :debug,
-            __method__,
-            :type => type,
-            :request_id => @request_id,
-            :method_name => method,
-            :arguments => args,
-          )
+          log(:debug) do
+            {
+              :type => type,
+              :request_id => @request_id,
+              :method_name => method,
+              :arguments => args,
+            }
+          end
 
           yield [0, @request_id, method, args]
         when :response
           reqid, value, error = write_args
 
-          log(
-            :debug,
-            __method__,
-            :type => type,
-            :request_id => reqid,
-            :value => value,
-            :error => error,
-          )
+          log(:debug) do
+            {
+              :type => type,
+              :request_id => reqid,
+              :value => value,
+              :error => error,
+            }
+          end
 
           yield [1, reqid, error, value]
         when :notification
           method, args = write_args
 
-          log(
-            :debug,
-            __method__,
-            :type => type,
-            :method_name => method,
-            :arguments => args,
-          )
+          log(:debug) do
+            {
+              :type => type,
+              :method_name => method,
+              :arguments => args,
+            }
+          end
 
           yield [2, method, args]
         else
@@ -108,17 +108,17 @@ module Neovim
         case kind
         when 0
           message = Request.new(*payload)
-          log(:debug, __method__, message.to_h)
+          log(:debug) { message.to_h }
           yield message
         when 2
           message = Notification.new(*payload)
-          log(:debug, __method__, message.to_h)
+          log(:debug) { message.to_h }
           yield message
         when 1
           reqid, (_, error), result = payload
           handler = @pending_requests.delete(reqid) || Proc.new {}
           message = Response.new(reqid, result, error)
-          log(:debug, __method__, message.to_h)
+          log(:debug) { message.to_h }
           handler.call(message)
         end
       end

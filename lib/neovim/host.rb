@@ -47,15 +47,15 @@ module Neovim
     # Handle messages received from the host. Sends a +Neovim::Client+ along
     # with the message to be used in plugin callbacks.
     def handle(message)
-      log(:debug, __method__, :message => message.to_h)
+      log(:debug) { message.to_h }
 
       @handlers.
         fetch(message.method_name, default_handler).
         call(@client, message)
     rescue SignalException => ex
-      log_exception(:debug, __method__, ex)
+      log_exception(:debug, ex)
     rescue => ex
-      log_exception(:fatal, __method__, ex)
+      log_exception(:fatal, ex)
     end
 
     private
@@ -93,7 +93,7 @@ module Neovim
 
           @session.respond(message.id, result) if message.sync?
         rescue => e
-          log_exception(:error, __method__, e)
+          log_exception(:error, e)
           @session.respond(message.id, nil, e.message) if message.sync?
         end
       end
