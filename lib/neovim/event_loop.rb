@@ -34,7 +34,6 @@ module Neovim
       @connection = connection
       @serializer = Serializer.new
       @message_builder = MessageBuilder.new
-      @write_queue = []
     end
 
     def stop
@@ -47,15 +46,15 @@ module Neovim
     end
 
     def request(method, *args, &response_handler)
-      @write_queue.push([:request, method, args, response_handler])
+      write(:request, method, args, response_handler)
     end
 
     def respond(request_id, return_value, error)
-      @write_queue.push([:response, request_id, return_value, error])
+      write(:response, request_id, return_value, error)
     end
 
     def notify(method, *args)
-      @write_queue.push([:notification, method, args])
+      write(:notification, method, args)
     end
 
     def run(&callback)
@@ -64,14 +63,6 @@ module Neovim
       loop do
         break if !@running
         break if @shutdown
-
-        while write_args = @write_queue.shift
-          @message_builder.write(*write_args) do |arr|
-            @serializer.write(arr) do |bytes|
-              @connection.write(bytes)
-            end
-          end
-        end
 
         @connection.read do |bytes|
           @serializer.read(bytes) do |obj|
@@ -97,6 +88,16 @@ module Neovim
 
         @serializer.register_type(id) do |index|
           klass.new(index, session, api)
+        end
+      end
+    end
+
+    private
+
+    def write(type, *args)
+      @message_builder.write(type, *args) do |arr|
+        @serializer.write(arr) do |bytes|
+          @connection.write(bytes)
         end
       end
     end

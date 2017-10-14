@@ -7,7 +7,7 @@ require "net/http"
 require "open-uri"
 require "tempfile"
 
-RSpec.describe "Acceptance", :timeout => 5 do
+RSpec.describe "Acceptance", :timeout => 10 do
   let(:root) { File.expand_path("../acceptance", __FILE__) }
   let(:init) { File.join(root, "runtime/init.vim") }
   let(:manifest) { File.join(root, "runtime/rplugin.vim") }
