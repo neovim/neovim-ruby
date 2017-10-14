@@ -42,9 +42,14 @@ module Neovim
     end
 
     def self.json_formatter
+      timestamp_format = "%Y-%m-%dT%H:%M:%S.%6N ".freeze
+
       Proc.new do |level, time, _, fields|
         JSON.generate(
-          {:_level => level, :_time => time.to_f}.merge!(fields)
+          {
+            :_level => level,
+            :_time => time.strftime(timestamp_format)
+          }.merge!(fields)
         ) << "\n"
       end
     end
