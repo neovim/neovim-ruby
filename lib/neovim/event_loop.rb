@@ -81,9 +81,9 @@ module Neovim
         end
       end
     rescue EOFError => ex
-      log_exception(:debug, ex)
+      log_exception(:debug, ex, __method__)
     rescue => ex
-      log_exception(:fatal, ex)
+      log_exception(:fatal, ex, __method__)
     ensure
       @connection.close if @shutdown
     end

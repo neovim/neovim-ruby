@@ -53,9 +53,9 @@ module Neovim
         fetch(message.method_name, default_handler).
         call(@client, message)
     rescue SignalException => ex
-      log_exception(:debug, ex)
+      log_exception(:debug, ex, __method__)
     rescue => ex
-      log_exception(:fatal, ex)
+      log_exception(:fatal, ex, __method__)
     end
 
     private
@@ -93,7 +93,7 @@ module Neovim
 
           @session.respond(message.id, result) if message.sync?
         rescue => e
-          log_exception(:error, e)
+          log_exception(:error, e, __method__)
           @session.respond(message.id, nil, e.message) if message.sync?
         end
       end

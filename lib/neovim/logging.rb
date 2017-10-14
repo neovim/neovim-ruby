@@ -58,12 +58,12 @@ module Neovim
     module Helpers
       private
 
-      def log(level, &block)
+      def log(level, _method=nil, &block)
         begin
           Logging.logger.public_send(level) do
             {
               :_class => self.class,
-              :_method => block.binding.eval("__method__"),
+              :_method => _method || block.binding.eval("__method__"),
             }.merge!(block.call)
           end
         rescue => ex
@@ -73,12 +73,12 @@ module Neovim
         # Inability to log shouldn't abort process
       end
 
-      def log_exception(level, ex)
-        log(level) do
+      def log_exception(level, ex, _method)
+        log(level, _method) do
           {:exception => ex.class, :message => ex.message}
         end
 
-        log(:debug) do
+        log(:debug, _method) do
           {:exception => ex.class, :message => ex.message, :backtrace => ex.backtrace}
         end
       end
