@@ -2,7 +2,8 @@ require "bundler/setup"
 
 if ENV["REPORT_COVERAGE"]
   require "coveralls"
-  Coveralls.wear!
+  Coveralls.wear_merged!
+  SimpleCov.merge_timeout(3600)
 end
 
 require "fileutils"
