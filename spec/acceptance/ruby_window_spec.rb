@@ -1,8 +1,3 @@
-begin
-  require "helper"
-rescue LoadError
-end
-
 RSpec.describe "Vim::Window", :embedded do
   before do
     $curbuf.set_lines(0, -1, true, ["one", "two", "three"])

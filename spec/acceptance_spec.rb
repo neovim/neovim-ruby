@@ -1,11 +1,20 @@
 ENV.delete("VIM")
 ENV.delete("VIMRUNTIME")
 
-require "helper"
 require "json"
 require "net/http"
 require "open-uri"
 require "tempfile"
+
+if ENV["REPORT_COVERAGE"]
+  require "coveralls"
+  Coveralls.wear_merged!
+  SimpleCov.merge_timeout 3600
+  SimpleCov.command_name "spec:acceptance"
+end
+
+$:.unshift File.expand_path("../../lib")
+require "neovim"
 
 RSpec.describe "Acceptance", :timeout => 10 do
   let(:root) { File.expand_path("../acceptance", __FILE__) }
