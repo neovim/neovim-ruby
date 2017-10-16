@@ -11,6 +11,7 @@ if ENV["REPORT_COVERAGE"]
   require "coveralls"
   Coveralls.wear_merged!
   SimpleCov.merge_timeout(3600)
+  SimpleCov.command_name("spec:acceptance")
 end
 EOF
 
