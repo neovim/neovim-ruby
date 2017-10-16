@@ -13,6 +13,9 @@ if ENV["REPORT_COVERAGE"]
   SimpleCov.merge_timeout 3600
   SimpleCov.command_name "spec:acceptance:#{Process.pid}"
 end
+
+$:.unshift File.expand_path("../../../lib", __FILE__)
+require "neovim"
 EOS
 
 function! RunSuite() abort
