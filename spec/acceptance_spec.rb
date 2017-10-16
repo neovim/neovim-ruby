@@ -6,9 +6,6 @@ require "net/http"
 require "open-uri"
 require "tempfile"
 
-$:.unshift File.expand_path("../../lib")
-require "neovim"
-
 RSpec.describe "Acceptance", :timeout => 10 do
   let(:root) { File.expand_path("../acceptance", __FILE__) }
   let(:init) { File.join(root, "runtime/init.vim") }
@@ -95,7 +92,8 @@ RSpec.describe "Acceptance", :timeout => 10 do
   end
 
   def run_nvim(env, *opts)
-    system(env, Neovim.executable.path, "--headless", "-n", "-u", init, *opts)
+    nvim = env.fetch("NVIM_EXECUTABLE", "nvim")
+    system(env, nvim, "--headless", "-n", "-u", init, *opts)
   end
 
   def run_rspec(*args)
