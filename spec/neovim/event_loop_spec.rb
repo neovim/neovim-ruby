@@ -38,7 +38,7 @@ module Neovim
         server_wr.flush
 
         event_loop.run
-        expect(response.value).to eq("value")
+        expect(response.value!).to eq("value")
       end
 
       it "writes responses" do
