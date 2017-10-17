@@ -24,7 +24,6 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
   config.order = :random
   config.color = true
-  config.filter_run_excluding :embedded
 
   config.around(:example) do |spec|
     Support.setup_workspace

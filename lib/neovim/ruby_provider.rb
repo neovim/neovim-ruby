@@ -116,8 +116,10 @@ module Neovim
     def self.__with_exception_handling(client)
       begin
         yield
-      rescue SyntaxError, LoadError, StandardError => e
-        msg = [e.class, e.message].join(": ")
+      rescue SignalException => sig
+        raise sig
+      rescue Exception => e
+        msg = [e.class, e.message.gsub("\n", " ")].join(": ")
         client.err_writeln(msg.lines.first.strip)
       end
     end

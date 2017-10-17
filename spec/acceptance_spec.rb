@@ -15,43 +15,21 @@ RSpec.describe "Acceptance", :timeout => 10 do
     Dir.chdir(root) { spec.run }
   end
 
-  describe ":ruby" do
-    specify "vimscript specs" do
-      run_vader("ruby_spec.vim") do |status, output|
-        expect(status).to be_success, lambda { output.read }
-      end
-    end
-
-    ["vim", "buffer", "window"].each do |object|
-      specify "ruby-#{object}" do
-        run_rspec("+ruby load('ruby_#{object}_spec.rb')") do |status, output|
-          expect(status).to be_success, lambda { output.read }
-        end
-      end
+  specify ":ruby" do
+    run_vader("ruby_spec.vim") do |status, output|
+      expect(status).to be_success, lambda { output.read }
     end
   end
 
-  describe ":rubyfile" do
-    specify "vimscript specs" do
-      run_vader("rubyfile_spec.vim") do |status, output|
-        expect(status).to be_success, lambda { output.read }
-      end
-    end
-
-    ["vim", "buffer", "window"].each do |object|
-      specify "ruby-#{object}" do
-        run_rspec("+rubyfile ruby_#{object}_spec.rb") do |status, output|
-          expect(status).to be_success, lambda { output.read }
-        end
-      end
+  specify ":rubyfile" do
+    run_vader("rubyfile_spec.vim") do |status, output|
+      expect(status).to be_success, lambda { output.read }
     end
   end
 
-  describe ":rubydo" do
-    specify "vimscript specs" do
-      run_vader("rubydo_spec.vim") do |status, output|
-        expect(status).to be_success, lambda { output.read }
-      end
+  specify ":rubydo" do
+    run_vader("rubydo_spec.vim") do |status, output|
+      expect(status).to be_success, lambda { output.read }
     end
   end
 
@@ -94,17 +72,6 @@ RSpec.describe "Acceptance", :timeout => 10 do
   def run_nvim(env, *opts)
     nvim = env.fetch("NVIM_EXECUTABLE", "nvim")
     system(env, nvim, "--headless", "-n", "-u", init, *opts)
-  end
-
-  def run_rspec(*args)
-    Tempfile.open("rspec.out") do |out|
-      run_nvim(
-        {"NVIM_RPLUGIN_MANIFEST" => manifest, "RSPEC_OUTPUT_FILE" => out.path},
-        *args, "+call RunSuite()"
-      )
-
-      yield $?, out
-    end
   end
 
   def run_vader(test_path)

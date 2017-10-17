@@ -91,3 +91,6 @@ Execute (Raise a Ruby syntax error):
 Expect:
   still works
   two
+
+Execute (Access ruby interface):
+  rubyfile ./rubyfile/ruby_interface.rb

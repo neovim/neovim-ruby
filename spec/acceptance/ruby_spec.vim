@@ -72,3 +72,15 @@ Execute (Raise a Ruby syntax error):
 Expect:
   still works
   two
+
+Execute (Access Vim interface):
+  ruby expect(Vim).to eq(VIM)
+  ruby expect(Vim.strwidth("hi")).to eq(2)
+
+Execute (Access Vim::Buffer interface):
+  ruby expect($curbuf).to be_a(Neovim::Buffer)
+  ruby expect(Vim::Buffer.current).to eq($curbuf)
+
+Execute (Access Vim::Window interface):
+  ruby expect($curwin).to be_a(Neovim::Window)
+  ruby expect(Vim::Window.current).to eq($curwin)

@@ -5,10 +5,24 @@ module Neovim
     let(:client) { Neovim.attach_child(Support.child_argv) }
     after { client.shutdown }
 
-    specify do
-      client.strwidth("foo")
-      client.strwidth("bar")
-      client.command("echom 'hi'")
+    describe "#set_option" do
+      it "sets an option from two arguments" do
+        expect {
+          client.set_option("makeprg", "rake")
+        }.to change { client.evaluate("&makeprg") }.to("rake")
+      end
+
+      it "sets an option from a string" do
+        expect {
+          client.set_option("timeoutlen=0")
+        }.to change { client.evaluate("&timeoutlen") }.to(0)
+      end
+
+      it "sets a boolean option" do
+        expect {
+          client.set_option("expandtab")
+        }.to change { client.evaluate("&expandtab") }.to(1)
+      end
     end
 
     describe "#respond_to?" do
