@@ -51,7 +51,7 @@ module Neovim
 
             expect(request.sync?).to eq(true)
             expect(request.id).to eq(1)
-            expect(request.method_name).to eq("method")
+            expect(request.method_name).to eq(:method)
             expect(request.arguments).to eq([1, 2])
           end
         end
@@ -66,6 +66,7 @@ module Neovim
 
             expect(response.request_id).to eq(1)
             expect(response.value).to eq(:result)
+            expect(response.value!).to eq(:result)
             expect(response.error).to eq(nil)
           end
 
@@ -81,7 +82,8 @@ module Neovim
 
             expect(response.request_id).to eq(1)
             expect(response.error).to eq("BOOM")
-            expect { response.value }.to raise_error("BOOM")
+            expect(response.value).to eq(nil)
+            expect { response.value! }.to raise_error("BOOM")
           end
         end
 
@@ -93,7 +95,7 @@ module Neovim
             end
 
             expect(notification.sync?).to eq(false)
-            expect(notification.method_name).to eq("method")
+            expect(notification.method_name).to eq(:method)
             expect(notification.arguments).to eq([1, 2])
           end
         end

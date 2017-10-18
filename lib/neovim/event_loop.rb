@@ -46,14 +46,24 @@ module Neovim
     end
 
     def request(method, *args, &response_handler)
+      log(:debug) { {:name => method, :arguments => arg} }
       write(:request, method, args, response_handler)
     end
 
     def respond(request_id, return_value, error)
+      log(:debug) do
+        {
+          :request_id => request_id,
+          :return_value => return_value,
+          :error => error
+        }
+      end
+
       write(:response, request_id, return_value, error)
     end
 
     def notify(method, *args)
+      log(:debug) { {:name => method, :arguments => args} }
       write(:notification, method, args)
     end
 
@@ -70,21 +80,20 @@ module Neovim
           end
         end
       end
-    rescue EOFError
-      info("got EOFError")
-    rescue => e
-      fatal("got unexpected error #{e.inspect}")
-      debug(e.backtrace.join("\n"))
+    rescue EOFError => ex
+      log_exception(:debug, ex, __method__)
+    rescue => ex
+      log_exception(:fatal, ex, __method__)
     ensure
       @connection.close if @shutdown
     end
 
     # Register msgpack ext types using the provided API and session
     def register_types(api, session)
-      info("registering msgpack ext types")
       api.types.each do |type, info|
         id = info.fetch("id")
         klass = Neovim.const_get(type)
+        log(:debug) { {:type => type, :id => id} }
 
         @serializer.register_type(id) do |index|
           klass.new(index, session, api)

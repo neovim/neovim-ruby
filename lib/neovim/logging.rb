@@ -1,14 +1,11 @@
 require "logger"
+require "json"
 
 module Neovim
   # Mixed into classes for unified logging helper methods.
   #
   # @api private
   module Logging
-    class << self
-      attr_writer :logger
-    end
-
     # Return the value of @logger, or construct it from the environment.
     # $NVIM_RUBY_LOG_FILE specifies a file to log to (default +STDERR+), while
     # $NVIM_RUBY_LOG_LEVEL specifies the level (default +WARN+)
@@ -31,34 +28,59 @@ module Neovim
         @logger.level = Logger::WARN
       end
 
+      @logger.formatter = json_formatter
       @logger
+    end
+
+    def self.logger=(logger)
+      logger.formatter = json_formatter
+      @logger = logger
     end
 
     def self.included(base)
       base.send(:include, Helpers)
     end
 
+    def self.json_formatter
+      timestamp_format = "%Y-%m-%dT%H:%M:%S.%6N ".freeze
+
+      Proc.new do |level, time, _, fields|
+        JSON.generate(
+          {
+            :_level => level,
+            :_time => time.strftime(timestamp_format)
+          }.merge!(fields)
+        ) << "\n"
+      end
+    end
+    private_class_method :json_formatter
+
     module Helpers
       private
 
-      def fatal(msg)
-        logger.fatal(self.class) { msg }
+      def log(level, _method=nil, &block)
+        begin
+          Logging.logger.public_send(level) do
+            {
+              :_class => self.class,
+              :_method => _method || block.binding.eval("__method__"),
+            }.merge!(block.call)
+          end
+        rescue => ex
+          Logging.logger.error("failed to log: #{ex.inspect}")
+        end
+      rescue
+        # Inability to log shouldn't abort process
       end
 
-      def warn(msg)
-        logger.warn(self.class) { msg }
-      end
+      def log_exception(level, ex, _method)
+        log(level, _method) do
+          {:exception => ex.class, :message => ex.message}
+        end
 
-      def info(msg)
-        logger.info(self.class) { msg }
-      end
-
-      def debug(msg)
-        logger.debug(self.class) { msg }
-      end
-
-      def logger
-        Logging.logger
+        log(:debug, _method) do
+          {:exception => ex.class, :message => ex.message, :backtrace => ex.backtrace}
+        end
       end
     end
   end
