@@ -100,8 +100,8 @@ module Neovim
           obj.public_log_exception(:fatal, ex, :some_method)
           lines = log.string.lines
 
-          fatal = JSON.parse(lines.first)
-          debug = JSON.parse(lines.last)
+          fatal = JSON.parse(lines[0])
+          debug = JSON.parse(lines[1])
 
           expect(fatal).to match(
             "_level" => "FATAL",
