@@ -6,6 +6,8 @@ module Neovim
   #
   # @api private
   module Logging
+    TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S.%6N".freeze
+
     # Return the value of @logger, or construct it from the environment.
     # $NVIM_RUBY_LOG_FILE specifies a file to log to (default +STDERR+), while
     # $NVIM_RUBY_LOG_LEVEL specifies the level (default +WARN+)
@@ -42,13 +44,11 @@ module Neovim
     end
 
     def self.json_formatter
-      timestamp_format = "%Y-%m-%dT%H:%M:%S.%6N ".freeze
-
       Proc.new do |level, time, _, fields|
         JSON.generate(
           {
             :_level => level,
-            :_time => time.strftime(timestamp_format)
+            :_time => time.strftime(TIMESTAMP_FORMAT)
           }.merge!(fields)
         ) << "\n"
       end

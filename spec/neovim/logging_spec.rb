@@ -52,5 +52,77 @@ module Neovim
         expect(Logging.logger).to be(logger)
       end
     end
+
+    describe Logging::Helpers do
+      let!(:log) do
+        StringIO.new.tap do |io|
+          logger = Logger.new(io)
+          logger.level = Logger::DEBUG
+          Neovim.logger = logger
+        end
+      end
+
+      let(:klass) do
+        Class.new do
+          include Logging
+
+          def public_log(level, fields)
+            log(level) { fields }
+          end
+
+          def public_log_exception(*args)
+            log_exception(*args)
+          end
+        end
+      end
+
+      let(:obj) { klass.new }
+
+      describe "#log" do
+        it "logs JSON at the specified level" do
+          obj.public_log(:info, :foo => "bar")
+          logged = JSON.parse(log.string)
+
+          expect(logged).to match(
+            "_level" => "INFO",
+            "_class" => klass.to_s,
+            "_method" => "public_log",
+            "_time" => /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+/,
+            "foo" => "bar"
+          )
+        end
+      end
+
+      describe "#log_exception" do
+        it "logs JSON at the specified level and debugs the backtrace" do
+          ex = RuntimeError.new("BOOM")
+          ex.set_backtrace(["one", "two"])
+          obj.public_log_exception(:fatal, ex, :some_method)
+          lines = log.string.lines
+
+          fatal = JSON.parse(lines.first)
+          debug = JSON.parse(lines.last)
+
+          expect(fatal).to match(
+            "_level" => "FATAL",
+            "_class" => klass.to_s,
+            "_method" => "some_method",
+            "_time" => /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+/,
+            "exception" => "RuntimeError",
+            "message" => "BOOM",
+          )
+
+          expect(debug).to match(
+            "_level" => "DEBUG",
+            "_class" => klass.to_s,
+            "_method" => "some_method",
+            "_time" => /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+/,
+            "exception" => "RuntimeError",
+            "message" => "BOOM",
+            "backtrace" => ["one", "two"],
+          )
+        end
+      end
+    end
   end
 end
