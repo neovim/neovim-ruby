@@ -95,3 +95,7 @@ Execute (Call rplugin commands with eval):
 Execute (Call synchronous rplugin commands):
   RPluginCommandSync
   AssertEqual v:true, g:rplugin_command_sync
+
+Execute (Call recursive rplugin commands):
+  RPluginCommandRecursive 0
+  AssertEqual "10", g:rplugin_command_recursive

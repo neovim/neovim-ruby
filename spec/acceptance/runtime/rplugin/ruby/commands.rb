@@ -56,4 +56,12 @@ Neovim.plugin do |plug|
   plug.command(:RPluginCommandSync, :sync => true) do |nvim|
     nvim.set_var("rplugin_command_sync", true)
   end
+
+  plug.command(:RPluginCommandRecursive, :sync => true, :nargs => 1) do |nvim, n|
+    if Integer(n) >= 10
+      nvim.set_var("rplugin_command_recursive", n)
+    else
+      nvim.command("RPluginCommandRecursive #{n.succ}")
+    end
+  end
 end

@@ -14,4 +14,12 @@ Neovim.plugin do |plug|
   plug.function(:RPluginFunctionSync, :sync => true) do |nvim|
     true
   end
+
+  plug.function(:RPluginFunctionRecursive, :sync => true, :nargs => 1) do |nvim, n|
+    if n >= 10
+      n
+    else
+      nvim.evaluate("RPluginFunctionRecursive(#{n + 1})")
+    end
+  end
 end

@@ -24,3 +24,6 @@ Execute (Call rplugin functions with eval):
 
 Execute (Call synchronous rplugin functions):
   AssertEqual v:true, RPluginFunctionSync()
+
+Execute (Call recursive rplugin functions):
+  AssertEqual 10, RPluginFunctionRecursive(0)
