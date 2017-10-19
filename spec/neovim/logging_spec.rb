@@ -98,7 +98,7 @@ module Neovim
           ex = RuntimeError.new("BOOM")
           ex.set_backtrace(["one", "two"])
           obj.public_log_exception(:fatal, ex, :some_method)
-          lines = log.string.lines
+          lines = log.string.lines.to_a
 
           fatal = JSON.parse(lines[0])
           debug = JSON.parse(lines[1])
