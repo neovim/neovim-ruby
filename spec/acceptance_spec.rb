@@ -15,21 +15,23 @@ RSpec.describe "Acceptance", :timeout => 10 do
     Dir.chdir(root) { spec.run }
   end
 
-  specify ":ruby" do
-    run_vader("ruby_spec.vim") do |status, output|
-      expect(status).to be_success, lambda { output.read }
+  describe "Vim compatibility" do
+    specify ":ruby" do
+      run_vader("ruby_spec.vim") do |status, output|
+        expect(status).to be_success, lambda { output.read }
+      end
     end
-  end
 
-  specify ":rubyfile" do
-    run_vader("rubyfile_spec.vim") do |status, output|
-      expect(status).to be_success, lambda { output.read }
+    specify ":rubyfile" do
+      run_vader("rubyfile_spec.vim") do |status, output|
+        expect(status).to be_success, lambda { output.read }
+      end
     end
-  end
 
-  specify ":rubydo" do
-    run_vader("rubydo_spec.vim") do |status, output|
-      expect(status).to be_success, lambda { output.read }
+    specify ":rubydo" do
+      run_vader("rubydo_spec.vim") do |status, output|
+        expect(status).to be_success, lambda { output.read }
+      end
     end
   end
 
@@ -50,22 +52,24 @@ RSpec.describe "Acceptance", :timeout => 10 do
     end
   end
 
-  specify "up-to-date generated method docs" do
-    begin
-      url = "https://api.github.com/repos/neovim/neovim/releases/latest"
-      response = open(url) { |json| JSON.load(json) }
+  describe "Generated documentation" do
+    it "is up to date" do
+      begin
+        url = "https://api.github.com/repos/neovim/neovim/releases/latest"
+        response = open(url) { |json| JSON.load(json) }
 
-      client_file = File.read(
-        File.expand_path("../../lib/neovim/client.rb", __FILE__)
-      )
-      docs_version = client_file[
-        /The methods documented here were generated using (.+)$/,
-        1
-      ]
+        client_file = File.read(
+          File.expand_path("../../lib/neovim/client.rb", __FILE__)
+        )
+        docs_version = client_file[
+          /The methods documented here were generated using (.+)$/,
+          1
+        ]
 
-      expect(docs_version).to eq(response["name"])
-    rescue SocketError, OpenURI::HTTPError => e
-      skip "Skipping: #{e}"
+        expect(docs_version).to eq(response["name"])
+      rescue SocketError, OpenURI::HTTPError => e
+        skip "Skipping: #{e}"
+      end
     end
   end
 
