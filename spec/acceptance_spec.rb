@@ -16,26 +16,16 @@ RSpec.describe "Acceptance", :timeout => 10 do
   end
 
   describe "Vim compatibility" do
-    specify ":ruby" do
-      run_vader("ruby_spec.vim") do |status, output|
-        expect(status).to be_success, lambda { output.read }
-      end
-    end
-
-    specify ":rubyfile" do
-      run_vader("rubyfile_spec.vim") do |status, output|
-        expect(status).to be_success, lambda { output.read }
-      end
-    end
-
-    specify ":rubydo" do
-      run_vader("rubydo_spec.vim") do |status, output|
-        expect(status).to be_success, lambda { output.read }
+    ["ruby", "rubyfile", "rubydo"].each do |feature|
+      specify ":#{feature}" do
+        run_vader("#{feature}_spec.vim") do |status, output|
+          expect(status).to be_success, lambda { output.read }
+        end
       end
     end
   end
 
-  describe "Neovim.plugin DSL" do
+  describe "Remote plugin DSL" do
     before do
       run_nvim(
         {"NVIM_RPLUGIN_MANIFEST" => manifest},
@@ -44,7 +34,7 @@ RSpec.describe "Acceptance", :timeout => 10 do
     end
 
     ["command", "function", "autocmd"].each do |feature|
-      specify feature do
+      specify "##{feature}" do
         run_vader("rplugin_#{feature}_spec.vim") do |status, output|
           expect(status).to be_success, lambda { output.read }
         end
