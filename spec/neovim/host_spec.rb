@@ -23,6 +23,10 @@ module Neovim
               plug.command(:Boom, :sync => true) do |client|
                 raise "BOOM"
               end
+
+              plug.command(:BoomAsync) do |client|
+                raise "BOOM ASYNC"
+              end
             end
           PLUGIN
         end
@@ -87,6 +91,12 @@ module Neovim
                 "sync" => true,
                 "opts" => {},
               },
+              {
+                "type" => "command",
+                "name" => "BoomAsync",
+                "sync" => false,
+                "opts" => {},
+              },
             ],
           ],
         )
@@ -101,13 +111,27 @@ module Neovim
         expect(response).to eq([1, 0, nil, 2])
       end
 
-      it "handles exceptions in plugin handlers", :silence_warnings do
+      it "handles exceptions in sync plugin handlers" do
         message = MessagePack.pack([0, 0, "#{plugin_path}:command:Boom", ["hi"]])
         nvim_wr.write(message)
         nvim_wr.flush
 
         response = MessagePack.unpack(nvim_rd.readpartial(1024))
         expect(response).to eq([1, 0, "BOOM", nil])
+      end
+
+      it "handles exceptions in async plugin handlers" do
+        message = MessagePack.pack([2, "#{plugin_path}:command:BoomAsync", ["hi"]])
+        nvim_wr.write(message)
+        nvim_wr.flush
+
+        message = MessagePack.unpack(nvim_rd.readpartial(1024))
+        expect(message).to match_array(
+          [
+            0, duck_type(:to_int), "nvim_err_writeln",
+            [/my_plugin:command:BoomAsync: \(RuntimeError\) BOOM ASYNC/]
+          ]
+        )
       end
 
       it "handles unknown requests" do

@@ -95,7 +95,12 @@ module Neovim
           @session.respond(message.id, result) if message.sync?
         rescue => e
           log_exception(:error, e, __method__)
-          @session.respond(message.id, nil, e.message) if message.sync?
+
+          if message.sync?
+            @session.respond(message.id, nil, e.message)
+          else
+            client.err_writeln("#{handler.qualified_name}: (#{e.class}) #{e.message}")
+          end
         end
       end
     end
