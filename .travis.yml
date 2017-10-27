@@ -28,5 +28,8 @@ before_install:
   - gem update bundler
   - bundle --version
 
-env: REPORT_COVERAGE=1
+env:
+  - REPORT_COVERAGE=1
+  - NVIM_RUBY_LOG_LEVEL=DEBUG
+  - NVIM_RUBY_LOG_FILE=ci.log
 script: bundle exec rake --trace
