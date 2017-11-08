@@ -8,7 +8,7 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
-  # The methods documented here were generated using NVIM v0.2.0
+  # The methods documented here were generated using NVIM v0.2.1
   #
   # @see Buffer
   # @see Window
@@ -136,6 +136,16 @@ module Neovim
   See +:h nvim_command()+
   @return [void]
 
+@method get_hl_by_name(rgb)
+  See +:h nvim_get_hl_by_name()+
+  @param [Boolean] rgb
+  @return [Hash]
+
+@method get_hl_by_id(rgb)
+  See +:h nvim_get_hl_by_id()+
+  @param [Boolean] rgb
+  @return [Hash]
+
 @method feedkeys(mode, escape_csi)
   See +:h nvim_feedkeys()+
   @param [String] mode
@@ -163,6 +173,11 @@ module Neovim
 
 @method call_function(args)
   See +:h nvim_call_function()+
+  @param [Array] args
+  @return [Object]
+
+@method execute_lua(args)
+  See +:h nvim_execute_lua()+
   @param [Array] args
   @return [Object]
 
@@ -278,6 +293,10 @@ module Neovim
 @method get_mode
   See +:h nvim_get_mode()+
   @return [Hash]
+
+@method get_keymap
+  See +:h nvim_get_keymap()+
+  @return [Array<Hash>]
 
 @method get_api_info
   See +:h nvim_get_api_info()+
