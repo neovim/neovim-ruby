@@ -8,7 +8,7 @@ Neovim.plugin do |plug|
   end
 
   plug.function(:RPluginFunctionEval, :eval => "g:to_eval") do |nvim, to_eval|
-    nvim.set_var("rplugin_function_eval", to_eval)
+    nvim.set_var("rplugin_function_eval", to_eval.merge(:b => 43))
   end
 
   plug.function(:RPluginFunctionSync, :sync => true) do |nvim|

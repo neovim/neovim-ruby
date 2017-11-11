@@ -4,6 +4,6 @@ Neovim.plugin do |plug|
   end
 
   plug.autocmd(:BufEnter, :pattern => "*.c", :eval => "g:to_eval") do |nvim, to_eval|
-    nvim.set_var("rplugin_autocmd_BufEnter_eval", to_eval)
+    nvim.set_var("rplugin_autocmd_BufEnter_eval", to_eval.merge(:b => 43))
   end
 end

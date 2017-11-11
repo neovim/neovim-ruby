@@ -26,13 +26,6 @@ RSpec.describe "Acceptance", :timeout => 10 do
   end
 
   describe "Remote plugin DSL" do
-    before do
-      run_nvim(
-        {"NVIM_RPLUGIN_MANIFEST" => manifest},
-        "-c", "silent UpdateRemotePlugins", "-c", "qa!"
-      )
-    end
-
     ["command", "function", "autocmd"].each do |feature|
       specify "##{feature}" do
         run_vader("rplugin_#{feature}_spec.vim") do |status, output|

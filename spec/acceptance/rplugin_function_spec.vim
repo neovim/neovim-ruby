@@ -17,10 +17,10 @@ Execute (Call rplugin functions with a range):
   AssertEqual [1, 2], g:rplugin_function_range
 
 Execute (Call rplugin functions with eval):
-  let g:to_eval = {'n': 42}
+  let g:to_eval = {'a': 42}
   call RPluginFunctionEval()
   sleep 50m
-  AssertEqual {'n': 42}, g:rplugin_function_eval
+  AssertEqual {'a': 42, 'b': 43}, g:rplugin_function_eval
 
 Execute (Call synchronous rplugin functions):
   AssertEqual v:true, RPluginFunctionSync()

@@ -87,10 +87,10 @@ Execute (Call rplugin commands with completion):
   AssertEqual "buffer", g:rplugin_command_completion
 
 Execute (Call rplugin commands with eval):
-  let g:to_eval = {'n': 42}
+  let g:to_eval = {'a': 42}
   RPluginCommandEval
   sleep 50m
-  AssertEqual {'n': 42}, g:rplugin_command_eval
+  AssertEqual {'a': 42, 'b': 43}, g:rplugin_command_eval
 
 Execute (Call synchronous rplugin commands):
   RPluginCommandSync

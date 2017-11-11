@@ -15,4 +15,4 @@ Execute (Trigger event with eval):
   let g:to_eval = {'a': 42}
   silent split file.c
   sleep 50m
-  AssertEqual {'a': 42}, g:rplugin_autocmd_BufEnter_eval
+  AssertEqual {'a': 42, 'b': 43}, g:rplugin_autocmd_BufEnter_eval

@@ -50,7 +50,7 @@ Neovim.plugin do |plug|
   end
 
   plug.command(:RPluginCommandEval, :eval => "g:to_eval") do |nvim, to_eval|
-    nvim.set_var("rplugin_command_eval", to_eval)
+    nvim.set_var("rplugin_command_eval", to_eval.merge(:b => 43))
   end
 
   plug.command(:RPluginCommandSync, :sync => true) do |nvim|
