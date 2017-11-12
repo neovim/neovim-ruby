@@ -53,6 +53,12 @@ Then:
     AssertNotEqual g:pwd_before, g:pwd_after
   endif
 
+Execute (Run nested Ruby files):
+  rubyfile ./rubyfile/nested.rb
+
+Then:
+  AssertEqual 123, g:ruby_nested
+
 Execute (Raise a Ruby load error):
   try
     rubyfile /foo/bar/baz

@@ -47,6 +47,12 @@ Then:
     AssertNotEqual g:before_pwd, g:after_pwd
   endif
 
+Execute (Run nested Ruby commands):
+  ruby Vim.command("ruby Vim.command('let g:ruby_nested = 123')")
+
+Then:
+  AssertEqual 123, g:ruby_nested
+
 Execute (Raise a Ruby standard error):
   try
     ruby raise "BOOM"
