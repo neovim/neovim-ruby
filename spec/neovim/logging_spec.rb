@@ -1,4 +1,5 @@
 require "helper"
+require "multi_json"
 
 module Neovim
   RSpec.describe Logging do
@@ -81,7 +82,7 @@ module Neovim
       describe "#log" do
         it "logs JSON at the specified level" do
           obj.public_log(:info, :foo => "bar")
-          logged = JSON.parse(log.string)
+          logged = MultiJson.decode(log.string)
 
           expect(logged).to match(
             "_level" => "INFO",
@@ -100,8 +101,8 @@ module Neovim
           obj.public_log_exception(:fatal, ex, :some_method)
           lines = log.string.lines.to_a
 
-          fatal = JSON.parse(lines[0])
-          debug = JSON.parse(lines[1])
+          fatal = MultiJson.decode(lines[0])
+          debug = MultiJson.decode(lines[1])
 
           expect(fatal).to match(
             "_level" => "FATAL",

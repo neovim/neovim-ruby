@@ -1,5 +1,4 @@
 require "logger"
-require "json"
 
 module Neovim
   # Mixed into classes for unified logging helper methods.
@@ -45,7 +44,9 @@ module Neovim
 
     def self.json_formatter
       Proc.new do |level, time, _, fields|
-        JSON.generate(
+        require "multi_json"
+
+        MultiJson.encode(
           {
             :_level => level,
             :_time => time.strftime(TIMESTAMP_FORMAT)
