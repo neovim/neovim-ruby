@@ -1,3 +1,9 @@
+# 0.6.0
+- Refactor: consolidate "run" logic into EventLoop class to simplify middleware
+  layers
+- Add JSON structured logging
+- Regenerated docs for nvim 0.2.1
+
 # 0.5.1
 - Convert vader.vim from submodule to subtree so it is included in gem
   installations
