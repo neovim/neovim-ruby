@@ -1,3 +1,6 @@
+# 0.6.1
+- Add `multi_json` dependency to fix load error in certain envs
+
 # 0.6.0
 - Refactor: consolidate "run" logic into EventLoop class to simplify middleware
   layers
