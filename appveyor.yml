@@ -9,7 +9,7 @@ build: off
 
 branches:
   only:
-    - appveyor
+    - master
 
 before_test:
   - ruby -v
