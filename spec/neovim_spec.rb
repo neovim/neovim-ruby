@@ -4,11 +4,11 @@ RSpec.describe Neovim do
   describe ".attach_tcp" do
     it "attaches to a TCP socket" do
       port = Support.tcp_port
-      env = {"NVIM_LISTEN_ADDRESS" => "0.0.0.0:#{port}"}
-      pid = Process.spawn(env, *Support.child_argv, [:out, :err] => "/dev/null")
+      env = {"NVIM_LISTEN_ADDRESS" => "127.0.0.1:#{port}"}
+      pid = Process.spawn(env, *Support.child_argv, [:out, :err] => File::NULL)
 
       begin
-        client = Neovim.attach_tcp("0.0.0.0", port)
+        client = Neovim.attach_tcp("127.0.0.1", port)
       rescue Errno::ECONNREFUSED
         retry
       end
@@ -16,17 +16,21 @@ RSpec.describe Neovim do
       begin
         expect(client.strwidth("hi")).to eq(2)
       ensure
-        Process.kill(:TERM, pid)
+        Support.kill(pid)
         Process.waitpid(pid)
       end
     end
   end
 
   describe ".attach_unix" do
+    before do
+      skip("Not supported on this platform") if Support.windows?
+    end
+
     it "attaches to a UNIX socket" do
       socket_path = Support.socket_path
       env = {"NVIM_LISTEN_ADDRESS" => socket_path}
-      pid = Process.spawn(env, *Support.child_argv, [:out, :err] => "/dev/null")
+      pid = Process.spawn(env, *Support.child_argv, [:out, :err] => File::NULL)
 
       begin
         client = Neovim.attach_unix(socket_path)
@@ -37,7 +41,7 @@ RSpec.describe Neovim do
       begin
         expect(client.strwidth("hi")).to eq(2)
       ensure
-        Process.kill(:TERM, pid)
+        Support.kill(pid)
         Process.waitpid(pid)
       end
     end

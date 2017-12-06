@@ -37,6 +37,14 @@ module Support
     [Neovim.executable.path, "--headless", "-i", "NONE", "-u", "NONE", "-n"]
   end
 
+  def self.windows?
+    Gem.win_platform?
+  end
+
+  def self.kill(pid)
+    windows? ? Process.kill(:KILL, pid) : Process.kill(:TERM, pid)
+  end
+
   begin
     self.nvim_version = Neovim.executable.version
   rescue => e

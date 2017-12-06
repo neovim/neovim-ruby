@@ -45,7 +45,7 @@ Neovim.plugin do |plug|
 
   plug.command(:RPluginCommandCompletion, :complete => "buffer") do |nvim|
     attrs = nvim.command_output("silent command RPluginCommandCompletion")
-    compl = attrs.split("\n").last.split[2]
+    compl = attrs.split($/).last.split[2]
     nvim.set_var("rplugin_command_completion", compl)
   end
 

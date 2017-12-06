@@ -21,11 +21,11 @@ module Neovim
       end
 
       it "raises with an invalid executable path" do
-        executable = Executable.new("/dev/null")
+        executable = Executable.new(File::NULL)
 
         expect {
           executable.version
-        }.to raise_error(Executable::Error, /\/dev\/null/)
+        }.to raise_error(Executable::Error, Regexp.new(File::NULL))
       end
     end
   end

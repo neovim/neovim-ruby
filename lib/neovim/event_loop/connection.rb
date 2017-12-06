@@ -11,12 +11,12 @@ module Neovim
 
       def self.tcp(host, port)
         socket = Socket.tcp(host, port)
-        new(socket)
+        new(socket, socket)
       end
 
       def self.unix(path)
         socket = Socket.unix(path)
-        new(socket)
+        new(socket, socket)
       end
 
       def self.child(_argv)
@@ -26,15 +26,15 @@ module Neovim
           Process.detach(_io.pid)
         end
 
-        new(io)
+        new(io, io)
       end
 
       def self.stdio
         new(STDIN, STDOUT)
       end
 
-      def initialize(rd, wr=rd)
-        @rd, @wr = rd, wr
+      def initialize(rd, wr)
+        @rd, @wr = [rd, wr].each { |io| io.binmode.sync = true }
         @running = false
       end
 

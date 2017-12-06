@@ -3,10 +3,12 @@ require "helper"
 module Neovim
   class EventLoop
     RSpec.describe Connection do
+      let(:nil_io) { StringIO.new }
+
       describe "#write" do
         it "writes to the underlying file descriptor" do
           rd, wr = IO.pipe
-          connection = Connection.new(nil, wr)
+          connection = Connection.new(nil_io, wr)
           connection.write("some data")
           wr.close
 
@@ -14,15 +16,39 @@ module Neovim
         end
 
         it "writes large amounts of data" do
-          File.open(Support.file_path("io"), "w+") do |io|
-            connection = Connection.new(nil, io)
-            big_data = Array.new(1024 * 16) { SecureRandom.hex(4) }.join
+          port = Support.tcp_port
 
-            connection = Connection.new(nil, io)
-            connection.write(big_data)
+          server_thr = Thread.new do
+            read_result = ""
 
-            expect(File.read(io.path)).to eq(big_data)
+            TCPServer.open("127.0.0.1", port) do |server|
+              client = server.accept
+
+              loop do
+                begin
+                  read_result << client.readpartial(1024 * 16)
+                rescue EOFError
+                  break
+                end
+              end
+              client.close
+            end
+
+            read_result
           end
+
+          begin
+            socket = Socket.tcp("127.0.0.1", port)
+          rescue Errno::ECONNREFUSED
+            retry
+          end
+
+          big_data = Array.new(1024 * 16) { SecureRandom.hex(4) }.join
+          connection = Connection.new(nil_io, socket)
+
+          connection.write(big_data)
+          socket.close
+          expect(server_thr.value).to eq(big_data)
         end
       end
 
@@ -32,7 +58,7 @@ module Neovim
           wr.write("some data")
           wr.close
 
-          connection = Connection.new(rd, nil)
+          connection = Connection.new(rd, nil_io)
 
           expect do |y|
             connection.read(&y)
@@ -54,7 +80,7 @@ module Neovim
           pid = io.pid
           expect(pid).to respond_to(:to_int)
 
-          Connection.new(io).close
+          Connection.new(io, nil_io).close
           expect { Process.kill(0, pid) }.to raise_error(Errno::ESRCH)
         end
       end

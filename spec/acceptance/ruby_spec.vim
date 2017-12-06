@@ -27,7 +27,7 @@ Then:
 
 Execute (Change the working directory explicitly):
   cd /
-  ruby Vim.command("let g:ruby_pwd = '#{Dir.pwd}'")
+  ruby Vim.command("let g:ruby_pwd = '#{Dir.pwd.sub(/^C:/, '')}'")
   cd -
 
 Then:
