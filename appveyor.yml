@@ -1,0 +1,21 @@
+install:
+  - set PATH=C:\Ruby24-x64\bin;C:\tools\neovim\Neovim\bin;%PATH%
+  - set NVIM_RUBY_LOG_LEVEL=DEBUG
+  - set NVIM_RUBY_LOG_FILE=%cd%\ci.log
+  - choco install neovim --pre -fy --ignore-dependencies
+  - bundle install
+
+build: off
+
+branches:
+  only:
+    - appveyor
+
+before_test:
+  - ruby -v
+  - gem -v
+  - bundle -v
+  - nvim -v
+
+test_script:
+  - bundle exec rake
