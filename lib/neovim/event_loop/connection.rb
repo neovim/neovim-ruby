@@ -34,7 +34,7 @@ module Neovim
       end
 
       def initialize(rd, wr)
-        @rd, @wr = [rd, wr].each { |io| io.binmode.sync = true }
+        @rd, @wr = [rd, wr].map(&:binmode)
         @running = false
       end
 
