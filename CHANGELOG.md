@@ -1,3 +1,8 @@
+# 0.6.2
+- Put IOs into binary mode (fixes windows bugs)
+- Various build fixes for appveyor
+- Update generated docs to v0.2.2
+
 # 0.6.1
 - Add `multi_json` dependency to fix load error in certain envs
 
