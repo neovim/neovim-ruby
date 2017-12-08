@@ -31,7 +31,7 @@ module Neovim
     end
 
     # Extend +respond_to?+ to support RPC methods.
-    def respond_to?(method_name)
+    def respond_to?(method_name, *)
       super || rpc_methods.include?(method_name.to_sym)
     end
 

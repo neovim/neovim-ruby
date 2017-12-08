@@ -16,8 +16,7 @@ module Neovim
   class Client
     attr_reader :session, :api
 
-    def self.from_event_loop(event_loop)
-      session = Session.new(event_loop)
+    def self.from_event_loop(event_loop, session=Session.new(event_loop))
       api = API.new(session.request(:nvim_get_api_info))
       event_loop.register_types(api, session)
 
@@ -39,7 +38,7 @@ module Neovim
     end
 
     # Extend +respond_to?+ to support RPC methods.
-    def respond_to?(method_name)
+    def respond_to?(method_name, *)
       super || rpc_methods.include?(method_name.to_sym)
     end
 
