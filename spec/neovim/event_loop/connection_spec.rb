@@ -14,42 +14,6 @@ module Neovim
 
           expect(MessagePack.unpack(rd.read)).to eq("some data")
         end
-
-        it "writes large amounts of data" do
-          port = Support.tcp_port
-
-          server_thr = Thread.new do
-            read_result = ""
-
-            TCPServer.open("127.0.0.1", port) do |server|
-              client = server.accept
-
-              loop do
-                begin
-                  read_result << client.readpartial(1024 * 16)
-                rescue EOFError
-                  break
-                end
-              end
-              client.close
-            end
-
-            read_result
-          end
-
-          begin
-            socket = Socket.tcp("127.0.0.1", port)
-          rescue Errno::ECONNREFUSED
-            retry
-          end
-
-          big_data = Array.new(1024 * 16) { SecureRandom.hex(4) }.join
-          connection = Connection.new(nil_io, socket)
-
-          connection.write(big_data)
-          socket.close
-          expect(MessagePack.unpack(server_thr.value)).to eq(big_data)
-        end
       end
 
       describe "#read" do
@@ -65,6 +29,39 @@ module Neovim
           end.to yield_with_args("some data")
         end
       end
+
+      describe "#register_type" do
+        it "registers a msgpack ext type" do
+          ext_class = Struct.new(:id) do
+            def self.from_msgpack_ext(data)
+              new(data.unpack('N')[0])
+            end
+
+            def to_msgpack_ext
+              [self.id].pack('C')
+            end
+          end
+
+          client_rd, server_wr = IO.pipe
+          server_rd, client_wr = IO.pipe
+
+          connection = Connection.new(client_rd, client_wr)
+
+          connection.register_type(42) do |id|
+            ext_class.new(id)
+          end
+
+          factory = MessagePack::Factory.new
+          factory.register_type(42, ext_class)
+          obj = ext_class.new(1)
+          factory.packer(server_wr).write(obj).flush
+
+          expect do |block|
+            connection.read(&block)
+          end.to yield_with_args(obj)
+        end
+      end
+
 
       describe "#close" do
         it "closes IO handles" do
