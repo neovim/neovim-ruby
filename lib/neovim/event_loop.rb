@@ -43,9 +43,16 @@ module Neovim
       @shutdown = true
     end
 
-    def request(method, *args, &response_handler)
-      log(:debug) { {:name => method, :arguments => args} }
-      write(:request, method, args, response_handler)
+    def request(request_id, method, *args)
+      log(:debug) do
+        {
+          :request_id => request_id,
+          :method => method,
+          :arguments => args
+        }
+      end
+
+      write(:request, request_id, method, args)
     end
 
     def respond(request_id, return_value, error)

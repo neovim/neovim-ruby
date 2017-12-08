@@ -13,68 +13,43 @@ module Neovim
     let(:connection) { EventLoop::Connection.new(client_rd, client_wr) }
     let(:event_loop) { EventLoop.new(connection) }
 
+    describe "#request" do
+      it "writes a msgpack request" do
+        event_loop.request(1, :method, 1, 2)
+        message = server_rd.readpartial(1024)
+        expect(message).to eq(MessagePack.pack([0, 1, "method", [1, 2]]))
+      end
+    end
+
+    describe "#respond" do
+      it "writes a msgpack response" do
+        event_loop.respond(2, "value", "error")
+        message = server_rd.readpartial(1024)
+        expect(message).to eq(MessagePack.pack([1, 2, "error", "value"]))
+      end
+    end
+
+    describe "#notify" do
+      it "writes a msgpack notification" do
+        event_loop.notify(:method, 1, 2)
+        message = server_rd.readpartial(1024)
+        expect(message).to eq(MessagePack.pack([2, "method", [1, 2]]))
+      end
+    end
+
     describe "#run" do
-      it "reads requests" do
+      it "yields received messages to the block" do
         server_wr.write(MessagePack.pack([0, 1, :foo_method, []]))
         server_wr.flush
 
-        request = nil
+        message = nil
         event_loop.run do |req|
-          request = req
-          event_loop.stop
-        end
-        expect(request.method_name).to eq("foo_method")
-      end
-
-      it "writes requests" do
-        response = nil
-
-        event_loop.request(:foo_method) do |res|
-          response = res
+          message = req
           event_loop.stop
         end
 
-        server_wr.write(MessagePack.pack([1, 1, nil, :value]))
-        server_wr.flush
-
-        event_loop.run
-        expect(response.value!).to eq("value")
-      end
-
-      it "writes responses" do
-        event_loop.respond(1, :foo_response, nil)
-
-        server_wr.write(MessagePack.pack([2, :noop, []]))
-        server_wr.flush
-
-        event_loop.run { event_loop.stop }
-        expect(server_rd.readpartial(1024)).to eq(
-          MessagePack.pack([1, 1, nil, :foo_response])
-        )
-      end
-
-      it "reads notifications" do
-        server_wr.write(MessagePack.pack([2, :foo_notification, []]))
-        server_wr.flush
-
-        notification = nil
-        event_loop.run do |ntf|
-          notification = ntf
-          event_loop.stop
-        end
-        expect(notification.method_name).to eq("foo_notification")
-      end
-
-      it "writes notifications" do
-        event_loop.notify(:foo_notification)
-
-        server_wr.write(MessagePack.pack([2, :noop, []]))
-        server_wr.flush
-
-        event_loop.run { event_loop.stop }
-        expect(server_rd.readpartial(1024)).to eq(
-          MessagePack.pack([2, :foo_notification, []])
-        )
+        expect(message.sync?).to eq(true)
+        expect(message.method_name).to eq("foo_method")
       end
     end
   end

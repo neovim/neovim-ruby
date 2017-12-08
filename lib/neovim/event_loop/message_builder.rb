@@ -16,6 +16,10 @@ module Neovim
       class Request < Struct.new(:id, :method_name, :arguments)
         include StructToH
 
+        def received(_, &block)
+          block.call(self)
+        end
+
         def sync?
           true
         end
@@ -28,6 +32,10 @@ module Neovim
       class Notification < Struct.new(:method_name, :arguments)
         include StructToH
 
+        def received(_, &block)
+          block.call(self)
+        end
+
         def sync?
           false
         end
@@ -37,11 +45,11 @@ module Neovim
         end
       end
 
-      class Response < Struct.new(:request_id, :value, :error)
+      class Response < Struct.new(:request_id, :error, :value)
         include StructToH
 
-        def value!
-          error ? raise(error) : value
+        def received(handlers)
+          handlers[request_id].call(self)
         end
 
         def to_h
@@ -51,29 +59,21 @@ module Neovim
 
       include Logging
 
-      def initialize
-        @request_id = 0
-        @pending_requests = {}
-      end
-
       def write(type, *write_args)
         case type
         when :request
-          method, args, response_handler = write_args
-
-          @request_id += 1
-          @pending_requests[@request_id] = response_handler
+          reqid, method, args = write_args
 
           log(:debug) do
             {
               :type => type,
-              :request_id => @request_id,
+              :request_id => reqid,
               :method_name => method,
               :arguments => args,
             }
           end
 
-          yield [0, @request_id, method, args]
+          yield [0, reqid, method, args]
         when :response
           reqid, value, error = write_args
 
@@ -108,19 +108,17 @@ module Neovim
         case kind
         when 0
           message = Request.new(*payload)
-          log(:debug) { message.to_h }
-          yield message
+        when 1
+          reqid, (_, error), value = payload
+          message = Response.new(reqid, error, value)
         when 2
           message = Notification.new(*payload)
-          log(:debug) { message.to_h }
-          yield message
-        when 1
-          reqid, (_, error), result = payload
-          handler = @pending_requests.delete(reqid) || Proc.new {}
-          message = Response.new(reqid, result, error)
-          log(:debug) { message.to_h }
-          handler.call(message)
+        else
+          raise "Received unknown message type #{kind.inspect}"
         end
+
+        log(:debug) { message.to_h }
+        yield message
       end
     end
   end

@@ -8,28 +8,30 @@ module Neovim
   class Session
     include Logging
 
+    attr_writer :request_id
+
     def initialize(event_loop)
       @event_loop = event_loop
-      @pending_messages = []
       @main_thread = Thread.current
       @main_fiber = Fiber.current
+      @response_handlers = Hash.new(Proc.new {})
+      @pending_messages = []
+      @request_id = 0
     end
 
     # Run the event loop, handling messages in a +Fiber+.
-    def run
+    def run(&block)
       @running = true
 
-      while pending = @pending_messages.shift
-        Fiber.new { yield pending if block_given? }.resume
+      while message = @pending_messages.shift
+        Fiber.new { message.received(@response_handlers, &block) }.resume
       end
 
       return unless @running
 
       @event_loop.run do |message|
-        Fiber.new { yield message if block_given? }.resume
+        Fiber.new { message.received(@response_handlers, &block) }.resume
       end
-    ensure
-      @event_loop.shutdown
     end
 
     # Make an RPC request and return its response.
@@ -44,13 +46,21 @@ module Neovim
     # in the meantime are enqueued to be handled later.
     def request(method, *args)
       main_thread_only do
-        if Fiber.current == @main_fiber
-          response = blocking_request(method, *args)
-        else
-          response = yielding_request(method, *args)
+        @request_id += 1
+        blocking = Fiber.current == @main_fiber
+
+        log(:debug) do
+          {
+            :method_name => method,
+            :request_id => @request_id,
+            :blocking => blocking,
+            :arguments => args
+          }
         end
 
-        response.value!
+        @event_loop.request(@request_id, method, *args)
+        response = blocking ? blocking_response : yielding_response
+        response.error ? raise(response.error) : response.value
       end
     end
 
@@ -75,41 +85,26 @@ module Neovim
 
     private
 
-    def yielding_request(method, *args)
-      log(:debug) do
-        {
-          :method_name => method,
-          :arguments => args,
-        }
-      end
-
-      fiber = Fiber.current
-      @event_loop.request(method, *args) do |response|
-        fiber.resume(response)
-      end
-      Fiber.yield
-    end
-
-    def blocking_request(method, *args)
-      log(:debug) do
-        {
-          :method_name => method,
-          :arguments => args,
-        }
-      end
-
+    def blocking_response
       response = nil
 
-      @event_loop.request(method, *args) do |res|
+      @response_handlers[@request_id] = Proc.new do |res|
         response = res
         stop
       end
 
-      @event_loop.run do |message|
-        @pending_messages << message
+      run { |message| @pending_messages << message }
+      response
+    end
+
+    def yielding_response
+      fiber = Fiber.current
+
+      @response_handlers[@request_id] = Proc.new do |response|
+        fiber.resume(response)
       end
 
-      response
+      Fiber.yield
     end
 
     def main_thread_only

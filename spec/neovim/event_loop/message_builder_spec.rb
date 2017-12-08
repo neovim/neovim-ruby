@@ -9,18 +9,8 @@ module Neovim
         context "requests" do
           it "yields a valid request message" do
             expect do |y|
-              message_builder.write(:request, :method, [1, 2], Proc.new {}, &y)
+              message_builder.write(:request, 1, :method, [1, 2], Proc.new {}, &y)
             end.to yield_with_args([0, 1, :method, [1, 2]])
-          end
-
-          it "increments the request id" do
-            expect do |y|
-              message_builder.write(:request, :method, [], Proc.new {}, &y)
-              message_builder.write(:request, :method, [], Proc.new {}, &y)
-            end.to yield_successive_args(
-              [0, 1, :method, []],
-              [0, 2, :method, []]
-            )
           end
         end
 
@@ -54,36 +44,38 @@ module Neovim
             expect(request.method_name).to eq(:method)
             expect(request.arguments).to eq([1, 2])
           end
+
+          describe "#received" do
+            it "yields the request object" do
+              expect do |block|
+                message_builder.read([0, 1, :method, [1, 2]]) do |req|
+                  req.received({}, &block)
+                end
+              end.to yield_with_args(kind_of(MessageBuilder::Request))
+            end
+          end
         end
 
         context "responses" do
-          it "calls the registered handler with a success response" do
+          it "yields a response object" do
             response = nil
-            handler = Proc.new { |res| response = res }
-
-            message_builder.write(:request, :method, [1, 2], handler) {}
-            message_builder.read([1, 1, [nil, nil], :result])
-
-            expect(response.request_id).to eq(1)
-            expect(response.value).to eq(:result)
-            expect(response.value!).to eq(:result)
-            expect(response.error).to eq(nil)
-          end
-
-          it "calls the registered handler with an error response" do
-            response = nil
-
-            handler = Proc.new do |res|
+            message_builder.read([1, 2, [1, "error msg"], :return_value]) do |res|
               response = res
             end
 
-            message_builder.write(:request, :method, [1, 2], handler) {}
-            message_builder.read([1, 1, [:some_err, "BOOM"], nil])
+            expect(response.request_id).to eq(2)
+            expect(response.error).to eq("error msg")
+            expect(response.value).to eq(:return_value)
+          end
 
-            expect(response.request_id).to eq(1)
-            expect(response.error).to eq("BOOM")
-            expect(response.value).to eq(nil)
-            expect { response.value! }.to raise_error("BOOM")
+          describe "#received" do
+            it "calls the response handler with the notification" do
+              expect do |block|
+                message_builder.read([1, 2, nil, :return_value]) do |res|
+                  res.received(2 => block.to_proc)
+                end
+              end.to yield_with_args(kind_of(MessageBuilder::Response))
+            end
           end
         end
 
@@ -97,6 +89,16 @@ module Neovim
             expect(notification.sync?).to eq(false)
             expect(notification.method_name).to eq(:method)
             expect(notification.arguments).to eq([1, 2])
+          end
+
+          describe "#received" do
+            it "yields the notification object" do
+              expect do |block|
+                message_builder.read([2, :method, [1, 2]]) do |ntf|
+                  ntf.received({}, &block)
+                end
+              end.to yield_with_args(kind_of(MessageBuilder::Notification))
+            end
           end
         end
       end
