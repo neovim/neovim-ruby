@@ -33,7 +33,7 @@ module Neovim
       end
 
       let!(:host_thread) do
-        connection = EventLoop::Connection.new(host_rd, host_wr)
+        connection = Connection.new(host_rd, host_wr)
         event_loop = EventLoop.new(connection)
 
         Thread.new do

@@ -1,6 +1,6 @@
 require "neovim/logging"
-require "neovim/event_loop/connection"
-require "neovim/event_loop/message"
+require "neovim/connection"
+require "neovim/message"
 
 module Neovim
   class EventLoop

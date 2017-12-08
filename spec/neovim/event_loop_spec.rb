@@ -10,7 +10,7 @@ module Neovim
     let(:server_rd) { pull_pipe[0] }
     let(:server_wr) { push_pipe[1] }
 
-    let(:connection) { EventLoop::Connection.new(client_rd, client_wr) }
+    let(:connection) { Connection.new(client_rd, client_wr) }
     let(:event_loop) { EventLoop.new(connection) }
 
     describe "#request" do
