@@ -72,14 +72,17 @@ module Neovim
         break if !@running
         break if @shutdown
 
-        @connection.read do |obj|
-          @message_builder.read(obj, &callback)
+        begin
+          @connection.read do |obj|
+            @message_builder.read(obj, &callback)
+          end
+        rescue EOFError, SignalException => e
+          log_exception(:debug, e, __method__)
+          shutdown
+        rescue => e
+          log_exception(:error, e, __method__)
         end
       end
-    rescue EOFError => ex
-      log_exception(:debug, ex, __method__)
-    rescue => ex
-      log_exception(:fatal, ex, __method__)
     ensure
       @connection.close if @shutdown
     end
