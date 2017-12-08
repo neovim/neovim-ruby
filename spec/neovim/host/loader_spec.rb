@@ -6,7 +6,7 @@ module Neovim
     RSpec.describe Loader do
       describe "#load" do
         let(:plugin_path) { Support.file_path("plug.rb") }
-        let(:host) { instance_double(Host, :register => nil) }
+        let(:host) { instance_double(Host, :plugins => []) }
         let(:loader) { Loader.new(host) }
 
         before do
@@ -14,26 +14,33 @@ module Neovim
         end
 
         it "registers plugins defined in the provided files" do
-          expect(host).to receive(:register).with(kind_of(Plugin))
-          loader.load([plugin_path])
+          expect do
+            loader.load([plugin_path])
+          end.to change { host.plugins.size }.by(1)
         end
 
         it "registers multiple plugins defined in the provided files" do
           File.write(plugin_path, "Neovim.plugin; Neovim.plugin")
-          expect(host).to receive(:register).with(kind_of(Plugin)).twice
-          loader.load([plugin_path])
+
+          expect do
+            loader.load([plugin_path])
+          end.to change { host.plugins.size }.by(2)
         end
 
         it "doesn't register plugins when none are defined" do
           File.write(plugin_path, "class FooClass; end")
-          expect(host).not_to receive(:register)
-          loader.load([plugin_path])
+
+          expect do
+            loader.load([plugin_path])
+          end.not_to change { host.plugins.size }
         end
 
         it "doesn't leak constants defined in plugins" do
           File.write(plugin_path, "class FooClass; end")
-          loader.load([plugin_path])
-          expect(Kernel.const_defined?(:FooClass)).to be(false)
+
+          expect do
+            loader.load([plugin_path])
+          end.not_to change { Kernel.const_defined?(:FooClass) }.from(false)
         end
 
         it "doesn't leak the overidden Neovim.plugin method" do

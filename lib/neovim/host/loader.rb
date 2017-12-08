@@ -27,7 +27,7 @@ module Neovim
 
         Neovim.define_singleton_method(:plugin) do |&block|
           plugin = Plugin.from_config_block(path, &block)
-          at_host.register(plugin)
+          at_host.plugins << plugin
         end
 
         yield

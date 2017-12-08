@@ -8,39 +8,29 @@ module Neovim
   class Host
     include Logging
 
+    attr_reader :plugins
+
     # Start a plugin host. This is called by the +nvim-ruby-host+ executable,
     # which is spawned by +nvim+ to discover and run Ruby plugins, and acts as
     # the bridge between +nvim+ and the plugin.
     def self.run(rplugin_paths, event_loop=EventLoop.stdio)
-      client = Client.from_event_loop(event_loop)
-
-      new(client).tap do |host|
+      new(event_loop).tap do |host|
         Loader.new(host).load(rplugin_paths)
       end.run
     end
 
-    def initialize(client)
-      @client = client
-      @session = client.session
+    def initialize(event_loop)
+      @event_loop = event_loop
+      @session = Session.new(event_loop)
       @handlers = {"poll" => poll_handler, "specs" => specs_handler}
+      @plugins = []
       @specs = {}
-    end
-
-    # Register a +Plugin+ to receive +Host+ messages.
-    def register(plugin)
-      plugin.handlers.each do |handler|
-        @handlers[handler.qualified_name] = wrap_plugin_handler(handler)
-      end
-
-      plugin.setup(@client)
-      @specs[plugin.source] = plugin.specs
     end
 
     # Run the event loop, passing received messages to the appropriate handler.
     def run
       @session.run { |msg| handle(msg) }
     ensure
-      @client.shutdown
       @session.shutdown
     end
 
@@ -52,17 +42,17 @@ module Neovim
       @handlers.
         fetch(message.method_name, default_handler).
         call(@client, message)
-    rescue SignalException => ex
-      log_exception(:debug, ex, __method__)
-      raise ex
     rescue => ex
-      log_exception(:fatal, ex, __method__)
+      log_exception(:error, ex, __method__)
     end
 
     private
 
     def poll_handler
       @poll_handler ||= Proc.new do |_, req|
+        initialize_client(req.id)
+        initialize_plugins
+
         @session.respond(req.id, "ok")
       end
     end
@@ -83,6 +73,22 @@ module Neovim
       @default_handler ||= Proc.new do |_, message|
         next unless message.sync?
         @session.respond(message.id, nil, "Unknown request #{message.method_name}")
+      end
+    end
+
+    def initialize_client(request_id)
+      @session.request_id = request_id
+      @client = Client.from_event_loop(@event_loop, @session)
+    end
+
+    def initialize_plugins
+      @plugins.each do |plugin|
+        plugin.handlers.each do |handler|
+          @handlers[handler.qualified_name] = wrap_plugin_handler(handler)
+        end
+
+        plugin.setup(@client)
+        @specs[plugin.source] = plugin.specs
       end
     end
 
