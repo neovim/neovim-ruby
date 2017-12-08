@@ -27,14 +27,6 @@ module Neovim
     # 2. Define the +DirChanged+ event to update the provider's pwd.
     def self.__define_setup(plug)
       plug.__send__(:setup) do |client|
-        $stdout.define_singleton_method(:write) do |string|
-          client.out_write(string + "\n")
-        end
-
-        $stderr.define_singleton_method(:write) do |string|
-          client.err_writeln(string)
-        end
-
         begin
           cid = client.api.channel_id
           client.command("au DirChanged * call rpcrequest(#{cid}, 'ruby_chdir', v:event)")
@@ -107,7 +99,9 @@ module Neovim
       Vim.__refresh_globals(client)
 
       __with_exception_handling(client) do
-        yield
+        __with_std_streams(client) do
+          yield
+        end
       end
       nil
     end
@@ -119,8 +113,25 @@ module Neovim
       rescue SignalException => sig
         raise sig
       rescue Exception => e
-        msg = [e.class, e.message.gsub("\n", " ")].join(": ")
-        client.err_writeln(msg.lines.first.strip)
+        msg = [e.class, e.message].join(": ")
+        client.err_writeln(msg)
+      end
+    end
+
+    def self.__with_std_streams(client)
+      old_stdout = $stdout.dup
+      old_stderr = $stderr.dup
+
+      $stdout, $stderr = StringIO.new, StringIO.new
+
+      begin
+        yield
+
+        client.out_write($stdout.string + $/) if $stdout.length > 0
+        client.err_writeln($stderr.string) if $stderr.length > 0
+      ensure
+        $stdout = old_stdout
+        $stderr = old_stderr
       end
     end
 
