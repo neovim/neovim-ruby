@@ -1,6 +1,6 @@
 require "neovim/logging"
 require "neovim/event_loop/connection"
-require "neovim/event_loop/message_builder"
+require "neovim/event_loop/message"
 
 module Neovim
   class EventLoop
@@ -31,7 +31,6 @@ module Neovim
       @running = false
       @shutdown = false
       @connection = connection
-      @message_builder = MessageBuilder.new
     end
 
     def stop
@@ -64,7 +63,7 @@ module Neovim
         }
       end
 
-      write(:response, request_id, return_value, error)
+      write(:response, request_id, error, return_value)
     end
 
     def notify(method, *args)
@@ -80,9 +79,7 @@ module Neovim
         break if @shutdown
 
         begin
-          @connection.read do |obj|
-            @message_builder.read(obj, &callback)
-          end
+          callback.call(read)
         rescue EOFError, SignalException => e
           log_exception(:debug, e, __method__)
           shutdown
@@ -109,10 +106,14 @@ module Neovim
 
     private
 
+    def read
+      array = @connection.read
+      Message.from_array(array)
+    end
+
     def write(type, *args)
-      @message_builder.write(type, *args) do |arr|
-        @connection.write(arr)
-      end
+      message = Message.public_send(type, *args)
+      @connection.write(message.to_a)
     end
   end
 end

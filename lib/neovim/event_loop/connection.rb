@@ -51,7 +51,6 @@ module Neovim
       def read
         @unpacker.read.tap do |object|
           log(:debug) { {:object => object} }
-          yield object
         end
       end
 

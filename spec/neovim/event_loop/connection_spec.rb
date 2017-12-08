@@ -17,16 +17,13 @@ module Neovim
       end
 
       describe "#read" do
-        it "yields data from the underlying file descriptor" do
+        it "reads msgpack from the underlying file descriptor" do
           rd, wr = IO.pipe
           wr.write(MessagePack.pack("some data"))
           wr.close
 
           connection = Connection.new(rd, nil_io)
-
-          expect do |y|
-            connection.read(&y)
-          end.to yield_with_args("some data")
+          expect(connection.read).to eq("some data")
         end
       end
 
@@ -56,9 +53,7 @@ module Neovim
           obj = ext_class.new(1)
           factory.packer(server_wr).write(obj).flush
 
-          expect do |block|
-            connection.read(&block)
-          end.to yield_with_args(obj)
+          expect(connection.read).to eq(obj)
         end
       end
 
