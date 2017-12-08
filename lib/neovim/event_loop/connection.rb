@@ -1,5 +1,6 @@
 require "neovim/logging"
 require "socket"
+require "msgpack"
 
 module Neovim
   class EventLoop
@@ -34,33 +35,30 @@ module Neovim
       end
 
       def initialize(rd, wr)
-        @rd, @wr = [rd, wr].map(&:binmode)
+        @rd, @wr = [rd, wr].each { |io| io.binmode.sync = true }
+
+        @unpacker = MessagePack::Unpacker.new(@rd)
+        @packer = MessagePack::Packer.new(@wr)
         @running = false
       end
 
-      # Write data to the underlying +IO+. This will block until all the
-      # data has been written.
-      def write(data)
-        written = 0
-        total = data.bytesize
-        log(:debug) { {:bytes => total} }
-
-        begin
-          while written < total
-            written += @wr.write_nonblock(data[written..-1])
-          end
-        rescue ::IO::WaitWritable
-          ::IO.select(nil, [@wr], nil, 1)
-          retry
-        ensure
-          @wr.flush
-        end
+      # Write object to the underlying +IO+ as msgpack.
+      def write(object)
+        log(:debug) { {:object => object} }
+        @packer.write(object).flush
       end
 
       def read
-        @rd.readpartial(1024 * 16).tap do |bytes|
-          log(:debug) { {:bytes => bytes.bytesize} }
-          yield bytes
+        @unpacker.read.tap do |object|
+          log(:debug) { {:object => object} }
+          yield object
+        end
+      end
+
+      def register_type(id, &block)
+        @unpacker.register_type(id) do |data|
+          index = MessagePack.unpack(data)
+          block.call(index)
         end
       end
 

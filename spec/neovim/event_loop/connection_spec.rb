@@ -6,13 +6,13 @@ module Neovim
       let(:nil_io) { StringIO.new }
 
       describe "#write" do
-        it "writes to the underlying file descriptor" do
+        it "writes msgpack to the underlying file descriptor" do
           rd, wr = IO.pipe
           connection = Connection.new(nil_io, wr)
           connection.write("some data")
           wr.close
 
-          expect(rd.read).to eq("some data")
+          expect(MessagePack.unpack(rd.read)).to eq("some data")
         end
 
         it "writes large amounts of data" do
@@ -48,14 +48,14 @@ module Neovim
 
           connection.write(big_data)
           socket.close
-          expect(server_thr.value).to eq(big_data)
+          expect(MessagePack.unpack(server_thr.value)).to eq(big_data)
         end
       end
 
       describe "#read" do
         it "yields data from the underlying file descriptor" do
           rd, wr = IO.pipe
-          wr.write("some data")
+          wr.write(MessagePack.pack("some data"))
           wr.close
 
           connection = Connection.new(rd, nil_io)

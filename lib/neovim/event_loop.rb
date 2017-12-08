@@ -1,7 +1,6 @@
 require "neovim/logging"
 require "neovim/event_loop/connection"
 require "neovim/event_loop/message_builder"
-require "neovim/event_loop/serializer"
 
 module Neovim
   class EventLoop
@@ -32,7 +31,6 @@ module Neovim
       @running = false
       @shutdown = false
       @connection = connection
-      @serializer = Serializer.new
       @message_builder = MessageBuilder.new
     end
 
@@ -74,10 +72,8 @@ module Neovim
         break if !@running
         break if @shutdown
 
-        @connection.read do |bytes|
-          @serializer.read(bytes) do |obj|
-            @message_builder.read(obj, &callback)
-          end
+        @connection.read do |obj|
+          @message_builder.read(obj, &callback)
         end
       end
     rescue EOFError => ex
@@ -95,7 +91,7 @@ module Neovim
         klass = Neovim.const_get(type)
         log(:debug) { {:type => type, :id => id} }
 
-        @serializer.register_type(id) do |index|
+        @connection.register_type(id) do |index|
           klass.new(index, session, api)
         end
       end
@@ -105,9 +101,7 @@ module Neovim
 
     def write(type, *args)
       @message_builder.write(type, *args) do |arr|
-        @serializer.write(arr) do |bytes|
-          @connection.write(bytes)
-        end
+        @connection.write(arr)
       end
     end
   end
