@@ -117,6 +117,7 @@ module Neovim
         client.err_writeln(msg)
       end
     end
+    private_class_method :__with_exception_handling
 
     def self.__with_std_streams(client)
       old_stdout = $stdout.dup
@@ -134,6 +135,7 @@ module Neovim
         $stderr = old_stderr
       end
     end
+    private_class_method :__with_std_streams
 
     def self.__update_lines_in_chunks(buffer, start, stop, size)
       (start..stop).each_slice(size) do |linenos|
