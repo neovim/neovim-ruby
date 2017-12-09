@@ -3,26 +3,22 @@ require "neovim/connection"
 require "neovim/message"
 
 module Neovim
+  # @api private
   class EventLoop
     include Logging
 
-    # Connect to a TCP socket.
     def self.tcp(host, port)
       new Connection.tcp(host, port)
     end
 
-    # Connect to a UNIX domain socket.
     def self.unix(path)
       new Connection.unix(path)
     end
 
-    # Spawn and connect to a child +nvim+ process.
     def self.child(argv)
       new Connection.child(argv)
     end
 
-    # Connect to the current process's standard streams. This is used to
-    # promote the current process to a Ruby plugin host.
     def self.stdio
       new Connection.stdio
     end
@@ -91,7 +87,6 @@ module Neovim
       @connection.close if @shutdown
     end
 
-    # Register msgpack ext types using the provided API and session
     def register_types(api, session)
       api.types.each do |type, info|
         id = info.fetch("id")

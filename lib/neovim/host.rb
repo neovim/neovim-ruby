@@ -10,9 +10,6 @@ module Neovim
 
     attr_reader :plugins
 
-    # Start a plugin host. This is called by the +nvim-ruby-host+ executable,
-    # which is spawned by +nvim+ to discover and run Ruby plugins, and acts as
-    # the bridge between +nvim+ and the plugin.
     def self.run(rplugin_paths, event_loop=EventLoop.stdio)
       new(event_loop).tap do |host|
         Loader.new(host).load(rplugin_paths)
@@ -27,15 +24,12 @@ module Neovim
       @specs = {}
     end
 
-    # Run the event loop, passing received messages to the appropriate handler.
     def run
       @session.run { |msg| handle(msg) }
     ensure
       @session.shutdown
     end
 
-    # Handle messages received from the host. Sends a +Neovim::Client+ along
-    # with the message to be used in plugin callbacks.
     def handle(message)
       log(:debug) { message.to_h }
 

@@ -19,7 +19,6 @@ module Neovim
       @request_id = 0
     end
 
-    # Run the event loop, handling messages in a +Fiber+.
     def run(&block)
       @running = true
 
@@ -68,7 +67,6 @@ module Neovim
       @event_loop.respond(request_id, value, error)
     end
 
-    # Make an RPC notification. +nvim+ will not block waiting for a response.
     def notify(method, *args)
       @event_loop.notify(method, *args)
     end

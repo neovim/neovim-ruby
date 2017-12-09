@@ -3,8 +3,6 @@ require "socket"
 require "msgpack"
 
 module Neovim
-  # The lowest level interface to reading from and writing to +nvim+.
-  #
   # @api private
   class Connection
     include Logging
@@ -41,7 +39,6 @@ module Neovim
       @running = false
     end
 
-    # Write object to the underlying +IO+ as msgpack.
     def write(object)
       log(:debug) { {:object => object} }
       @packer.write(object).flush
@@ -60,7 +57,6 @@ module Neovim
       end
     end
 
-    # Close underlying +IO+s.
     def close
       [@rd, @wr].each do |io|
         begin

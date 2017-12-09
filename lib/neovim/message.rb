@@ -1,9 +1,6 @@
 require "neovim/logging"
 
 module Neovim
-  # Handles formatting RPC messages and registering response callbacks for
-  # requests.
-  #
   # @api private
   class Message
     def self.from_array((kind, *payload))
