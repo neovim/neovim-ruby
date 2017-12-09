@@ -51,6 +51,17 @@ module Neovim
         expect(message.sync?).to eq(true)
         expect(message.method_name).to eq("foo_method")
       end
+
+      it "shuts down after receiving EOFError" do
+        run_thread = Thread.new do
+          event_loop.run
+        end
+
+        server_wr.close
+        run_thread.join
+        expect(client_rd).to be_closed
+        expect(client_wr).to be_closed
+      end
     end
   end
 end
