@@ -42,7 +42,7 @@ module Neovim
       end
 
       after do
-        host_thread.kill
+        host_thread.kill while host_thread.alive?
         host_thread.join
       end
 
