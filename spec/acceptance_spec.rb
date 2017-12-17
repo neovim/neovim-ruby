@@ -3,6 +3,7 @@ ENV.delete("VIMRUNTIME")
 
 require "json"
 require "net/http"
+require "openssl"
 require "open-uri"
 require "tempfile"
 
@@ -58,7 +59,7 @@ RSpec.describe "Acceptance", :timeout => 10 do
         ]
 
         expect(docs_version).to eq(release_version)
-      rescue SocketError, OpenURI::HTTPError => e
+      rescue SocketError, OpenURI::HTTPError, OpenSSL::SSL::SSLError => e
         skip "Skipping: #{e}"
       end
     end
