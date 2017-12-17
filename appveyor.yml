@@ -4,15 +4,12 @@ environment:
     - RUBY_VERSION: 23
     - RUBY_VERSION: 22
     - RUBY_VERSION: 21
-    - RUBY_VERSION: 20
-    - RUBY_VERSION: 19
 
 install:
   - set PATH=C:\Ruby%RUBY_VERSION%\bin;C:\tools\neovim\Neovim\bin;%PATH%
   - set NVIM_RUBY_LOG_LEVEL=DEBUG
   - set NVIM_RUBY_LOG_FILE=%cd%\ci.log
   - choco install neovim --pre -fy --ignore-dependencies
-  - gem install msgpack --platform=ruby
   - bundle install
 
 build: off
@@ -20,6 +17,7 @@ build: off
 branches:
   only:
     - master
+    - appveyor_debug
 
 before_test:
   - ruby -v
