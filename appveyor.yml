@@ -17,7 +17,6 @@ build: off
 branches:
   only:
     - master
-    - appveyor_debug
 
 before_test:
   - ruby -v
