@@ -12,6 +12,7 @@ install:
   - set NVIM_RUBY_LOG_LEVEL=DEBUG
   - set NVIM_RUBY_LOG_FILE=%cd%\ci.log
   - choco install neovim --pre -fy --ignore-dependencies
+  - gem install msgpack --platform=ruby
   - bundle install
 
 build: off
