@@ -17,5 +17,5 @@ test/tmp
 test/version_tmp
 tmp
 spec/workspace
-spec/integration/runtime/rplugin.vim
+spec/acceptance/runtime/rplugin.vim
 vendor/bundle
