@@ -45,23 +45,25 @@ RSpec.describe "Acceptance", :timeout => 10 do
 
   describe "Generated documentation" do
     it "is up to date" do
+      url = "https://api.github.com/repos/neovim/neovim/releases/latest"
+
       begin
-        url = "https://api.github.com/repos/neovim/neovim/releases/latest"
         response = open(url) { |json| JSON.load(json) }
-        release_version = response["name"][/NVIM v?(.+)$/, 1]
-
-        client_file = File.read(
-          File.expand_path("../../lib/neovim/client.rb", __FILE__)
-        )
-        docs_version = client_file[
-          /The methods documented here were generated using NVIM v?(.+)$/,
-          1
-        ]
-
-        expect(docs_version).to eq(release_version)
       rescue SocketError, OpenURI::HTTPError, OpenSSL::SSL::SSLError => e
         skip "Skipping: #{e}"
       end
+
+      release_version = response["name"][/NVIM v?(.+)$/, 1]
+
+      client_file = File.read(
+        File.expand_path("../../lib/neovim/client.rb", __FILE__)
+      )
+      docs_version = client_file[
+        /The methods documented here were generated using NVIM v?(.+)$/,
+        1
+      ]
+
+      expect(docs_version).to eq(release_version)
     end
   end
 
