@@ -26,15 +26,17 @@ RSpec.configure do |config|
   config.color = true
 
   config.around(:example, :silence_thread_exceptions) do |spec|
-    return(spec.run) unless Thread.respond_to?(:report_on_exception)
+    if Thread.respond_to?(:report_on_exception)
+      original = Thread.report_on_exception
 
-    original = Thread.report_on_exception
-
-    begin
-      Thread.report_on_exception = false
+      begin
+        Thread.report_on_exception = false
+        spec.run
+      ensure
+        Thread.report_on_exception = original
+      end
+    else
       spec.run
-    ensure
-      Thread.report_on_exception = original
     end
   end
 
