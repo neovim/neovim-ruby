@@ -14,7 +14,7 @@ module Neovim
       @event_loop = event_loop
       @main_thread = Thread.current
       @main_fiber = Fiber.current
-      @response_handlers = Hash.new(Proc.new {})
+      @response_handlers = Hash.new(-> {})
       @pending_messages = []
       @request_id = 0
     end
@@ -86,10 +86,10 @@ module Neovim
     def blocking_response
       response = nil
 
-      @response_handlers[@request_id] = Proc.new do |res|
+      @response_handlers[@request_id] = -> (res) {
         response = res
         stop
-      end
+      }
 
       run { |message| @pending_messages << message }
       response
@@ -98,9 +98,9 @@ module Neovim
     def yielding_response
       fiber = Fiber.current
 
-      @response_handlers[@request_id] = Proc.new do |response|
+      @response_handlers[@request_id] = -> (response) {
         fiber.resume(response)
-      end
+      }
 
       Fiber.yield
     end

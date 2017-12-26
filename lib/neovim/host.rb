@@ -43,16 +43,16 @@ module Neovim
     private
 
     def poll_handler
-      @poll_handler ||= Proc.new do |_, req|
+      @poll_handler ||= -> (_, req) {
         initialize_client(req.id)
         initialize_plugins
 
         @session.respond(req.id, "ok")
-      end
+      }
     end
 
     def specs_handler
-      @specs_handler ||= Proc.new do |_, req|
+      @specs_handler ||= -> (_, req) {
         source = req.arguments.fetch(0)
 
         if @specs.key?(source)
@@ -60,14 +60,14 @@ module Neovim
         else
           @session.respond(req.id, nil, "Unknown plugin #{source}")
         end
-      end
+      }
     end
 
     def default_handler
-      @default_handler ||= Proc.new do |_, message|
+      @default_handler ||= -> (_, message) {
         next unless message.sync?
         @session.respond(message.id, nil, "Unknown request #{message.method_name}")
-      end
+      }
     end
 
     def initialize_client(request_id)
@@ -87,7 +87,7 @@ module Neovim
     end
 
     def wrap_plugin_handler(handler)
-      Proc.new do |client, message|
+      -> (client, message) {
         begin
           args = message.arguments.flatten(1)
           result = handler.call(client, *args)
@@ -102,7 +102,7 @@ module Neovim
             client.err_writeln("#{handler.qualified_name}: (#{e.class}) #{e.message}")
           end
         end
-      end
+      }
     end
   end
 end

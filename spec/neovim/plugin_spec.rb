@@ -5,7 +5,7 @@ module Neovim
   RSpec.describe Plugin do
     describe ".from_config_block" do
       it "registers a command" do
-        cmd_block = Proc.new {}
+        cmd_block = -> {}
 
         plugin = Plugin.from_config_block("source") do |plug|
           plug.command(
@@ -39,7 +39,7 @@ module Neovim
       end
 
       it "registers an autocmd" do
-        au_block = Proc.new {}
+        au_block = -> {}
 
         plugin = Plugin.from_config_block("source") do |plug|
           plug.autocmd("BufEnter", pattern: "*.rb", &au_block)
@@ -61,7 +61,7 @@ module Neovim
       end
 
       it "registers a function" do
-        fun_block = Proc.new {}
+        fun_block = -> {}
 
         plugin = Plugin.from_config_block("source") do |plug|
           plug.function("Foo", range: true, nargs: 1, &fun_block)
@@ -101,7 +101,7 @@ module Neovim
       end
 
       it "registers a top level RPC" do
-        cmd_block = Proc.new {}
+        cmd_block = -> {}
 
         plugin = Plugin.from_config_block("source") do |plug|
           plug.__send__(:rpc, "Foo", &cmd_block)

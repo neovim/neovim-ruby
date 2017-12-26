@@ -14,7 +14,7 @@ module Neovim
         @name = name.to_s
         @sync = !!sync
         @options = options
-        @block = block || Proc.new {}
+        @block = block || -> {}
         @qualified =
           options.key?(:qualified) ? options.delete(:qualified) : true
       end

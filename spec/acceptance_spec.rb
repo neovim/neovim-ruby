@@ -20,7 +20,7 @@ RSpec.describe "Acceptance", timeout: 10 do
     ["ruby", "rubyfile", "rubydo"].each do |feature|
       specify ":#{feature}" do
         run_vader("#{feature}_spec.vim") do |status, output|
-          expect(status).to be_success, lambda { output.read }
+          expect(status).to be_success, -> { output.read }
         end
       end
     end
@@ -37,7 +37,7 @@ RSpec.describe "Acceptance", timeout: 10 do
     ["command", "function", "autocmd"].each do |feature|
       specify "##{feature}" do
         run_vader("rplugin_#{feature}_spec.vim") do |status, output|
-          expect(status).to be_success, lambda { output.read }
+          expect(status).to be_success, -> { output.read }
         end
       end
     end

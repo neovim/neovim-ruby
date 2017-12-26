@@ -43,7 +43,7 @@ module Neovim
     end
 
     def self.json_formatter
-      Proc.new do |level, time, _, fields|
+      -> (level, time, _, fields) {
         require "multi_json"
 
         MultiJson.encode(
@@ -52,7 +52,7 @@ module Neovim
             _time: time.strftime(TIMESTAMP_FORMAT)
           }.merge!(fields)
         ) << "\n"
-      end
+      }
     end
     private_class_method :json_formatter
 
