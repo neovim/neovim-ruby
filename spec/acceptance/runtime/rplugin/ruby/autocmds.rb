@@ -1,9 +1,9 @@
 Neovim.plugin do |plug|
-  plug.autocmd(:BufEnter, :pattern => "*.rb") do |nvim|
+  plug.autocmd(:BufEnter, pattern: "*.rb") do |nvim|
     nvim.get_current_buf.set_var("rplugin_autocmd_BufEnter", true)
   end
 
-  plug.autocmd(:BufEnter, :pattern => "*.c", :eval => "g:to_eval") do |nvim, to_eval|
-    nvim.set_var("rplugin_autocmd_BufEnter_eval", to_eval.merge(:b => 43))
+  plug.autocmd(:BufEnter, pattern: "*.c", eval: "g:to_eval") do |nvim, to_eval|
+    nvim.set_var("rplugin_autocmd_BufEnter_eval", to_eval.merge(b: 43))
   end
 end

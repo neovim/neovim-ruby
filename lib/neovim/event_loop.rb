@@ -41,9 +41,9 @@ module Neovim
     def request(request_id, method, *args)
       log(:debug) do
         {
-          :request_id => request_id,
-          :method => method,
-          :arguments => args
+          request_id: request_id,
+          method: method,
+          arguments: args
         }
       end
 
@@ -53,9 +53,9 @@ module Neovim
     def respond(request_id, return_value, error)
       log(:debug) do
         {
-          :request_id => request_id,
-          :return_value => return_value,
-          :error => error
+          request_id: request_id,
+          return_value: return_value,
+          error: error
         }
       end
 
@@ -63,7 +63,7 @@ module Neovim
     end
 
     def notify(method, *args)
-      log(:debug) { {:name => method, :arguments => args} }
+      log(:debug) { {name: method, arguments: args} }
       write(:notification, method, args)
     end
 
@@ -91,7 +91,7 @@ module Neovim
       api.types.each do |type, info|
         id = info.fetch("id")
         klass = Neovim.const_get(type)
-        log(:debug) { {:type => type, :id => id} }
+        log(:debug) { {type: type, id: id} }
 
         @connection.register_type(id) do |index|
           klass.new(index, session, api)

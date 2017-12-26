@@ -10,10 +10,10 @@ module Neovim
         plugin = Plugin.from_config_block("source") do |plug|
           plug.command(
             "Foo",
-            :nargs => 1,
-            :range => true,
-            :bang => true,
-            :register => true,
+            nargs: 1,
+            range: true,
+            bang: true,
+            register: true,
             &cmd_block
           )
         end
@@ -26,14 +26,14 @@ module Neovim
         expect(handler.block).to eq(cmd_block)
         expect(handler.qualified_name).to eq("source:command:Foo")
         expect(handler.to_spec).to eq(
-          :type => :command,
-          :name => "Foo",
-          :sync => false,
-          :opts => {
-            :nargs => 1,
-            :range => "",
-            :bang => "",
-            :register => "",
+          type: :command,
+          name: "Foo",
+          sync: false,
+          opts: {
+            nargs: 1,
+            range: "",
+            bang: "",
+            register: "",
           },
         )
       end
@@ -42,7 +42,7 @@ module Neovim
         au_block = Proc.new {}
 
         plugin = Plugin.from_config_block("source") do |plug|
-          plug.autocmd("BufEnter", :pattern => "*.rb", &au_block)
+          plug.autocmd("BufEnter", pattern: "*.rb", &au_block)
         end
 
         expect(plugin.handlers.size).to be(1)
@@ -53,10 +53,10 @@ module Neovim
         expect(handler.block).to eq(au_block)
         expect(handler.qualified_name).to eq("source:autocmd:BufEnter:*.rb")
         expect(handler.to_spec).to eq(
-          :type => :autocmd,
-          :name => "BufEnter",
-          :sync => false,
-          :opts => {:pattern => "*.rb"},
+          type: :autocmd,
+          name: "BufEnter",
+          sync: false,
+          opts: {pattern: "*.rb"},
         )
       end
 
@@ -64,7 +64,7 @@ module Neovim
         fun_block = Proc.new {}
 
         plugin = Plugin.from_config_block("source") do |plug|
-          plug.function("Foo", :range => true, :nargs => 1, &fun_block)
+          plug.function("Foo", range: true, nargs: 1, &fun_block)
         end
 
         expect(plugin.handlers.size).to be(1)
@@ -75,10 +75,10 @@ module Neovim
         expect(handler.block).to eq(fun_block)
         expect(handler.qualified_name).to eq("source:function:Foo")
         expect(handler.to_spec).to eq(
-          :type => :function,
-          :name => "Foo",
-          :sync => false,
-          :opts => {:range => "", :nargs => 1},
+          type: :function,
+          name: "Foo",
+          sync: false,
+          opts: {range: "", nargs: 1},
         )
       end
 
@@ -120,16 +120,16 @@ module Neovim
     describe "#specs" do
       it "returns specs for plugin handlers" do
         plugin = Plugin.from_config_block("source") do |plug|
-          plug.command("Foo", :sync => true, :nargs => 2)
+          plug.command("Foo", sync: true, nargs: 2)
         end
 
         expect(plugin.specs).to eq(
           [
             {
-              :type => :command,
-              :name => "Foo",
-              :sync => true,
-              :opts=> {:nargs => 2}
+              type: :command,
+              name: "Foo",
+              sync: true,
+              opts: {nargs: 2}
             }
           ]
         )

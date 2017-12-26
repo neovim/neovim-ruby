@@ -16,11 +16,11 @@ module Neovim
         Support.file_path("my_plugin").tap do |path|
           File.write(path, <<-PLUGIN)
             Neovim.plugin do |plug|
-              plug.command(:Echo, :nargs => 1, :sync => true) do |client, arg|
+              plug.command(:Echo, nargs: 1, sync: true) do |client, arg|
                 arg
               end
 
-              plug.command(:Boom, :sync => true) do |client|
+              plug.command(:Boom, sync: true) do |client|
                 raise "BOOM"
               end
 

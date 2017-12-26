@@ -50,10 +50,10 @@ module Neovim
 
         log(:debug) do
           {
-            :method_name => method,
-            :request_id => @request_id,
-            :blocking => blocking,
-            :arguments => args
+            method_name: method,
+            request_id: @request_id,
+            blocking: blocking,
+            arguments: args
           }
         end
 

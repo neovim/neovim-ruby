@@ -16,21 +16,21 @@ module Neovim
 
     describe ".logger" do
       it "fetches the output from $NVIM_RUBY_LOG_FILE" do
-        logger = instance_double(Logger, :level= => nil, :formatter= => nil)
+        logger = instance_double(Logger, "level=": nil, "formatter=": nil)
         expect(Logger).to receive(:new).with("/tmp/nvim.log").and_return(logger)
         Logging.logger("NVIM_RUBY_LOG_FILE" => "/tmp/nvim.log")
         expect(Logging.logger).to be(logger)
       end
 
       it "defaults the output to STDERR" do
-        logger = instance_double(Logger, :level= => nil, :formatter= => nil)
+        logger = instance_double(Logger, "level=": nil, "formatter=": nil)
         expect(Logger).to receive(:new).with(STDERR).and_return(logger)
         Logging.logger({})
         expect(Logging.logger).to be(logger)
       end
 
       it "fetches the level from $NVIM_RUBY_LOG_LEVEL as a string" do
-        logger = instance_double(Logger, :formatter= => nil)
+        logger = instance_double(Logger, "formatter=": nil)
         expect(Logger).to receive(:new).and_return(logger)
         expect(logger).to receive(:level=).with(Logger::DEBUG)
         Logging.logger("NVIM_RUBY_LOG_LEVEL" => "DEBUG")
@@ -38,7 +38,7 @@ module Neovim
       end
 
       it "fetches the level from $NVIM_RUBY_LOG_LEVEL as an integer" do
-        logger = instance_double(Logger, :formatter= => nil)
+        logger = instance_double(Logger, "formatter=": nil)
         expect(Logger).to receive(:new).and_return(logger)
         expect(logger).to receive(:level=).with(0)
         Logging.logger("NVIM_RUBY_LOG_LEVEL" => "0")
@@ -46,7 +46,7 @@ module Neovim
       end
 
       it "defaults the level to WARN" do
-        logger = instance_double(Logger, :formatter= => nil)
+        logger = instance_double(Logger, "formatter=": nil)
         expect(Logger).to receive(:new).and_return(logger)
         expect(logger).to receive(:level=).with(Logger::WARN)
         Logging.logger({})
@@ -81,7 +81,7 @@ module Neovim
 
       describe "#log" do
         it "logs JSON at the specified level" do
-          obj.public_log(:info, :foo => "bar")
+          obj.public_log(:info, foo: "bar")
           logged = MultiJson.decode(log.string)
 
           expect(logged).to match(

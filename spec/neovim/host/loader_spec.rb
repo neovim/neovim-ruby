@@ -6,7 +6,7 @@ module Neovim
     RSpec.describe Loader do
       describe "#load" do
         let(:plugin_path) { Support.file_path("plug.rb") }
-        let(:host) { instance_double(Host, :plugins => []) }
+        let(:host) { instance_double(Host, plugins: []) }
         let(:loader) { Loader.new(host) }
 
         before do

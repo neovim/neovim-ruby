@@ -40,13 +40,13 @@ module Neovim
     end
 
     def write(object)
-      log(:debug) { {:object => object} }
+      log(:debug) { {object: object} }
       @packer.write(object).flush
     end
 
     def read
       @unpacker.read.tap do |object|
-        log(:debug) { {:object => object} }
+        log(:debug) { {object: object} }
       end
     end
 

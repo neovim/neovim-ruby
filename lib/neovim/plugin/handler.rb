@@ -5,7 +5,7 @@ module Neovim
       attr_reader :block
 
       def self.unqualified(name, block)
-        new(nil, nil, name, true, {:qualified => false}, block)
+        new(nil, nil, name, true, {qualified: false}, block)
       end
 
       def initialize(source, type, name, sync, options, block)
@@ -40,10 +40,10 @@ module Neovim
 
       def to_spec
         {
-          :type => @type,
-          :name => @name,
-          :sync => @sync,
-          :opts => @options,
+          type: @type,
+          name: @name,
+          sync: @sync,
+          opts: @options,
         }
       end
 

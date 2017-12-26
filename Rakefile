@@ -24,4 +24,4 @@ namespace :spec do
   end
 end
 
-task :default => ["spec:functional", "spec:acceptance"]
+task default: ["spec:functional", "spec:acceptance"]

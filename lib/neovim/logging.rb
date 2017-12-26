@@ -48,8 +48,8 @@ module Neovim
 
         MultiJson.encode(
           {
-            :_level => level,
-            :_time => time.strftime(TIMESTAMP_FORMAT)
+            _level: level,
+            _time: time.strftime(TIMESTAMP_FORMAT)
           }.merge!(fields)
         ) << "\n"
       end
@@ -63,8 +63,8 @@ module Neovim
         begin
           Logging.logger.public_send(level) do
             {
-              :_class => self.class,
-              :_method => _method || block.binding.eval("__method__"),
+              _class: self.class,
+              _method: _method || block.binding.eval("__method__"),
             }.merge!(block.call)
           end
         rescue => ex
@@ -76,11 +76,11 @@ module Neovim
 
       def log_exception(level, ex, _method)
         log(level, _method) do
-          {:exception => ex.class, :message => ex.message}
+          {exception: ex.class, message: ex.message}
         end
 
         log(:debug, _method) do
-          {:exception => ex.class, :message => ex.message, :backtrace => ex.backtrace}
+          {exception: ex.class, message: ex.message, backtrace: ex.backtrace}
         end
       end
     end
