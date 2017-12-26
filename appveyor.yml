@@ -1,10 +1,4 @@
----
-init:
-  - ps: 'if ($env:APPVEYOR_REPO_TAG -eq "true") {
-      Update-AppveyorBuild -Version "$($env:APPVEYOR_REPO_TAG_NAME).TrimStart("v")"
-    } else {
-      Update-AppveyorBuild -Version "$($env:APPVEYOR_REPO_COMMIT.Substring(0, 7))"
-    }'
+version: '{build}'
 
 environment:
   matrix:
