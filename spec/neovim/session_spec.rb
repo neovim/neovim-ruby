@@ -24,7 +24,7 @@ module Neovim
         expect(session.request(:nvim_get_current_line)).to eq(large_str)
       end
 
-      it "fails outside of the main thread" do
+      it "fails outside of the main thread", :silence_thread_exceptions do
         expect {
           Thread.new { session.request(:nvim_strwidth, "foo") }.join
         }.to raise_error(/outside of the main thread/)

@@ -25,6 +25,19 @@ RSpec.configure do |config|
   config.order = :random
   config.color = true
 
+  config.around(:example, :silence_thread_exceptions) do |spec|
+    return(spec.run) unless Thread.respond_to?(:report_on_exception)
+
+    original = Thread.report_on_exception
+
+    begin
+      Thread.report_on_exception = false
+      spec.run
+    ensure
+      Thread.report_on_exception = original
+    end
+  end
+
   config.around(:example) do |spec|
     Support.setup_workspace
     timeout = spec.metadata.fetch(:timeout, 3)
