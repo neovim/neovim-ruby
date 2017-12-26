@@ -4,7 +4,6 @@ environment:
     - RUBY_VERSION: 24
     - RUBY_VERSION: 23
     - RUBY_VERSION: 22
-    - RUBY_VERSION: 21
 
 install:
   - set PATH=C:\Ruby%RUBY_VERSION%\bin;C:\tools\neovim\Neovim\bin;%PATH%
