@@ -14,6 +14,7 @@ rvm:
 
 before_install:
   - eval "$(curl -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64"
+  - gem update --system
   - gem update bundler
   - bundle --version
 
