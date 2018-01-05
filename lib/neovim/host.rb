@@ -26,8 +26,6 @@ module Neovim
 
     def run
       @session.run { |msg| handle(msg) }
-    ensure
-      @session.shutdown
     end
 
     def handle(message)
@@ -36,8 +34,16 @@ module Neovim
       @handlers.
         fetch(message.method_name, default_handler).
         call(@client, message)
-    rescue => ex
-      log_exception(:error, ex, __method__)
+    rescue Exception => e
+      log_exception(:error, e, __method__)
+
+      if message.sync?
+        @session.respond(message.id, nil, e.message)
+      else
+        @client.err_writeln("Exception handling #{message.method_name}: (#{e.class}) #{e.message}")
+      end
+
+      raise unless StandardError === e
     end
 
     private
@@ -88,20 +94,10 @@ module Neovim
 
     def wrap_plugin_handler(handler)
       -> (client, message) {
-        begin
-          args = message.arguments.flatten(1)
-          result = handler.call(client, *args)
+        args = message.arguments.flatten(1)
+        result = handler.call(client, *args)
 
-          @session.respond(message.id, result) if message.sync?
-        rescue => e
-          log_exception(:error, e, __method__)
-
-          if message.sync?
-            @session.respond(message.id, nil, e.message)
-          else
-            client.err_writeln("#{handler.qualified_name}: (#{e.class}) #{e.message}")
-          end
-        end
+        @session.respond(message.id, result) if message.sync?
       }
     end
   end

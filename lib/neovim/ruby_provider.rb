@@ -110,9 +110,7 @@ module Neovim
     def self.__with_exception_handling(client)
       begin
         yield
-      rescue SignalException => sig
-        raise sig
-      rescue Exception => e
+      rescue ScriptError, StandardError => e
         msg = [e.class, e.message].join(": ")
         client.err_writeln(msg)
       end

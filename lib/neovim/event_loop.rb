@@ -76,7 +76,7 @@ module Neovim
 
         begin
           callback.call(read)
-        rescue EOFError, SignalException => e
+        rescue EOFError => e
           log_exception(:debug, e, __method__)
           shutdown
         rescue => e
