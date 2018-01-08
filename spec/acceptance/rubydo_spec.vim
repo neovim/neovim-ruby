@@ -1,3 +1,6 @@
+Before:
+  AssertEqual 1, has('nvim')
+
 Given:
   one
   two

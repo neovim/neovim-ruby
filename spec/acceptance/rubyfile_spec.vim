@@ -1,9 +1,5 @@
-Execute (Set nvim_version):
-  if has('nvim')
-    let g:nvim_version = api_info()['version']
-  else
-    let g:nvim_version = {'major': 99, 'minor': 99, 'patch': 99}
-  endif
+Before:
+  AssertEqual 1, has('nvim')
 
 Given:
   one
@@ -34,9 +30,7 @@ Execute (Change the working directory explicitly):
   cd -
 
 Then:
-  if g:nvim_version['major'] > 0 || g:nvim_version['minor'] >= 2
-    AssertEqual "/", g:pwd_before
-  endif
+  AssertEqual "/", g:pwd_before
 
 Execute (Change the working directory implicitly):
   let g:before_file = getcwd() . "/rubyfile/set_pwd_before.rb"
@@ -49,9 +43,7 @@ Execute (Change the working directory implicitly):
   wincmd p | lcd -
 
 Then:
-  if g:nvim_version['major'] > 0 || g:nvim_version['minor'] >= 2
-    AssertNotEqual g:pwd_before, g:pwd_after
-  endif
+  AssertNotEqual g:pwd_before, g:pwd_after
 
 Execute (Run nested Ruby files):
   rubyfile ./rubyfile/nested.rb

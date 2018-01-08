@@ -1,9 +1,5 @@
-Execute (Set nvim_version):
-  if has('nvim')
-    let g:nvim_version = api_info()['version']
-  else
-    let g:nvim_version = {'major': 99, 'minor': 99, 'patch': 99}
-  endif
+Before:
+  AssertEqual 1, has('nvim')
 
 Given:
   one
@@ -31,9 +27,7 @@ Execute (Change the working directory explicitly):
   cd -
 
 Then:
-  if g:nvim_version['major'] > 0 || g:nvim_version['minor'] >= 2
-    AssertEqual "/", g:ruby_pwd
-  endif
+  AssertEqual "/", g:ruby_pwd
 
 Execute (Change the working directory implicitly):
   split | lcd /
@@ -43,9 +37,7 @@ Execute (Change the working directory implicitly):
   wincmd p | lcd -
 
 Then:
-  if g:nvim_version['major'] > 0 || g:nvim_version['minor'] >= 2
-    AssertNotEqual g:before_pwd, g:after_pwd
-  endif
+  AssertNotEqual g:before_pwd, g:after_pwd
 
 Execute (Run nested Ruby commands):
   ruby Vim.command("ruby Vim.command('let g:ruby_nested = 123')")
