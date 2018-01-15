@@ -26,7 +26,7 @@ RSpec.describe "Acceptance", timeout: 10 do
     end
   end
 
-  describe "Remote plugin DSL" do
+  describe "Remote plugins" do
     before do
       run_nvim(
         {"NVIM_RPLUGIN_MANIFEST" => manifest},
@@ -43,14 +43,17 @@ RSpec.describe "Acceptance", timeout: 10 do
     end
   end
 
-  describe "Generated documentation" do
+  describe "Generated documentation", timeout: 120 do
     it "is up to date" do
       url = "https://api.github.com/repos/neovim/neovim/releases/latest"
+      retries = 5.times.lazy.map { sleep 5 }
 
       begin
         response = open(url) { |json| JSON.load(json) }
       rescue SocketError, OpenURI::HTTPError, OpenSSL::SSL::SSLError => e
-        skip "Skipping: #{e}"
+        warn "#{e} (retrying)"; retries.next; retry
+      rescue StopIteration
+        fail "Couldn't determine latest neovim release from Github"
       end
 
       release_version = response["name"][/NVIM v?(.+)$/, 1]
