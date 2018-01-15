@@ -6,7 +6,6 @@ require "net/http"
 require "openssl"
 require "open-uri"
 require "tempfile"
-require "rspec/retry"
 
 RSpec.describe "Acceptance", timeout: 10 do
   let(:root) { File.expand_path("../acceptance", __FILE__) }
@@ -44,10 +43,16 @@ RSpec.describe "Acceptance", timeout: 10 do
     end
   end
 
-  describe "Generated documentation", timeout: 60, retry: 5, retry_wait: 5 do
+  describe "Generated documentation" do
     it "is up to date" do
       url = "https://api.github.com/repos/neovim/neovim/releases/latest"
-      response = open(url) { |io| JSON.load(io) }
+
+      begin
+        response = open(url) { |json| JSON.load(json) }
+      rescue SocketError, OpenURI::HTTPError => e
+        skip "Skipping: #{e}"
+      end
+
       release_version = response["name"][/NVIM v?(.+)$/, 1]
 
       client_file = File.read(
