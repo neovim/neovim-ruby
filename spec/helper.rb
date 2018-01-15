@@ -13,6 +13,7 @@ require "stringio"
 require "timeout"
 require "securerandom"
 require "msgpack"
+require "rspec/retry"
 
 require File.expand_path("../support.rb", __FILE__)
 
@@ -24,6 +25,9 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
   config.order = :random
   config.color = true
+
+  config.verbose_retry = true
+  config.display_try_failure_messages = true
 
   config.around(:example, :silence_thread_exceptions) do |spec|
     if Thread.respond_to?(:report_on_exception)

@@ -43,19 +43,10 @@ RSpec.describe "Acceptance", timeout: 10 do
     end
   end
 
-  describe "Generated documentation", timeout: 120 do
+  describe "Generated documentation", timeout: 60, retry: 5, retry_wait: 5 do
     it "is up to date" do
       url = "https://api.github.com/repos/neovim/neovim/releases/latest"
-      retries = 5.times.lazy.map { sleep 5 }
-
-      begin
-        response = open(url) { |json| JSON.load(json) }
-      rescue SocketError, OpenURI::HTTPError, OpenSSL::SSL::SSLError => e
-        warn "#{e} (retrying)"; retries.next; retry
-      rescue StopIteration
-        fail "Couldn't determine latest neovim release from Github"
-      end
-
+      response = open(url) { |io| JSON.load(io) }
       release_version = response["name"][/NVIM v?(.+)$/, 1]
 
       client_file = File.read(
