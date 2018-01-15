@@ -21,10 +21,7 @@ module Neovim
       end
     end
 
-    # Bootstrap the provider client:
-    #
-    # 1. Monkeypatch +$stdout+ and +$stderr+ to write to +nvim+.
-    # 2. Define the +DirChanged+ event to update the provider's pwd.
+    # Define the +DirChanged+ event to update the provider's pwd.
     def self.__define_setup(plug)
       plug.__send__(:setup) do |client|
         begin
