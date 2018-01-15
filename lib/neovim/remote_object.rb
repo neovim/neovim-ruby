@@ -23,15 +23,15 @@ module Neovim
 
     # Intercept method calls and delegate to appropriate RPC methods.
     def method_missing(method_name, *args)
-      if func = @api.function_for_object_method(self, method_name)
+      if (func = @api.function_for_object_method(self, method_name))
         func.call(@session, @index, *args)
       else
         super
       end
     end
 
-    # Extend +respond_to?+ to support RPC methods.
-    def respond_to?(method_name, *)
+    # Extend +respond_to_missing?+ to support RPC methods.
+    def respond_to_missing?(method_name, *)
       super || rpc_methods.include?(method_name.to_sym)
     end
 

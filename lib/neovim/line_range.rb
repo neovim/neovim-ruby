@@ -12,8 +12,8 @@ module Neovim
     # @yieldparam line [String]
     def each(&block)
       (0...@buffer.count).each_slice(5000) do |linenos|
-        _start, _stop = linenos[0], linenos[-1] + 1
-        @buffer.get_lines(_start, _stop, true).each(&block)
+        start, stop = linenos[0], linenos[-1] + 1
+        @buffer.get_lines(start, stop, true).each(&block)
       end
     end
 
@@ -50,15 +50,15 @@ module Neovim
     # @example Get the first two lines using an index and length
     #   line_range[0, 2] # => ["first", "second"]
     def [](pos, len=nil)
-      if Range === pos
+      if pos.is_a?(Range)
         @buffer.get_lines(*range_indices(pos), true)
       else
-        _begin, _end = length_indices(pos, len || 1)
-        lines = @buffer.get_lines(_begin, _end, true)
+        start, stop = length_indices(pos, len || 1)
+        lines = @buffer.get_lines(start, stop, true)
         len ? lines : lines.first
       end
     end
-    alias_method :slice, :[]
+    alias slice []
 
     # Set a line or line range.
     #
@@ -85,11 +85,11 @@ module Neovim
       *target, val = args
       pos, len = target
 
-      if Range === pos
+      if pos.is_a?(Range)
         @buffer.set_lines(*range_indices(pos), true, Array(val))
       else
-        _begin, _end = length_indices(pos, len || 1)
-        @buffer.set_lines(_begin, _end, true, Array(val))
+        start, stop = length_indices(pos, len || 1)
+        @buffer.set_lines(start, stop, true, Array(val))
       end
     end
 
@@ -113,18 +113,18 @@ module Neovim
     private
 
     def range_indices(range)
-      _begin = adjust_index(range.begin)
-      _end = adjust_index(range.end)
-      _end += 1 unless range.exclude_end?
+      start = adjust_index(range.begin)
+      stop = adjust_index(range.end)
+      stop += 1 unless range.exclude_end?
 
-      [_begin, _end]
+      [start, stop]
     end
 
     def length_indices(index, len)
-      _begin = adjust_index(index)
-      _end = _begin < 0 ? [_begin + len, -1].min : _begin + len
+      start = adjust_index(index)
+      stop = start < 0 ? [start + len, -1].min : start + len
 
-      [_begin, _end]
+      [start, stop]
     end
 
     def adjust_index(i)

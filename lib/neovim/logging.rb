@@ -13,13 +13,12 @@ module Neovim
     def self.logger(env=ENV)
       return @logger if instance_variable_defined?(:@logger)
 
-      if env_file = env["NVIM_RUBY_LOG_FILE"]
-        @logger = Logger.new(env_file)
-      else
-        @logger = Logger.new(STDERR)
-      end
+      env_file, env_level =
+        env.values_at("NVIM_RUBY_LOG_FILE", "NVIM_RUBY_LOG_LEVEL")
 
-      if env_level = env["NVIM_RUBY_LOG_LEVEL"]
+      @logger = Logger.new(env_file || STDERR)
+
+      if env_level
         begin
           @logger.level = Integer(env_level)
         rescue ArgumentError
@@ -43,7 +42,7 @@ module Neovim
     end
 
     def self.json_formatter
-      -> (level, time, _, fields) {
+      lambda do |level, time, _, fields|
         require "multi_json"
 
         MultiJson.encode(
@@ -52,20 +51,21 @@ module Neovim
             _time: time.strftime(TIMESTAMP_FORMAT)
           }.merge!(fields)
         ) << "\n"
-      }
+      end
     end
     private_class_method :json_formatter
 
+    # @api private
     module Helpers
       private
 
-      def log(level, _method=nil, &block)
+      def log(level, method=nil, &block)
         begin
           Logging.logger.public_send(level) do
             {
               _class: self.class,
-              _method: _method || block.binding.eval("__method__"),
-            }.merge!(block.call)
+              _method: method || block.binding.eval("__method__")
+            }.merge!(yield)
           end
         rescue => ex
           Logging.logger.error("failed to log: #{ex.inspect}")
@@ -74,12 +74,12 @@ module Neovim
         # Inability to log shouldn't abort process
       end
 
-      def log_exception(level, ex, _method)
-        log(level, _method) do
+      def log_exception(level, ex, method)
+        log(level, method) do
           {exception: ex.class, message: ex.message}
         end
 
-        log(:debug, _method) do
+        log(:debug, method) do
           {exception: ex.class, message: ex.message, backtrace: ex.backtrace}
         end
       end

@@ -55,7 +55,7 @@ module Neovim
     # @return [String]
     def [](index)
       check_index(index)
-      @lines[index-1]
+      @lines[index - 1]
     end
 
     # Set the given line (1-indexed).
@@ -65,7 +65,7 @@ module Neovim
     # @return [String]
     def []=(index, str)
       check_index(index)
-      @lines[index-1] = str
+      @lines[index - 1] = str
     end
 
     # Delete the given line (1-indexed).
@@ -74,7 +74,7 @@ module Neovim
     # @return [void]
     def delete(index)
       check_index(index)
-      @lines.delete(index-1)
+      @lines.delete(index - 1)
       nil
     end
 
@@ -100,9 +100,7 @@ module Neovim
     #
     # @return [String, nil]
     def line
-      if active?
-        @session.request(:nvim_get_current_line)
-      end
+      @session.request(:nvim_get_current_line) if active?
     end
 
     # Set the current line of an active buffer.
@@ -110,18 +108,14 @@ module Neovim
     # @param str [String]
     # @return [String, nil]
     def line=(str)
-      if active?
-        @session.request(:nvim_set_current_line, str)
-      end
+      @session.request(:nvim_set_current_line, str) if active?
     end
 
     # Get the current line number of an active buffer.
     #
     # @return [Integer, nil]
     def line_number
-      if active?
-        @session.request(:nvim_get_current_win).get_cursor[0]
-      end
+      @session.request(:nvim_get_current_win).get_cursor[0] if active?
     end
 
     # Determine if the buffer is active.
@@ -134,9 +128,7 @@ module Neovim
     private
 
     def check_index(index)
-      if index < 0
-        raise ArgumentError, "Index out of bounds"
-      end
+      raise ArgumentError, "Index out of bounds" if index < 0
     end
 
     public

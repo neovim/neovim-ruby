@@ -35,9 +35,9 @@ module Neovim
         initial_index = current.buffer.index
         client.command("vnew")
 
-        expect {
+        expect do
           current.buffer = initial_index
-        }.to change { current.buffer.index }.to(initial_index)
+        end.to change { current.buffer.index }.to(initial_index)
       end
 
       it "sets the current buffer from a Buffer" do
@@ -45,9 +45,9 @@ module Neovim
         client.command("vnew")
         b1 = current.buffer
 
-        expect {
+        expect do
           current.buffer = b0
-        }.to change { current.buffer }.from(b1).to(b0)
+        end.to change { current.buffer }.from(b1).to(b0)
       end
 
       it "returns an integer" do
@@ -72,9 +72,9 @@ module Neovim
         start_index = current.window.index
         client.command("vsp")
 
-        expect {
+        expect do
           current.window = start_index
-        }.to change { current.window.index }.to(start_index)
+        end.to change { current.window.index }.to(start_index)
       end
 
       it "sets the current window from a Window" do
@@ -82,9 +82,9 @@ module Neovim
         client.command("vsp")
         w1 = current.window
 
-        expect {
+        expect do
           current.window = w0
-        }.to change { current.window }.from(w1).to(w0)
+        end.to change { current.window }.from(w1).to(w0)
       end
 
       it "returns an integer" do
@@ -110,9 +110,9 @@ module Neovim
         client.command("tabnew")
         expect(current.tabpage.index).not_to eq(initial_index)
 
-        expect {
+        expect do
           current.tabpage = initial_index
-        }.to change { current.tabpage.index }.to(initial_index)
+        end.to change { current.tabpage.index }.to(initial_index)
       end
 
       it "sets the current tabpage from a Tabpage" do
@@ -120,9 +120,9 @@ module Neovim
         client.command("tabnew")
         tp1 = current.tabpage
 
-        expect {
+        expect do
           current.tabpage = tp0
-        }.to change { current.tabpage }.from(tp1).to(tp0)
+        end.to change { current.tabpage }.from(tp1).to(tp0)
       end
 
       it "returns an integer" do

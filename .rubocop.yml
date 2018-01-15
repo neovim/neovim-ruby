@@ -1,0 +1,114 @@
+AllCops:
+  Exclude:
+    - spec/acceptance/**/*
+    - vendor/**/*
+    - script/**/*
+
+Layout/SpaceAroundEqualsInParameterDefault:
+  EnforcedStyle: no_space
+
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - spec/**/*
+
+Lint/HandleExceptions:
+  Exclude:
+    - lib/neovim/ruby_provider.rb
+    - lib/neovim/logging.rb
+    - lib/neovim/connection.rb
+    - lib/neovim/line_range.rb
+
+Lint/RescueException:
+  Exclude:
+    - lib/neovim/host.rb
+
+Lint/UnderscorePrefixedVariableName:
+  Exclude:
+    - lib/neovim/ruby_provider.rb
+
+Lint/UselessAccessModifier:
+  Exclude:
+    - lib/neovim/buffer.rb
+    - lib/neovim/client.rb
+
+Lint/Void:
+  Exclude:
+    - lib/neovim/window.rb
+
+Metrics/AbcSize:
+  Max: 20
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+
+Metrics/ClassLength:
+  Max: 500
+
+Metrics/LineLength:
+  Max: 125
+
+Metrics/MethodLength:
+  Max: 50
+
+Metrics/ModuleLength:
+  Exclude:
+    - spec/**/*
+
+Metrics/ParameterLists:
+  Max: 6
+
+Naming/AccessorMethodName:
+  Exclude:
+    - lib/neovim/client.rb
+
+Security/Eval:
+  Exclude:
+    - lib/neovim/ruby_provider.rb
+
+Style/BlockComments:
+  Exclude:
+    - lib/neovim/buffer.rb
+    - lib/neovim/client.rb
+    - lib/neovim/tabpage.rb
+    - lib/neovim/window.rb
+
+Style/ConditionalAssignment:
+  EnforcedStyle: assign_inside_condition
+  IncludeTernaryExpressions: false
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/FormatStringToken:
+  EnforcedStyle: unannotated
+
+Style/GlobalVars:
+  Exclude:
+    - lib/neovim/ruby_provider/vim.rb
+    - spec/neovim/ruby_provider/vim_spec.rb
+
+Style/ParallelAssignment:
+  Enabled: false
+
+Style/RescueStandardError:
+  EnforcedStyle: implicit
+
+Style/SpecialGlobalVars:
+  EnforcedStyle: use_perl_names
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+Style/WordArray:
+  EnforcedStyle: brackets
+
+Style/ZeroLengthPredicate:
+  Exclude:
+    - lib/neovim/ruby_provider.rb

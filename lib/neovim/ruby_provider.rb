@@ -105,12 +105,10 @@ module Neovim
     private_class_method :__wrap_client
 
     def self.__with_exception_handling(client)
-      begin
-        yield
-      rescue ScriptError, StandardError => e
-        msg = [e.class, e.message].join(": ")
-        client.err_writeln(msg)
-      end
+      yield
+    rescue ScriptError, StandardError => e
+      msg = [e.class, e.message].join(": ")
+      client.err_writeln(msg)
     end
     private_class_method :__with_exception_handling
 
@@ -123,8 +121,8 @@ module Neovim
       begin
         yield
 
-        client.out_write($stdout.string + $/) if $stdout.length > 0
-        client.err_writeln($stderr.string) if $stderr.length > 0
+        client.out_write($stdout.string + $/) if $stdout.size > 0
+        client.err_writeln($stderr.string) if $stderr.size > 0
       ensure
         $stdout = old_stdout
         $stderr = old_stderr
@@ -134,10 +132,10 @@ module Neovim
 
     def self.__update_lines_in_chunks(buffer, start, stop, size)
       (start..stop).each_slice(size) do |linenos|
-        _start, _stop = linenos[0]-1, linenos[-1]
-        lines = buffer.get_lines(_start, _stop, true)
+        start, stop = linenos[0] - 1, linenos[-1]
+        lines = buffer.get_lines(start, stop, true)
 
-        buffer.set_lines(_start, _stop, true, yield(lines))
+        buffer.set_lines(start, stop, true, yield(lines))
       end
     end
     private_class_method :__update_lines_in_chunks

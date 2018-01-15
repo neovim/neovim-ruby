@@ -23,9 +23,9 @@ module Neovim
       it "raises with an invalid executable path" do
         executable = Executable.new(File::NULL)
 
-        expect {
+        expect do
           executable.version
-        }.to raise_error(Executable::Error, Regexp.new(File::NULL))
+        end.to raise_error(Executable::Error, Regexp.new(File::NULL))
       end
     end
   end

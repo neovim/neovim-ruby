@@ -6,13 +6,13 @@ if ENV["REPORT_COVERAGE"]
 end
 
 require "fileutils"
+require "msgpack"
 require "neovim"
 require "pry"
 require "rubygems"
+require "securerandom"
 require "stringio"
 require "timeout"
-require "securerandom"
-require "msgpack"
 
 require File.expand_path("../support.rb", __FILE__)
 

@@ -13,9 +13,9 @@ module Neovim
       end
 
       it "raises an exception when there are errors" do
-        expect {
+        expect do
           session.request(:nvim_strwidth, "too", "many")
-        }.to raise_error(/wrong number of arguments/i)
+        end.to raise_error(/wrong number of arguments/i)
       end
 
       it "handles large data" do
@@ -25,17 +25,17 @@ module Neovim
       end
 
       it "fails outside of the main thread", :silence_thread_exceptions do
-        expect {
+        expect do
           Thread.new { session.request(:nvim_strwidth, "foo") }.join
-        }.to raise_error(/outside of the main thread/)
+        end.to raise_error(/outside of the main thread/)
       end
     end
 
     describe "#notify" do
       it "doesn't raise exceptions" do
-        expect {
+        expect do
           session.notify(:nvim_strwidth, "too", "many")
-        }.not_to raise_error
+        end.not_to raise_error
       end
 
       it "handles large data" do
@@ -45,9 +45,9 @@ module Neovim
       end
 
       it "succeeds outside of the main thread" do
-        expect {
+        expect do
           Thread.new { session.notify(:nvim_set_current_line, "foo") }.join
-        }.not_to raise_error
+        end.not_to raise_error
       end
     end
 

@@ -1,6 +1,7 @@
 require "neovim/ruby_provider/vim"
 
 module Neovim
+  # @api private
   class Buffer
     def self.current
       ::Vim.get_current_buf

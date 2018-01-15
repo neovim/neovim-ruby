@@ -7,21 +7,21 @@ module Neovim
 
     describe "#set_option" do
       it "sets an option from two arguments" do
-        expect {
+        expect do
           client.set_option("makeprg", "rake")
-        }.to change { client.evaluate("&makeprg") }.to("rake")
+        end.to change { client.evaluate("&makeprg") }.to("rake")
       end
 
       it "sets an option from a string" do
-        expect {
+        expect do
           client.set_option("timeoutlen=0")
-        }.to change { client.evaluate("&timeoutlen") }.to(0)
+        end.to change { client.evaluate("&timeoutlen") }.to(0)
       end
 
       it "sets a boolean option" do
-        expect {
+        expect do
           client.set_option("expandtab")
-        }.to change { client.evaluate("&expandtab") }.to(1)
+        end.to change { client.evaluate("&expandtab") }.to(1)
       end
     end
 
@@ -45,15 +45,15 @@ module Neovim
       end
 
       it "raises exceptions for unknown methods" do
-        expect {
+        expect do
           client.foobar
-        }.to raise_error(NoMethodError)
+        end.to raise_error(NoMethodError)
       end
 
       it "raises exceptions for incorrect usage" do
-        expect {
+        expect do
           client.strwidth("too", "many")
-        }.to raise_error("Wrong number of arguments: expecting 1 but got 2")
+        end.to raise_error("Wrong number of arguments: expecting 1 but got 2")
       end
     end
 

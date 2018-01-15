@@ -33,8 +33,8 @@ module Neovim
             nargs: 1,
             range: "",
             bang: "",
-            register: "",
-          },
+            register: ""
+          }
         )
       end
 
@@ -56,7 +56,7 @@ module Neovim
           type: :autocmd,
           name: "BufEnter",
           sync: false,
-          opts: {pattern: "*.rb"},
+          opts: {pattern: "*.rb"}
         )
       end
 
@@ -78,7 +78,7 @@ module Neovim
           type: :function,
           name: "Foo",
           sync: false,
-          opts: {range: "", nargs: 1},
+          opts: {range: "", nargs: 1}
         )
       end
 
@@ -95,9 +95,9 @@ module Neovim
           end
         end
 
-        expect {
+        expect do
           plugin.setup(:client)
-        }.to change { yielded }.from([]).to([:client, :other])
+        end.to change { yielded }.from([]).to([:client, :other])
       end
 
       it "registers a top level RPC" do

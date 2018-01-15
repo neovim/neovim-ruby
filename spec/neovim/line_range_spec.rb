@@ -66,9 +66,9 @@ module Neovim
         expect(line_range[-2, 2]).to eq(["3", "4"])
         expect(line_range[-2, 3]).to eq(["3", "4"])
 
-        expect {
+        expect do
           line_range[2, 3]
-        }.to raise_error(/out of bounds/)
+        end.to raise_error(/out of bounds/)
       end
 
       it "accepts a range" do
@@ -83,9 +83,9 @@ module Neovim
         expect(line_range[0...-4]).to eq([])
         expect(line_range[-2..-3]).to eq([])
 
-        expect {
+        expect do
           line_range[2..4]
-        }.to raise_error(/out of bounds/)
+        end.to raise_error(/out of bounds/)
       end
     end
 
@@ -97,9 +97,9 @@ module Neovim
         expect(line_range[-1] = "bar").to eq("bar")
         expect(line_range.to_a).to eq(["foo", "2", "3", "bar"])
 
-        expect {
+        expect do
           line_range[-5] = "foo"
-        }.to raise_error(/out of bounds/)
+        end.to raise_error(/out of bounds/)
       end
 
       it "accepts an index and length" do
@@ -112,9 +112,9 @@ module Neovim
         expect(line_range[0, 2] = "baz").to eq("baz")
         expect(line_range.to_a).to eq(["baz"])
 
-        expect {
+        expect do
           line_range[0, 5] = "foo"
-        }.to raise_error(/out of bounds/)
+        end.to raise_error(/out of bounds/)
       end
 
       it "accepts a range" do
@@ -141,17 +141,17 @@ module Neovim
 
     describe "#delete" do
       it "deletes the line at the given index" do
-        expect {
+        expect do
           line_range.delete(0)
-        }.to change { line_range.to_a }.to(["2", "3", "4"])
+        end.to change { line_range.to_a }.to(["2", "3", "4"])
 
-        expect {
+        expect do
           line_range.delete(-1)
-        }.to change { line_range.to_a }.to(["2", "3"])
+        end.to change { line_range.to_a }.to(["2", "3"])
 
-        expect {
+        expect do
           line_range.delete(-2)
-        }.to change { line_range.to_a }.to(["3"])
+        end.to change { line_range.to_a }.to(["3"])
       end
 
       it "returns the line deleted" do
@@ -160,9 +160,9 @@ module Neovim
       end
 
       it "returns nil if provided a non-integer" do
-        expect {
+        expect do
           expect(line_range.delete(:foo)).to eq(nil)
-        }.not_to change { line_range.to_a }
+        end.not_to change { line_range.to_a }
       end
     end
   end

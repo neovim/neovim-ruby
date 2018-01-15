@@ -1,6 +1,7 @@
 require "neovim/ruby_provider/vim"
 
 module Neovim
+  # @api private
   class Window
     def self.current
       ::Vim.get_current_win

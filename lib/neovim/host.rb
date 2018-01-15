@@ -31,9 +31,9 @@ module Neovim
     def handle(message)
       log(:debug) { message.to_h }
 
-      @handlers.
-        fetch(message.method_name, default_handler).
-        call(@client, message)
+      @handlers
+        .fetch(message.method_name, default_handler)
+        .call(@client, message)
     rescue Exception => e
       log_exception(:error, e, __method__)
 
@@ -43,22 +43,22 @@ module Neovim
         @client.err_writeln("Exception handling #{message.method_name}: (#{e.class}) #{e.message}")
       end
 
-      raise unless StandardError === e
+      raise unless e.is_a?(StandardError)
     end
 
     private
 
     def poll_handler
-      @poll_handler ||= -> (_, req) {
+      @poll_handler ||= lambda do |_, req|
         initialize_client(req.id)
         initialize_plugins
 
         @session.respond(req.id, "ok")
-      }
+      end
     end
 
     def specs_handler
-      @specs_handler ||= -> (_, req) {
+      @specs_handler ||= lambda do |_, req|
         source = req.arguments.fetch(0)
 
         if @specs.key?(source)
@@ -66,14 +66,14 @@ module Neovim
         else
           @session.respond(req.id, nil, "Unknown plugin #{source}")
         end
-      }
+      end
     end
 
     def default_handler
-      @default_handler ||= -> (_, message) {
+      @default_handler ||= lambda do |_, message|
         next unless message.sync?
         @session.respond(message.id, nil, "Unknown request #{message.method_name}")
-      }
+      end
     end
 
     def initialize_client(request_id)
@@ -93,12 +93,12 @@ module Neovim
     end
 
     def wrap_plugin_handler(handler)
-      -> (client, message) {
+      lambda do |client, message|
         args = message.arguments.flatten(1)
         result = handler.call(client, *args)
 
         @session.respond(message.id, result) if message.sync?
-      }
+      end
     end
   end
 end

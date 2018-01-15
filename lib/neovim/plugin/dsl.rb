@@ -85,14 +85,14 @@ module Neovim
         @plugin.handlers.push(Handler.unqualified(name, block))
       end
 
-      def register_handler(type, name, _options, block)
+      def register_handler(type, name, options, block)
         if type == :autocmd
-          options = _options.dup
+          options = options.dup
         else
-          options = standardize(_options.dup)
+          options = standardize(options.dup)
         end
 
-        sync = options.delete(:sync)
+        sync = !!options.delete(:sync)
 
         @plugin.handlers.push(
           Handler.new(@plugin.source, type, name, sync, options, block)

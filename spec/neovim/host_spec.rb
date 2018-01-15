@@ -64,7 +64,7 @@ module Neovim
       context "after poll" do
         before do
           nvim_wr.write([0, 1, :poll, []]).flush
-          _, reqid, _ = nvim_rd.read
+          _, reqid, = nvim_rd.read
 
           session = Session.new(EventLoop.child(Support.child_argv))
           api_info = session.request(:nvim_get_api_info)
@@ -87,22 +87,22 @@ module Neovim
                   "type" => "command",
                   "name" => "Echo",
                   "sync" => true,
-                  "opts" => {"nargs" => 1},
+                  "opts" => {"nargs" => 1}
                 },
                 {
                   "type" => "command",
                   "name" => "Boom",
                   "sync" => true,
-                  "opts" => {},
+                  "opts" => {}
                 },
                 {
                   "type" => "command",
                   "name" => "BoomAsync",
                   "sync" => false,
-                  "opts" => {},
-                },
-              ],
-            ],
+                  "opts" => {}
+                }
+              ]
+            ]
           )
         end
 

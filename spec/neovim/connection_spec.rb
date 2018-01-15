@@ -30,16 +30,16 @@ module Neovim
       it "registers a msgpack ext type" do
         ext_class = Struct.new(:id) do
           def self.from_msgpack_ext(data)
-            new(data.unpack('N')[0])
+            new(data.unpack("N")[0])
           end
 
           def to_msgpack_ext
-            [self.id].pack('C')
+            [id].pack("C")
           end
         end
 
         client_rd, server_wr = IO.pipe
-        server_rd, client_wr = IO.pipe
+        _, client_wr = IO.pipe
 
         connection = Connection.new(client_rd, client_wr)
 
@@ -55,7 +55,6 @@ module Neovim
         expect(connection.read).to eq(obj)
       end
     end
-
 
     describe "#close" do
       it "closes IO handles" do

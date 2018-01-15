@@ -19,9 +19,9 @@ module Neovim
 
     describe ".count" do
       it "returns the current buffer count from the global Vim client" do
-        expect {
+        expect do
           nvim.command("new")
-        }.to change { Buffer.count }.by(1)
+        end.to change { Buffer.count }.by(1)
       end
     end
 

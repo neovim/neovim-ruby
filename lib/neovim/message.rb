@@ -29,13 +29,13 @@ module Neovim
       Notification.new(method, args)
     end
 
-    class Request < Struct.new(:id, :method_name, :arguments)
+    Request = Struct.new(:id, :method_name, :arguments) do
       def to_a
         [0, id, method_name, arguments]
       end
 
-      def received(_, &block)
-        block.call(self)
+      def received(_)
+        yield self
       end
 
       def sync?
@@ -43,7 +43,7 @@ module Neovim
       end
     end
 
-    class Response < Struct.new(:request_id, :error, :value)
+    Response = Struct.new(:request_id, :error, :value) do
       def to_a
         [1, request_id, error, value]
       end
@@ -53,13 +53,13 @@ module Neovim
       end
     end
 
-    class Notification < Struct.new(:method_name, :arguments)
+    Notification = Struct.new(:method_name, :arguments) do
       def to_a
         [2, method_name, arguments]
       end
 
-      def received(_, &block)
-        block.call(self)
+      def received(_)
+        yield self
       end
 
       def sync?

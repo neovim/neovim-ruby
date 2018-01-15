@@ -67,15 +67,15 @@ module Neovim
       write(:notification, method, args)
     end
 
-    def run(&callback)
+    def run
       @running = true
 
       loop do
-        break if !@running
+        break unless @running
         break if @shutdown
 
         begin
-          callback.call(read)
+          yield read
         rescue EOFError => e
           log_exception(:debug, e, __method__)
           shutdown

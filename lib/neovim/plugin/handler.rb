@@ -12,7 +12,7 @@ module Neovim
         @source = source
         @type = type.to_sym if type.respond_to?(:to_sym)
         @name = name.to_s
-        @sync = !!sync
+        @sync = sync
         @options = options
         @block = block || -> {}
         @qualified =
@@ -20,7 +20,7 @@ module Neovim
       end
 
       def sync?
-        @sync
+        !!@sync
       end
 
       def qualified?
@@ -43,7 +43,7 @@ module Neovim
           type: @type,
           name: @name,
           sync: @sync,
-          opts: @options,
+          opts: @options
         }
       end
 

@@ -58,13 +58,13 @@ RSpec.describe Vim do
       Vim.__client = client
       Vim.__refresh_globals(client)
 
-      expect {
+      expect do
         Vim.command("wincmd n")
-      }.to change { $curwin.index }.by(1)
+      end.to change { $curwin.index }.by(1)
 
-      expect {
+      expect do
         Vim.command("vs bar")
-      }.to change { $curbuf.index }.by(1)
+      end.to change { $curbuf.index }.by(1)
     end
   end
 end

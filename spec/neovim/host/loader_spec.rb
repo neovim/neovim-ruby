@@ -45,9 +45,9 @@ module Neovim
 
         it "doesn't leak the overidden Neovim.plugin method" do
           loader.load([plugin_path])
-          expect {
+          expect do
             Neovim.plugin
-          }.to raise_error(/outside of a plugin host/)
+          end.to raise_error(/outside of a plugin host/)
         end
       end
     end

@@ -15,8 +15,20 @@ module Vim
 
   # Delegate all method calls to the underlying +Neovim::Client+ object.
   def self.method_missing(method, *args, &block)
-    @__client.public_send(method, *args, &block).tap do
-      __refresh_globals(@__client)
+    if @__client.respond_to?(method)
+      @__client.public_send(method, *args, &block).tap do
+        __refresh_globals(@__client)
+      end
+    else
+      super
+    end
+  end
+
+  def self.respond_to_missing?(method, *args)
+    if @__client
+      @__client.respond_to_missing?(method, *args)
+    else
+      super
     end
   end
 

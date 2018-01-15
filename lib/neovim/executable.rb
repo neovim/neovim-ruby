@@ -1,4 +1,5 @@
 module Neovim
+  # Object representing the `nvim` executable.
   class Executable
     VERSION_PATTERN = /\ANVIM v?(.+)$/
 

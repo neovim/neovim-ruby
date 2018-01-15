@@ -17,12 +17,11 @@ module Neovim
       new(socket, socket)
     end
 
-    def self.child(_argv)
-      argv = _argv.include?("--embed") ? _argv : _argv + ["--embed"]
+    def self.child(argv)
+      argv = argv.include?("--embed") ? argv : argv + ["--embed"]
 
-      io = ::IO.popen(argv, "rb+").tap do |_io|
-        Process.detach(_io.pid)
-      end
+      io = ::IO.popen(argv, "rb+")
+      Process.detach(io.pid)
 
       new(io, io)
     end
@@ -50,10 +49,10 @@ module Neovim
       end
     end
 
-    def register_type(id, &block)
+    def register_type(id)
       @unpacker.register_type(id) do |data|
         index = MessagePack.unpack(data)
-        block.call(index)
+        yield index
       end
     end
 

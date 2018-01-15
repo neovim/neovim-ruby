@@ -13,7 +13,7 @@ module Neovim
               {"name" => "nvim_func"},
               {"name" => "nvim_buf_func"},
               {"name" => "nvim_win_func"},
-              {"name" => "nvim_tabpage_func"},
+              {"name" => "nvim_tabpage_func"}
             ]
           }
         ]

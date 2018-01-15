@@ -48,7 +48,7 @@ RSpec.describe "Acceptance", timeout: 10 do
       url = "https://api.github.com/repos/neovim/neovim/releases/latest"
 
       begin
-        response = open(url) { |json| JSON.load(json) }
+        response = open(url) { |res| JSON.parse(res.read) }
       rescue SocketError, OpenURI::HTTPError => e
         skip "Skipping: #{e}"
       end

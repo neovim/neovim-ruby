@@ -32,7 +32,7 @@ module Neovim
 
     # Truncate the output of inspect so console sessions are more pleasant.
     def inspect
-      "#<#{self.class}:0x%x @channel_id=#{@channel_id.inspect} @types={...} @functions={...}>" % (object_id << 1)
+      format("#<#{self.class}:0x%x @channel_id=#{@channel_id.inspect}>", object_id << 1)
     end
 
     private
@@ -67,6 +67,7 @@ module Neovim
       end
     end
 
+    # @api private
     class Function
       attr_reader :name
 

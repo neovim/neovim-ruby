@@ -43,4 +43,3 @@ module Neovim
     end
   end
 end
-

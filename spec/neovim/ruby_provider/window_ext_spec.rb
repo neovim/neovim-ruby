@@ -19,31 +19,31 @@ module Neovim
 
     describe ".count" do
       it "returns the current window count from the global Vim client" do
-        expect {
+        expect do
           nvim.command("new")
-        }.to change { Window.count }.by(1)
+        end.to change { Window.count }.by(1)
       end
 
       it "only includes windows within a tabpage" do
-        expect {
+        expect do
           nvim.command("tabnew")
-        }.not_to change { Window.count }.from(1)
+        end.not_to change { Window.count }.from(1)
       end
     end
 
     describe ".[]" do
       it "returns the window at the given index" do
-        expect {
+        expect do
           nvim.command("new")
-        }.to change { Window[1] }.from(nil).to(kind_of(Window))
+        end.to change { Window[1] }.from(nil).to(kind_of(Window))
       end
 
       it "only includes windows within a tabpage" do
         nvim.command("new")
 
-        expect {
+        expect do
           nvim.command("tabnew")
-        }.to change { Window[1] }.from(kind_of(Window)).to(nil)
+        end.to change { Window[1] }.from(kind_of(Window)).to(nil)
       end
     end
   end

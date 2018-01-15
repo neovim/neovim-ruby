@@ -22,8 +22,8 @@ module Neovim
     def run(&block)
       @running = true
 
-      while message = @pending_messages.shift
-        Fiber.new { message.received(@response_handlers, &block) }.resume
+      while (pending = @pending_messages.shift)
+        Fiber.new { pending.received(@response_handlers, &block) }.resume
       end
 
       return unless @running
@@ -86,10 +86,10 @@ module Neovim
     def blocking_response
       response = nil
 
-      @response_handlers[@request_id] = -> (res) {
+      @response_handlers[@request_id] = lambda do |res|
         response = res
         stop
-      }
+      end
 
       run { |message| @pending_messages << message }
       response
@@ -97,11 +97,7 @@ module Neovim
 
     def yielding_response
       fiber = Fiber.current
-
-      @response_handlers[@request_id] = -> (response) {
-        fiber.resume(response)
-      }
-
+      @response_handlers[@request_id] = ->(response) { fiber.resume(response) }
       Fiber.yield
     end
 
@@ -110,8 +106,8 @@ module Neovim
         yield if block_given?
       else
         raise(
-          "A Ruby plugin attempted to call neovim outside of the main thread, " +
-          "which is not yet supported by the neovim gem."
+          "A Ruby plugin attempted to call neovim outside of the main thread,  \
+          which is not yet supported by the neovim gem."
         )
       end
     end

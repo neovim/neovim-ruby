@@ -1,5 +1,8 @@
 require "bundler/gem_tasks"
 require "rspec/core/rake_task"
+require "rubocop/rake_task"
+
+RuboCop::RakeTask.new(:style)
 
 desc "Generate Neovim remote API docs"
 task :docs do
@@ -24,4 +27,4 @@ namespace :spec do
   end
 end
 
-task default: ["spec:functional", "spec:acceptance"]
+task default: [:style, "spec:functional", "spec:acceptance"]
