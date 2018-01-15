@@ -6,6 +6,7 @@ require "net/http"
 require "openssl"
 require "open-uri"
 require "tempfile"
+require "rspec/retry"
 
 RSpec.describe "Acceptance", timeout: 10 do
   let(:root) { File.expand_path("../acceptance", __FILE__) }
