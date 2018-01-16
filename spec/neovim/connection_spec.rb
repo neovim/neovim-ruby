@@ -68,12 +68,10 @@ module Neovim
       it "kills spawned processes" do
         io = ::IO.popen("cat", "rb+")
         pid = io.pid
-        expect(pid).to respond_to(:to_int)
+        thr = Process.detach(pid)
 
         Connection.new(io, nil_io).close
-        sleep 0.01
-
-        expect { Process.kill(0, pid) }.to raise_error(Errno::ESRCH)
+        expect(thr.join.pid).to eq(pid)
       end
     end
   end
