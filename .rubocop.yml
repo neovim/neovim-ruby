@@ -1,5 +1,6 @@
 AllCops:
   Exclude:
+    - _neovim/**/*
     - spec/acceptance/**/*
     - vendor/**/*
     - script/**/*
