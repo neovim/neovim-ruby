@@ -5,6 +5,9 @@ AllCops:
     - vendor/**/*
     - script/**/*
 
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
 Layout/SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
 
