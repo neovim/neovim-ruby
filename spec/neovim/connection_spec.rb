@@ -71,6 +71,8 @@ module Neovim
         expect(pid).to respond_to(:to_int)
 
         Connection.new(io, nil_io).close
+        sleep 0.01
+
         expect { Process.kill(0, pid) }.to raise_error(Errno::ESRCH)
       end
     end
