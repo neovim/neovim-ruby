@@ -1,84 +1,84 @@
-Before:
-  AssertEqual 1, has('nvim')
+let s:suite = themis#suite(":ruby")
+let s:expect = themis#helper("expect")
 
-Given:
-  one
-  two
+function! s:suite.before_each() abort
+  1,$delete
+  call append(0, ["one", "two"])
+endfunction
 
-Execute (Define a Ruby method):
+function! s:suite.has_nvim() abort
+  call s:expect(has("nvim")).to_equal(1)
+endfunction
+
+function! s:suite.defines_a_ruby_method() abort
   ruby def foo; Vim.command("let g:called = 1"); end
-
-Execute (Call a Ruby method):
   ruby foo
 
-Then:
-  AssertEqual 1, g:called
+  call s:expect(g:called).to_equal(1)
+endfunction
 
-Execute (Update instance state on `$curbuf`):
+function! s:suite.persists_curbuf_state() abort
   ruby $curbuf.instance_variable_set(:@foo, 123)
   ruby Vim.command("let g:foo = #{$curbuf.instance_variable_get(:@foo)}")
 
-Then:
-  AssertEqual 123, g:foo
+  call s:expect(g:foo).to_equal(123)
+endfunction
 
-Execute (Change the working directory explicitly):
+function! s:suite.updates_working_directory() abort
   cd /
-  ruby Vim.command("let g:ruby_pwd = '#{Dir.pwd.sub(/^C:/, '')}'")
+  ruby Vim.command("let g:ruby_pwd = '#{Dir.pwd.sub(/^C:/, "")}'")
   cd -
 
-Then:
-  AssertEqual "/", g:ruby_pwd
+  call s:expect(g:ruby_pwd).to_equal("/")
+endfunction
 
-Execute (Change the working directory implicitly):
+function! s:suite.updates_working_directory_implicitly() abort
   split | lcd /
   ruby Vim.command("let g:before_pwd = '#{Dir.pwd}'")
   wincmd p
   ruby Vim.command("let g:after_pwd = '#{Dir.pwd}'")
   wincmd p | lcd -
 
-Then:
-  AssertNotEqual g:before_pwd, g:after_pwd
+  call s:expect(g:before_pwd).not.to_equal(g:after_pwd)
+endfunction
 
-Execute (Run nested Ruby commands):
+function! s:suite.supports_nesting() abort
   ruby Vim.command("ruby Vim.command('let g:ruby_nested = 123')")
 
-Then:
-  AssertEqual 123, g:ruby_nested
+  call s:expect(g:ruby_nested).to_equal(123)
+endfunction
 
-Execute (Raise a Ruby standard error):
+function! s:suite.handles_standard_error() abort
   try
     ruby raise "BOOM"
     throw "Nothing raised"
   catch /BOOM/
   endtry
 
-  ruby $curbuf[1] = "still works"
+  call s:suite.defines_a_ruby_method()
+endfunction
 
-Expect:
-  still works
-  two
-
-Execute (Raise a Ruby syntax error):
+function! s:suite.handles_syntax_error() abort
   try
     ruby puts[
     throw "Nothing raised"
   catch /SyntaxError/
   endtry
 
-  ruby $curbuf[1] = "still works"
+  call s:suite.defines_a_ruby_method()
+endfunction
 
-Expect:
-  still works
-  two
-
-Execute (Access Vim interface):
+function! s:suite.exposes_Vim() abort
   ruby expect(Vim).to eq(VIM)
   ruby expect(Vim.strwidth("hi")).to eq(2)
+endfunction
 
-Execute (Access Vim::Buffer interface):
+function! s:suite.exposes_Buffer() abort
   ruby expect($curbuf).to be_a(Neovim::Buffer)
   ruby expect(Vim::Buffer.current).to eq($curbuf)
+endfunction
 
-Execute (Access Vim::Window interface):
+function! s:suite.exposes_Window() abort
   ruby expect($curwin).to be_a(Neovim::Window)
   ruby expect(Vim::Window.current).to eq($curwin)
+endfunction

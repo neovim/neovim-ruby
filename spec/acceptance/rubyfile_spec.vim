@@ -1,38 +1,39 @@
-Before:
-  AssertEqual 1, has('nvim')
+let s:suite = themis#suite(":rubyfile")
+let s:expect = themis#helper("expect")
 
-Given:
-  one
-  two
+function! s:suite.before_each() abort
+  1,$delete
+  call append(0, ["one", "two"])
+endfunction
 
-Execute (Define a Ruby method):
+function! s:suite.has_nvim() abort
+  call s:expect(has("nvim")).to_equal(1)
+endfunction
+
+function! s:suite.defines_a_ruby_method() abort
   rubyfile ./rubyfile/define_foo.rb
-
-Execute (Call a Ruby method):
   rubyfile ./rubyfile/call_foo.rb
 
-Then:
-  AssertEqual 1, g:called
+  call s:expect(g:called).to_equal(1)
+endfunction
 
-Execute (Update instance state on $curbuf):
+function! s:suite.persists_curbuf_state() abort
   rubyfile ./rubyfile/curbuf_ivar_set.rb
-
-Execute (Access instance state on $curbuf):
   rubyfile ./rubyfile/curbuf_ivar_get.rb
 
-Then:
-  AssertEqual 123, g:foo
+  call s:expect(g:foo).to_equal(123)
+endfunction
 
-Execute (Change the working directory explicitly):
+function! s:suite.updates_working_directory() abort
   let g:rubyfile = getcwd() . "/rubyfile/set_pwd_before.rb"
   cd /
   exec "rubyfile " . g:rubyfile
   cd -
 
-Then:
-  AssertEqual "/", g:pwd_before
+  call s:expect(g:pwd_before).to_equal("/")
+endfunction
 
-Execute (Change the working directory implicitly):
+function! s:suite.updates_working_directory_implicitly() abort
   let g:before_file = getcwd() . "/rubyfile/set_pwd_before.rb"
   let g:after_file = getcwd() . "/rubyfile/set_pwd_after.rb"
 
@@ -42,53 +43,45 @@ Execute (Change the working directory implicitly):
   exec "rubyfile " . g:after_file
   wincmd p | lcd -
 
-Then:
-  AssertNotEqual g:pwd_before, g:pwd_after
+  call s:expect(g:pwd_before).not.to_equal(g:pwd_after)
+endfunction
 
-Execute (Run nested Ruby files):
+function! s:suite.supports_nesting() abort
   rubyfile ./rubyfile/nested.rb
 
-Then:
-  AssertEqual 123, g:ruby_nested
+  call s:expect(g:ruby_nested).to_equal(123)
+endfunction
 
-Execute (Raise a Ruby load error):
-  try
-    rubyfile /foo/bar/baz
-    throw "Nothing raised"
-  catch /LoadError/
-  endtry
-
-  ruby $curbuf[1] = "still works"
-
-Expect:
-  still works
-  two
-
-Execute (Raise a Ruby standard error):
+function! s:suite.handles_standard_error() abort
   try
     rubyfile ./rubyfile/raise_standard_error.rb
     throw "Nothing raised"
   catch /BOOM/
   endtry
 
-  ruby $curbuf[1] = "still works"
+  call s:suite.defines_a_ruby_method()
+endfunction
 
-Expect:
-  still works
-  two
+function! s:suite.handles_load_error() abort
+  try
+    rubyfile /foo/bar/baz
+    throw "Nothing raised"
+  catch /LoadError/
+  endtry
 
-Execute (Raise a Ruby syntax error):
+  call s:suite.defines_a_ruby_method()
+endfunction
+
+function! s:suite.handles_syntax_error() abort
   try
     rubyfile ./rubyfile/raise_syntax_error.rb
     throw "Nothing raised"
   catch /SyntaxError/
   endtry
 
-  ruby $curbuf[1] = "still works"
+  call s:suite.defines_a_ruby_method()
+endfunction
 
-Expect:
-  still works
-  two
-
-Execute (Access ruby interface):
+function! s:suite.exposes_constants() abort
   rubyfile ./rubyfile/ruby_interface.rb
+endfunction
