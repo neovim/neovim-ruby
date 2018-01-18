@@ -1,0 +1,9 @@
+box: wercker/default
+build:
+  steps:
+    - script:
+        name: echo vim version
+        code: |-
+          vim --version
+    - thinca/themis:
+        itself: true

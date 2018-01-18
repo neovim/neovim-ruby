@@ -1,0 +1,93 @@
+Describe vimspec-style
+  Describe order of examples
+    Before all
+      let self.count = 0
+    End
+    It is called in first
+      let self.count += 1
+      Assert Equals(self.count, 1)
+    End
+    It is called in second
+      let self.count += 1
+      Assert Equals(self.count, 2)
+    End
+    It is called in third
+      let self.count += 1
+      Assert Equals(self.count, 3)
+    End
+    It is called in fourth
+      let self.count += 1
+      Assert Equals(self.count, 4)
+    End
+    It is called in fifth
+      let self.count += 1
+      Assert Equals(self.count, 5)
+    End
+    It is called in sixth
+      let self.count += 1
+      Assert Equals(self.count, 6)
+    End
+    It is called in seventh
+      let self.count += 1
+      Assert Equals(self.count, 7)
+    End
+    It is called in eighth
+      let self.count += 1
+      Assert Equals(self.count, 8)
+    End
+    It is called in ninth
+      let self.count += 1
+      Assert Equals(self.count, 9)
+    End
+    It is called in tenth
+      let self.count += 1
+      Assert Equals(self.count, 10)
+    End
+  End
+
+  Describe order of bundles
+
+    Before all
+      let g:count = 0
+    End
+
+    After all
+      unlet! g:count
+    End
+
+    Context first bundle
+      It is called in first
+        let g:count += 1
+        Assert Equals(g:count, 1)
+      End
+    End
+
+    Context second bundle
+      It is called in second
+        let g:count += 1
+        Assert Equals(g:count, 2)
+      End
+    End
+
+    Context third bundle
+      It is called in third
+        let g:count += 1
+        Assert Equals(g:count, 3)
+      End
+    End
+
+    Context fourth bundle
+      It is called in fourth
+        let g:count += 1
+        Assert Equals(g:count, 4)
+      End
+    End
+
+    Context fifth bundle
+      It is called in fifth
+        let g:count += 1
+        Assert Equals(g:count, 5)
+      End
+    End
+  End
+End

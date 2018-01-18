@@ -1,0 +1,73 @@
+Describe Runner
+  Before
+    let runner = themis#runner#new()
+  End
+
+  Describe events
+    Before
+      let listener = {'called': []}
+      function! listener._(name, args) abort
+        let self.called += [a:name]
+      endfunction
+      call runner.add_event(listener)
+    End
+
+    Context with no test
+      Before
+        let bundle = themis#bundle#new('test')
+      End
+
+      It is emitted in order
+        call runner.run(bundle)
+        Assert Equals(listener.called, [
+        \   'init',
+        \     'start',
+        \     'end',
+        \   'finish',
+        \ ])
+      End
+    End
+
+    Context with some tests
+      Before
+        let bundle = themis#bundle#new('test')
+        let bundle.style = runner._styles['basic']
+        function! bundle.suite.success_test() abort
+        endfunction
+        function! bundle.suite.failure_test() abort
+          Fail fail test
+        endfunction
+        function! bundle.suite.pending_test() abort
+          Skip pending
+        endfunction
+      End
+
+      It is emitted in order
+        call runner.run(bundle)
+        Assert Equals(listener.called, [
+        \   'init',
+        \     'start',
+        \       'before_suite',
+        \         'start_test',
+        \           'before_test',
+        \           'after_test',
+        \         'end_test',
+        \         'pass',
+        \         'start_test',
+        \           'before_test',
+        \           'after_test',
+        \         'end_test',
+        \         'fail',
+        \         'start_test',
+        \           'before_test',
+        \           'after_test',
+        \         'end_test',
+        \         'pending',
+        \       'after_suite',
+        \     'end',
+        \   'finish',
+        \ ])
+      End
+    End
+  End
+End

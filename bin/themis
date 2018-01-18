@@ -1,0 +1,25 @@
+#!/bin/sh
+# Command line utility for themis.vim
+# Version: 1.5.4
+# Author : thinca <thinca+vim@gmail.com>
+# License: zlib License
+
+: "${THEMIS_VIM:=vim}"
+: "${THEMIS_ARGS:=-e -s}"
+
+if ! type realpath >/dev/null 2>&1; then
+	realpath() {
+		# NOTE: use X to avoid "XSMP opening connection" message.
+		"${THEMIS_VIM}" -u NONE -i NONE -N -X -V1 -e -s --cmd "echon resolve(argv(0))" --cmd "echo ''" --cmd quit "$1" 2>&1
+	}
+fi
+
+: "${THEMIS_HOME:=$(dirname "$(dirname "$(realpath "$0")")")}"
+
+STARTUP_SCRIPT="${THEMIS_HOME}/macros/themis_startup.vim"
+if [ ! -f "${STARTUP_SCRIPT}" ]; then
+	echo '$THEMIS_HOME is not set up correctly.' >&2
+	exit 2
+fi
+
+"${THEMIS_VIM}" -u NONE -i NONE -n -N ${THEMIS_ARGS} --cmd "source ${STARTUP_SCRIPT}" -- "$@" 3>&1 1>&2 2>&3 3>&-
