@@ -1,0 +1,91 @@
+Describe vimspec-style
+  Describe supports lexical scope
+    Before all
+      let test_var_1 = 1
+    End
+
+    It can access to the variable
+      Assert True(exists('test_var_1'))
+      Assert Equals(test_var_1, 1)
+    End
+
+    It does not taint the global scope
+      Assert False(exists('g:test_var_1'))
+    End
+
+    Context in the child block
+      It can access to the variable
+        Assert True(exists('test_var_1'))
+        Assert Equals(test_var_1, 1)
+      End
+    End
+
+    Context in before block
+      Before all
+        let test_var_1 = 5
+      End
+      It can change the variable
+        Assert True(exists('test_var_1'))
+        Assert Equals(test_var_1, 5)
+      End
+    End
+
+    Describe before each block
+      Before all
+        let inc = 0
+      End
+
+      Before each
+        let inc += 1
+      End
+
+      It is shared the scope with before all block
+        Assert True(exists('inc'))
+        Assert Equals(inc, 1)
+      End
+
+      It is separate every test
+        Assert True(exists('inc'))
+        Assert NotEquals(inc, 2)
+      End
+    End
+
+    Describe between before each block and body
+      Before
+        let s:dict = {}
+        let dict = s:dict
+      End
+
+      After
+        unlet s:dict
+      End
+
+      It shares the variable instance
+        let sd = s:dict
+        Assert Same(dict, sd)
+      End
+    End
+
+    Describe the execution order of nested contexts
+      Before all
+        let list = [1]
+      End
+      Before each
+        let list += [3]
+      End
+
+      Context a deep context
+        Before all
+          let list += [2]
+        End
+        Before each
+          let list += [4]
+        End
+
+        It is called in order
+          Assert Equals(list, [1, 2, 3, 4])
+        End
+      End
+    End
+  End
+End

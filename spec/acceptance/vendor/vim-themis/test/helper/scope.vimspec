@@ -1,0 +1,77 @@
+let s:scope = themis#helper('scope')
+
+let s:file = expand('<sfile>:p')
+
+Describe helper-scope
+  Describe .funcs()
+    Context with {path} is relative path
+      Before
+        let funcs = s:scope.funcs('test/fixture/scope.vim')
+      End
+
+      It returns a dictionary
+        Assert IsDict(funcs)
+      End
+
+      It contains "hello" function
+        Assert KeyExists(funcs, 'hello')
+        Assert IsFunc(funcs.hello)
+        Assert Equals(funcs.hello('themis'), 'Hello, themis')
+      End
+    End
+
+    Context with {path} is full path
+      Before
+        let paths = globpath(&runtimepath, 'test/fixture/scope.vim')
+        let path = split(paths, "\n")[0]
+        let funcs = s:scope.funcs(path)
+      End
+
+      It returns a dictionary
+        Assert IsDict(funcs)
+      End
+
+      It contains "hello" function
+        Assert KeyExists(funcs, 'hello')
+        Assert IsFunc(funcs.hello)
+        Assert Equals(funcs.hello('themis'), 'Hello, themis')
+      End
+    End
+  End
+
+  Describe .vars()
+    Context with {path} is relative path
+      Before
+        let vars = s:scope.vars('test/fixture/scope.vim')
+      End
+
+      It returns a dictionary
+        Assert IsDict(vars)
+      End
+
+      It contains "foo" variable
+        Assert KeyExists(vars, 'foo')
+        Assert IsString(vars.foo)
+        Assert Equals(vars.foo, 'foo')
+      End
+    End
+
+    Context with {path} is full path
+      Before
+        let paths = globpath(&runtimepath, 'test/fixture/scope.vim')
+        let path = split(paths, "\n")[0]
+        let vars = s:scope.vars(path)
+      End
+
+      It returns a dictionary
+        Assert IsDict(vars)
+      End
+
+      It contains "foo" variable
+        Assert KeyExists(vars, 'foo')
+        Assert IsString(vars.foo)
+        Assert Equals(vars.foo, 'foo')
+      End
+    End
+  End
+End

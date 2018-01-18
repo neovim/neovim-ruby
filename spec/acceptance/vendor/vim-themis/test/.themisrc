@@ -1,0 +1,10 @@
+call themis#option('recursive', 1)
+call themis#option('exclude', ['test/fixture/'])
+
+call themis#helper('command').with(themis#helper('assert'))
+
+function! NewBasicSuite(name, runner) abort
+  let bundle = themis#bundle#new(a:name)
+  let bundle.style = a:runner._styles['basic']
+  return bundle
+endfunction

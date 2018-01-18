@@ -1,0 +1,155 @@
+
+Describe Bundle
+  Before
+    let base = themis#bundle#new('base')
+  End
+
+  It has a title
+    Assert Equals(base.get_title(), 'base')
+  End
+
+  Describe tree structure
+    It can make a new child bundle by themis#bundle#new()
+      let child = themis#bundle#new('child', base)
+      Assert Same(base.get_child('child'), child)
+    End
+
+    It can add a new child bundle by .add_child()
+      let child = themis#bundle#new('child')
+      Assert Empty(base.get_child('child'))
+      call base.add_child(child)
+      Assert Same(base.get_child('child'), child)
+    End
+
+    Describe child bundle
+      Before
+        let child = themis#bundle#new('child', base)
+      End
+
+      It can access to parent bundle
+        Assert Same(child.get_parent(), base)
+      End
+
+      It can be removed from parent module
+        call base.remove_child(child)
+        Assert Empty(base.get_child('child'))
+        Assert False(child.has_parent())
+      End
+
+      It can change a parent bundle
+        let new_parent = themis#bundle#new('new_parent')
+        call new_parent.add_child(child)
+        Assert Empty(base.get_child('child'))
+        Assert True(child.has_parent())
+        Assert Same(child.get_parent(), new_parent)
+      End
+    End
+  End
+
+  Describe style
+    Before
+      let style = themis#module#style('basic')
+      let base.style = style
+    End
+
+    It can have a style
+      Assert Same(base.get_style(), style)
+    End
+
+    It inherits to child bundles
+      let child = themis#bundle#new('child', base)
+      Assert Same(child.get_style(), style)
+    End
+  End
+
+  Describe test entries
+    Before
+      let base.style = themis#module#style('basic')
+      function! base.suite.test1() abort
+      endfunction
+      function! base.suite.test2() abort
+      endfunction
+    End
+
+    It can get all test entries
+      Assert LengthOf(base.all_test_entries(), 2)
+    End
+
+    It can select the tests
+      Assert LengthOf(base.get_test_entries(), 2)
+      call base.select_tests('1')
+      Assert LengthOf(base.get_test_entries(), 1)
+    End
+
+    Context with nested bundles
+      Before
+        let child = themis#bundle#new('child', base)
+        function! child.suite.test3() abort
+        endfunction
+        function! child.suite.test4() abort
+        endfunction
+      End
+
+      It can count total test count
+        Assert Equals(base.total_test_count(), 4)
+      End
+
+      It can select the tests in recursive
+        call base.select_tests_recursive('[23]')
+        Assert Equals(base.total_test_count(), 2)
+        Assert LengthOf(base.get_test_entries(), 1)
+        Assert LengthOf(child.get_test_entries(), 1)
+      End
+
+      It can check the bundle is empty
+        Assert False(base.is_empty())
+        call base.select_tests_recursive('never match')
+        Assert True(base.is_empty())
+      End
+
+      It can reverse the filter
+        Assert Equals(base.total_test_count(), 4)
+        call base.select_tests_recursive('never match')
+        Assert Equals(base.total_test_count(), 0)
+        call base.select_tests_recursive('')
+        Assert Equals(base.total_test_count(), 4)
+      End
+    End
+  End
+
+  Describe test entry
+    Before
+      let suite = base.suite
+      function! suite.test1() abort
+      endfunction
+      function! suite.test2() abort
+      endfunction
+      let base.suite_descriptions = {'test1': 'a description for test 1'}
+    End
+
+    It may have a description
+      Assert NotEmpty(base.get_description('test1'))
+      Assert Empty(base.get_description('test2'))
+    End
+
+    It uses a description or a name for title
+      Assert Equals(base.get_test_title('test1'), 'a description for test 1')
+      Assert Equals(base.get_test_title('test2'), 'test2')
+    End
+
+    It can get full title which includes bundle titles
+      Assert Equals(base.get_test_full_title('test1'),
+      \             'base a description for test 1')
+      Assert Equals(base.get_test_full_title('test2'), 'base test2')
+    End
+  End
+
+  Describe #is_bundle()
+    It can check the {obj} is a bundle or not
+      Assert True(themis#bundle#is_bundle(themis#bundle#new()))
+      Assert True(themis#bundle#is_bundle(themis#bundle#new('title')))
+      Assert False(themis#bundle#is_bundle({}))
+      Assert False(themis#bundle#is_bundle(0.0))
+    End
+  End
+End

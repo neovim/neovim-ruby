@@ -1,0 +1,22 @@
+let s:assert = themis#helper('assert')
+
+Describe supporter-builtin_assert
+  Before
+    if !exists('v:errors')
+      Skip v:errors is not supported
+    endif
+    let runner = themis#runner#new()
+    let stats = runner.supporter('stats')
+
+    let bundle = NewBasicSuite('sample', runner)
+    let suite = bundle.suite
+  End
+
+  It handles assert_true()
+    function! suite.test_assert_true() abort
+      call assert_true(0)
+    endfunction
+    call runner.run(bundle)
+    Assert Equals(stats.fail(), 1)
+  End
+End

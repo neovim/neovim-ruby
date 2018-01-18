@@ -1,0 +1,163 @@
+Describe Emitter
+  Before
+    let emitter = themis#emitter#new()
+  End
+
+  Describe #add_listener()
+    It adds a listener
+      call emitter.add_listener({})
+      Assert LengthOf(emitter.get_listeners(), 1)
+    End
+  End
+
+  Describe #remove_listener()
+    It removes a listener
+      call emitter.add_listener({})
+
+      let listener = {}
+      call emitter.add_listener(listener)
+      Assert LengthOf(emitter.get_listeners(), 2)
+      call emitter.remove_listener(listener)
+      Assert LengthOf(emitter.get_listeners(), 1)
+    End
+  End
+
+  Describe #remove_all_listeners()
+    It removes all listeners
+      call emitter.add_listener({})
+      call emitter.add_listener({})
+      Assert LengthOf(emitter.get_listeners(), 2)
+      call emitter.remove_all_listeners()
+      Assert LengthOf(emitter.get_listeners(), 0)
+    End
+  End
+
+  Describe #emit()
+    Context with no listeners
+      It has no effect
+        call emitter.emit('some_event')
+      End
+    End
+
+    Context with a listener which has "foo" event
+      Before
+        let listener = {'called': 0}
+        function! listener.foo(value) abort
+          let self.called = 1
+          let self.value = a:value
+        endfunction
+        call emitter.add_listener(listener)
+      End
+
+      Context {event} is "foo"
+        It calls "foo" event handler
+          Assert False(listener.called)
+          call emitter.emit('foo', 0)
+          Assert True(listener.called)
+        End
+
+        It doesn't call "bar" event handler
+          Assert False(listener.called)
+          call emitter.emit('bar', 0)
+          Assert False(listener.called)
+        End
+
+        It receives the argument
+          call emitter.emit('foo', 'val')
+          Assert Equals(listener.value, 'val')
+        End
+      End
+    End
+
+    Context with two or more listeners
+      Before
+        let listener1 = {'called': 0}
+        function! listener1.foo() abort
+          let self.called = 1
+        endfunction
+        call emitter.add_listener(listener1)
+
+        let listener2 = {'called': 0}
+        function! listener2.foo() abort
+          let self.called = 1
+        endfunction
+        call emitter.add_listener(listener2)
+      End
+
+      It calls all listeners
+        call emitter.emit('foo')
+        Assert True(listener1.called)
+        Assert True(listener2.called)
+      End
+    End
+
+    Context with a listener which has wildcard event
+      Before
+        let listener = {'called': {}}
+        function! listener._(event, args) abort
+          let self.called[a:event] = 1
+        endfunction
+        call emitter.add_listener(listener)
+      End
+
+      It receives all events
+        Assert KeyNotExists(listener.called, 'foo')
+        call emitter.emit('foo')
+        Assert KeyExists(listener.called, 'foo')
+        Assert True(listener.called.foo)
+      End
+
+      Context and has "foo" event
+        Before
+          function! listener.foo() abort
+          endfunction
+        End
+        It doesn't receive the defined event
+          Assert KeyNotExists(listener.called, 'foo')
+          call emitter.emit('foo')
+          Assert KeyNotExists(listener.called, 'foo')
+        End
+      End
+    End
+  End
+
+  Describe #emitting()
+    Context when event is emitting
+      Before
+        let listener = {'emitter': emitter}
+        function! listener.foo() abort
+          let self.emitting = self.emitter.emitting()
+        endfunction
+        call emitter.add_listener(listener)
+      End
+
+      It returns emitting event name
+        call emitter.emit('foo')
+        Assert KeyExists(listener, 'emitting')
+        Assert Equals(listener.emitting, 'foo')
+      End
+    End
+
+    Context when event is not emitting
+      It returns empty string
+        Assert Equals(emitter.emitting(), '')
+      End
+    End
+
+    Context when an error occurred while emitting
+      Before
+        let listener = {}
+        function! listener.foo() abort
+          throw 'error'
+        endfunction
+        call emitter.add_listener(listener)
+      End
+
+      It keeps the value
+        Throws /^error$/ emitter.emit('foo')
+        Assert Equals(emitter.emitting(), 'foo')
+      End
+    End
+  End
+
+End
