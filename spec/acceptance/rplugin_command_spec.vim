@@ -1,10 +1,6 @@
 let s:suite = themis#suite("Remote plugin command")
 let s:expect = themis#helper("expect")
 
-function! s:suite.before() abort
-  silent UpdateRemotePlugins
-endfunction
-
 function! s:suite.before_each() abort
   1,$delete
   call append(0, ["one", "two", "three"])

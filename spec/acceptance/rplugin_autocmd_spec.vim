@@ -1,10 +1,6 @@
 let s:suite = themis#suite("Remote plugin autocmd")
 let s:expect = themis#helper("expect")
 
-function! s:suite.before() abort
-  silent UpdateRemotePlugins
-endfunction
-
 function! s:suite.has_nvim() abort
   call s:expect(has("nvim")).to_equal(1)
 endfunction
