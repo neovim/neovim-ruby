@@ -1,78 +1,63 @@
-Before:
-  AssertEqual 1, has('nvim')
+let s:suite = themis#suite(":rubydo")
+let s:expect = themis#helper("expect")
 
-Given:
-  one
-  two
-  three
-  four
+function! s:suite.before_each() abort
+  1,$delete
+  call append(0, ["one", "two", "three", "four"])
+endfunction
 
-Execute (Update one line using `$_`):
+function! s:suite.has_nvim() abort
+  call s:expect(has("nvim")).to_equal(1)
+endfunction
+
+function! s:suite.updates_one_line() abort
   2rubydo $_.upcase!
 
-Expect:
-  one
-  TWO
-  three
-  four
+  call s:expect(getline(1, 4)).to_equal(["one", "TWO", "three", "four"])
+endfunction
 
-Execute (Update a range of lines using `$_`):
+function! s:suite.updates_line_range() abort
   2,3rubydo $_.upcase!
 
-Expect:
-  one
-  TWO
-  THREE
-  four
+  call s:expect(getline(1, 4)).to_equal(["one", "TWO", "THREE", "four"])
+endfunction
 
-Execute (Update all lines using `$_`):
+function! s:suite.updates_large_line_range() abort
+  1,$delete
+
+  for _ in range(0, 6000)
+    call append(0, "x")
+  endfor
+
+  %rubydo $_.succ!
+
+  call s:expect(getline(1)).to_equal("y")
+  call s:expect(getline(6001)).to_equal("y")
+  call s:expect(getline(6002)).to_equal("")
+endfunction
+
+function! s:suite.updates_all_lines() abort
   %rubydo $_.upcase!
 
-Expect:
-  ONE
-  TWO
-  THREE
-  FOUR
+  call s:expect(getline(1, 4)).to_equal(["ONE", "TWO", "THREE", "FOUR"])
+endfunction
 
-Execute (Raise a Ruby standard error):
+function! s:suite.handles_standard_error() abort
   try
     1rubydo raise "BOOM"
     throw "Nothing raised"
   catch /BOOM/
   endtry
 
-  1rubydo $_.replace("still works")
+  call s:suite.updates_one_line()
+endfunction
 
-Expect:
-  still works
-  two
-  three
-  four
-
-Execute (Raise a Ruby syntax error):
+function! s:suite.handles_syntax_error() abort
   try
     1rubydo puts[
     throw "Nothing raised"
   catch /SyntaxError/
   endtry
 
-  1rubydo $_.replace("still works")
-
-Expect:
-  still works
-  two
-  three
-  four
-
-Given:
-  x
-
-Execute (Add a large number of lines):
-  1yank
-  silent normal 6000p
-  %rubydo $_.succ!
-
-Then:
-  AssertEqual "y", getline(1)
-  AssertEqual "y", getline(6001)
-  AssertEqual "", getline(6002)
+  call s:suite.updates_one_line()
+endfunction

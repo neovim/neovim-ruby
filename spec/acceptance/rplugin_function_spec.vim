@@ -1,29 +1,41 @@
-Before (Generate rplugin manifest):
-  silent UpdateRemotePlugins
+let s:suite = themis#suite("Remote plugin function")
+let s:expect = themis#helper("expect")
 
-Execute (Call rplugin functions with arguments):
+function! s:suite.before_each() abort
+  1,$delete
+  call append(0, ["one", "two", "three"])
+endfunction
+
+function! s:suite.has_nvim() abort
+  call s:expect(has("nvim")).to_equal(1)
+endfunction
+
+function! s:suite.supports_arguments() abort
   call RPluginFunctionArgs(1, 2)
   sleep 50m
-  AssertEqual [1, 2], g:rplugin_function_args
 
-Given:
-  one
-  two
-  three
+  call s:expect(g:rplugin_function_args).to_equal([1, 2])
+endfunction
 
-Execute (Call rplugin functions with a range):
+function! s:suite.supports_line_range() abort
   1,2call RPluginFunctionRange()
   sleep 50m
-  AssertEqual [1, 2], g:rplugin_function_range
 
-Execute (Call rplugin functions with eval):
+  call s:expect(g:rplugin_function_range).to_equal([1, 2])
+endfunction
+
+function! s:suite.supports_eval() abort
   let g:to_eval = {'a': 42}
   call RPluginFunctionEval()
   sleep 50m
-  AssertEqual {'a': 42, 'b': 43}, g:rplugin_function_eval
 
-Execute (Call synchronous rplugin functions):
-  AssertEqual v:true, RPluginFunctionSync()
+  call s:expect(g:rplugin_function_eval).to_equal({"a": 42, "b": 43})
+endfunction
 
-Execute (Call recursive rplugin functions):
-  AssertEqual 10, RPluginFunctionRecursive(0)
+function! s:suite.supports_synchronous_functions() abort
+  call s:expect(RPluginFunctionSync()).to_equal(v:true)
+endfunction
+
+function! s:suite.supports_recursion() abort
+  call s:expect(RPluginFunctionRecursive(0)).to_equal(10)
+endfunction

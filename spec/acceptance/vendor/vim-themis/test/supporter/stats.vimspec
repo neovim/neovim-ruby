@@ -1,0 +1,46 @@
+Describe supporter-stats
+  Before
+    let runner = themis#runner#new()
+    let stats = runner.supporter('stats')
+
+    let bundle = NewBasicSuite('sample', runner)
+    let suite = bundle.suite
+    function! suite.success1() abort
+    endfunction
+    function! suite.success2() abort
+    endfunction
+    function! suite.success3() abort
+    endfunction
+    function! suite.fail1() abort
+      Fail fail test
+    endfunction
+    function! suite.fail2() abort
+      throw 'omg'
+    endfunction
+    function! suite.pending1() abort
+      Skip pending test
+    endfunction
+
+    call runner.run(bundle)
+  End
+
+  It counts number of total tests
+    Assert Equals(stats.count(), 6)
+  End
+
+  It counts number of passed tests
+    Assert Equals(stats.pass(), 3)
+  End
+
+  It counts number of failed tests
+    Assert Equals(stats.fail(), 2)
+  End
+
+  It counts number of pending tests
+    Assert Equals(stats.pending(), 1)
+  End
+
+  It shows the test statistics
+    Assert Equals(stats.stat(), "tests 6\npasses 3\npendings 1\nfails 2")
+  End
+End

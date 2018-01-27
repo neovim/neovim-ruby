@@ -1,0 +1,58 @@
+language: generic
+
+env:
+  - HEAD=yes
+  - HEAD=no
+
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - language-pack-ja
+      - vim
+      - libperl-dev
+      - python-dev
+      - python3-dev
+      - liblua5.1-0-dev
+      - lua5.1
+
+cache:
+  directories:
+    - /tmp/vim
+
+install:
+  - |
+    if [ x"${HEAD}" = "xyes" ]; then
+      if [ -d /tmp/vim/.git ]; then
+        cd /tmp/vim
+        git fetch
+        if git diff --exit-code --quiet ..origin/master; then
+          need_build=0
+        else
+          git reset --hard origin/master
+          git clean -dfx
+          need_build=1
+        fi
+      else
+        git clone --depth 1 --single-branch https://github.com/vim/vim /tmp/vim
+        cd /tmp/vim
+        need_build=1
+      fi
+      if [ "${need_build}" = "1" ]; then
+        ./configure --prefix="$PWD/build" --with-features=huge \
+          --enable-perlinterp --enable-pythoninterp --enable-python3interp \
+          --enable-rubyinterp --enable-luainterp --enable-fail-if-missing
+        make -j2
+        make install
+      fi
+      export PATH=$PWD/build/bin:$PATH
+      cd "${TRAVIS_BUILD_DIR}"
+    fi
+
+before_script:
+  - git clone https://github.com/thinca/vim-themis --quiet --branch v1.5.4 --single-branch --depth 1 /tmp/vim-themis
+
+script:
+  - vim --version
+  - /tmp/vim-themis/bin/themis --reporter dot

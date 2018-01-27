@@ -1,0 +1,53 @@
+Describe Report
+  Before
+    let bundle = themis#bundle#new('base')
+    function! bundle.suite.test1() abort
+    endfunction
+    let report = themis#report#new(bundle, 'test1')
+  End
+
+  Describe .get_full_title()
+    It returns full title of a target test
+      Assert Equals(report.get_full_title(), 'base test1')
+    End
+  End
+
+  Describe .get_title()
+    It returns title of a target test
+      Assert Equals(report.get_title(), 'test1')
+    End
+  End
+
+  Describe .get_message()
+    Context with no exceptions
+      It returns empty string
+        Assert Equals(report.get_message(), '')
+      End
+    End
+
+    Context with an exception
+      Before
+        call report.add_exception(
+        \   'themis:report:error:message foo',
+        \   expand('<sfile>'))
+      End
+      It returns the message of exception
+        Assert Equals(report.get_message(), 'message foo')
+      End
+    End
+
+    Context with two exceptions
+      Before
+        call report.add_exception(
+        \   'themis:report:error:message foo',
+        \   expand('<sfile>'))
+        call report.add_exception(
+        \   'themis:report:error:message bar',
+        \   expand('<sfile>'))
+      End
+      It returns the message of all exceptions
+        Assert Equals(report.get_message(), "message foo\n---\nmessage bar")
+      End
+    End
+  End
+End

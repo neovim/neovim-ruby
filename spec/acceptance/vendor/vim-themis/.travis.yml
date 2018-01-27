@@ -1,0 +1,82 @@
+language: generic
+sudo: false
+git:
+  depth: 10
+
+matrix:
+  include:
+    - os: linux
+      env:
+        - VIM_VERSION=v7.4
+    - os: linux
+      env:
+        - VIM_VERSION=v8.0.0000
+    - os: linux
+      env:
+        - VIM_VERSION=master
+    - os: osx
+      osx_image: xcode8.3
+
+addons:
+  apt:
+    packages:
+      - language-pack-ja
+      - vim
+      - libperl-dev
+      - python-dev
+      - python3-dev
+      - ruby-dev
+      - liblua5.1-0-dev
+      - lua5.1
+
+cache:
+  directories:
+    - /tmp/vim
+
+install:
+  - rvm reset
+  - |
+    case "${TRAVIS_OS_NAME}" in
+      linux)
+        need_build=0
+        if [[ ! -d "/tmp/vim/${VIM_VERSION}" ]]; then
+          git clone --depth 1 --branch "${VIM_VERSION}" --single-branch https://github.com/vim/vim "/tmp/vim/${VIM_VERSION}"
+          need_build=1
+        fi
+        if [[ ! -f "/tmp/vim/${VIM_VERSION}/build/vim" ]]; then
+          need_build=1
+        fi
+        if [[ "${VIM_VERSION}" = "master" && "${need_build}" = "1" ]]; then
+          cd "/tmp/vim/${VIM_VERSION}"
+          git fetch
+          if ! git diff --exit-code --quiet ..origin/master; then
+            git reset --hard origin/master
+            git clean -dfx
+            need_build=1
+          fi
+        fi
+        if [[ "${need_build}" = "1" ]]; then
+          cd "/tmp/vim/${VIM_VERSION}"
+          ./configure --prefix="/tmp/vim/${VIM_VERSION}/build" --with-features=huge \
+            --enable-perlinterp --enable-pythoninterp --enable-python3interp \
+            --enable-rubyinterp --enable-luainterp --enable-fail-if-missing
+          make -j2
+          make install
+        fi
+        cd "${TRAVIS_BUILD_DIR}"
+        export PATH=/tmp/vim/${VIM_VERSION}/build/bin:${PATH}
+      ;;
+      osx)
+        export HOMEBREW_NO_AUTO_UPDATE=1
+        brew update
+        brew install macvim --with-override-system-vim --with-lua
+      ;;
+      *)
+        echo "Unknown value of \${TRAVIS_OS_NAME}: ${TRAVIS_OS_NAME}"
+        exit 65
+      ;;
+    esac
+
+script:
+  - vim --version
+  - ./bin/themis --reporter dot

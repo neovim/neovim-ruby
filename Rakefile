@@ -4,27 +4,30 @@ require "rubocop/rake_task"
 
 RuboCop::RakeTask.new(:style)
 
-desc "Generate Neovim remote API docs"
-task :docs do
-  sh File.expand_path("../script/generate_docs", __FILE__)
-end
-
-desc "Dump nvim remote API"
-task :api do
-  sh File.expand_path("../script/dump_api", __FILE__)
-end
-
 namespace :spec do
   desc "Run functional specs"
-  RSpec::Core::RakeTask.new(:functional) do |t|
-    t.exclude_pattern = "spec/acceptance_spec.rb,spec/acceptance/**/*"
-  end
+  RSpec::Core::RakeTask.new(:functional)
 
   desc "Run acceptance specs"
-  RSpec::Core::RakeTask.new(:acceptance) do |t|
-    t.pattern = "spec/acceptance_spec.rb"
-    t.rspec_opts = "--format documentation"
+  task :acceptance do
+    run_script(:run_acceptance)
   end
 end
 
-task default: [:style, "spec:functional", "spec:acceptance"]
+namespace :docs do
+  desc "Generate Neovim remote API docs"
+  task :generate do
+    run_script(:generate_docs)
+  end
+
+  desc "Validate generated documentation is up-to-date"
+  task :validate do
+    run_script(:validate_docs)
+  end
+end
+
+task default: [:style, "spec:functional", "spec:acceptance", "docs:validate"]
+
+def run_script(script_name)
+  sh RbConfig.ruby, File.expand_path("../script/#{script_name}.rb", __FILE__)
+end

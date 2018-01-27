@@ -1,0 +1,40 @@
+Describe option
+  Describe #default()
+    It returns new dictionary always
+      let def1 = themis#option#default()
+      let def2 = themis#option#default()
+      Assert NotSame(def1, def2)
+    End
+  End
+
+  Describe #empty_options()
+    It returns empty options
+      let options = themis#option#empty_options()
+      for v in values(options)
+        Assert IsList(v)
+        Assert LengthOf(v, 0, string(v))
+      endfor
+    End
+  End
+
+  Describe #merge()
+    It merges two options
+      let self.base = {
+      \   'foo': 10,
+      \   'bar': ['value1'],
+      \ }
+      let overwriter = {
+      \   'buz': 20,
+      \   'bar': ['value2'],
+      \ }
+      let expect = {
+      \   'foo': 10,
+      \   'buz': 20,
+      \   'bar': ['value1', 'value2'],
+      \ }
+      let actual = themis#option#merge(self.base, overwriter)
+      Assert Equals(actual, expect)
+      Assert NotEquals(actual, self.base)
+    End
+  End
+End
