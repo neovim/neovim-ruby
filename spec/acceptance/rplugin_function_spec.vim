@@ -11,29 +11,23 @@ function! s:suite.has_nvim() abort
 endfunction
 
 function! s:suite.supports_arguments() abort
-  call RPluginFunctionArgs(1, 2)
-  sleep 50m
-
-  call s:expect(g:rplugin_function_args).to_equal([1, 2])
+  call s:expect(RPluginFunctionArgs(1, 2)).to_equal([1, 2])
 endfunction
 
 function! s:suite.supports_line_range() abort
-  1,2call RPluginFunctionRange()
-  sleep 50m
-
-  call s:expect(g:rplugin_function_range).to_equal([1, 2])
+  3,4call RPluginFunctionRange()
+  call s:expect(g:rplugin_function_range).to_equal([3, 4])
 endfunction
 
 function! s:suite.supports_eval() abort
   let g:to_eval = {'a': 42}
-  call RPluginFunctionEval()
-  sleep 50m
-
-  call s:expect(g:rplugin_function_eval).to_equal({"a": 42, "b": 43})
+  call s:expect(RPluginFunctionEval()).to_equal({"a": 42, "b": 43})
 endfunction
 
-function! s:suite.supports_synchronous_functions() abort
-  call s:expect(RPluginFunctionSync()).to_equal(v:true)
+function! s:suite.supports_asynchronous_functions() abort
+  call RPluginFunctionAsync()
+  sleep 50m
+  call s:expect(g:rplugin_function_async).to_equal(v:true)
 endfunction
 
 function! s:suite.supports_recursion() abort

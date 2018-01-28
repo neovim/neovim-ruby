@@ -1,18 +1,18 @@
 Neovim.plugin do |plug|
-  plug.function(:RPluginFunctionArgs) do |nvim, *args|
-    nvim.set_var("rplugin_function_args", args)
+  plug.function(:RPluginFunctionArgs, sync: true) do |nvim, *args|
+    args
   end
 
-  plug.function(:RPluginFunctionRange, range: true) do |nvim, *range|
-    nvim.set_var("rplugin_function_range", range)
+  plug.function(:RPluginFunctionRange, range: true, sync: true) do |nvim, start, stop|
+    nvim.set_var("rplugin_function_range", [start, stop])
   end
 
-  plug.function(:RPluginFunctionEval, eval: "g:to_eval") do |nvim, to_eval|
-    nvim.set_var("rplugin_function_eval", to_eval.merge(b: 43))
+  plug.function(:RPluginFunctionEval, eval: "g:to_eval", sync: true) do |nvim, to_eval|
+    to_eval.merge(b: 43)
   end
 
-  plug.function(:RPluginFunctionSync, sync: true) do |nvim|
-    true
+  plug.function(:RPluginFunctionAsync) do |nvim|
+    nvim.set_var("rplugin_function_async", true)
   end
 
   plug.function(:RPluginFunctionRecursive, sync: true, nargs: 1) do |nvim, n|
