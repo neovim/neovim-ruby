@@ -1,6 +1,15 @@
 let s:suite = themis#suite(":rubyfile")
 let s:expect = themis#helper("expect")
 
+function! s:suite.before() abort
+  let g:return_pwd = getcwd()
+  cd spec/acceptance/rubyfile
+endfunction
+
+function! s:suite.after() abort
+  execute("cd " . g:return_pwd)
+endfunction
+
 function! s:suite.before_each() abort
   1,$delete
   call append(0, ["one", "two"])
@@ -11,21 +20,21 @@ function! s:suite.has_nvim() abort
 endfunction
 
 function! s:suite.defines_a_ruby_method() abort
-  rubyfile ./rubyfile/define_foo.rb
-  rubyfile ./rubyfile/call_foo.rb
+  rubyfile ./define_foo.rb
+  rubyfile ./call_foo.rb
 
   call s:expect(g:called).to_equal(1)
 endfunction
 
 function! s:suite.persists_curbuf_state() abort
-  rubyfile ./rubyfile/curbuf_ivar_set.rb
-  rubyfile ./rubyfile/curbuf_ivar_get.rb
+  rubyfile ./curbuf_ivar_set.rb
+  rubyfile ./curbuf_ivar_get.rb
 
   call s:expect(g:foo).to_equal(123)
 endfunction
 
 function! s:suite.updates_working_directory() abort
-  let g:rubyfile = getcwd() . "/rubyfile/set_pwd_before.rb"
+  let g:rubyfile = getcwd() . "/set_pwd_before.rb"
   cd /
   exec "rubyfile " . g:rubyfile
   cd -
@@ -34,8 +43,8 @@ function! s:suite.updates_working_directory() abort
 endfunction
 
 function! s:suite.updates_working_directory_implicitly() abort
-  let g:before_file = getcwd() . "/rubyfile/set_pwd_before.rb"
-  let g:after_file = getcwd() . "/rubyfile/set_pwd_after.rb"
+  let g:before_file = getcwd() . "/set_pwd_before.rb"
+  let g:after_file = getcwd() . "/set_pwd_after.rb"
 
   split | lcd /
   exec "rubyfile " . g:before_file
@@ -47,14 +56,14 @@ function! s:suite.updates_working_directory_implicitly() abort
 endfunction
 
 function! s:suite.supports_nesting() abort
-  rubyfile ./rubyfile/nested.rb
+  rubyfile ./nested.rb
 
   call s:expect(g:ruby_nested).to_equal(123)
 endfunction
 
 function! s:suite.handles_standard_error() abort
   try
-    rubyfile ./rubyfile/raise_standard_error.rb
+    rubyfile ./raise_standard_error.rb
     throw "Nothing raised"
   catch /BOOM/
   endtry
@@ -74,7 +83,7 @@ endfunction
 
 function! s:suite.handles_syntax_error() abort
   try
-    rubyfile ./rubyfile/raise_syntax_error.rb
+    rubyfile ./raise_syntax_error.rb
     throw "Nothing raised"
   catch /SyntaxError/
   endtry
@@ -83,5 +92,5 @@ function! s:suite.handles_syntax_error() abort
 endfunction
 
 function! s:suite.exposes_constants() abort
-  rubyfile ./rubyfile/ruby_interface.rb
+  rubyfile ./ruby_interface.rb
 endfunction

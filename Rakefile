@@ -10,7 +10,7 @@ namespace :spec do
 
   desc "Run acceptance specs"
   task :acceptance do
-    run_script(:run_acceptance)
+    run_script(:run_acceptance, "--reporter", "dot", "spec/acceptance")
   end
 end
 
@@ -28,6 +28,10 @@ end
 
 task default: [:style, "spec:functional", "spec:acceptance", "docs:validate"]
 
-def run_script(script_name)
-  sh RbConfig.ruby, File.expand_path("../script/#{script_name}.rb", __FILE__)
+def run_script(script_name, *args)
+  sh(
+    RbConfig.ruby,
+    File.expand_path("../script/#{script_name}.rb", __FILE__),
+    *args
+  )
 end

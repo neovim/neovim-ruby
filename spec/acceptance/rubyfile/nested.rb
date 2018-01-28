@@ -1,1 +1,1 @@
-Vim.command("rubyfile ./rubyfile/nested_inner.rb")
+Vim.command("rubyfile ./nested_inner.rb")
