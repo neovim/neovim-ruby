@@ -7,7 +7,7 @@ RuboCop::RakeTask.new(:style)
 namespace :vim_flavor do
   desc "Install VimFlavor dependencies"
   task :install do
-    sh "vim-flavor install --vimfiles-path=spec/acceptance"
+    sh "bundle exec vim-flavor install --vimfiles-path=spec/acceptance || true"
   end
 end
 
