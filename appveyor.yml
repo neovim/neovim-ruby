@@ -27,4 +27,4 @@ before_test:
   - nvim -v
 
 test_script:
-  - bundle exec rake vim_flavor:install
+  - bundle exec rake spec:acceptance
