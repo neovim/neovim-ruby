@@ -4,12 +4,19 @@ require "rubocop/rake_task"
 
 RuboCop::RakeTask.new(:style)
 
+namespace :vim_flavor do
+  desc "Install VimFlavor dependencies"
+  task :install do
+    sh "vim-flavor install --vimfiles-path=spec/acceptance"
+  end
+end
+
 namespace :spec do
   desc "Run functional specs"
   RSpec::Core::RakeTask.new(:functional)
 
   desc "Run acceptance specs"
-  task :acceptance do
+  task acceptance: "vim_flavor:install" do
     run_script(:run_acceptance, "--reporter", "dot", "spec/acceptance")
   end
 end
