@@ -33,14 +33,7 @@ namespace :docs do
   end
 end
 
-#task default: [:style, "spec:functional", "spec:acceptance", "docs:validate"]
-
-task :default do
-  sh "bash", "-c", "{
-  echo hi &&
-  echo bye
-}"
-end
+task default: [:style, "spec:functional", "spec:acceptance", "docs:validate"]
 
 def run_script(script_name, *args)
   sh(
