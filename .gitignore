@@ -5,6 +5,7 @@
 .config
 .yardoc
 Gemfile.lock
+VimFlavor.lock
 InstalledFiles
 _yardoc
 coverage
