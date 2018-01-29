@@ -6,10 +6,10 @@ ENV.delete("VIM")
 ENV.delete("VIMRUNTIME")
 
 acceptance_root = File.expand_path("../../spec/acceptance", __FILE__)
-themis_home = File.join(acceptance_root, "flavors/thinca_vim-themis")
 themis_rtp = File.join(acceptance_root, "runtime")
-manifest = File.join(acceptance_root, "runtime/rplugin.vim")
-vimrc = File.join(acceptance_root, "runtime/init.vim")
+themis_home = File.join(themis_rtp, "flavors/thinca_vim-themis")
+manifest = File.join(themis_rtp, "rplugin.vim")
+vimrc = File.join(themis_rtp, "init.vim")
 
 themis_exe = Gem.win_platform? ?
   File.join(themis_home, "bin/themis.bat") :
