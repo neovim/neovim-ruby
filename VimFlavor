@@ -1,1 +1,1 @@
-flavor "thinca/vim-themis"
+flavor "thinca/vim-themis", branch: "master"
