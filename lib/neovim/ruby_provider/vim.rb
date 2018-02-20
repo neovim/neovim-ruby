@@ -26,7 +26,7 @@ module Vim
 
   def self.respond_to_missing?(method, *args)
     if @__client
-      @__client.respond_to_missing?(method, *args)
+      @__client.send(:respond_to_missing?, method, *args)
     else
       super
     end
