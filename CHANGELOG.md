@@ -1,3 +1,8 @@
+# 0.7.1
+
+- Fix `uninitialized constant Neovim::RubyProvider::StringIO`
+- Various backwards-compatible style changes to satisfy Rubocop rules
+
 # 0.7.0
 
 - Drop support for Ruby < 2.2.0, update syntax accordingly
