@@ -1,6 +1,7 @@
 require "neovim/ruby_provider/vim"
 require "neovim/ruby_provider/buffer_ext"
 require "neovim/ruby_provider/window_ext"
+require "stringio"
 
 module Neovim
   # This class is used to define a +Neovim::Plugin+ to act as a backend for the

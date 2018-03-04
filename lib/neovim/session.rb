@@ -1,5 +1,6 @@
 require "neovim/logging"
 require "fiber"
+require "thread"
 
 module Neovim
   # Wraps an event loop in a synchronous API using +Fiber+s.
