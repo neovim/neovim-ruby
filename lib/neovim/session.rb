@@ -107,8 +107,8 @@ module Neovim
         yield if block_given?
       else
         raise(
-          "A Ruby plugin attempted to call neovim outside of the main thread,  \
-          which is not yet supported by the neovim gem."
+          "A Ruby plugin attempted to call neovim outside of the main thread, " \
+          "which is not yet supported by the neovim gem."
         )
       end
     end
