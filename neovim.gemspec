@@ -22,7 +22,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "multi_json", "~> 1.0"
 
   spec.add_development_dependency "bundler"
-  spec.add_development_dependency "coveralls"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "pry-byebug"
   spec.add_development_dependency "rake"

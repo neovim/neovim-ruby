@@ -1,10 +1,5 @@
 require "bundler/setup"
 
-if ENV["REPORT_COVERAGE"]
-  require "coveralls"
-  Coveralls.wear!
-end
-
 require "fileutils"
 require "msgpack"
 require "neovim"
