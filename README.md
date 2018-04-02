@@ -2,10 +2,7 @@
 
 [![Travis](https://travis-ci.org/alexgenco/neovim-ruby.svg?branch=master)](https://travis-ci.org/alexgenco/neovim-ruby)
 [![Build status](https://ci.appveyor.com/api/projects/status/wp7agvgcxxcguj6h/branch/master?svg=true)](https://ci.appveyor.com/project/alexgenco/neovim-ruby/branch/master)
-[![Coverage Status](https://coveralls.io/repos/alexgenco/neovim-ruby/badge.svg)](https://coveralls.io/r/alexgenco/neovim-ruby)
-[![Code Climate](https://codeclimate.com/github/alexgenco/neovim-ruby/badges/gpa.svg)](https://codeclimate.com/github/alexgenco/neovim-ruby)
 [![Gem Version](https://badge.fury.io/rb/neovim.svg)](https://badge.fury.io/rb/neovim)
-[![Dependency Status](https://gemnasium.com/badges/github.com/alexgenco/neovim-ruby.svg)](https://gemnasium.com/github.com/alexgenco/neovim-ruby)
 [![Inline docs](http://inch-ci.org/github/alexgenco/neovim-ruby.svg?branch=master)](http://inch-ci.org/github/alexgenco/neovim-ruby)
 
 Ruby bindings for [Neovim](https://github.com/neovim/neovim).
