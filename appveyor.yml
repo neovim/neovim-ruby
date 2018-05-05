@@ -7,13 +7,16 @@ environment:
     - RUBY_VERSION: 23
     - RUBY_VERSION: 22
 
+cache:
+  - vendor/bundle
+
 install:
   - set SSL_CERT_FILE=C:/ruby24-x64/ssl/cert.pem
   - set PATH=C:\Ruby%RUBY_VERSION%\bin;C:\tools\neovim\Neovim\bin;%PATH%
   - set NVIM_RUBY_LOG_LEVEL=DEBUG
   - set NVIM_RUBY_LOG_FILE=%cd%\ci.log
   - choco install neovim --pre -fy --ignore-dependencies
-  - bundle install
+  - bundle install --path vendor/bundle
 
 build: off
 
