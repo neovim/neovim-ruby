@@ -24,7 +24,9 @@ module Neovim
         expect(session.request(:nvim_get_current_line)).to eq(large_str)
       end
 
-      it "raises an exception when a command causes nvim to exit" do
+      it "raises an exception when a command causes nvim to exit", timeout: 0.1 do
+        pending("Windows hangs when nvim exits") if Support.windows?
+
         expect do
           session.request(:nvim_command, "qa!")
         end.to raise_error(Neovim::Session::Exited, /exited/)
