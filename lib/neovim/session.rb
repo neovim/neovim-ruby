@@ -11,6 +11,13 @@ module Neovim
 
     attr_writer :request_id
 
+    # @api private
+    class Exited < RuntimeError
+      def initialize
+        super("nvim process exited")
+      end
+    end
+
     def initialize(event_loop)
       @event_loop = event_loop
       @main_thread = Thread.current
@@ -60,7 +67,10 @@ module Neovim
 
         @event_loop.request(@request_id, method, *args)
         response = blocking ? blocking_response : yielding_response
-        response.error ? raise(response.error) : response.value
+
+        raise(Exited) if response.nil?
+        raise(response.error) if response.error
+        response.value
       end
     end
 

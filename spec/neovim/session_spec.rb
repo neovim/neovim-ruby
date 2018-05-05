@@ -24,6 +24,12 @@ module Neovim
         expect(session.request(:nvim_get_current_line)).to eq(large_str)
       end
 
+      it "raises an exception when a command causes nvim to exit" do
+        expect do
+          session.request(:nvim_command, "qa!")
+        end.to raise_error(Neovim::Session::Exited, /exited/)
+      end
+
       it "fails outside of the main thread", :silence_thread_exceptions do
         expect do
           Thread.new { session.request(:nvim_strwidth, "foo") }.join

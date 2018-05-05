@@ -25,6 +25,13 @@ module Neovim
       end
     end
 
+    describe "#shutdown" do
+      it "causes nvim to exit" do
+        client.shutdown
+        expect { client.strwidth("hi") }.to raise_error(IOError)
+      end
+    end
+
     describe "#respond_to?" do
       it "returns true for vim functions" do
         expect(client).to respond_to(:strwidth)

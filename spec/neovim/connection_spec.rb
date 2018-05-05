@@ -13,6 +13,14 @@ module Neovim
 
         expect(MessagePack.unpack(rd.read)).to eq("some data")
       end
+
+      it "throws an exception when the file is closed" do
+        _, wr = IO.pipe
+        connection = Connection.new(nil_io, wr)
+        wr.close
+
+        expect { connection.write("some data") }.to raise_error(IOError)
+      end
     end
 
     describe "#read" do
@@ -23,6 +31,14 @@ module Neovim
 
         connection = Connection.new(rd, nil_io)
         expect(connection.read).to eq("some data")
+      end
+
+      it "throws an exception when the file is closed" do
+        rd, wr = IO.pipe
+        wr.close
+
+        connection = Connection.new(rd, nil_io)
+        expect { connection.read }.to raise_error(EOFError)
       end
     end
 
