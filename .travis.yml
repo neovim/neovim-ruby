@@ -15,6 +15,9 @@ rvm:
 
 before_install:
   - eval "$(curl --connect-timeout 30 --retry 3 -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64"
+  - gem update --system
+  - gem install --remote bundler
+  - bundle --version
 
 env: NVIM_RUBY_LOG_LEVEL=DEBUG NVIM_RUBY_LOG_FILE=ci.log
 script: bundle exec rake --trace
