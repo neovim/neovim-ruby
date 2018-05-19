@@ -4,7 +4,7 @@ module Support
   end
 
   def self.workspace
-    File.expand_path("../workspace", __FILE__)
+    File.expand_path("workspace", __dir__)
   end
 
   def self.socket_path

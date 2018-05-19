@@ -9,7 +9,7 @@ require "securerandom"
 require "stringio"
 require "timeout"
 
-require File.expand_path("../support.rb", __FILE__)
+require File.expand_path("support.rb", __dir__)
 
 RSpec.configure do |config|
   config.expect_with :rspec do |exp|
