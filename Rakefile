@@ -36,5 +36,5 @@ end
 task default: [:style, "spec:functional", "spec:acceptance", "docs:validate"]
 
 def run_script(script_name, *args)
-  ruby File.expand_path("../script/#{script_name}.rb", __FILE__), *args
+  ruby File.expand_path("script/#{script_name}.rb", __dir__), *args
 end

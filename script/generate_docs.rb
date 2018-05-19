@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-$:.unshift File.expand_path("../../lib", __FILE__)
+$:.unshift File.expand_path("../lib", __dir__)
 
 require "neovim"
 require "pathname"
@@ -72,7 +72,7 @@ session.request(:nvim_get_api_info)[1]["functions"].each do |func|
   end
 end
 
-lib_dir = Pathname.new(File.expand_path("../../lib/neovim", __FILE__))
+lib_dir = Pathname.new(File.expand_path("../lib/neovim", __dir__))
 {
   "client.rb" => nvim_docs,
   "buffer.rb" => buffer_docs,

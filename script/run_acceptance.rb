@@ -5,7 +5,7 @@ require "fileutils"
 ENV.delete("VIM")
 ENV.delete("VIMRUNTIME")
 
-acceptance_root = File.expand_path("../../spec/acceptance", __FILE__)
+acceptance_root = File.expand_path("../spec/acceptance", __dir__)
 themis_rtp = File.join(acceptance_root, "runtime")
 themis_home = File.join(themis_rtp, "flavors/thinca_vim-themis")
 manifest = File.join(themis_rtp, "rplugin_manifest.vim")

@@ -15,7 +15,7 @@ end
 release_version = response["name"][/NVIM v?(.+)$/, 1]
 
 client_file = File.read(
-  File.expand_path("../../lib/neovim/client.rb", __FILE__)
+  File.expand_path("../lib/neovim/client.rb", __dir__)
 )
 docs_version = client_file[
   /The methods documented here were generated using NVIM v?(.+)$/,
