@@ -12,6 +12,7 @@ Gem::Specification.new do |spec|
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
+  spec.bindir        = "exe"
   spec.executables   = ["neovim-ruby-host"]
   spec.test_files    = spec.files.grep(%r{^spec/})
   spec.require_paths = ["lib"]
