@@ -4,6 +4,7 @@ AllCops:
     - spec/acceptance/**/*
     - vendor/**/*
     - script/**/*
+    - bin/**/*
 
 Layout/EndOfLine:
   EnforcedStyle: lf
