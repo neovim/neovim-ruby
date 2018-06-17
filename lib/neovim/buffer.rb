@@ -4,7 +4,7 @@ require "neovim/line_range"
 module Neovim
   # Class representing an +nvim+ buffer.
   #
-  # The methods documented here were generated using NVIM v0.2.2
+  # The methods documented here were generated using NVIM v0.3.0
   class Buffer < RemoteObject
     attr_reader :lines
 
@@ -140,6 +140,18 @@ module Neovim
   @param [Buffer] buffer
   @return [Integer]
 
+@method attach(buffer, send_buffer, opts)
+  See +:h nvim_buf_attach()+
+  @param [Buffer] buffer
+  @param [Boolean] send_buffer
+  @param [Hash] opts
+  @return [Boolean]
+
+@method detach(buffer)
+  See +:h nvim_buf_detach()+
+  @param [Buffer] buffer
+  @return [Boolean]
+
 @method get_lines(buffer, start, end, strict_indexing)
   See +:h nvim_buf_get_lines()+
   @param [Buffer] buffer
@@ -173,6 +185,12 @@ module Neovim
   @param [Buffer] buffer
   @param [String] mode
   @return [Array<Hash>]
+
+@method get_commands(buffer, opts)
+  See +:h nvim_buf_get_commands()+
+  @param [Buffer] buffer
+  @param [Hash] opts
+  @return [Hash]
 
 @method set_var(buffer, name, value)
   See +:h nvim_buf_set_var()+

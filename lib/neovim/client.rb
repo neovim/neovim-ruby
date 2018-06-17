@@ -8,7 +8,7 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
-  # The methods documented here were generated using NVIM v0.2.2
+  # The methods documented here were generated using NVIM v0.3.0
   #
   # @see Buffer
   # @see Window
@@ -170,13 +170,19 @@ module Neovim
   See +:h nvim_eval()+
   @return [Object]
 
+@method execute_lua(args)
+  See +:h nvim_execute_lua()+
+  @param [Array] args
+  @return [Object]
+
 @method call_function(args)
   See +:h nvim_call_function()+
   @param [Array] args
   @return [Object]
 
-@method execute_lua(args)
-  See +:h nvim_execute_lua()+
+@method call_dict_function(fn, args)
+  See +:h nvim_call_dict_function()+
+  @param [String] fn
   @param [Array] args
   @return [Object]
 
@@ -297,13 +303,51 @@ module Neovim
   See +:h nvim_get_keymap()+
   @return [Array<Hash>]
 
+@method get_commands
+  See +:h nvim_get_commands()+
+  @return [Hash]
+
 @method get_api_info
   See +:h nvim_get_api_info()+
+  @return [Array]
+
+@method set_client_info(version, type, methods, attributes)
+  See +:h nvim_set_client_info()+
+  @param [Hash] version
+  @param [String] type
+  @param [Hash] methods
+  @param [Hash] attributes
+  @return [void]
+
+@method get_chan_info
+  See +:h nvim_get_chan_info()+
+  @return [Hash]
+
+@method list_chans
+  See +:h nvim_list_chans()+
   @return [Array]
 
 @method call_atomic
   See +:h nvim_call_atomic()+
   @return [Array]
+
+@method parse_expression(flags, highlight)
+  See +:h nvim_parse_expression()+
+  @param [String] flags
+  @param [Boolean] highlight
+  @return [Hash]
+
+@method list_uis
+  See +:h nvim_list_uis()+
+  @return [Array]
+
+@method get_proc_children
+  See +:h nvim_get_proc_children()+
+  @return [Array]
+
+@method get_proc
+  See +:h nvim_get_proc()+
+  @return [Object]
 
 =end
   end
