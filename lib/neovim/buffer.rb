@@ -135,119 +135,100 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
-@method line_count(buffer)
+@method line_count
   See +:h nvim_buf_line_count()+
-  @param [Buffer] buffer
   @return [Integer]
 
-@method attach(buffer, send_buffer, opts)
+@method attach(send_buffer, opts)
   See +:h nvim_buf_attach()+
-  @param [Buffer] buffer
   @param [Boolean] send_buffer
   @param [Hash] opts
   @return [Boolean]
 
-@method detach(buffer)
+@method detach
   See +:h nvim_buf_detach()+
-  @param [Buffer] buffer
   @return [Boolean]
 
-@method get_lines(buffer, start, end, strict_indexing)
+@method get_lines(start, end, strict_indexing)
   See +:h nvim_buf_get_lines()+
-  @param [Buffer] buffer
   @param [Integer] start
   @param [Integer] end
   @param [Boolean] strict_indexing
   @return [Array<String>]
 
-@method set_lines(buffer, start, end, strict_indexing, replacement)
+@method set_lines(start, end, strict_indexing, replacement)
   See +:h nvim_buf_set_lines()+
-  @param [Buffer] buffer
   @param [Integer] start
   @param [Integer] end
   @param [Boolean] strict_indexing
   @param [Array<String>] replacement
   @return [void]
 
-@method get_var(buffer, name)
+@method get_var(name)
   See +:h nvim_buf_get_var()+
-  @param [Buffer] buffer
   @param [String] name
   @return [Object]
 
-@method get_changedtick(buffer)
+@method get_changedtick
   See +:h nvim_buf_get_changedtick()+
-  @param [Buffer] buffer
   @return [Integer]
 
-@method get_keymap(buffer, mode)
+@method get_keymap(mode)
   See +:h nvim_buf_get_keymap()+
-  @param [Buffer] buffer
   @param [String] mode
   @return [Array<Hash>]
 
-@method get_commands(buffer, opts)
+@method get_commands(opts)
   See +:h nvim_buf_get_commands()+
-  @param [Buffer] buffer
   @param [Hash] opts
   @return [Hash]
 
-@method set_var(buffer, name, value)
+@method set_var(name, value)
   See +:h nvim_buf_set_var()+
-  @param [Buffer] buffer
   @param [String] name
   @param [Object] value
   @return [void]
 
-@method del_var(buffer, name)
+@method del_var(name)
   See +:h nvim_buf_del_var()+
-  @param [Buffer] buffer
   @param [String] name
   @return [void]
 
-@method get_option(buffer, name)
+@method get_option(name)
   See +:h nvim_buf_get_option()+
-  @param [Buffer] buffer
   @param [String] name
   @return [Object]
 
-@method set_option(buffer, name, value)
+@method set_option(name, value)
   See +:h nvim_buf_set_option()+
-  @param [Buffer] buffer
   @param [String] name
   @param [Object] value
   @return [void]
 
-@method get_number(buffer)
+@method get_number
   See +:h nvim_buf_get_number()+
-  @param [Buffer] buffer
   @return [Integer]
 
-@method get_name(buffer)
+@method get_name
   See +:h nvim_buf_get_name()+
-  @param [Buffer] buffer
   @return [String]
 
-@method set_name(buffer, name)
+@method set_name(name)
   See +:h nvim_buf_set_name()+
-  @param [Buffer] buffer
   @param [String] name
   @return [void]
 
-@method is_valid(buffer)
+@method is_valid
   See +:h nvim_buf_is_valid()+
-  @param [Buffer] buffer
   @return [Boolean]
 
-@method get_mark(buffer, name)
+@method get_mark(name)
   See +:h nvim_buf_get_mark()+
-  @param [Buffer] buffer
   @param [String] name
   @return [Array<Integer>]
 
-@method add_highlight(buffer, src_id, hl_group, line, col_start, col_end)
+@method add_highlight(src_id, hl_group, line, col_start, col_end)
   See +:h nvim_buf_add_highlight()+
-  @param [Buffer] buffer
   @param [Integer] src_id
   @param [String] hl_group
   @param [Integer] line
@@ -255,9 +236,8 @@ module Neovim
   @param [Integer] col_end
   @return [Integer]
 
-@method clear_highlight(buffer, src_id, line_start, line_end)
+@method clear_highlight(src_id, line_start, line_end)
   See +:h nvim_buf_clear_highlight()+
-  @param [Buffer] buffer
   @param [Integer] src_id
   @param [Integer] line_start
   @param [Integer] line_end

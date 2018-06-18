@@ -7,43 +7,36 @@ module Neovim
   class Tabpage < RemoteObject
 # The following methods are dynamically generated.
 =begin
-@method list_wins(tabpage)
+@method list_wins
   See +:h nvim_tabpage_list_wins()+
-  @param [Tabpage] tabpage
   @return [Array<Window>]
 
-@method get_var(tabpage, name)
+@method get_var(name)
   See +:h nvim_tabpage_get_var()+
-  @param [Tabpage] tabpage
   @param [String] name
   @return [Object]
 
-@method set_var(tabpage, name, value)
+@method set_var(name, value)
   See +:h nvim_tabpage_set_var()+
-  @param [Tabpage] tabpage
   @param [String] name
   @param [Object] value
   @return [void]
 
-@method del_var(tabpage, name)
+@method del_var(name)
   See +:h nvim_tabpage_del_var()+
-  @param [Tabpage] tabpage
   @param [String] name
   @return [void]
 
-@method get_win(tabpage)
+@method get_win
   See +:h nvim_tabpage_get_win()+
-  @param [Tabpage] tabpage
   @return [Window]
 
-@method get_number(tabpage)
+@method get_number
   See +:h nvim_tabpage_get_number()+
-  @param [Tabpage] tabpage
   @return [Integer]
 
-@method is_valid(tabpage)
+@method is_valid
   See +:h nvim_tabpage_is_valid()+
-  @param [Tabpage] tabpage
   @return [Boolean]
 
 =end

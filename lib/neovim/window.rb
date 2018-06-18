@@ -64,94 +64,78 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
-@method get_buf(window)
+@method get_buf
   See +:h nvim_win_get_buf()+
-  @param [Window] window
   @return [Buffer]
 
-@method get_cursor(window)
+@method get_cursor
   See +:h nvim_win_get_cursor()+
-  @param [Window] window
   @return [Array<Integer>]
 
-@method set_cursor(window, pos)
+@method set_cursor(pos)
   See +:h nvim_win_set_cursor()+
-  @param [Window] window
   @param [Array<Integer>] pos
   @return [void]
 
-@method get_height(window)
+@method get_height
   See +:h nvim_win_get_height()+
-  @param [Window] window
   @return [Integer]
 
-@method set_height(window, height)
+@method set_height(height)
   See +:h nvim_win_set_height()+
-  @param [Window] window
   @param [Integer] height
   @return [void]
 
-@method get_width(window)
+@method get_width
   See +:h nvim_win_get_width()+
-  @param [Window] window
   @return [Integer]
 
-@method set_width(window, width)
+@method set_width(width)
   See +:h nvim_win_set_width()+
-  @param [Window] window
   @param [Integer] width
   @return [void]
 
-@method get_var(window, name)
+@method get_var(name)
   See +:h nvim_win_get_var()+
-  @param [Window] window
   @param [String] name
   @return [Object]
 
-@method set_var(window, name, value)
+@method set_var(name, value)
   See +:h nvim_win_set_var()+
-  @param [Window] window
   @param [String] name
   @param [Object] value
   @return [void]
 
-@method del_var(window, name)
+@method del_var(name)
   See +:h nvim_win_del_var()+
-  @param [Window] window
   @param [String] name
   @return [void]
 
-@method get_option(window, name)
+@method get_option(name)
   See +:h nvim_win_get_option()+
-  @param [Window] window
   @param [String] name
   @return [Object]
 
-@method set_option(window, name, value)
+@method set_option(name, value)
   See +:h nvim_win_set_option()+
-  @param [Window] window
   @param [String] name
   @param [Object] value
   @return [void]
 
-@method get_position(window)
+@method get_position
   See +:h nvim_win_get_position()+
-  @param [Window] window
   @return [Array<Integer>]
 
-@method get_tabpage(window)
+@method get_tabpage
   See +:h nvim_win_get_tabpage()+
-  @param [Window] window
   @return [Tabpage]
 
-@method get_number(window)
+@method get_number
   See +:h nvim_win_get_number()+
-  @param [Window] window
   @return [Integer]
 
-@method is_valid(window)
+@method is_valid
   See +:h nvim_win_is_valid()+
-  @param [Window] window
   @return [Boolean]
 
 =end

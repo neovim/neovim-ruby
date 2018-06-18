@@ -30,16 +30,18 @@ session.request(:nvim_get_api_info)[1]["functions"].each do |func|
   case func_name
   when /^nvim_buf_(.+)/
     method_name = $1
+    params.shift
     next if buffer_defs.include?(method_name.to_sym)
   when /^nvim_win_(.+)/
     method_name = $1
+    params.shift
     next if window_defs.include?(method_name.to_sym)
   when /^nvim_tabpage_(.+)/
     method_name = $1
+    params.shift
     next if tabpage_defs.include?(method_name.to_sym)
   when /^nvim_(.+)/
     method_name = $1
-    params.shift
     next if nvim_defs.include?(method_name.to_sym)
   else
     next

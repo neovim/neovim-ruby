@@ -111,8 +111,9 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
-@method ui_attach(height, options)
+@method ui_attach(width, height, options)
   See +:h nvim_ui_attach()+
+  @param [Integer] width
   @param [Integer] height
   @param [Hash] options
   @return [void]
@@ -121,126 +122,150 @@ module Neovim
   See +:h nvim_ui_detach()+
   @return [void]
 
-@method ui_try_resize(height)
+@method ui_try_resize(width, height)
   See +:h nvim_ui_try_resize()+
+  @param [Integer] width
   @param [Integer] height
   @return [void]
 
-@method ui_set_option(value)
+@method ui_set_option(name, value)
   See +:h nvim_ui_set_option()+
+  @param [String] name
   @param [Object] value
   @return [void]
 
-@method command
+@method command(command)
   See +:h nvim_command()+
+  @param [String] command
   @return [void]
 
-@method get_hl_by_name(rgb)
+@method get_hl_by_name(name, rgb)
   See +:h nvim_get_hl_by_name()+
+  @param [String] name
   @param [Boolean] rgb
   @return [Hash]
 
-@method get_hl_by_id(rgb)
+@method get_hl_by_id(hl_id, rgb)
   See +:h nvim_get_hl_by_id()+
+  @param [Integer] hl_id
   @param [Boolean] rgb
   @return [Hash]
 
-@method feedkeys(mode, escape_csi)
+@method feedkeys(keys, mode, escape_csi)
   See +:h nvim_feedkeys()+
+  @param [String] keys
   @param [String] mode
   @param [Boolean] escape_csi
   @return [void]
 
-@method input
+@method input(keys)
   See +:h nvim_input()+
+  @param [String] keys
   @return [Integer]
 
-@method replace_termcodes(from_part, do_lt, special)
+@method replace_termcodes(str, from_part, do_lt, special)
   See +:h nvim_replace_termcodes()+
+  @param [String] str
   @param [Boolean] from_part
   @param [Boolean] do_lt
   @param [Boolean] special
   @return [String]
 
-@method command_output
+@method command_output(command)
   See +:h nvim_command_output()+
+  @param [String] command
   @return [String]
 
-@method eval
+@method eval(expr)
   See +:h nvim_eval()+
+  @param [String] expr
   @return [Object]
 
-@method execute_lua(args)
+@method execute_lua(code, args)
   See +:h nvim_execute_lua()+
+  @param [String] code
   @param [Array] args
   @return [Object]
 
-@method call_function(args)
+@method call_function(fn, args)
   See +:h nvim_call_function()+
-  @param [Array] args
-  @return [Object]
-
-@method call_dict_function(fn, args)
-  See +:h nvim_call_dict_function()+
   @param [String] fn
   @param [Array] args
   @return [Object]
 
-@method strwidth
+@method call_dict_function(dict, fn, args)
+  See +:h nvim_call_dict_function()+
+  @param [Object] dict
+  @param [String] fn
+  @param [Array] args
+  @return [Object]
+
+@method strwidth(text)
   See +:h nvim_strwidth()+
+  @param [String] text
   @return [Integer]
 
 @method list_runtime_paths
   See +:h nvim_list_runtime_paths()+
   @return [Array<String>]
 
-@method set_current_dir
+@method set_current_dir(dir)
   See +:h nvim_set_current_dir()+
+  @param [String] dir
   @return [void]
 
 @method get_current_line
   See +:h nvim_get_current_line()+
   @return [String]
 
-@method set_current_line
+@method set_current_line(line)
   See +:h nvim_set_current_line()+
+  @param [String] line
   @return [void]
 
 @method del_current_line
   See +:h nvim_del_current_line()+
   @return [void]
 
-@method get_var
+@method get_var(name)
   See +:h nvim_get_var()+
+  @param [String] name
   @return [Object]
 
-@method set_var(value)
+@method set_var(name, value)
   See +:h nvim_set_var()+
+  @param [String] name
   @param [Object] value
   @return [void]
 
-@method del_var
+@method del_var(name)
   See +:h nvim_del_var()+
+  @param [String] name
   @return [void]
 
-@method get_vvar
+@method get_vvar(name)
   See +:h nvim_get_vvar()+
+  @param [String] name
   @return [Object]
 
-@method get_option
+@method get_option(name)
   See +:h nvim_get_option()+
+  @param [String] name
   @return [Object]
 
-@method out_write
+@method out_write(str)
   See +:h nvim_out_write()+
+  @param [String] str
   @return [void]
 
-@method err_write
+@method err_write(str)
   See +:h nvim_err_write()+
+  @param [String] str
   @return [void]
 
-@method err_writeln
+@method err_writeln(str)
   See +:h nvim_err_writeln()+
+  @param [String] str
   @return [void]
 
 @method list_bufs
@@ -251,8 +276,9 @@ module Neovim
   See +:h nvim_get_current_buf()+
   @return [Buffer]
 
-@method set_current_buf
+@method set_current_buf(buffer)
   See +:h nvim_set_current_buf()+
+  @param [Buffer] buffer
   @return [void]
 
 @method list_wins
@@ -263,8 +289,9 @@ module Neovim
   See +:h nvim_get_current_win()+
   @return [Window]
 
-@method set_current_win
+@method set_current_win(window)
   See +:h nvim_set_current_win()+
+  @param [Window] window
   @return [void]
 
 @method list_tabpages
@@ -275,20 +302,24 @@ module Neovim
   See +:h nvim_get_current_tabpage()+
   @return [Tabpage]
 
-@method set_current_tabpage
+@method set_current_tabpage(tabpage)
   See +:h nvim_set_current_tabpage()+
+  @param [Tabpage] tabpage
   @return [void]
 
-@method subscribe
+@method subscribe(event)
   See +:h nvim_subscribe()+
+  @param [String] event
   @return [void]
 
-@method unsubscribe
+@method unsubscribe(event)
   See +:h nvim_unsubscribe()+
+  @param [String] event
   @return [void]
 
-@method get_color_by_name
+@method get_color_by_name(name)
   See +:h nvim_get_color_by_name()+
+  @param [String] name
   @return [Integer]
 
 @method get_color_map
@@ -299,40 +330,46 @@ module Neovim
   See +:h nvim_get_mode()+
   @return [Hash]
 
-@method get_keymap
+@method get_keymap(mode)
   See +:h nvim_get_keymap()+
+  @param [String] mode
   @return [Array<Hash>]
 
-@method get_commands
+@method get_commands(opts)
   See +:h nvim_get_commands()+
+  @param [Hash] opts
   @return [Hash]
 
 @method get_api_info
   See +:h nvim_get_api_info()+
   @return [Array]
 
-@method set_client_info(version, type, methods, attributes)
+@method set_client_info(name, version, type, methods, attributes)
   See +:h nvim_set_client_info()+
+  @param [String] name
   @param [Hash] version
   @param [String] type
   @param [Hash] methods
   @param [Hash] attributes
   @return [void]
 
-@method get_chan_info
+@method get_chan_info(chan)
   See +:h nvim_get_chan_info()+
+  @param [Integer] chan
   @return [Hash]
 
 @method list_chans
   See +:h nvim_list_chans()+
   @return [Array]
 
-@method call_atomic
+@method call_atomic(calls)
   See +:h nvim_call_atomic()+
+  @param [Array] calls
   @return [Array]
 
-@method parse_expression(flags, highlight)
+@method parse_expression(expr, flags, highlight)
   See +:h nvim_parse_expression()+
+  @param [String] expr
   @param [String] flags
   @param [Boolean] highlight
   @return [Hash]
@@ -341,12 +378,14 @@ module Neovim
   See +:h nvim_list_uis()+
   @return [Array]
 
-@method get_proc_children
+@method get_proc_children(pid)
   See +:h nvim_get_proc_children()+
+  @param [Integer] pid
   @return [Array]
 
-@method get_proc
+@method get_proc(pid)
   See +:h nvim_get_proc()+
+  @param [Integer] pid
   @return [Object]
 
 =end
