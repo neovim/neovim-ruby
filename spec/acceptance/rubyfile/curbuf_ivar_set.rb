@@ -1,1 +1,1 @@
-$curbuf.instance_variable_set(:@foo, 123)
+$curbuf.instance_variable_set(:@var, 123)

@@ -2,12 +2,13 @@ let s:suite = themis#suite(":rubyfile")
 let s:expect = themis#helper("expect")
 
 function! s:suite.before() abort
-  let g:return_pwd = getcwd()
+  let s:pwd = getcwd()
   cd spec/acceptance/rubyfile
+  unlet! s:var
 endfunction
 
 function! s:suite.after() abort
-  execute("cd " . g:return_pwd)
+  execute("cd " . s:pwd)
 endfunction
 
 function! s:suite.before_each() abort
@@ -23,42 +24,43 @@ function! s:suite.defines_a_ruby_method() abort
   rubyfile ./define_foo.rb
   rubyfile ./call_foo.rb
 
-  call s:expect(g:called).to_equal(1)
+  call s:expect(s:var).to_equal(1)
 endfunction
 
 function! s:suite.persists_curbuf_state() abort
   rubyfile ./curbuf_ivar_set.rb
   rubyfile ./curbuf_ivar_get.rb
 
-  call s:expect(g:foo).to_equal(123)
+  call s:expect(s:var).to_equal(123)
 endfunction
 
 function! s:suite.updates_working_directory() abort
-  let g:rubyfile = getcwd() . "/set_pwd_before.rb"
+  let s:rubyfile = getcwd() . "/set_pwd_before.rb"
   cd /
-  exec "rubyfile " . g:rubyfile
+  exec "rubyfile " . s:rubyfile
   cd -
 
-  call s:expect(g:pwd_before).to_equal("/")
+  call s:expect(s:var).to_equal(["/"])
 endfunction
 
 function! s:suite.updates_working_directory_implicitly() abort
-  let g:before_file = getcwd() . "/set_pwd_before.rb"
-  let g:after_file = getcwd() . "/set_pwd_after.rb"
+  let s:before_file = getcwd() . "/set_pwd_before.rb"
+  let s:after_file = getcwd() . "/set_pwd_after.rb"
 
   split | lcd /
-  exec "rubyfile " . g:before_file
+  exec "rubyfile " . s:before_file
   wincmd p
-  exec "rubyfile " . g:after_file
+  exec "rubyfile " . s:after_file
   wincmd p | lcd -
 
-  call s:expect(g:pwd_before).not.to_equal(g:pwd_after)
+  call s:expect(len(s:var)).to_equal(2)
+  call s:expect(s:var[0]).not.to_equal(s:var[1])
 endfunction
 
 function! s:suite.supports_nesting() abort
   rubyfile ./nested.rb
 
-  call s:expect(g:ruby_nested).to_equal(123)
+  call s:expect(s:var).to_equal(123)
 endfunction
 
 function! s:suite.handles_standard_error() abort

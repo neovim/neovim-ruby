@@ -1,1 +1,1 @@
-Vim.command("let g:pwd_after = '#{Dir.pwd}'")
+Vim.command("call add(s:var, '#{Dir.pwd}')")

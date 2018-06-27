@@ -4,6 +4,7 @@ let s:expect = themis#helper("expect")
 function! s:suite.before_each() abort
   1,$delete
   call append(0, ["one", "two"])
+  unlet! s:var
 endfunction
 
 function! s:suite.has_nvim() abort
@@ -11,41 +12,42 @@ function! s:suite.has_nvim() abort
 endfunction
 
 function! s:suite.defines_a_ruby_method() abort
-  ruby def foo; Vim.command("let g:called = 1"); end
+  ruby def foo; Vim.command("let s:var = 1"); end
   ruby foo
 
-  call s:expect(g:called).to_equal(1)
+  call s:expect(s:var).to_equal(1)
 endfunction
 
 function! s:suite.persists_curbuf_state() abort
   ruby $curbuf.instance_variable_set(:@foo, 123)
-  ruby Vim.command("let g:foo = #{$curbuf.instance_variable_get(:@foo)}")
+  ruby Vim.command("let s:var = #{$curbuf.instance_variable_get(:@foo)}")
 
-  call s:expect(g:foo).to_equal(123)
+  call s:expect(s:var).to_equal(123)
 endfunction
 
 function! s:suite.updates_working_directory() abort
   cd /
-  ruby Vim.command("let g:ruby_pwd = '#{Dir.pwd.sub(/^C:/, "")}'")
+  ruby Vim.command("let s:var = '#{Dir.pwd.sub(/^C:/, "")}'")
   cd -
 
-  call s:expect(g:ruby_pwd).to_equal("/")
+  call s:expect(s:var).to_equal("/")
 endfunction
 
 function! s:suite.updates_working_directory_implicitly() abort
   split | lcd /
-  ruby Vim.command("let g:before_pwd = '#{Dir.pwd}'")
+  ruby Vim.command("let s:var = ['#{Dir.pwd}']")
   wincmd p
-  ruby Vim.command("let g:after_pwd = '#{Dir.pwd}'")
+  ruby Vim.command("call add(s:var, '#{Dir.pwd}')")
   wincmd p | lcd -
 
-  call s:expect(g:before_pwd).not.to_equal(g:after_pwd)
+  call s:expect(len(s:var)).to_equal(2)
+  call s:expect(s:var[0]).not.to_equal(s:var[1])
 endfunction
 
 function! s:suite.supports_nesting() abort
-  ruby Vim.command("ruby Vim.command('let g:ruby_nested = 123')")
+  ruby Vim.command("ruby Vim.command('let s:var = 123')")
 
-  call s:expect(g:ruby_nested).to_equal(123)
+  call s:expect(s:var).to_equal(123)
 endfunction
 
 function! s:suite.handles_standard_error() abort

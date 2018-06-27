@@ -1,1 +1,1 @@
-Vim.command("let g:ruby_nested = 123")
+Vim.command("let s:var = 123")

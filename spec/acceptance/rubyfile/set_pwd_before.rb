@@ -1,1 +1,1 @@
-Vim.command("let g:pwd_before = '#{Dir.pwd.sub(/^C:/, '')}'")
+Vim.command("let s:var = ['#{Dir.pwd.sub(/^C:/, '')}']")

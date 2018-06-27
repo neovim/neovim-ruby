@@ -1,1 +1,1 @@
-Vim.command("let g:foo = #{$curbuf.instance_variable_get(:@foo)}")
+Vim.command("let s:var = #{$curbuf.instance_variable_get(:@var)}")
