@@ -16,7 +16,9 @@ namespace :spec do
   namespace :acceptance do
     desc "Install acceptance spec dependencies"
     task :deps do
-      sh "bundle exec vim-flavor update --vimfiles-path=spec/acceptance/runtime"
+      Bundler.with_clean_env do
+        sh "bundle exec vim-flavor update --vimfiles-path=spec/acceptance/runtime"
+      end
     end
   end
 end
