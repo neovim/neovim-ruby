@@ -21,3 +21,4 @@ spec/workspace
 spec/acceptance/runtime/flavors
 spec/acceptance/runtime/rplugin_manifest.vim
 vendor/bundle
+bin
