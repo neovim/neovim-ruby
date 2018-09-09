@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Alex Genco"]
   spec.email         = ["alexgenco@gmail.com"]
   spec.summary       = "A Ruby client for Neovim"
-  spec.homepage      = "https://github.com/alexgenco/neovim-ruby"
+  spec.homepage      = "https://github.com/neovim/neovim-ruby"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")

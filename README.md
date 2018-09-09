@@ -1,9 +1,9 @@
 # Neovim Ruby
 
-[![Travis](https://travis-ci.org/alexgenco/neovim-ruby.svg?branch=master)](https://travis-ci.org/alexgenco/neovim-ruby)
-[![Build status](https://ci.appveyor.com/api/projects/status/wp7agvgcxxcguj6h/branch/master?svg=true)](https://ci.appveyor.com/project/alexgenco/neovim-ruby/branch/master)
+[![Travis](https://travis-ci.org/neovim/neovim-ruby.svg?branch=master)](https://travis-ci.org/neovim/neovim-ruby)
+[![Build status](https://ci.appveyor.com/api/projects/status/wp7agvgcxxcguj6h/branch/master?svg=true)](https://ci.appveyor.com/project/neovim/neovim-ruby/branch/master)
 [![Gem Version](https://badge.fury.io/rb/neovim.svg)](https://badge.fury.io/rb/neovim)
-[![Inline docs](http://inch-ci.org/github/alexgenco/neovim-ruby.svg?branch=master)](http://inch-ci.org/github/alexgenco/neovim-ruby)
+[![Inline docs](http://inch-ci.org/github/neovim/neovim-ruby.svg?branch=master)](http://inch-ci.org/github/neovim/neovim-ruby)
 
 Ruby bindings for [Neovim](https://github.com/neovim/neovim).
 
@@ -38,7 +38,7 @@ require "neovim"
 client = Neovim.attach_unix("/tmp/nvim.sock")
 ```
 
-Refer to the [`Neovim` docs](http://www.rubydoc.info/github/alexgenco/neovim-ruby/master/Neovim) for other ways to connect to `nvim`, and the [`Neovim::Client` docs](http://www.rubydoc.info/github/alexgenco/neovim-ruby/master/Neovim/Client) for a summary of the client interface.
+Refer to the [`Neovim` docs](http://www.rubydoc.info/github/neovim/neovim-ruby/master/Neovim) for other ways to connect to `nvim`, and the [`Neovim::Client` docs](http://www.rubydoc.info/github/neovim/neovim-ruby/master/Neovim/Client) for a summary of the client interface.
 
 ### Plugins
 
@@ -70,7 +70,7 @@ end
 
 When you add or update a plugin, you will need to call `:UpdateRemotePlugins` to update the remote plugin manifest. See `:help remote-plugin-manifest` for more information.
 
-Refer to the [`Neovim::Plugin::DSL` docs](http://www.rubydoc.info/github/alexgenco/neovim-ruby/master/Neovim/Plugin/DSL) for a more complete overview of the `Neovim.plugin` DSL.
+Refer to the [`Neovim::Plugin::DSL` docs](http://www.rubydoc.info/github/neovim/neovim-ruby/master/Neovim/Plugin/DSL) for a more complete overview of the `Neovim.plugin` DSL.
 
 ### Vim Plugin Support
 
@@ -78,16 +78,16 @@ The Neovim gem also acts as a compatibility layer for Ruby plugins written for `
 
 ## Links
 
-* Source: <http://github.com/alexgenco/neovim-ruby>
-* Bugs:   <http://github.com/alexgenco/neovim-ruby/issues>
-* CI: <http://travis-ci.org/alexgenco/neovim-ruby>
+* Source: <http://github.com/neovim/neovim-ruby>
+* Bugs:   <http://github.com/neovim/neovim-ruby/issues>
+* CI: <http://travis-ci.org/neovim/neovim-ruby>
 * Documentation:
     * Latest Gem: <http://rubydoc.info/gems/neovim>
-    * Master: <http://rubydoc.info/github/alexgenco/neovim-ruby/master/frames>
+    * Master: <http://rubydoc.info/github/neovim/neovim-ruby/master/frames>
 
 ## Contributing
 
-1. Fork it (http://github.com/alexgenco/neovim-ruby/fork)
+1. Fork it (http://github.com/neovim/neovim-ruby/fork)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
