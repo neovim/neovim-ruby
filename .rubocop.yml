@@ -2,6 +2,7 @@ AllCops:
   Exclude:
     - _neovim/**/*
     - spec/acceptance/**/*
+    - spec/workspace/**/*
     - vendor/**/*
     - script/**/*
     - bin/**/*
