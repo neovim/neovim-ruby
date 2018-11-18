@@ -42,6 +42,15 @@ function! s:suite.updates_all_lines() abort
   call s:expect(getline(1, 4)).to_equal(["ONE", "TWO", "THREE", "FOUR"])
 endfunction
 
+function! s:suite.ignores_line_deletion() abort
+  " Just ensure `Index out of bounds` exception isn't raised.
+  "
+  " Deleting or adding lines inside `:rubydo` is documented as not supported.
+  " Therefore this will remain inconsistent with Vim, which deletes all but
+  " the first line (?)
+  %rubydo Vim.command("%d")
+endfunction
+
 function! s:suite.handles_standard_error() abort
   try
     1rubydo raise "BOOM"

@@ -134,9 +134,9 @@ module Neovim
     def self.__update_lines_in_chunks(buffer, start, stop, size)
       (start..stop).each_slice(size) do |linenos|
         start, stop = linenos[0] - 1, linenos[-1]
-        lines = buffer.get_lines(start, stop, true)
+        lines = buffer.get_lines(start, stop, false)
 
-        buffer.set_lines(start, stop, true, yield(lines))
+        buffer.set_lines(start, stop, false, yield(lines))
       end
     end
     private_class_method :__update_lines_in_chunks
