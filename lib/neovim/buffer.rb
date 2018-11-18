@@ -91,7 +91,7 @@ module Neovim
       window = @session.request(:nvim_get_current_win)
       cursor = window.cursor
 
-      set_lines(index, index, true, [str])
+      set_lines(index, index, true, [*str.split($/)])
       window.set_cursor(cursor)
       str
     end

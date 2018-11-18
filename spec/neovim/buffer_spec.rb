@@ -124,6 +124,12 @@ module Neovim
         end.to change { buffer.lines.to_a }.to(["first", "one", "two"])
       end
 
+      it "allows newlines" do
+        expect do
+          buffer.append(0, "first\nsecond")
+        end.to change { buffer.lines.to_a }.to(["first", "second", "one", "two"])
+      end
+
       it "doesn't move the cursor" do
         expect do
           buffer.append(0, "first")
