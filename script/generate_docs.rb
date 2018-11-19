@@ -19,10 +19,6 @@ buffer_defs = Neovim::Buffer.instance_methods(false)
 tabpage_defs = Neovim::Tabpage.instance_methods(false)
 window_defs = Neovim::Window.instance_methods(false)
 
-def add_method(docs, defs, method_name)
-  return if defs.include?(method_name.to_s)
-end
-
 session.request(:nvim_get_api_info)[1]["functions"].each do |func|
   func_name = func["name"]
   params = func["parameters"]
@@ -75,6 +71,7 @@ session.request(:nvim_get_api_info)[1]["functions"].each do |func|
 end
 
 lib_dir = Pathname.new(File.expand_path("../lib/neovim", __dir__))
+
 {
   "client.rb" => nvim_docs,
   "buffer.rb" => buffer_docs,
