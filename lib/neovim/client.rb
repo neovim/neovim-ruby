@@ -44,7 +44,7 @@ module Neovim
 
     # Extend +methods+ to include RPC methods.
     def methods(*args)
-      (super.to_set | rpc_methods).to_a
+      super | rpc_methods.to_a
     end
 
     # Access to objects belonging to the current +nvim+ context.

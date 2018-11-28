@@ -37,7 +37,7 @@ module Neovim
 
     # Extend +methods+ to include RPC methods
     def methods(*args)
-      (super.to_set | rpc_methods).to_a
+      super | rpc_methods.to_a
     end
 
     # Extend +==+ to only look at class and index.
