@@ -103,7 +103,7 @@ module Neovim
     private
 
     def read
-      array = @connection.read
+      array = @connection.flush.read
       Message.from_array(array)
     end
 

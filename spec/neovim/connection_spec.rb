@@ -7,19 +7,29 @@ module Neovim
     describe "#write" do
       it "writes msgpack to the underlying file descriptor" do
         rd, wr = IO.pipe
-        connection = Connection.new(nil_io, wr)
-        connection.write("some data")
-        wr.close
+        Connection.new(nil_io, wr).write("some data").flush
+        data = rd.readpartial(1024)
 
-        expect(MessagePack.unpack(rd.read)).to eq("some data")
+        expect(MessagePack.unpack(data)).to eq("some data")
+      end
+    end
+
+    describe "#flush" do
+      it "flushes writes to the underlying file descriptor" do
+        rd, wr = IO.pipe
+        connection = Connection.new(nil_io, wr).write("some data")
+
+        expect { connection.flush }
+          .to change { IO.select([rd], nil, nil, 0.01) }
+          .from(nil).to([[rd], [], []])
       end
 
       it "throws an exception when the file is closed" do
         _, wr = IO.pipe
-        connection = Connection.new(nil_io, wr)
+        connection = Connection.new(nil_io, wr).write("some data")
         wr.close
 
-        expect { connection.write("some data") }.to raise_error(IOError)
+        expect { connection.flush }.to raise_error(IOError)
       end
     end
 
@@ -27,7 +37,7 @@ module Neovim
       it "reads msgpack from the underlying file descriptor" do
         rd, wr = IO.pipe
         wr.write(MessagePack.pack("some data"))
-        wr.close
+        wr.flush
 
         connection = Connection.new(rd, nil_io)
         expect(connection.read).to eq("some data")
