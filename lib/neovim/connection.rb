@@ -40,13 +40,17 @@ module Neovim
 
     def write(object)
       log(:debug) { {object: object} }
-      @packer.write(object).flush
+      @packer.write(object)
     end
 
     def read
       @unpacker.read.tap do |object|
         log(:debug) { {object: object} }
       end
+    end
+
+    def flush
+      @packer.flush
     end
 
     def register_type(id)

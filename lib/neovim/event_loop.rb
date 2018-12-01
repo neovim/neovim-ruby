@@ -76,6 +76,7 @@ module Neovim
         break if @shutdown
 
         begin
+          flush
           yield read
         rescue EOFError => e
           log_exception(:debug, e, __method__)
@@ -98,6 +99,10 @@ module Neovim
           klass.new(index, session, api)
         end
       end
+    end
+
+    def flush
+      @connection.flush
     end
 
     private

@@ -94,7 +94,10 @@ module Neovim
 
     def self.__wrap_client(client)
       Vim.__client = client
-      Vim.__refresh_globals(client)
+      client.run_par [
+        Vim.method(:refresh_curbuf),
+        Vim.method(:refresh_curwin),
+      ]
 
       __with_exception_handling(client) do
         __with_std_streams(client) do

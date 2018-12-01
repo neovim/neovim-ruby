@@ -82,6 +82,10 @@ module Neovim
       @event_loop.notify(method, *args)
     end
 
+    def flush
+      @event_loop.flush
+    end
+
     def shutdown
       @running = false
       @event_loop.shutdown
@@ -90,6 +94,38 @@ module Neovim
     def stop
       @running = false
       @event_loop.stop
+    end
+
+    def run_par(cbs)
+      raise("not supported on main fiber (yet)") if Fiber.current == @main_fiber
+      remaining = cbs.count
+      return if remaining.zero?
+      cur = Fiber.current
+      resumed = false
+      cbs.each do |cb|
+        fib = Fiber.new do
+          begin
+            cb.call
+          rescue => e
+            unless resumed then
+              cur.resume e
+              resumed = true
+            end
+          else
+            unless resumed then
+              remaining -= 1
+              if remaining.zero? then
+                cur.resume nil
+                resumed = true
+              end
+            end
+          end
+        end
+        fib.resume
+      end
+      @event_loop.flush
+      e = Fiber.yield
+      raise e unless e.nil?
     end
 
     private

@@ -97,6 +97,14 @@ module Neovim
       end
     end
 
+    def run_par(cbs)
+      @session.run_par(cbs)
+    end
+
+    def flush
+      @session.flush
+    end
+
     def shutdown
       @session.shutdown
     end
