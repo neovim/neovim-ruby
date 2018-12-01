@@ -49,7 +49,7 @@ module Neovim
       end
 
       def received(handlers)
-        handlers[request_id].call(self)
+        handlers.delete(request_id).call(self)
       end
     end
 
