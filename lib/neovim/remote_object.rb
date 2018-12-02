@@ -1,3 +1,5 @@
+require "set"
+
 module Neovim
   # @abstract Superclass for all +nvim+ remote objects.
   #

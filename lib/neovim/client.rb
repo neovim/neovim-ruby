@@ -1,6 +1,7 @@
 require "neovim/api"
 require "neovim/current"
 require "neovim/session"
+require "set"
 
 module Neovim
   # Client to a running +nvim+ instance. The interface is generated at
