@@ -28,7 +28,7 @@ module Neovim
     describe "#shutdown" do
       it "causes nvim to exit" do
         client.shutdown
-        expect { client.strwidth("hi") }.to raise_error(IOError)
+        expect { client.strwidth("hi") }.to raise_error(Neovim::Session::Exited)
       end
     end
 

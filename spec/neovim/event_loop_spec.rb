@@ -16,7 +16,9 @@ module Neovim
     describe "#request" do
       it "writes a msgpack request" do
         event_loop.request(1, :method, 1, 2)
+        connection.flush
         message = server_rd.readpartial(1024)
+
         expect(message).to eq(MessagePack.pack([0, 1, "method", [1, 2]]))
       end
     end
@@ -24,7 +26,9 @@ module Neovim
     describe "#respond" do
       it "writes a msgpack response" do
         event_loop.respond(2, "value", "error")
+        connection.flush
         message = server_rd.readpartial(1024)
+
         expect(message).to eq(MessagePack.pack([1, 2, "error", "value"]))
       end
     end
@@ -32,7 +36,9 @@ module Neovim
     describe "#notify" do
       it "writes a msgpack notification" do
         event_loop.notify(:method, 1, 2)
+        connection.flush
         message = server_rd.readpartial(1024)
+
         expect(message).to eq(MessagePack.pack([2, "method", [1, 2]]))
       end
     end

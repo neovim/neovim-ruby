@@ -15,7 +15,7 @@ module Vim
 
   # Delegate all method calls to the underlying +Neovim::Client+ object.
   def self.method_missing(method, *args, &block)
-    if @__client.respond_to?(method)
+    if @__client
       @__client.public_send(method, *args, &block).tap do
         __refresh_globals(@__client)
       end
@@ -33,13 +33,14 @@ module Vim
   end
 
   def self.__refresh_globals(client)
-    bufnr = client.evaluate("bufnr('%')")
+    bufid, winid = client.evaluate("[nvim_get_current_buf(), nvim_get_current_win()]")
+    session, api = client.session, client.api
 
-    $curbuf = @__buffer_cache.fetch(bufnr) do
-      @__buffer_cache[bufnr] = client.get_current_buf
+    $curbuf = @__buffer_cache.fetch(bufid) do
+      @__buffer_cache[bufid] = Buffer.new(bufid, session, api)
     end
 
-    $curwin = client.get_current_win
+    $curwin = Window.new(winid, session, api)
   end
 end
 
