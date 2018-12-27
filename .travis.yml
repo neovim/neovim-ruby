@@ -15,7 +15,7 @@ rvm:
 
 before_install:
   - eval "$(curl --connect-timeout 30 --retry 3 -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64"
-  - gem update --system
+  - gem update --system --conservative || (gem install "rubygems-update:~>2.7" --no-document && update_rubygems)
   - gem install --remote bundler
   - bundle --version
 
