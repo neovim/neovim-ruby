@@ -1,3 +1,14 @@
+# 0.8.0
+
+- Allow `Buffer#append` to take a string with newlines
+- Use non-strict line indexing in `:rubydo` to prevent line deletions from
+  throwing exceptions
+- Performance optimizations:
+  - Cache RPC method lookups and store them in a set
+  - Only flush writes before reading in the event loop
+  - Delete request handlers after invoking them
+  - Refresh provider globals in a single RPC request
+
 # 0.7.1
 
 - Fix `uninitialized constant Neovim::RubyProvider::StringIO`
