@@ -9,7 +9,7 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
-  # The methods documented here were generated using NVIM v0.3.1
+  # The methods documented here were generated using NVIM v0.3.3
   #
   # @see Buffer
   # @see Window
@@ -308,6 +308,15 @@ module Neovim
   See +:h nvim_set_current_tabpage()+
   @param [Tabpage] tabpage
   @return [void]
+
+@method create_namespace(name)
+  See +:h nvim_create_namespace()+
+  @param [String] name
+  @return [Integer]
+
+@method get_namespaces
+  See +:h nvim_get_namespaces()+
+  @return [Hash]
 
 @method subscribe(event)
   See +:h nvim_subscribe()+
