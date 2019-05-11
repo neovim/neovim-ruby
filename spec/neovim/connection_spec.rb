@@ -1,4 +1,5 @@
 require "helper"
+require "io/wait"
 
 module Neovim
   RSpec.describe Connection do
@@ -19,9 +20,7 @@ module Neovim
         rd, wr = IO.pipe
         connection = Connection.new(nil_io, wr).write("some data")
 
-        expect { connection.flush }
-          .to change { IO.select([rd], nil, nil, 0.01) }
-          .from(nil).to([[rd], [], []])
+        expect { connection.flush }.to change { rd.ready? }.from(false).to(true)
       end
 
       it "throws an exception when the file is closed" do
