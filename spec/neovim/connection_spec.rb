@@ -20,7 +20,7 @@ module Neovim
         rd, wr = IO.pipe
         connection = Connection.new(nil_io, wr).write("some data")
 
-        expect { connection.flush }.to change { rd.ready? }.from(false).to(true)
+        expect { connection.flush }.to change { rd.ready? }.to(true)
       end
 
       it "throws an exception when the file is closed" do

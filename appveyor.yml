@@ -2,6 +2,7 @@ version: '{build}'
 
 environment:
   matrix:
+    - RUBY_VERSION: 26
     - RUBY_VERSION: 25
     - RUBY_VERSION: 24
     - RUBY_VERSION: 23
