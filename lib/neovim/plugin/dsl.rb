@@ -68,6 +68,12 @@ module Neovim
 
       private
 
+      # Mark this plugin as the Ruby script host started by nvim. Should only
+      # be used in +Neovim::RubyProvider+.
+      def script_host!
+        @plugin.script_host = true
+      end
+
       # Register a setup block to run once before the host starts. The block
       # should expect to receive a single argument, a +Neovim::Client+.
       #

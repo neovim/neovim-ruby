@@ -43,6 +43,7 @@ module Support
 
   def self.kill(pid)
     windows? ? Process.kill(:KILL, pid) : Process.kill(:TERM, pid)
+    Process.waitpid(pid)
   end
 
   begin

@@ -14,6 +14,8 @@ module Neovim
       Thread.abort_on_exception = true
 
       Neovim.plugin do |plug|
+        plug.__send__(:script_host!)
+
         __define_setup(plug)
         __define_ruby_execute(plug)
         __define_ruby_execute_file(plug)

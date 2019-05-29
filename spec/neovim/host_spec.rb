@@ -47,7 +47,7 @@ module Neovim
       end
 
       context "poll" do
-        it "initializes a client and responds 'ok'" do
+        it "initializes a client, sets client info, and responds 'ok'" do
           nvim_wr.write([0, 1, :poll, []]).flush
           type, reqid, method = nvim_rd.read
 
@@ -57,6 +57,8 @@ module Neovim
 
           api_info = [0, {"types" => {}, "functions" => {}}]
           nvim_wr.write([1, reqid, nil, api_info]).flush
+
+          expect(nvim_rd.read).to match([2, "nvim_set_client_info", duck_type(:to_ary)])
           expect(nvim_rd.read).to eq([1, 1, nil, "ok"])
         end
       end
@@ -71,7 +73,9 @@ module Neovim
           session.shutdown
 
           nvim_wr.write([1, reqid, nil, api_info]).flush
-          nvim_rd.read
+
+          # read `nvim_set_client_info`, then `poll`
+          2.times { nvim_rd.read }
         end
 
         it "responds with specs to the 'specs' request" do

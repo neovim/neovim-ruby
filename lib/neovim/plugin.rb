@@ -3,7 +3,7 @@ require "neovim/plugin/dsl"
 module Neovim
   # @api private
   class Plugin
-    attr_accessor :handlers, :setup_blocks
+    attr_accessor :handlers, :setup_blocks, :script_host
     attr_reader :source
 
     def self.from_config_block(source)
@@ -13,9 +13,10 @@ module Neovim
     end
 
     def initialize(source)
-      @handlers = []
       @source = source
+      @handlers = []
       @setup_blocks = []
+      @script_host = false
     end
 
     def specs
@@ -26,6 +27,10 @@ module Neovim
 
     def setup(client)
       @setup_blocks.each { |bl| bl.call(client) }
+    end
+
+    def script_host?
+      !!@script_host
     end
   end
 end
