@@ -49,16 +49,15 @@ module Neovim
       context "poll" do
         it "initializes a client, sets client info, and responds 'ok'" do
           nvim_wr.write([0, 1, :poll, []]).flush
-          type, reqid, method = nvim_rd.read
 
-          expect(type).to eq(0)
-          expect(reqid).to eq(2)
-          expect(method).to eq("nvim_get_api_info")
+          expect(nvim_rd.read).to match([2, "nvim_set_client_info", duck_type(:to_ary)])
+
+          type, reqid, method = nvim_rd.read
+          expect([type, reqid, method]).to match([0, duck_type(:to_int), "nvim_get_api_info"])
 
           api_info = [0, {"types" => {}, "functions" => {}}]
           nvim_wr.write([1, reqid, nil, api_info]).flush
 
-          expect(nvim_rd.read).to match([2, "nvim_set_client_info", duck_type(:to_ary)])
           expect(nvim_rd.read).to eq([1, 1, nil, "ok"])
         end
       end
@@ -66,7 +65,12 @@ module Neovim
       context "after poll" do
         before do
           nvim_wr.write([0, 1, :poll, []]).flush
-          _, reqid, = nvim_rd.read
+
+          expect(nvim_rd.read[1]).to eq("nvim_set_client_info")
+
+          _, reqid, method = nvim_rd.read
+
+          expect(method).to eq("nvim_get_api_info")
 
           session = Session.new(EventLoop.child(Support.child_argv))
           api_info = session.request(:nvim_get_api_info)
@@ -74,8 +78,7 @@ module Neovim
 
           nvim_wr.write([1, reqid, nil, api_info]).flush
 
-          # read `nvim_set_client_info`, then `poll`
-          2.times { nvim_rd.read }
+          expect(nvim_rd.read[3]).to eq("ok")
         end
 
         it "responds with specs to the 'specs' request" do

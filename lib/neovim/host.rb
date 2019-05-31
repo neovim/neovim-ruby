@@ -79,8 +79,9 @@ module Neovim
 
     def initialize_client(request_id)
       @session.request_id = request_id
+      @session.notify(:nvim_set_client_info, *ClientInfo.for_host(self).to_args)
+
       @client = Client.from_event_loop(@event_loop, @session)
-      @client.session.notify(:nvim_set_client_info, *ClientInfo.for_host(self).to_args)
     end
 
     def initialize_plugins
