@@ -1,7 +1,7 @@
 # Neovim Ruby
 
 [![Travis](https://travis-ci.org/neovim/neovim-ruby.svg?branch=master)](https://travis-ci.org/neovim/neovim-ruby)
-[![Build status](https://ci.appveyor.com/api/projects/status/wp7agvgcxxcguj6h/branch/master?svg=true)](https://ci.appveyor.com/project/neovim/neovim-ruby/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/y44k25tcdvvuq0ee?svg=true)](https://ci.appveyor.com/project/alexgenco/neovim-ruby)
 [![Gem Version](https://badge.fury.io/rb/neovim.svg)](https://badge.fury.io/rb/neovim)
 [![Inline docs](http://inch-ci.org/github/neovim/neovim-ruby.svg?branch=master)](http://inch-ci.org/github/neovim/neovim-ruby)
 
