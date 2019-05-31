@@ -16,7 +16,7 @@ install:
   - set PATH=C:\Ruby%RUBY_VERSION%\bin;C:\tools\neovim\Neovim\bin;%PATH%
   - set NVIM_RUBY_LOG_LEVEL=DEBUG
   - set NVIM_RUBY_LOG_FILE=%cd%\ci.log
-  - choco install neovim --pre -fy --ignore-dependencies
+  - choco install neovim --pre -fy --ignore-dependencies --ignore-checksums
   - bundle install --path vendor/bundle
 
 build: off
@@ -32,4 +32,4 @@ before_test:
   - nvim -v
 
 test_script:
-  - bundle exec rake
+  - bundle exec rake spec:functional spec:acceptance
