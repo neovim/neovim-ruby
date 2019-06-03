@@ -1,5 +1,6 @@
 require "neovim"
 require "neovim/client"
+require "neovim/client_info"
 require "neovim/event_loop"
 require "neovim/host/loader"
 
@@ -78,6 +79,8 @@ module Neovim
 
     def initialize_client(request_id)
       @session.request_id = request_id
+      @session.notify(:nvim_set_client_info, *ClientInfo.for_host(self).to_args)
+
       @client = Client.from_event_loop(@event_loop, @session)
     end
 

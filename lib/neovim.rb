@@ -1,4 +1,5 @@
 require "neovim/client"
+require "neovim/client_info"
 require "neovim/session"
 require "neovim/event_loop"
 require "neovim/executable"
@@ -62,7 +63,7 @@ module Neovim
   # @return [Client]
   # @see EventLoop.tcp
   def self.attach_tcp(host, port)
-    Client.from_event_loop EventLoop.tcp(host, port)
+    attach(EventLoop.tcp(host, port))
   end
 
   # Connect to a running +nvim+ instance over a UNIX domain socket.
@@ -71,7 +72,7 @@ module Neovim
   # @return [Client]
   # @see EventLoop.unix
   def self.attach_unix(socket_path)
-    Client.from_event_loop EventLoop.unix(socket_path)
+    attach(EventLoop.unix(socket_path))
   end
 
   # Spawn and connect to a child +nvim+ process.
@@ -80,7 +81,7 @@ module Neovim
   # @return [Client]
   # @see EventLoop.child
   def self.attach_child(argv=[executable.path])
-    Client.from_event_loop EventLoop.child(argv)
+    attach(EventLoop.child(argv))
   end
 
   # Placeholder method for exposing the remote plugin DSL. This gets
@@ -116,4 +117,12 @@ module Neovim
   def self.logger
     Logging.logger
   end
+
+  # @api private
+  def self.attach(event_loop)
+    Client.from_event_loop(event_loop).tap do |client|
+      client.session.notify(:nvim_set_client_info, *ClientInfo.for_client.to_args)
+    end
+  end
+  private_class_method :attach
 end

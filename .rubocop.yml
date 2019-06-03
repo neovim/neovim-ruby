@@ -10,6 +10,9 @@ AllCops:
 Layout/EndOfLine:
   EnforcedStyle: lf
 
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
 Layout/SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
 
@@ -99,6 +102,9 @@ Style/GlobalVars:
   Exclude:
     - lib/neovim/ruby_provider/vim.rb
     - spec/neovim/ruby_provider/vim_spec.rb
+
+Style/MultilineTernaryOperator:
+  Enabled: false
 
 Style/ParallelAssignment:
   Enabled: false

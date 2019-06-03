@@ -29,6 +29,10 @@ module Neovim
       @api = api
     end
 
+    def channel_id
+      @api.channel_id
+    end
+
     # Intercept method calls and delegate to appropriate RPC methods.
     def method_missing(method_name, *args)
       if (func = @api.function_for_object_method(self, method_name))
