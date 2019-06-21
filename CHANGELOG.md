@@ -1,3 +1,8 @@
+# 0.8.1
+
+- Set client info on host and client startup
+- Add `Client#channel_id`
+
 # 0.8.0
 
 - Allow `Buffer#append` to take a string with newlines
