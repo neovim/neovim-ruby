@@ -35,6 +35,7 @@ jobs:
         - NVIM_EXECUTABLE="$PWD/nvim" 
         - secure: "ZVvRmjJoHbKdxMWzAssWXA4HpWalDZmRuOXohdRWkfbobYHg2yXmdvLI9A4lNR3C2ejieSfSbd2Rfdg2Ievf2z/fALhXf1B2kZk0mw9RmwgmIjRmoL0l4AG+HZOMrzidfncuVhiv4EVbzTbkkH+HotPHH/+FnEECRMbFDNasEVA="
       after_success:
+        - git checkout master --track origin/master
         - bundle exec rake docs:validate
         - git config user.name "Travis CI"
         - git config user.email "travis@travis-ci.org"
