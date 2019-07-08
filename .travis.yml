@@ -30,19 +30,19 @@ jobs:
       before_install:
         - wget https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -O "$NVIM_EXECUTABLE"
         - chmod u+x "$NVIM_EXECUTABLE"
-      script: bundle exec rake docs:generate
       env:
         - NVIM_EXECUTABLE="$PWD/nvim" 
         - secure: "ZVvRmjJoHbKdxMWzAssWXA4HpWalDZmRuOXohdRWkfbobYHg2yXmdvLI9A4lNR3C2ejieSfSbd2Rfdg2Ievf2z/fALhXf1B2kZk0mw9RmwgmIjRmoL0l4AG+HZOMrzidfncuVhiv4EVbzTbkkH+HotPHH/+FnEECRMbFDNasEVA="
-      after_success:
-        - git checkout master --track origin/master
-        - bundle exec rake docs:validate
+      script:
+        - git checkout -b master --track origin/master
+        - bundle exec rake docs:generate
         - git config user.name "Travis CI"
         - git config user.email "travis@travis-ci.org"
         - git remote set-url origin https://${GH_TOKEN}@github.com/neovim/neovim-ruby.git
         - git add lib/
         - git commit -m 'Update generated docs'
         - git push origin master
+        - bundle exec rake docs:validate
 
 stages:
   - test
