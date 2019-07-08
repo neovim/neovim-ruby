@@ -27,12 +27,12 @@ jobs:
     - stage: docs
       name: "Generate Docs"
       rvm: 2.6
-      before_install:
-        - wget https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -O "$NVIM_EXECUTABLE"
-        - chmod u+x "$NVIM_EXECUTABLE"
       env:
         - NVIM_EXECUTABLE="$PWD/nvim" 
         - secure: "ZVvRmjJoHbKdxMWzAssWXA4HpWalDZmRuOXohdRWkfbobYHg2yXmdvLI9A4lNR3C2ejieSfSbd2Rfdg2Ievf2z/fALhXf1B2kZk0mw9RmwgmIjRmoL0l4AG+HZOMrzidfncuVhiv4EVbzTbkkH+HotPHH/+FnEECRMbFDNasEVA="
+      before_install:
+        - wget https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -O "$NVIM_EXECUTABLE"
+        - chmod u+x "$NVIM_EXECUTABLE"
       script:
         - git config user.name "Travis CI"
         - git config user.email "travis@travis-ci.org"
@@ -50,6 +50,6 @@ stages:
   - name: docs
     if: branch = master
 
-env: NVIM_EXECUTABLE="$PWD/nvim" NVIM_RUBY_LOG_LEVEL=DEBUG NVIM_RUBY_LOG_FILE=ci.log
+env: PATH="$PATH:$PWD" NVIM_EXECUTABLE="$PWD/nvim" NVIM_RUBY_LOG_LEVEL=DEBUG NVIM_RUBY_LOG_FILE=ci.log
 
 script: bundle exec rake
