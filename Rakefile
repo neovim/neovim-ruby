@@ -35,17 +35,8 @@ namespace :docs do
   end
 end
 
-namespace :scripts do
-  desc "Validate script syntax"
-  task :validate do
-    sh "ruby -c #{File.expand_path("script/*.rb", __dir__)}"
-  end
-end
-
 task default: [
   :style,
-  :"docs:validate",
-  :"scripts:validate",
   :"spec:functional",
   :"spec:acceptance"
 ]

@@ -15,11 +15,39 @@ rvm:
   - ruby-head
 
 before_install:
-  - eval "$(curl --connect-timeout 30 --retry 3 -Ss https://raw.githubusercontent.com/neovim/bot-ci/master/scripts/travis-setup.sh) nightly-x64"
+  - wget https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage -O "$NVIM_EXECUTABLE"
+  - chmod u+x "$NVIM_EXECUTABLE"
   - gem update --system --conservative || (gem install "rubygems-update:~>2.7" --no-document && update_rubygems)
   - gem install --remote bundler || gem install --remote bundler -v "1.17.3"
   - gem install --user-install executable-hooks
   - bundle --version
 
-env: NVIM_RUBY_LOG_LEVEL=DEBUG NVIM_RUBY_LOG_FILE=ci.log
-script: bundle exec rake --trace
+jobs:
+  include:
+    - stage: docs
+      name: "Generate Docs"
+      rvm: 2.6
+      before_install:
+        - wget https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -O "$NVIM_EXECUTABLE"
+        - chmod u+x "$NVIM_EXECUTABLE"
+      script: bundle exec rake docs:generate
+      env:
+        - NVIM_EXECUTABLE="$PWD/nvim" 
+        - secure: "ZVvRmjJoHbKdxMWzAssWXA4HpWalDZmRuOXohdRWkfbobYHg2yXmdvLI9A4lNR3C2ejieSfSbd2Rfdg2Ievf2z/fALhXf1B2kZk0mw9RmwgmIjRmoL0l4AG+HZOMrzidfncuVhiv4EVbzTbkkH+HotPHH/+FnEECRMbFDNasEVA="
+      after_success:
+        - bundle exec rake docs:validate
+        - git config user.name "Travis CI"
+        - git config user.email "travis@travis-ci.org"
+        - git remote set-url origin https://${GH_TOKEN}@github.com/neovim/neovim-ruby.git
+        - git add lib/
+        - git commit -m 'Update generated docs'
+        - git push origin master
+
+stages:
+  - test
+  - name: docs
+    if: branch = master
+
+env: PATH="$PATH:$PWD" NVIM_EXECUTABLE="$PWD/nvim" NVIM_RUBY_LOG_LEVEL=DEBUG NVIM_RUBY_LOG_FILE=ci.log
+
+script: bundle exec rake
