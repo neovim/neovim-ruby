@@ -17,7 +17,7 @@ themis_exe = Gem.win_platform? ?
 
 env = {
   "NVIM_RPLUGIN_MANIFEST" => manifest,
-  "THEMIS_VIM" => "nvim",
+  "THEMIS_VIM" => ENV.fetch("NVIM_EXECUTABLE", "nvim"),
   "THEMIS_HOME" => themis_home,
   "THEMIS_ARGS" => "-e -s --headless -u #{vimrc}"
 }
