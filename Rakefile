@@ -10,7 +10,7 @@ namespace :spec do
 
   desc "Run acceptance specs"
   task acceptance: "acceptance:deps" do
-    run_script(:run_acceptance, "--reporter", "dot", "spec/acceptance")
+    run_script("run_acceptance.rb", "--reporter", "dot", "spec/acceptance")
   end
 
   namespace :acceptance do
@@ -26,12 +26,12 @@ end
 namespace :docs do
   desc "Generate Neovim remote API docs"
   task :generate do
-    run_script(:generate_docs)
+    run_script("generate_docs.rb")
   end
 
   desc "Validate generated documentation is up-to-date"
   task :validate do
-    run_script(:validate_docs)
+    run_script("validate_docs.rb")
   end
 end
 
@@ -43,11 +43,11 @@ namespace :ci do
   task docs: [:download_nvim, :"ci:generate_and_push_docs"]
 
   task :generate_and_push_docs do
-    run_script("ci/generate_and_push_docs")
+    run_script("ci/generate_and_push_docs.sh")
   end
 
   task :download_nvim do
-    run_script("ci/download_nvim")
+    run_script("ci/download_nvim.sh")
   end
 end
 
@@ -57,6 +57,7 @@ task default: [
   :"spec:acceptance"
 ]
 
-def run_script(script_name, *args)
-  sh File.expand_path("script/#{script_name}", __dir__), *args
+def run_script(relpath, *args)
+  path = File.expand_path("script/#{relpath}", __dir__)
+  File.extname(path) == ".rb" ? ruby(path, *args) : sh(path, *args)
 end
