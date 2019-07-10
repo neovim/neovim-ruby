@@ -35,6 +35,18 @@ namespace :docs do
   end
 end
 
+namespace :ci do
+  desc "Generate and push docs"
+  task :generate_and_push_docs do
+    run_script("ci/generate_and_push_docs")
+  end
+
+  desc "Download nvim appimage"
+  task :download_nvim do
+    run_script("ci/download_nvim")
+  end
+end
+
 task default: [
   :style,
   :"spec:functional",
@@ -42,5 +54,5 @@ task default: [
 ]
 
 def run_script(script_name, *args)
-  ruby File.expand_path("script/#{script_name}.rb", __dir__), *args
+  sh File.expand_path("script/#{script_name}", __dir__), *args
 end
