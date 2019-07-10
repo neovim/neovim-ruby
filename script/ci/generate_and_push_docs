@@ -2,7 +2,7 @@
 
 set -e -o nounset
 
-: ${TRAVIS:?} ${GH_TOKEN:?} ${NVIM_EXECUTABLE:?}
+: ${TRAVIS:?} ${GH_TOKEN:?}
 
 if bundle exec rake docs:validate; then
   exit 0
