@@ -28,7 +28,7 @@ jobs:
       rvm: 2.6
       env:
         - secure: "ZVvRmjJoHbKdxMWzAssWXA4HpWalDZmRuOXohdRWkfbobYHg2yXmdvLI9A4lNR3C2ejieSfSbd2Rfdg2Ievf2z/fALhXf1B2kZk0mw9RmwgmIjRmoL0l4AG+HZOMrzidfncuVhiv4EVbzTbkkH+HotPHH/+FnEECRMbFDNasEVA="
-      script: BUILD=latest bundle exec rake ci:download_nvim ci:generate_and_push_docs
+      script: BUILD=latest bundle exec rake ci:docs
 
 stages:
   - test
@@ -37,4 +37,4 @@ stages:
 
 env: PATH="$PATH:$PWD/_bin" NVIM_EXECUTABLE="$PWD/_bin/nvim" NVIM_RUBY_LOG_LEVEL=DEBUG NVIM_RUBY_LOG_FILE=ci.log
 
-script: bundle exec rake
+script: BUILD=nightly bundle exec rake ci:test

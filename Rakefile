@@ -36,12 +36,16 @@ namespace :docs do
 end
 
 namespace :ci do
-  desc "Generate and push docs"
+  desc "Run tests on CI"
+  task test: [:style, :download_nvim, :default]
+
+  desc "Generate docs on CI"
+  task docs: [:download_nvim, :"ci:generate_and_push_docs"]
+
   task :generate_and_push_docs do
     run_script("ci/generate_and_push_docs")
   end
 
-  desc "Download nvim appimage"
   task :download_nvim do
     run_script("ci/download_nvim")
   end
