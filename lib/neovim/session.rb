@@ -30,14 +30,23 @@ module Neovim
     def run(&block)
       @running = true
 
-      while (pending = @pending_messages.shift)
-        Fiber.new { pending.received(@response_handlers, &block) }.resume
-      end
-
-      return unless @running
-
       @event_loop.run do |message|
         Fiber.new { message.received(@response_handlers, &block) }.resume
+      end
+    end
+
+    def next
+      if @pending_messages.any?
+        @pending_messages.shift
+      else
+        rv = nil
+
+        run do |msg|
+          rv = msg
+          stop
+        end
+
+        rv
       end
     end
 

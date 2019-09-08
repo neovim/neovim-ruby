@@ -38,12 +38,6 @@ module Neovim
     end
 
     describe "#notify" do
-      it "doesn't raise exceptions" do
-        expect do
-          session.notify(:nvim_strwidth, "too", "many")
-        end.not_to raise_error
-      end
-
       it "handles large data" do
         large_str = Array.new(1024 * 17) { SecureRandom.hex(1) }.join
         session.notify(:nvim_set_current_line, large_str)
@@ -57,33 +51,26 @@ module Neovim
       end
     end
 
-    describe "#run" do
-      it "enqueues messages received during blocking requests" do
-        session.request(:nvim_subscribe, "my_event")
-        session.request(:nvim_command, "call rpcnotify(0, 'my_event', 'foo')")
+    describe "#next" do
+      it "returns the next message from the event loop" do
+        cid, = session.request(:nvim_get_api_info)
+        session.request(:nvim_command, "call rpcnotify(#{cid}, 'my_event', 'foo')")
 
-        message = nil
-        session.run do |msg|
-          message = msg
-          session.shutdown
-        end
+        message = session.next
 
         expect(message.sync?).to eq(false)
         expect(message.method_name).to eq("my_event")
         expect(message.arguments).to eq(["foo"])
       end
 
-      it "supports requests within callbacks" do
-        session.request(:nvim_subscribe, "my_event")
-        session.request(:nvim_command, "call rpcnotify(0, 'my_event', 'foo')")
+      it "returns asynchronous notification errors" do
+        session.notify(:nvim_set_current_line, "too", "many", "args")
 
-        result = nil
-        session.run do |msg|
-          result = session.request(:nvim_strwidth, msg.arguments.first)
-          session.shutdown
-        end
+        message = session.next
 
-        expect(result).to be(3)
+        expect(message.sync?).to eq(false)
+        expect(message.method_name).to eq("nvim_error_event")
+        expect(message.arguments).to eq([0, "Wrong number of arguments: expecting 1 but got 3"])
       end
     end
   end

@@ -36,7 +36,7 @@ module Neovim
     def shutdown
       @running = false
       @shutdown = true
-      run
+      @connection.close
     end
 
     def request(request_id, method, *args)
