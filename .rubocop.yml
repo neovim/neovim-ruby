@@ -115,6 +115,9 @@ Style/NegatedIf:
 Style/ParallelAssignment:
   Enabled: false
 
+Style/PerlBackrefs:
+   Enabled: false
+
 Style/RescueStandardError:
   EnforcedStyle: implicit
 

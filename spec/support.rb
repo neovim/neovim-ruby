@@ -3,6 +3,29 @@ module Support
     attr_accessor :nvim_version
   end
 
+  def self.clean_persistent_client
+    persistent_client.command("%bdelete! | tabonly | only | set all&")
+  end
+
+  def self.persistent_client
+    return @persistent_client if defined?(@persistent_client)
+
+    backend = ENV.fetch("NVIM_RUBY_SPEC_BACKEND", "child")
+
+    case backend
+    when /^child$/
+      @persistent_client = Neovim.attach_child(child_argv)
+    when /^tcp:(.+)$/
+      @persistent_client = Neovim.attach_tcp(*$1.split(":", 2))
+    when /^unix:(.+)$/
+      @persistent_client = Neovim.attach_unix($1)
+    else
+      raise "Unrecognized $NVIM_RUBY_SPEC_BACKEND #{backend.inspect}"
+    end
+
+    @persistent_client
+  end
+
   def self.workspace
     File.expand_path("workspace", __dir__)
   end

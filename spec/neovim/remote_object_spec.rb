@@ -2,8 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe RemoteObject do
-    let(:client) { Neovim.attach_child(Support.child_argv) }
-    after { client.shutdown }
+    let(:client) { Support.persistent_client }
 
     context Window do
       let(:window) { client.current.window }

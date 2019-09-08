@@ -2,9 +2,8 @@ require "helper"
 
 module Neovim
   RSpec.describe Current do
-    let(:client) { Neovim.attach_child(Support.child_argv) }
+    let(:client) { Support.persistent_client }
     let(:current) { client.current }
-    after { client.shutdown }
 
     describe "#line" do
       it "returns an empty string if the current line is empty" do

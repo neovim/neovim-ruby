@@ -2,10 +2,8 @@ require "helper"
 
 module Neovim
   RSpec.describe Session do
-    let(:event_loop) { EventLoop.child(Support.child_argv) }
-    let!(:session) { Session.new(event_loop) }
-
-    after { session.shutdown }
+    let(:client) { Support.persistent_client }
+    let(:session) { client.session }
 
     describe "#request" do
       it "synchronously returns a result" do
@@ -22,12 +20,6 @@ module Neovim
         large_str = Array.new(1024 * 17) { SecureRandom.hex(1) }.join
         session.request(:nvim_set_current_line, large_str)
         expect(session.request(:nvim_get_current_line)).to eq(large_str)
-      end
-
-      it "raises an exception when a command causes nvim to exit" do
-        expect do
-          session.request(:nvim_command, "qa!")
-        end.to raise_error(Neovim::Session::Exited, /exited/)
       end
 
       it "fails outside of the main thread", :silence_thread_exceptions do
