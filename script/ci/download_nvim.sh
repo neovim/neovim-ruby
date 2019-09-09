@@ -26,3 +26,5 @@ wget -q \
   -O "$NVIM_EXECUTABLE"
 
 chmod u+x "$NVIM_EXECUTABLE"
+
+"$NVIM_EXECUTABLE" --version

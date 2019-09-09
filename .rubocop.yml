@@ -103,8 +103,14 @@ Style/GlobalVars:
     - lib/neovim/ruby_provider/vim.rb
     - spec/neovim/ruby_provider/vim_spec.rb
 
+Style/IfUnlessModifier:
+  Enabled: false
+
 Style/MultilineTernaryOperator:
   Enabled: false
+
+Style/NegatedIf:
+  EnforcedStyle: postfix
 
 Style/ParallelAssignment:
   Enabled: false

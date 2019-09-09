@@ -63,7 +63,7 @@ module Neovim
         expect(message.arguments).to eq(["foo"])
       end
 
-      it "returns asynchronous notification errors" do
+      it "returns asynchronous notification errors", nvim_version: ">= 0.4.pre.dev" do
         session.notify(:nvim_set_current_line, "too", "many", "args")
 
         message = session.next
