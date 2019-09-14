@@ -4,12 +4,10 @@ require "neovim/ruby_provider/window_ext"
 module Neovim
   RSpec.describe Window do
     let!(:nvim) do
-      Neovim.attach_child(Support.child_argv).tap do |nvim|
-        stub_const("::Vim", nvim)
+      Support.persistent_client.tap do |client|
+        stub_const("::Vim", client)
       end
     end
-
-    after { nvim.shutdown }
 
     describe ".current" do
       it "returns the current window from the global Vim client" do
@@ -33,17 +31,16 @@ module Neovim
 
     describe ".[]" do
       it "returns the window at the given index" do
-        expect do
-          nvim.command("new")
-        end.to change { Window[1] }.from(nil).to(kind_of(Window))
+        window = Window[0]
+
+        expect(window).to be_a(Window)
+        expect(window).to eq(nvim.list_wins[0])
       end
 
       it "only includes windows within a tabpage" do
-        nvim.command("new")
-
         expect do
           nvim.command("tabnew")
-        end.to change { Window[1] }.from(kind_of(Window)).to(nil)
+        end.to change { Window[0] }
       end
     end
   end
