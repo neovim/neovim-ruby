@@ -28,7 +28,7 @@ module Neovim
       it "causes nvim to exit" do
         client = Neovim.attach_child(Support.child_argv)
         client.shutdown
-        expect { client.strwidth("hi") }.to raise_error(Neovim::Session::Exited)
+        expect { client.strwidth("hi") }.to raise_error(Neovim::Session::Disconnected)
       end
     end
 
