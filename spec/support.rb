@@ -1,3 +1,5 @@
+require "shellwords"
+
 module Support
   class << self
     attr_accessor :nvim_version
@@ -7,23 +9,23 @@ module Support
     persistent_client.command("%bdelete! | tabonly | only | set all&")
   end
 
+  def self.backend_strategy
+    @backend_strategy ||= ENV.fetch("NVIM_RUBY_SPEC_BACKEND", "child")
+  end
+
   def self.persistent_client
     return @persistent_client if defined?(@persistent_client)
 
-    backend = ENV.fetch("NVIM_RUBY_SPEC_BACKEND", "child")
-
-    case backend
-    when /^child$/
-      @persistent_client = Neovim.attach_child(child_argv)
+    case backend_strategy
+    when /^child:?(.*)$/
+      @persistent_client = Neovim.attach_child(child_argv + Shellwords.split($1))
     when /^tcp:(.+)$/
       @persistent_client = Neovim.attach_tcp(*$1.split(":", 2))
     when /^unix:(.+)$/
       @persistent_client = Neovim.attach_unix($1)
     else
-      raise "Unrecognized $NVIM_RUBY_SPEC_BACKEND #{backend.inspect}"
+      raise "Unrecognized $NVIM_RUBY_SPEC_BACKEND #{backend_strategy.inspect}"
     end
-
-    @persistent_client
   end
 
   def self.workspace
