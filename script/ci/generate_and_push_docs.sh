@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e -o nounset
+set -o nounset
 
 : ${TRAVIS:?} ${GH_TOKEN:?}
 
@@ -18,5 +18,5 @@ git fetch origin
 git checkout master
 
 git add lib/
-git commit -m "Update generated docs" || true
+git commit -m "Update generated docs"
 git push origin master
