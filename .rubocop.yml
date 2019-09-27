@@ -118,6 +118,9 @@ Style/ParallelAssignment:
 Style/RescueStandardError:
   EnforcedStyle: implicit
 
+Style/Semicolon:
+  Enabled: false
+
 Style/SpecialGlobalVars:
   EnforcedStyle: use_perl_names
 

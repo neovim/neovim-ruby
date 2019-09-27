@@ -58,6 +58,16 @@ module Neovim
         expect(message.method_name).to eq("foo_method")
       end
 
+      it "returns the last message received" do
+        server_wr.write(MessagePack.pack([0, 1, :foo_method, []]))
+        server_wr.flush
+
+        message = event_loop.run { |req| event_loop.stop; req }
+
+        expect(message.sync?).to eq(true)
+        expect(message.method_name).to eq("foo_method")
+      end
+
       it "shuts down after receiving EOFError" do
         run_thread = Thread.new do
           event_loop.run

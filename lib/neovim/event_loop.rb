@@ -70,13 +70,14 @@ module Neovim
 
     def run
       @running = true
+      last_value = nil
 
       loop do
         break unless @running
         break if @shutdown
 
         begin
-          yield read
+          last_value = yield(read)
         rescue EOFError => e
           log_exception(:debug, e, __method__)
           shutdown
@@ -84,6 +85,8 @@ module Neovim
           log_exception(:error, e, __method__)
         end
       end
+
+      last_value
     ensure
       @connection.close if @shutdown
     end

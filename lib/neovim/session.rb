@@ -28,6 +28,8 @@ module Neovim
     end
 
     def run(&block)
+      block ||= ->(msg) { @pending_messages << msg }
+
       @running = true
 
       @event_loop.run do |message|
@@ -36,18 +38,9 @@ module Neovim
     end
 
     def next
-      if @pending_messages.any?
-        @pending_messages.shift
-      else
-        rv = nil
+      return @pending_messages.shift if @pending_messages.any?
 
-        run do |msg|
-          rv = msg
-          stop
-        end
-
-        rv
-      end
+      run { |msg| stop; msg }
     end
 
     # Make an RPC request and return its response.
@@ -104,15 +97,8 @@ module Neovim
     private
 
     def blocking_response
-      response = nil
-
-      @response_handlers[@request_id] = lambda do |res|
-        response = res
-        stop
-      end
-
-      run { |message| @pending_messages << message }
-      response
+      @response_handlers[@request_id] = ->(res) { stop; res }
+      run
     end
 
     def yielding_response
