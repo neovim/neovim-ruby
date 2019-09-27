@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -o nounset
+set -euo pipefail
 
 : ${TRAVIS:?} ${GH_TOKEN:?}
 

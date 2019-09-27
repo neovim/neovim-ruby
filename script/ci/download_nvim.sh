@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e -o nounset
+set -euo pipefail
 
 : ${TRAVIS:?} ${BUILD:?}
 
@@ -21,8 +21,7 @@ esac
 
 mkdir -p "$(dirname "$NVIM_EXECUTABLE")"
 
-wget -q \
-  "https://github.com/neovim/neovim/releases/$URL_PART/nvim.appimage" \
+wget "https://github.com/neovim/neovim/releases/$URL_PART/nvim.appimage" \
   -O "$NVIM_EXECUTABLE"
 
 chmod u+x "$NVIM_EXECUTABLE"
