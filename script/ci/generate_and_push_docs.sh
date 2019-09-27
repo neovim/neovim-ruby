@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -euo pipefail
+set -eu
 
 : ${TRAVIS:?} ${GH_TOKEN:?}
 
