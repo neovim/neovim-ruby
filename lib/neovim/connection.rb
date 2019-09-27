@@ -35,7 +35,6 @@ module Neovim
 
       @unpacker = MessagePack::Unpacker.new(@rd)
       @packer = MessagePack::Packer.new(@wr)
-      @running = false
     end
 
     def write(object)

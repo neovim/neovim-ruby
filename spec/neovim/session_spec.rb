@@ -16,12 +16,6 @@ module Neovim
         end.to raise_error(/wrong number of arguments/i)
       end
 
-      it "handles large data" do
-        large_str = Array.new(1024 * 17) { SecureRandom.hex(1) }.join
-        session.request(:nvim_set_current_line, large_str)
-        expect(session.request(:nvim_get_current_line)).to eq(large_str)
-      end
-
       it "fails outside of the main thread", :silence_thread_exceptions do
         expect do
           Thread.new { session.request(:nvim_strwidth, "foo") }.join
@@ -30,12 +24,6 @@ module Neovim
     end
 
     describe "#notify" do
-      it "handles large data" do
-        large_str = Array.new(1024 * 17) { SecureRandom.hex(1) }.join
-        session.notify(:nvim_set_current_line, large_str)
-        expect(session.request(:nvim_get_current_line)).to eq(large_str)
-      end
-
       it "succeeds outside of the main thread" do
         expect do
           Thread.new { session.notify(:nvim_set_current_line, "foo") }.join
