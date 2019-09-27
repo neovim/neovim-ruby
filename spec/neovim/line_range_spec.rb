@@ -2,15 +2,13 @@ require "helper"
 
 module Neovim
   RSpec.describe LineRange do
-    let(:client) { Neovim.attach_child(Support.child_argv) }
+    let(:client) { Support.persistent_client }
     let(:buffer) { client.current.buffer }
     let(:line_range) { LineRange.new(buffer) }
 
     before do
       buffer.set_lines(0, -1, true, ["1", "2", "3", "4"])
     end
-
-    after { client.shutdown }
 
     describe "#each" do
       it "yields each line" do

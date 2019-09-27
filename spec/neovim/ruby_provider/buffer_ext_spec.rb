@@ -4,12 +4,10 @@ require "neovim/ruby_provider/buffer_ext"
 module Neovim
   RSpec.describe Buffer do
     let!(:nvim) do
-      Neovim.attach_child(Support.child_argv).tap do |nvim|
-        stub_const("::Vim", nvim)
+      Support.persistent_client.tap do |client|
+        stub_const("::Vim", client)
       end
     end
-
-    after { nvim.shutdown }
 
     describe ".current" do
       it "returns the current buffer from the global Vim client" do
@@ -27,9 +25,10 @@ module Neovim
 
     describe ".[]" do
       it "returns the buffer from the global Vim client at the given index" do
-        expect(Buffer[0]).to eq(nvim.get_current_buf)
-        nvim.command("new")
-        expect(Buffer[1]).to eq(nvim.get_current_buf)
+        buffer = Buffer[0]
+
+        expect(buffer).to be_a(Buffer)
+        expect(buffer).to eq(nvim.list_bufs[0])
       end
     end
   end

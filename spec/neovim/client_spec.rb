@@ -2,8 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe Client do
-    let(:client) { Neovim.attach_child(Support.child_argv) }
-    after { client.shutdown }
+    let(:client) { Support.persistent_client }
 
     describe "#set_option" do
       it "sets an option from two arguments" do
@@ -27,8 +26,9 @@ module Neovim
 
     describe "#shutdown" do
       it "causes nvim to exit" do
+        client = Neovim.attach_child(Support.child_argv)
         client.shutdown
-        expect { client.strwidth("hi") }.to raise_error(Neovim::Session::Exited)
+        expect { client.strwidth("hi") }.to raise_error(Neovim::Session::Disconnected)
       end
     end
 

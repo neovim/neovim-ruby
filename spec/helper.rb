@@ -40,7 +40,10 @@ RSpec.configure do |config|
     timeout = spec.metadata.fetch(:timeout, 3)
 
     begin
-      Timeout.timeout(timeout) { spec.run }
+      Timeout.timeout(timeout) do
+        Support.clean_persistent_client
+        spec.run
+      end
     ensure
       Support.teardown_workspace
     end
@@ -54,6 +57,10 @@ RSpec.configure do |config|
     if !requirement.satisfied_by?(nvim_version)
       skip "Skipping on nvim #{nvim_version} (requires #{comparator})"
     end
+  end
+
+  config.after(:suite) do
+    Support.persistent_client.shutdown
   end
 
   Kernel.srand config.seed

@@ -52,7 +52,7 @@ RSpec.describe Vim do
     end
 
     it "refreshes global variables" do
-      client = Neovim.attach_child(Support.child_argv)
+      client = Support.persistent_client
       client.command("vs foo")
 
       Vim.__client = client

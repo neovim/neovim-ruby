@@ -41,10 +41,7 @@ module Neovim
         end
       end
 
-      after do
-        host_thread.kill while host_thread.alive?
-        host_thread.join
-      end
+      after { host_thread.kill.join }
 
       context "poll" do
         it "initializes a client, sets client info, and responds 'ok'" do
@@ -72,9 +69,7 @@ module Neovim
 
           expect(method).to eq("nvim_get_api_info")
 
-          session = Session.new(EventLoop.child(Support.child_argv))
-          api_info = session.request(:nvim_get_api_info)
-          session.shutdown
+          api_info = Support.persistent_client.get_api_info
 
           nvim_wr.write([1, reqid, nil, api_info]).flush
 

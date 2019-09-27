@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe Buffer do
-    let(:client) { Neovim.attach_child(Support.child_argv) }
+    let(:client) { Support.persistent_client }
     let(:buffer) { client.current.buffer }
 
     before do
@@ -10,8 +10,6 @@ module Neovim
       client.command("normal otwo")
       client.command("normal gg")
     end
-
-    after { client.shutdown }
 
     describe "#lines" do
       it "returns a LineRange" do
@@ -37,9 +35,9 @@ module Neovim
 
     describe "#number" do
       it "returns the buffer number" do
-        expect(buffer.number).to eq(1)
-        client.command("new")
-        expect(client.get_current_buf.number).to eq(2)
+        expect do
+          client.command("new")
+        end.to change { client.get_current_buf.number }.by(1)
       end
     end
 

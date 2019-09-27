@@ -12,9 +12,9 @@ module Neovim
     attr_writer :request_id
 
     # @api private
-    class Exited < RuntimeError
+    class Disconnected < RuntimeError
       def initialize
-        super("nvim process exited")
+        super("Disconnected from nvim process")
       end
     end
 
@@ -70,7 +70,7 @@ module Neovim
         @event_loop.request(@request_id, method, *args)
         response = blocking ? blocking_response : yielding_response
 
-        raise(Exited) if response.nil?
+        raise(Disconnected) if response.nil?
         raise(response.error) if response.error
         response.value
       end

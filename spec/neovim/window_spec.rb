@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe Window do
-    let(:client) { Neovim.attach_child(Support.child_argv) }
+    let(:client) { Support.persistent_client }
     let(:window) { client.current.window }
 
     before do

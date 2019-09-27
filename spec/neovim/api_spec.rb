@@ -2,7 +2,7 @@ require "helper"
 
 module Neovim
   RSpec.describe API do
-    let(:client) { Neovim.attach_child(Support.child_argv) }
+    let(:client) { Support.persistent_client }
 
     let(:api) do
       API.new(
