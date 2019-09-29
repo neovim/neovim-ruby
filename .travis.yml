@@ -27,6 +27,7 @@ jobs:
       rvm: 2.6
       env:
         - secure: "ZVvRmjJoHbKdxMWzAssWXA4HpWalDZmRuOXohdRWkfbobYHg2yXmdvLI9A4lNR3C2ejieSfSbd2Rfdg2Ievf2z/fALhXf1B2kZk0mw9RmwgmIjRmoL0l4AG+HZOMrzidfncuVhiv4EVbzTbkkH+HotPHH/+FnEECRMbFDNasEVA="
+        - NVIM_EXECUTABLE="$PWD/_bin/nvim"
       script: BUILD=latest bundle exec rake ci:docs
 
 stages:
