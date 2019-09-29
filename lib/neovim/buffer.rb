@@ -4,7 +4,7 @@ require "neovim/line_range"
 module Neovim
   # Class representing an +nvim+ buffer.
   #
-  # The methods documented here were generated using NVIM v0.3.8
+  # The methods documented here were generated using NVIM v0.4.2
   class Buffer < RemoteObject
     attr_reader :lines
 
@@ -182,6 +182,20 @@ module Neovim
   See +:h nvim_buf_get_keymap()+
   @param [String] mode
   @return [Array<Hash>]
+
+@method set_keymap(mode, lhs, rhs, opts)
+  See +:h nvim_buf_set_keymap()+
+  @param [String] mode
+  @param [String] lhs
+  @param [String] rhs
+  @param [Hash] opts
+  @return [void]
+
+@method del_keymap(mode, lhs)
+  See +:h nvim_buf_del_keymap()+
+  @param [String] mode
+  @param [String] lhs
+  @return [void]
 
 @method get_commands(opts)
   See +:h nvim_buf_get_commands()+

@@ -9,7 +9,7 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
-  # The methods documented here were generated using NVIM v0.3.8
+  # The methods documented here were generated using NVIM v0.4.2
   #
   # @see Buffer
   # @see Window
@@ -140,6 +140,18 @@ module Neovim
   @param [Object] value
   @return [void]
 
+@method ui_try_resize_grid(grid, width, height)
+  See +:h nvim_ui_try_resize_grid()+
+  @param [Integer] grid
+  @param [Integer] width
+  @param [Integer] height
+  @return [void]
+
+@method ui_pum_set_height(height)
+  See +:h nvim_ui_pum_set_height()+
+  @param [Integer] height
+  @return [void]
+
 @method command(command)
   See +:h nvim_command()+
   @param [String] command
@@ -168,6 +180,16 @@ module Neovim
   See +:h nvim_input()+
   @param [String] keys
   @return [Integer]
+
+@method input_mouse(button, action, modifier, grid, row, col)
+  See +:h nvim_input_mouse()+
+  @param [String] button
+  @param [String] action
+  @param [String] modifier
+  @param [Integer] grid
+  @param [Integer] row
+  @param [Integer] col
+  @return [void]
 
 @method replace_termcodes(str, from_part, do_lt, special)
   See +:h nvim_replace_termcodes()+
@@ -254,6 +276,12 @@ module Neovim
   @param [String] name
   @return [Object]
 
+@method set_vvar(name, value)
+  See +:h nvim_set_vvar()+
+  @param [String] name
+  @param [Object] value
+  @return [void]
+
 @method get_option(name)
   See +:h nvim_get_option()+
   @param [String] name
@@ -300,6 +328,19 @@ module Neovim
   @param [Window] window
   @return [void]
 
+@method create_buf(listed, scratch)
+  See +:h nvim_create_buf()+
+  @param [Boolean] listed
+  @param [Boolean] scratch
+  @return [Buffer]
+
+@method open_win(buffer, enter, config)
+  See +:h nvim_open_win()+
+  @param [Buffer] buffer
+  @param [Boolean] enter
+  @param [Hash] config
+  @return [Window]
+
 @method list_tabpages
   See +:h nvim_list_tabpages()+
   @return [Array<Tabpage>]
@@ -322,6 +363,21 @@ module Neovim
   See +:h nvim_get_namespaces()+
   @return [Hash]
 
+@method paste(data, crlf, phase)
+  See +:h nvim_paste()+
+  @param [String] data
+  @param [Boolean] crlf
+  @param [Integer] phase
+  @return [Boolean]
+
+@method put(lines, type, after, follow)
+  See +:h nvim_put()+
+  @param [Array<String>] lines
+  @param [String] type
+  @param [Boolean] after
+  @param [Boolean] follow
+  @return [void]
+
 @method subscribe(event)
   See +:h nvim_subscribe()+
   @param [String] event
@@ -341,6 +397,16 @@ module Neovim
   See +:h nvim_get_color_map()+
   @return [Hash]
 
+@method get_context(opts)
+  See +:h nvim_get_context()+
+  @param [Hash] opts
+  @return [Hash]
+
+@method load_context(dict)
+  See +:h nvim_load_context()+
+  @param [Hash] dict
+  @return [Object]
+
 @method get_mode
   See +:h nvim_get_mode()+
   @return [Hash]
@@ -349,6 +415,20 @@ module Neovim
   See +:h nvim_get_keymap()+
   @param [String] mode
   @return [Array<Hash>]
+
+@method set_keymap(mode, lhs, rhs, opts)
+  See +:h nvim_set_keymap()+
+  @param [String] mode
+  @param [String] lhs
+  @param [String] rhs
+  @param [Hash] opts
+  @return [void]
+
+@method del_keymap(mode, lhs)
+  See +:h nvim_del_keymap()+
+  @param [String] mode
+  @param [String] lhs
+  @return [void]
 
 @method get_commands(opts)
   See +:h nvim_get_commands()+
@@ -402,6 +482,14 @@ module Neovim
   See +:h nvim_get_proc()+
   @param [Integer] pid
   @return [Object]
+
+@method select_popupmenu_item(item, insert, finish, opts)
+  See +:h nvim_select_popupmenu_item()+
+  @param [Integer] item
+  @param [Boolean] insert
+  @param [Boolean] finish
+  @param [Hash] opts
+  @return [void]
 
 =end
   end
