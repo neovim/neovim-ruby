@@ -59,5 +59,11 @@ task default: [
 
 def run_script(relpath, *args)
   path = File.expand_path("script/#{relpath}", __dir__)
-  File.extname(path) == ".rb" ? ruby(path, *args) : sh(path, *args)
+  cmd_handler = ->(_, status) { exit(status.exitstatus) }
+
+  if File.extname(path) == ".rb"
+    ruby(path, *args, &cmd_handler)
+  else
+    sh(path, *args, &cmd_handler)
+  end
 end
