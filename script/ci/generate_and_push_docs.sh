@@ -18,5 +18,5 @@ git fetch origin
 git checkout master
 
 git add lib/
-git commit -m "Update generated docs"
+git commit -m "[skip travis] Update generated docs"
 git push origin master
