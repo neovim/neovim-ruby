@@ -37,7 +37,7 @@ module Neovim
       it "returns the buffer number" do
         expect do
           client.command("new")
-        end.to change { client.get_current_buf.number }.by(1)
+        end.to change { client.get_current_buf.number }
       end
     end
 
