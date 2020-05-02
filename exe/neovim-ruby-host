@@ -1,18 +1,5 @@
 #!/usr/bin/env ruby
 
-require "neovim/host"
+require "neovim/host/cli"
 
-ARGV.each do |arg|
-  break if arg == "--"
-
-  if ["--version", "-V"].include?(arg)
-    puts Neovim::VERSION
-    exit(0)
-  end
-end
-
-if STDIN.tty?
-  abort("Can't run neovim-ruby-host interactively.")
-else
-  Neovim::Host.run(ARGV)
-end
+Neovim::Host::CLI.run(__FILE__, ARGV, STDIN, STDOUT, STDERR)
