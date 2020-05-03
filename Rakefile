@@ -37,7 +37,7 @@ end
 
 namespace :ci do
   desc "Run tests on CI"
-  task test: [:style, :download_nvim, :default]
+  task test: [:style, :download_nvim, :"spec:functional", :"spec:acceptance"]
 
   desc "Generate docs on CI"
   task docs: [:download_nvim, :"ci:generate_and_push_docs"]
@@ -59,7 +59,7 @@ task default: [
 
 def run_script(relpath, *args)
   path = File.expand_path("script/#{relpath}", __dir__)
-  cmd_handler = ->(_, status) { exit(status.exitstatus) }
+  cmd_handler = ->(ok, status) { ok || exit(status.exitstatus) }
 
   if File.extname(path) == ".rb"
     ruby(path, *args, &cmd_handler)
