@@ -1,6 +1,11 @@
 require "helper"
 require "neovim/host/cli"
-require "pty"
+
+begin
+  require "pty"
+rescue LoadError
+  # Not available on Windows
+end
 
 module Neovim
   class Host
@@ -28,17 +33,19 @@ module Neovim
       end
 
       it "fails with invalid arguments" do
-        PTY.open do |tty,|
-          expect do
-            CLI.run("/exe/nv-rb-host", ["-x"], tty, stdout, stderr)
-          end.to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+        expect do
+          CLI.run("/exe/nv-rb-host", ["-x"], stdin, stdout, stderr)
+        end.to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
 
-          expect(stdout.string).to be_empty
-          expect(stderr.string).to eq("invalid option: -x\n")
-        end
+        expect(stdout.string).to be_empty
+        expect(stderr.string).to eq("invalid option: -x\n")
       end
 
       it "fails when run interactively" do
+        if !defined?(PTY)
+          skip "Skipping without `pty` library."
+        end
+
         PTY.open do |tty,|
           expect do
             CLI.run("/exe/nv-rb-host", ["plugin.rb"], tty, stdout, stderr)

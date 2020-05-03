@@ -29,6 +29,7 @@ Lint/HandleExceptions:
     - lib/neovim/logging.rb
     - lib/neovim/connection.rb
     - lib/neovim/line_range.rb
+    - spec/**/*
 
 Lint/RescueException:
   Exclude:
