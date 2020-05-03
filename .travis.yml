@@ -13,9 +13,7 @@ rvm:
   - ruby-head
 
 before_install:
-  - gem update --system --conservative || (gem install "rubygems-update:~>2.7" --no-document && update_rubygems)
-  - gem install --remote bundler || gem install --remote bundler -v "1.17.3"
-  - gem install --user-install executable-hooks
+  - gem install --remote bundler
   - bundle --version
 
 jobs:
