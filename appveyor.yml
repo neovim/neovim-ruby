@@ -18,6 +18,7 @@ install:
   - set NVIM_RUBY_LOG_FILE=%cd%\ci.log
   - choco install neovim --pre -fy --ignore-dependencies --ignore-checksums
   - bundle install --path vendor/bundle
+  - bundle update --all
 
 build: off
 
