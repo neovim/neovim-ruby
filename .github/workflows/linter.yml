@@ -1,0 +1,28 @@
+name: Linter
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: neovim/neovim-ruby
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: head
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - name: Bundle install
+        run: |
+          bundle config set path vendor/bundle
+          bundle install --jobs 3 --retry 3
+      - name: Run linter
+        run: bundle exec rake linter

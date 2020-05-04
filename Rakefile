@@ -2,7 +2,7 @@ require "bundler/gem_tasks"
 require "rspec/core/rake_task"
 require "rubocop/rake_task"
 
-RuboCop::RakeTask.new(:style)
+RuboCop::RakeTask.new(:linter)
 
 namespace :spec do
   desc "Run functional specs"
@@ -36,12 +36,6 @@ namespace :docs do
 end
 
 namespace :ci do
-  desc "Run tests on CI"
-  task test: [:style, :download_nvim, :"spec:functional", :"spec:acceptance"]
-
-  desc "Generate docs on CI"
-  task docs: [:download_nvim, :"ci:generate_and_push_docs"]
-
   task :generate_and_push_docs do
     run_script("ci/generate_and_push_docs.sh")
   end
@@ -51,11 +45,10 @@ namespace :ci do
   end
 end
 
-task default: [
-  :style,
-  :"spec:functional",
-  :"spec:acceptance"
-]
+desc "Run specs"
+task spec: [:"spec:functional", :"spec:acceptance"]
+
+task default: [:linter, :spec]
 
 def run_script(relpath, *args)
   path = File.expand_path("script/#{relpath}", __dir__)
