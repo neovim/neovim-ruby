@@ -2,6 +2,8 @@ require "bundler/gem_tasks"
 require "rspec/core/rake_task"
 require "rubocop/rake_task"
 
+Bundler.setup
+
 RuboCop::RakeTask.new(:linter)
 
 namespace :spec do
@@ -16,9 +18,7 @@ namespace :spec do
   namespace :acceptance do
     desc "Install acceptance spec dependencies"
     task :deps do
-      Bundler.with_clean_env do
-        sh "bundle exec vim-flavor update --vimfiles-path=spec/acceptance/runtime"
-      end
+      sh "vim-flavor update --vimfiles-path=spec/acceptance/runtime"
     end
   end
 end
