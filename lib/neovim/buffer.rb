@@ -4,7 +4,7 @@ require "neovim/line_range"
 module Neovim
   # Class representing an +nvim+ buffer.
   #
-  # The methods documented here were generated using NVIM v0.4.3
+  # The methods documented here were generated using NVIM v0.5.0-502-g2f818eb9e
   class Buffer < RemoteObject
     attr_reader :lines
 
@@ -250,9 +250,38 @@ module Neovim
   @param [String] name
   @return [Array<Integer>]
 
-@method add_highlight(ns_id, hl_group, line, col_start, col_end)
-  See +:h nvim_buf_add_highlight()+
+@method get_extmark_by_id(ns_id, id)
+  See +:h nvim_buf_get_extmark_by_id()+
   @param [Integer] ns_id
+  @param [Integer] id
+  @return [Array<Integer>]
+
+@method get_extmarks(ns_id, start, end, opts)
+  See +:h nvim_buf_get_extmarks()+
+  @param [Integer] ns_id
+  @param [Object] start
+  @param [Object] end
+  @param [Hash] opts
+  @return [Array]
+
+@method set_extmark(ns_id, id, line, col, opts)
+  See +:h nvim_buf_set_extmark()+
+  @param [Integer] ns_id
+  @param [Integer] id
+  @param [Integer] line
+  @param [Integer] col
+  @param [Hash] opts
+  @return [Integer]
+
+@method del_extmark(ns_id, id)
+  See +:h nvim_buf_del_extmark()+
+  @param [Integer] ns_id
+  @param [Integer] id
+  @return [Boolean]
+
+@method add_highlight(src_id, hl_group, line, col_start, col_end)
+  See +:h nvim_buf_add_highlight()+
+  @param [Integer] src_id
   @param [String] hl_group
   @param [Integer] line
   @param [Integer] col_start
@@ -273,13 +302,18 @@ module Neovim
   @param [Integer] line_end
   @return [void]
 
-@method set_virtual_text(ns_id, line, chunks, opts)
+@method set_virtual_text(src_id, line, chunks, opts)
   See +:h nvim_buf_set_virtual_text()+
-  @param [Integer] ns_id
+  @param [Integer] src_id
   @param [Integer] line
   @param [Array] chunks
   @param [Hash] opts
   @return [Integer]
+
+@method get_virtual_text(line)
+  See +:h nvim_buf_get_virtual_text()+
+  @param [Integer] line
+  @return [Array]
 
 =end
   end

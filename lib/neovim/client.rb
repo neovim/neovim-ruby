@@ -9,7 +9,7 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
-  # The methods documented here were generated using NVIM v0.4.3
+  # The methods documented here were generated using NVIM v0.5.0-502-g2f818eb9e
   #
   # @see Buffer
   # @see Window
@@ -152,6 +152,20 @@ module Neovim
   @param [Integer] height
   @return [void]
 
+@method ui_pum_set_bounds(width, height, row, col)
+  See +:h nvim_ui_pum_set_bounds()+
+  @param [Float] width
+  @param [Float] height
+  @param [Float] row
+  @param [Float] col
+  @return [void]
+
+@method exec(src, output)
+  See +:h nvim_exec()+
+  @param [String] src
+  @param [Boolean] output
+  @return [String]
+
 @method command(command)
   See +:h nvim_command()+
   @param [String] command
@@ -168,6 +182,11 @@ module Neovim
   @param [Integer] hl_id
   @param [Boolean] rgb
   @return [Hash]
+
+@method get_hl_id_by_name(name)
+  See +:h nvim_get_hl_id_by_name()+
+  @param [String] name
+  @return [Integer]
 
 @method feedkeys(keys, mode, escape_csi)
   See +:h nvim_feedkeys()+
@@ -215,6 +234,12 @@ module Neovim
   @param [Array] args
   @return [Object]
 
+@method exec_lua(code, args)
+  See +:h nvim_exec_lua()+
+  @param [String] code
+  @param [Array] args
+  @return [Object]
+
 @method call_function(fn, args)
   See +:h nvim_call_function()+
   @param [String] fn
@@ -235,6 +260,12 @@ module Neovim
 
 @method list_runtime_paths
   See +:h nvim_list_runtime_paths()+
+  @return [Array<String>]
+
+@method get_runtime_file(name, all)
+  See +:h nvim_get_runtime_file()+
+  @param [String] name
+  @param [Boolean] all
   @return [Array<String>]
 
 @method set_current_dir(dir)

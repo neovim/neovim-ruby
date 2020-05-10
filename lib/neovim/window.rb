@@ -3,7 +3,7 @@ require "neovim/remote_object"
 module Neovim
   # Class representing an +nvim+ window.
   #
-  # The methods documented here were generated using NVIM v0.4.3
+  # The methods documented here were generated using NVIM v0.5.0-502-g2f818eb9e
   class Window < RemoteObject
     # Get the buffer displayed in the window
     #
