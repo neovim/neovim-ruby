@@ -19,12 +19,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('{neovim.gemspec,Gemfile}') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
       - name: Bundle install
         run: |
           bundle config set path vendor/bundle
@@ -50,12 +44,6 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('{neovim.gemspec,Gemfile}') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
       - name: Bundle install
         run: |
           bundle config set path vendor/bundle
@@ -68,4 +56,3 @@ jobs:
         env:
           NVIM_EXECUTABLE: 'C:\tools\neovim\Neovim\bin\nvim'
         run: bundle exec rake spec
-
