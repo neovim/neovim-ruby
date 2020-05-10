@@ -1,6 +1,6 @@
 # Neovim Ruby
 
-![Build Status](https://github.com/neovim/neovim-ruby/workflows/Tests/badge.svg)
+[![Build Status](https://github.com/neovim/neovim-ruby/workflows/Tests/badge.svg)](https://github.com/neovim/neovim-ruby/actions)
 [![Gem Version](https://badge.fury.io/rb/neovim.svg)](https://badge.fury.io/rb/neovim)
 [![Inline docs](http://inch-ci.org/github/neovim/neovim-ruby.svg?branch=master)](http://inch-ci.org/github/neovim/neovim-ruby)
 
