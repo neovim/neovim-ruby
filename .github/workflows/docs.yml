@@ -1,7 +1,7 @@
 name: Docs
 on:
   push:
-    branches: [master]
+    branches: [master, docs]
   schedule:
     - cron: '0 0 * * 0'
 jobs:
@@ -21,7 +21,7 @@ jobs:
           bundle install --jobs 3 --retry 3
       - name: Install Neovim
         env:
-          BUILD: latest
+          BUILD: nightly
         run: bundle exec rake ci:download_nvim
       - name: Generate docs
         env:
