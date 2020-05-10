@@ -1,0 +1,71 @@
+name: Tests
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+  linux_osx:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        ruby: [2.5, 2.6, 2.7, head]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: neovim/neovim-ruby
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('{neovim.gemspec,Gemfile}') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - name: Bundle install
+        run: |
+          bundle config set path vendor/bundle
+          bundle install --jobs 3 --retry 3
+      - name: Install Neovim
+        env:
+          BUILD: nightly
+        run: bundle exec rake ci:download_nvim
+      - name: Run tests
+        env:
+          NVIM_EXECUTABLE: "_nvim/bin/nvim"
+        run: bundle exec rake spec
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [2.5, 2.6, 2.7] # msgpack not supported on windows on 2.8 yet
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: neovim/neovim-ruby
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('{neovim.gemspec,Gemfile}') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - name: Bundle install
+        run: |
+          bundle config set path vendor/bundle
+          bundle install --jobs 3 --retry 3
+      - name: Install Neovim
+        uses: crazy-max/ghaction-chocolatey@v1
+        with:
+          args: install neovim --pre -fy --ignore-dependencies --ignore-checksums
+      - name: Run tests
+        env:
+          NVIM_EXECUTABLE: 'C:\tools\neovim\Neovim\bin\nvim'
+        run: bundle exec rake spec
+

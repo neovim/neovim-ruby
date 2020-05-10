@@ -3,17 +3,15 @@ let s:expect = themis#helper("expect")
 
 function! s:suite.before() abort
   let s:pwd = getcwd()
-  cd spec/acceptance/rubyfile
+  cd ./spec/acceptance/rubyfile
   unlet! s:var
+
+  1,$delete
+  call append(0, ["one", "two"])
 endfunction
 
 function! s:suite.after() abort
   execute("cd " . s:pwd)
-endfunction
-
-function! s:suite.before_each() abort
-  1,$delete
-  call append(0, ["one", "two"])
 endfunction
 
 function! s:suite.has_nvim() abort

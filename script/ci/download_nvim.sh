@@ -1,10 +1,8 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -eu
 
-: ${TRAVIS:?} ${BUILD:?}
-
-NVIM_EXECUTABLE="${NVIM_EXECUTABLE:-"$PWD/_bin/nvim"}"
+: ${RUNNER_OS:?} ${BUILD:?}
 
 case "$BUILD" in
   latest)
@@ -19,11 +17,24 @@ case "$BUILD" in
     ;;
 esac
 
-mkdir -p "$(dirname "$NVIM_EXECUTABLE")"
+case "$(echo "$RUNNER_OS" | tr "[:upper:]" "[:lower:]")" in
+  macos)
+    wget -nv -P /tmp \
+      "https://github.com/neovim/neovim/releases/$URL_PART/nvim-macos.tar.gz"
+    tar -C /tmp -xzf /tmp/nvim-macos.tar.gz
+    mv /tmp/nvim-osx64 ./_nvim
+    ;;
+  linux)
+    mkdir -p _nvim/bin
+    wget -nv -O _nvim/bin/nvim \
+      "https://github.com/neovim/neovim/releases/$URL_PART/nvim.appimage"
+    ;;
+  *)
+    echo "Unrecognized \$RUNNER_OS" >&2
+    exit 1
+    ;;
+esac
 
-wget "https://github.com/neovim/neovim/releases/$URL_PART/nvim.appimage" \
-  -O "$NVIM_EXECUTABLE"
+chmod u+x _nvim/bin/nvim
 
-chmod u+x "$NVIM_EXECUTABLE"
-
-"$NVIM_EXECUTABLE" --version
+_nvim/bin/nvim --version

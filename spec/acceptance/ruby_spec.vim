@@ -2,9 +2,14 @@ let s:suite = themis#suite(":ruby")
 let s:expect = themis#helper("expect")
 
 function! s:suite.before_each() abort
+  let s:pwd = getcwd()
   1,$delete
   call append(0, ["one", "two"])
   unlet! s:var
+endfunction
+
+function! s:suite.after_each() abort
+  execute("cd " . s:pwd)
 endfunction
 
 function! s:suite.has_nvim() abort
@@ -27,7 +32,7 @@ endfunction
 
 function! s:suite.updates_working_directory() abort
   cd /
-  ruby Vim.command("let s:var = '#{Dir.pwd.sub(/^C:/, "")}'")
+  ruby Vim.command("let s:var = '#{Dir.pwd.sub(/^[A-Z]:/, "")}'")
   cd -
 
   call s:expect(s:var).to_equal("/")
