@@ -1,0 +1,36 @@
+name: Docs
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: '0 0 * * 0'
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: neovim/neovim-ruby
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: head
+      - name: Bundle install
+        run: |
+          bundle config set path vendor/bundle
+          bundle install --jobs 3 --retry 3
+      - name: Install Neovim
+        env:
+          BUILD: latest
+        run: bundle exec rake ci:download_nvim
+      - name: Generate docs
+        env:
+          NVIM_EXECUTABLE: "_nvim/bin/nvim"
+        run: bundle exec rake docs:generate
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "[skip ci] Update generated docs"
+          author: Docs Workflow <noreply@github.com>
+          title: "Update generated docs"

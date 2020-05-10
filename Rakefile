@@ -28,18 +28,9 @@ namespace :docs do
   task :generate do
     run_script("generate_docs.rb")
   end
-
-  desc "Validate generated documentation is up-to-date"
-  task :validate do
-    run_script("validate_docs.rb")
-  end
 end
 
 namespace :ci do
-  task :generate_and_push_docs do
-    run_script("ci/generate_and_push_docs.sh")
-  end
-
   task :download_nvim do
     run_script("ci/download_nvim.sh")
   end
