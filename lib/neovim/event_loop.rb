@@ -78,7 +78,7 @@ module Neovim
 
         begin
           last_value = yield(read)
-        rescue EOFError => e
+        rescue EOFError, Errno::EPIPE => e
           log_exception(:debug, e, __method__)
           shutdown
         rescue => e
