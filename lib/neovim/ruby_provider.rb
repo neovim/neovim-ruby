@@ -75,7 +75,7 @@ module Neovim
           __start, __stop, __ruby = __args
           __buffer = __nvim.get_current_buf
 
-          __update_lines_in_chunks(__buffer, __start, __stop, 5000) do |__lines|
+          __update_lines_in_chunks(__buffer, __start, __stop, 1_000) do |__lines|
             __lines.map do |__line|
               $_ = __line
               eval(__ruby, binding, "eval")
