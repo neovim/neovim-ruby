@@ -11,6 +11,8 @@ require "timeout"
 
 require File.expand_path("support.rb", __dir__)
 
+ENV["NVIM_RUBY_LOG_LEVEL"] ||= "FATAL"
+
 RSpec.configure do |config|
   config.expect_with :rspec do |exp|
     exp.syntax = :expect

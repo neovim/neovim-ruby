@@ -18,7 +18,7 @@ module Neovim
 
       @logger = Logger.new(env_file || STDERR)
 
-      if env_level
+      if /\S+/.match?(env_level)
         begin
           @logger.level = Integer(env_level)
         rescue ArgumentError
