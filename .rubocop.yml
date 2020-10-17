@@ -65,8 +65,7 @@ Metrics/MethodLength:
   Max: 50
 
 Metrics/ModuleLength:
-  Exclude:
-    - spec/**/*
+  Enabled: false
 
 Metrics/ParameterLists:
   Max: 6
@@ -92,6 +91,11 @@ Style/BlockComments:
 Style/ConditionalAssignment:
   EnforcedStyle: assign_inside_condition
   IncludeTernaryExpressions: false
+
+Style/Documentation:
+  Exclude:
+    - spec/**/*
+    - lib/neovim/ruby_provider/object_ext.rb
 
 Style/DoubleNegation:
   Enabled: false
