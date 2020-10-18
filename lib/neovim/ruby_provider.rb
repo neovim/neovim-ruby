@@ -1,4 +1,5 @@
 require "neovim/ruby_provider/vim"
+require "neovim/ruby_provider/object_ext"
 require "neovim/ruby_provider/buffer_ext"
 require "neovim/ruby_provider/window_ext"
 require "stringio"
@@ -18,6 +19,7 @@ module Neovim
 
         __define_setup(plug)
         __define_ruby_execute(plug)
+        __define_ruby_eval(plug)
         __define_ruby_execute_file(plug)
         __define_ruby_do_range(plug)
         __define_ruby_chdir(plug)
@@ -44,11 +46,25 @@ module Neovim
     def self.__define_ruby_execute(plug)
       plug.__send__(:rpc, :ruby_execute) do |nvim, ruby|
         __wrap_client(nvim) do
-          eval(ruby, TOPLEVEL_BINDING, "eval")
+          eval(ruby, TOPLEVEL_BINDING, "ruby_execute")
         end
+        nil
       end
     end
     private_class_method :__define_ruby_execute
+
+    # Evaluate the provided Ruby code, exposing the +Vim+ constant for
+    # interactions with the editor and returning the value.
+    #
+    # This is used by the +:rubyeval+ command.
+    def self.__define_ruby_eval(plug)
+      plug.__send__(:rpc, :ruby_eval) do |nvim, ruby|
+        __wrap_client(nvim) do
+          eval(ruby, TOPLEVEL_BINDING, "ruby_eval")
+        end
+      end
+    end
+    private_class_method :__define_ruby_eval
 
     # Evaluate the provided Ruby file, exposing the +Vim+ constant for
     # interactions with the editor.
@@ -57,6 +73,7 @@ module Neovim
     def self.__define_ruby_execute_file(plug)
       plug.__send__(:rpc, :ruby_execute_file) do |nvim, path|
         __wrap_client(nvim) { load(path) }
+        nil
       end
     end
     private_class_method :__define_ruby_execute_file
@@ -78,11 +95,12 @@ module Neovim
           __update_lines_in_chunks(__buffer, __start, __stop, 1_000) do |__lines|
             __lines.map do |__line|
               $_ = __line
-              eval(__ruby, binding, "eval")
+              eval(__ruby, binding, "ruby_do_range")
               $_
             end
           end
         end
+        nil
       end
     end
     private_class_method :__define_ruby_do_range
@@ -103,7 +121,6 @@ module Neovim
           yield
         end
       end
-      nil
     end
     private_class_method :__wrap_client
 
@@ -122,10 +139,10 @@ module Neovim
       $stdout, $stderr = StringIO.new, StringIO.new
 
       begin
-        yield
-
-        client.out_write($stdout.string + $/) if $stdout.size > 0
-        client.err_writeln($stderr.string) if $stderr.size > 0
+        yield.tap do
+          client.out_write($stdout.string + $/) if $stdout.size > 0
+          client.err_writeln($stderr.string) if $stderr.size > 0
+        end
       ensure
         $stdout = old_stdout
         $stderr = old_stderr
