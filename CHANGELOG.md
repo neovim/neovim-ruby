@@ -1,3 +1,9 @@
+# 0.9.0
+
+- Add RPC support for `:rubyeval`.
+- Add `Neovim::Session#next`.
+- Rename `Neovim::Session::Exited` -> `Neovim::Session::Disconnected`.
+
 # 0.8.1
 
 - Set client info on host and client startup
