@@ -28,7 +28,7 @@ jobs:
           NVIM_EXECUTABLE: "_nvim/bin/nvim"
         run: bundle exec rake docs:generate
       - name: Open pull request
-        uses: peter-evans/create-pull-request@v2
+        uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "[skip ci] Update generated docs"
