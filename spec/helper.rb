@@ -57,7 +57,7 @@ RSpec.configure do |config|
 
     nvim_version = Support
       .nvim_version
-      .split("?")
+      .split("+")
       .first
 
     if !requirement.satisfied_by?(Gem::Version.new(nvim_version))
