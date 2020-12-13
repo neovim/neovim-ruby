@@ -59,9 +59,8 @@ RSpec.configure do |config|
       .nvim_version
       .split("?")
       .first
-      .then { |v| Gem::Version.new(v) }
 
-    if !requirement.satisfied_by?(nvim_version)
+    if !requirement.satisfied_by?(Gem::Version.new(nvim_version))
       skip "Skipping on nvim #{nvim_version} (requires #{comparator})"
     end
   end
