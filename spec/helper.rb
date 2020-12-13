@@ -54,7 +54,12 @@ RSpec.configure do |config|
   config.before(:example, :nvim_version) do |spec|
     comparator = spec.metadata.fetch(:nvim_version)
     requirement = Gem::Requirement.create(comparator)
-    nvim_version = Gem::Version.new(Support.nvim_version)
+
+    nvim_version = Support
+      .nvim_version
+      .split(?+)
+      .first
+      .then { |v| Gem::Version.new(v) }
 
     if !requirement.satisfied_by?(nvim_version)
       skip "Skipping on nvim #{nvim_version} (requires #{comparator})"
