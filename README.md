@@ -40,7 +40,7 @@ require "neovim"
 client = Neovim.attach_unix("/tmp/nvim.sock")
 ```
 
-Refer to the [`Neovim` docs](https://www.rubydoc.info/github/neovim/neovim-ruby/master/Neovim) for other ways to connect to `nvim`, and the [`Neovim::Client` docs](https://www.rubydoc.info/github/neovim/neovim-ruby/master/Neovim/Client) for a summary of the client interface.
+Refer to the [`Neovim` docs](https://www.rubydoc.info/github/neovim/neovim-ruby/main/Neovim) for other ways to connect to `nvim`, and the [`Neovim::Client` docs](https://www.rubydoc.info/github/neovim/neovim-ruby/main/Neovim/Client) for a summary of the client interface.
 
 ### Plugins
 
@@ -72,7 +72,7 @@ end
 
 When you add or update a plugin, you will need to call `:UpdateRemotePlugins` to update the remote plugin manifest. See `:help remote-plugin-manifest` for more information.
 
-Refer to the [`Neovim::Plugin::DSL` docs](https://www.rubydoc.info/github/neovim/neovim-ruby/master/Neovim/Plugin/DSL) for a more complete overview of the `Neovim.plugin` DSL.
+Refer to the [`Neovim::Plugin::DSL` docs](https://www.rubydoc.info/github/neovim/neovim-ruby/main/Neovim/Plugin/DSL) for a more complete overview of the `Neovim.plugin` DSL.
 
 ### Vim Plugin Support
 
@@ -85,7 +85,7 @@ The Neovim gem also acts as a compatibility layer for Ruby plugins written for `
 * CI: <https://github.com/neovim/neovim-ruby/actions>
 * Documentation:
   * Latest Gem: <https://rubydoc.info/gems/neovim>
-  * Master: <https://rubydoc.info/github/neovim/neovim-ruby/master/frames>
+  * Main: <https://rubydoc.info/github/neovim/neovim-ruby/main/frames>
 
 ## Contributing
 
