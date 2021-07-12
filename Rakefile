@@ -1,10 +1,7 @@
 require "bundler/gem_tasks"
 require "rspec/core/rake_task"
-require "rubocop/rake_task"
 
 Bundler.setup
-
-RuboCop::RakeTask.new(:linter)
 
 namespace :spec do
   desc "Run functional specs"
@@ -45,7 +42,7 @@ end
 desc "Run specs"
 task spec: [:"spec:functional", :"spec:acceptance"]
 
-task default: [:linter, :spec]
+task default: :spec
 
 def run_script(relpath, *args)
   path = File.expand_path("script/#{relpath}", __dir__)
