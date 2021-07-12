@@ -9,7 +9,7 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
-  # The methods documented here were generated using NVIM v0.4.4
+  # The methods documented here were generated using NVIM v0.5.0
   #
   # @see Buffer
   # @see Window
@@ -117,6 +117,17 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
+@method command_output(command)
+  See +:h nvim_command_output()+
+  @param [String] command
+  @return [String]
+
+@method execute_lua(code, args)
+  See +:h nvim_execute_lua()+
+  @param [String] code
+  @param [Array] args
+  @return [Object]
+
 @method ui_attach(width, height, options)
   See +:h nvim_ui_attach()+
   @param [Integer] width
@@ -152,6 +163,20 @@ module Neovim
   @param [Integer] height
   @return [void]
 
+@method ui_pum_set_bounds(width, height, row, col)
+  See +:h nvim_ui_pum_set_bounds()+
+  @param [Float] width
+  @param [Float] height
+  @param [Float] row
+  @param [Float] col
+  @return [void]
+
+@method exec(src, output)
+  See +:h nvim_exec()+
+  @param [String] src
+  @param [Boolean] output
+  @return [String]
+
 @method command(command)
   See +:h nvim_command()+
   @param [String] command
@@ -168,6 +193,18 @@ module Neovim
   @param [Integer] hl_id
   @param [Boolean] rgb
   @return [Hash]
+
+@method get_hl_id_by_name(name)
+  See +:h nvim_get_hl_id_by_name()+
+  @param [String] name
+  @return [Integer]
+
+@method set_hl(ns_id, name, val)
+  See +:h nvim_set_hl()+
+  @param [Integer] ns_id
+  @param [String] name
+  @param [Hash] val
+  @return [void]
 
 @method feedkeys(keys, mode, escape_csi)
   See +:h nvim_feedkeys()+
@@ -199,20 +236,22 @@ module Neovim
   @param [Boolean] special
   @return [String]
 
-@method command_output(command)
-  See +:h nvim_command_output()+
-  @param [String] command
-  @return [String]
-
 @method eval(expr)
   See +:h nvim_eval()+
   @param [String] expr
   @return [Object]
 
-@method execute_lua(code, args)
-  See +:h nvim_execute_lua()+
+@method exec_lua(code, args)
+  See +:h nvim_exec_lua()+
   @param [String] code
   @param [Array] args
+  @return [Object]
+
+@method notify(msg, log_level, opts)
+  See +:h nvim_notify()+
+  @param [String] msg
+  @param [Integer] log_level
+  @param [Hash] opts
   @return [Object]
 
 @method call_function(fn, args)
@@ -235,6 +274,12 @@ module Neovim
 
 @method list_runtime_paths
   See +:h nvim_list_runtime_paths()+
+  @return [Array<String>]
+
+@method get_runtime_file(name, all)
+  See +:h nvim_get_runtime_file()+
+  @param [String] name
+  @param [Boolean] all
   @return [Array<String>]
 
 @method set_current_dir(dir)
@@ -287,6 +332,22 @@ module Neovim
   @param [String] name
   @return [Object]
 
+@method get_all_options_info
+  See +:h nvim_get_all_options_info()+
+  @return [Hash]
+
+@method get_option_info(name)
+  See +:h nvim_get_option_info()+
+  @param [String] name
+  @return [Hash]
+
+@method echo(chunks, history, opts)
+  See +:h nvim_echo()+
+  @param [Array] chunks
+  @param [Boolean] history
+  @param [Hash] opts
+  @return [void]
+
 @method out_write(str)
   See +:h nvim_out_write()+
   @param [String] str
@@ -333,6 +394,18 @@ module Neovim
   @param [Boolean] listed
   @param [Boolean] scratch
   @return [Buffer]
+
+@method open_term(buffer, opts)
+  See +:h nvim_open_term()+
+  @param [Buffer] buffer
+  @param [Hash] opts
+  @return [Integer]
+
+@method chan_send(chan, data)
+  See +:h nvim_chan_send()+
+  @param [Integer] chan
+  @param [String] data
+  @return [void]
 
 @method open_win(buffer, enter, config)
   See +:h nvim_open_win()+
@@ -488,6 +561,12 @@ module Neovim
   @param [Integer] item
   @param [Boolean] insert
   @param [Boolean] finish
+  @param [Hash] opts
+  @return [void]
+
+@method set_decoration_provider(ns_id, opts)
+  See +:h nvim_set_decoration_provider()+
+  @param [Integer] ns_id
   @param [Hash] opts
   @return [void]
 

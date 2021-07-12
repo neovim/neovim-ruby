@@ -3,7 +3,7 @@ require "neovim/remote_object"
 module Neovim
   # Class representing an +nvim+ window.
   #
-  # The methods documented here were generated using NVIM v0.4.4
+  # The methods documented here were generated using NVIM v0.5.0
   class Window < RemoteObject
     # Get the buffer displayed in the window
     #
@@ -152,10 +152,19 @@ module Neovim
   See +:h nvim_win_get_config()+
   @return [Hash]
 
+@method hide
+  See +:h nvim_win_hide()+
+  @return [void]
+
 @method close(force)
   See +:h nvim_win_close()+
   @param [Boolean] force
   @return [void]
+
+@method call(fun)
+  See +:h nvim_win_call()+
+  @param [LuaRef] fun
+  @return [Object]
 
 =end
   end
