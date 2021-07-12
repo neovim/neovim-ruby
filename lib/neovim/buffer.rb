@@ -4,7 +4,7 @@ require "neovim/line_range"
 module Neovim
   # Class representing an +nvim+ buffer.
   #
-  # The methods documented here were generated using NVIM v0.4.4
+  # The methods documented here were generated using NVIM v0.5.0
   class Buffer < RemoteObject
     attr_reader :lines
 
@@ -164,6 +164,15 @@ module Neovim
   @param [Array<String>] replacement
   @return [void]
 
+@method set_text(start_row, start_col, end_row, end_col, replacement)
+  See +:h nvim_buf_set_text()+
+  @param [Integer] start_row
+  @param [Integer] start_col
+  @param [Integer] end_row
+  @param [Integer] end_col
+  @param [Array<String>] replacement
+  @return [void]
+
 @method get_offset(index)
   See +:h nvim_buf_get_offset()+
   @param [Integer] index
@@ -224,10 +233,6 @@ module Neovim
   @param [Object] value
   @return [void]
 
-@method get_number
-  See +:h nvim_buf_get_number()+
-  @return [Integer]
-
 @method get_name
   See +:h nvim_buf_get_name()+
   @return [String]
@@ -250,6 +255,35 @@ module Neovim
   @param [String] name
   @return [Array<Integer>]
 
+@method get_extmark_by_id(ns_id, id, opts)
+  See +:h nvim_buf_get_extmark_by_id()+
+  @param [Integer] ns_id
+  @param [Integer] id
+  @param [Hash] opts
+  @return [Array<Integer>]
+
+@method get_extmarks(ns_id, start, end, opts)
+  See +:h nvim_buf_get_extmarks()+
+  @param [Integer] ns_id
+  @param [Object] start
+  @param [Object] end
+  @param [Hash] opts
+  @return [Array]
+
+@method set_extmark(ns_id, line, col, opts)
+  See +:h nvim_buf_set_extmark()+
+  @param [Integer] ns_id
+  @param [Integer] line
+  @param [Integer] col
+  @param [Hash] opts
+  @return [Integer]
+
+@method del_extmark(ns_id, id)
+  See +:h nvim_buf_del_extmark()+
+  @param [Integer] ns_id
+  @param [Integer] id
+  @return [Boolean]
+
 @method add_highlight(ns_id, hl_group, line, col_start, col_end)
   See +:h nvim_buf_add_highlight()+
   @param [Integer] ns_id
@@ -266,20 +300,29 @@ module Neovim
   @param [Integer] line_end
   @return [void]
 
+@method set_virtual_text(src_id, line, chunks, opts)
+  See +:h nvim_buf_set_virtual_text()+
+  @param [Integer] src_id
+  @param [Integer] line
+  @param [Array] chunks
+  @param [Hash] opts
+  @return [Integer]
+
+@method call(fun)
+  See +:h nvim_buf_call()+
+  @param [LuaRef] fun
+  @return [Object]
+
+@method get_number
+  See +:h nvim_buf_get_number()+
+  @return [Integer]
+
 @method clear_highlight(ns_id, line_start, line_end)
   See +:h nvim_buf_clear_highlight()+
   @param [Integer] ns_id
   @param [Integer] line_start
   @param [Integer] line_end
   @return [void]
-
-@method set_virtual_text(ns_id, line, chunks, opts)
-  See +:h nvim_buf_set_virtual_text()+
-  @param [Integer] ns_id
-  @param [Integer] line
-  @param [Array] chunks
-  @param [Hash] opts
-  @return [Integer]
 
 =end
   end
