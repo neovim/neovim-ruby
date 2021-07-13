@@ -5,7 +5,7 @@
 .config
 .yardoc
 Gemfile.lock
-VimFlavor.lock
+Flavorfile.lock
 InstalledFiles
 _yardoc
 coverage
@@ -18,8 +18,7 @@ test/tmp
 test/version_tmp
 tmp
 spec/workspace
-spec/acceptance/runtime/flavors
+spec/acceptance/runtime/pack
 spec/acceptance/runtime/rplugin_manifest.vim
 vendor/bundle
 bin
-.vim-flavor
