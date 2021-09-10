@@ -43,10 +43,10 @@ Neovim.plugin do |plug|
     nvim.set_var("rplugin_command_register", reg)
   end
 
-  plug.command(:RPluginCommandCompletion, complete: "buffer", sync: true) do |nvim|
+  plug.command(:RPluginCommandCompletion, complete: "buffer", nargs: 1, sync: true) do |nvim, arg|
     attrs = nvim.command_output("silent command RPluginCommandCompletion")
     compl = attrs.split($/).last.split[2]
-    nvim.set_var("rplugin_command_completion", compl)
+    nvim.set_var("rplugin_command_completion", [compl, arg])
   end
 
   plug.command(:RPluginCommandEval, eval: "g:to_eval", sync: true) do |nvim, to_eval|

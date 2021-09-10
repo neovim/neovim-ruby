@@ -9,13 +9,7 @@ namespace :spec do
 
   desc "Run acceptance specs"
   task acceptance: "acceptance:deps" do
-    run_script(
-      "run_acceptance.rb",
-      "--reporter", "dot",
-      # TODO: remove once rubyeval is merged in nvim
-      "--exclude", "rubyeval",
-      "spec/acceptance"
-    )
+    run_script("run_acceptance.rb", "--reporter", "dot", "spec/acceptance")
   end
 
   namespace :acceptance do
