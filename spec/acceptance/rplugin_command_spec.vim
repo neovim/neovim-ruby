@@ -77,8 +77,8 @@ function! s:suite.supports_register() abort
 endfunction
 
 function! s:suite.supports_completion() abort
-  RPluginCommandCompletion
-  call s:expect(g:rplugin_command_completion).to_equal("buffer")
+  RPluginCommandCompletion foo
+  call s:expect(g:rplugin_command_completion).to_equal(["buffer", "foo"])
 endfunction
 
 function! s:suite.supports_eval() abort
