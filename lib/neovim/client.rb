@@ -9,7 +9,7 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
-  # The methods documented here were generated using NVIM v0.5.1
+  # The methods documented here were generated using NVIM v0.6.0
   #
   # @see Buffer
   # @see Window
@@ -128,6 +128,21 @@ module Neovim
   @param [Array] args
   @return [Object]
 
+@method create_namespace(name)
+  See +:h nvim_create_namespace()+
+  @param [String] name
+  @return [Integer]
+
+@method get_namespaces
+  See +:h nvim_get_namespaces()+
+  @return [Hash]
+
+@method set_decoration_provider(ns_id, opts)
+  See +:h nvim_set_decoration_provider()+
+  @param [Integer] ns_id
+  @param [Hash] opts
+  @return [void]
+
 @method ui_attach(width, height, options)
   See +:h nvim_ui_attach()+
   @param [Integer] width
@@ -169,17 +184,6 @@ module Neovim
   @param [Float] height
   @param [Float] row
   @param [Float] col
-  @return [void]
-
-@method exec(src, output)
-  See +:h nvim_exec()+
-  @param [String] src
-  @param [Boolean] output
-  @return [String]
-
-@method command(command)
-  See +:h nvim_command()+
-  @param [String] command
   @return [void]
 
 @method get_hl_by_name(name, rgb)
@@ -236,11 +240,6 @@ module Neovim
   @param [Boolean] special
   @return [String]
 
-@method eval(expr)
-  See +:h nvim_eval()+
-  @param [String] expr
-  @return [Object]
-
 @method exec_lua(code, args)
   See +:h nvim_exec_lua()+
   @param [String] code
@@ -252,19 +251,6 @@ module Neovim
   @param [String] msg
   @param [Integer] log_level
   @param [Hash] opts
-  @return [Object]
-
-@method call_function(fn, args)
-  See +:h nvim_call_function()+
-  @param [String] fn
-  @param [Array] args
-  @return [Object]
-
-@method call_dict_function(dict, fn, args)
-  See +:h nvim_call_dict_function()+
-  @param [Object] dict
-  @param [String] fn
-  @param [Array] args
   @return [Object]
 
 @method strwidth(text)
@@ -407,13 +393,6 @@ module Neovim
   @param [String] data
   @return [void]
 
-@method open_win(buffer, enter, config)
-  See +:h nvim_open_win()+
-  @param [Buffer] buffer
-  @param [Boolean] enter
-  @param [Hash] config
-  @return [Window]
-
 @method list_tabpages
   See +:h nvim_list_tabpages()+
   @return [Array<Tabpage>]
@@ -426,15 +405,6 @@ module Neovim
   See +:h nvim_set_current_tabpage()+
   @param [Tabpage] tabpage
   @return [void]
-
-@method create_namespace(name)
-  See +:h nvim_create_namespace()+
-  @param [String] name
-  @return [Integer]
-
-@method get_namespaces
-  See +:h nvim_get_namespaces()+
-  @return [Hash]
 
 @method paste(data, crlf, phase)
   See +:h nvim_paste()+
@@ -535,13 +505,6 @@ module Neovim
   @param [Array] calls
   @return [Array]
 
-@method parse_expression(expr, flags, highlight)
-  See +:h nvim_parse_expression()+
-  @param [String] expr
-  @param [String] flags
-  @param [Boolean] highlight
-  @return [Hash]
-
 @method list_uis
   See +:h nvim_list_uis()+
   @return [Array]
@@ -564,11 +527,65 @@ module Neovim
   @param [Hash] opts
   @return [void]
 
-@method set_decoration_provider(ns_id, opts)
-  See +:h nvim_set_decoration_provider()+
-  @param [Integer] ns_id
+@method del_mark(name)
+  See +:h nvim_del_mark()+
+  @param [String] name
+  @return [Boolean]
+
+@method get_mark(name, opts)
+  See +:h nvim_get_mark()+
+  @param [String] name
   @param [Hash] opts
+  @return [Array]
+
+@method eval_statusline(str, opts)
+  See +:h nvim_eval_statusline()+
+  @param [String] str
+  @param [Hash] opts
+  @return [Hash]
+
+@method exec(src, output)
+  See +:h nvim_exec()+
+  @param [String] src
+  @param [Boolean] output
+  @return [String]
+
+@method command(command)
+  See +:h nvim_command()+
+  @param [String] command
   @return [void]
+
+@method eval(expr)
+  See +:h nvim_eval()+
+  @param [String] expr
+  @return [Object]
+
+@method call_function(fn, args)
+  See +:h nvim_call_function()+
+  @param [String] fn
+  @param [Array] args
+  @return [Object]
+
+@method call_dict_function(dict, fn, args)
+  See +:h nvim_call_dict_function()+
+  @param [Object] dict
+  @param [String] fn
+  @param [Array] args
+  @return [Object]
+
+@method parse_expression(expr, flags, highlight)
+  See +:h nvim_parse_expression()+
+  @param [String] expr
+  @param [String] flags
+  @param [Boolean] highlight
+  @return [Hash]
+
+@method open_win(buffer, enter, config)
+  See +:h nvim_open_win()+
+  @param [Buffer] buffer
+  @param [Boolean] enter
+  @param [Hash] config
+  @return [Window]
 
 =end
   end

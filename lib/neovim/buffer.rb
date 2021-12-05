@@ -4,7 +4,7 @@ require "neovim/line_range"
 module Neovim
   # Class representing an +nvim+ buffer.
   #
-  # The methods documented here were generated using NVIM v0.5.1
+  # The methods documented here were generated using NVIM v0.6.0
   class Buffer < RemoteObject
     attr_reader :lines
 
@@ -250,10 +250,47 @@ module Neovim
   See +:h nvim_buf_is_valid()+
   @return [Boolean]
 
+@method del_mark(name)
+  See +:h nvim_buf_del_mark()+
+  @param [String] name
+  @return [Boolean]
+
+@method set_mark(name, line, col, opts)
+  See +:h nvim_buf_set_mark()+
+  @param [String] name
+  @param [Integer] line
+  @param [Integer] col
+  @param [Hash] opts
+  @return [Boolean]
+
 @method get_mark(name)
   See +:h nvim_buf_get_mark()+
   @param [String] name
   @return [Array<Integer>]
+
+@method call(fun)
+  See +:h nvim_buf_call()+
+  @param [LuaRef] fun
+  @return [Object]
+
+@method get_number
+  See +:h nvim_buf_get_number()+
+  @return [Integer]
+
+@method clear_highlight(ns_id, line_start, line_end)
+  See +:h nvim_buf_clear_highlight()+
+  @param [Integer] ns_id
+  @param [Integer] line_start
+  @param [Integer] line_end
+  @return [void]
+
+@method set_virtual_text(src_id, line, chunks, opts)
+  See +:h nvim_buf_set_virtual_text()+
+  @param [Integer] src_id
+  @param [Integer] line
+  @param [Array] chunks
+  @param [Hash] opts
+  @return [Integer]
 
 @method get_extmark_by_id(ns_id, id, opts)
   See +:h nvim_buf_get_extmark_by_id()+
@@ -295,30 +332,6 @@ module Neovim
 
 @method clear_namespace(ns_id, line_start, line_end)
   See +:h nvim_buf_clear_namespace()+
-  @param [Integer] ns_id
-  @param [Integer] line_start
-  @param [Integer] line_end
-  @return [void]
-
-@method set_virtual_text(src_id, line, chunks, opts)
-  See +:h nvim_buf_set_virtual_text()+
-  @param [Integer] src_id
-  @param [Integer] line
-  @param [Array] chunks
-  @param [Hash] opts
-  @return [Integer]
-
-@method call(fun)
-  See +:h nvim_buf_call()+
-  @param [LuaRef] fun
-  @return [Object]
-
-@method get_number
-  See +:h nvim_buf_get_number()+
-  @return [Integer]
-
-@method clear_highlight(ns_id, line_start, line_end)
-  See +:h nvim_buf_clear_highlight()+
   @param [Integer] ns_id
   @param [Integer] line_start
   @param [Integer] line_end
