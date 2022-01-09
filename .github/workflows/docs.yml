@@ -23,8 +23,6 @@ jobs:
           bundle config set path vendor/bundle
           bundle install --jobs 3 --retry 3
       - name: Install Neovim
-        env:
-          BUILD: latest
         run: bundle exec rake ci:download_nvim
       - name: Generate docs
         env:
