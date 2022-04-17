@@ -53,9 +53,10 @@ jobs:
       - name: Install Neovim
         uses: crazy-max/ghaction-chocolatey@v1
         with:
-          args: install neovim -fy --ignore-dependencies --ignore-checksums --ia 'C:\tools\neovim\Neovim'
+          args: install neovim -fy --ignore-dependencies --ignore-checksums
       - name: Run tests
         env:
           VIM_FLAVOR_HOME: 'D:\'
-          NVIM_EXECUTABLE: 'C:\tools\neovim\Neovim\bin\nvim'
-        run: bundle exec rake spec
+        run: |
+          refreshenv
+          bundle exec rake spec
