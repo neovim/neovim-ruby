@@ -59,5 +59,4 @@ jobs:
       - name: Run tests
         env:
           VIM_FLAVOR_HOME: 'D:\'
-          NVIM_EXECUTABLE: 'C:\tools\neovim\Neovim\bin\nvim'
         run: bundle exec rake spec
