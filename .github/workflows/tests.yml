@@ -53,11 +53,9 @@ jobs:
       - name: Install Neovim
         uses: crazy-max/ghaction-chocolatey@v1
         with:
-          # TODO: Install `--pre` once nightly release is fixed:
-          # https://github.com/neovim/neovim/issues/13312
           args: install neovim -fy --ignore-dependencies --ignore-checksums
       - name: Run tests
         env:
           VIM_FLAVOR_HOME: 'D:\'
-          NVIM_EXECUTABLE: 'C:\tools\neovim\Neovim\bin\nvim'
+          NVIM_EXECUTABLE: 'C:\tools\neovim\nvim-win64\bin\nvim'
         run: bundle exec rake spec
