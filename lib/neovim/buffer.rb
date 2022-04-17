@@ -4,7 +4,7 @@ require "neovim/line_range"
 module Neovim
   # Class representing an +nvim+ buffer.
   #
-  # The methods documented here were generated using NVIM v0.6.1
+  # The methods documented here were generated using NVIM v0.7.0
   class Buffer < RemoteObject
     attr_reader :lines
 
@@ -173,6 +173,15 @@ module Neovim
   @param [Array<String>] replacement
   @return [void]
 
+@method get_text(start_row, start_col, end_row, end_col, opts)
+  See +:h nvim_buf_get_text()+
+  @param [Integer] start_row
+  @param [Integer] start_col
+  @param [Integer] end_row
+  @param [Integer] end_col
+  @param [Hash] opts
+  @return [Array<String>]
+
 @method get_offset(index)
   See +:h nvim_buf_get_offset()+
   @param [Integer] index
@@ -272,6 +281,18 @@ module Neovim
   See +:h nvim_buf_call()+
   @param [LuaRef] fun
   @return [Object]
+
+@method create_user_command(name, command, opts)
+  See +:h nvim_buf_create_user_command()+
+  @param [String] name
+  @param [Object] command
+  @param [Hash] opts
+  @return [void]
+
+@method del_user_command(name)
+  See +:h nvim_buf_del_user_command()+
+  @param [String] name
+  @return [void]
 
 @method get_number
   See +:h nvim_buf_get_number()+

@@ -9,7 +9,7 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
-  # The methods documented here were generated using NVIM v0.6.1
+  # The methods documented here were generated using NVIM v0.7.0
   #
   # @see Buffer
   # @see Window
@@ -117,6 +117,49 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
+@method get_autocmds(opts)
+  See +:h nvim_get_autocmds()+
+  @param [Hash] opts
+  @return [Array]
+
+@method create_autocmd(event, opts)
+  See +:h nvim_create_autocmd()+
+  @param [Object] event
+  @param [Hash] opts
+  @return [Integer]
+
+@method del_autocmd(id)
+  See +:h nvim_del_autocmd()+
+  @param [Integer] id
+  @return [void]
+
+@method clear_autocmds(opts)
+  See +:h nvim_clear_autocmds()+
+  @param [Hash] opts
+  @return [void]
+
+@method create_augroup(name, opts)
+  See +:h nvim_create_augroup()+
+  @param [String] name
+  @param [Hash] opts
+  @return [Integer]
+
+@method del_augroup_by_id(id)
+  See +:h nvim_del_augroup_by_id()+
+  @param [Integer] id
+  @return [void]
+
+@method del_augroup_by_name(name)
+  See +:h nvim_del_augroup_by_name()+
+  @param [String] name
+  @return [void]
+
+@method exec_autocmds(event, opts)
+  See +:h nvim_exec_autocmds()+
+  @param [Object] event
+  @param [Hash] opts
+  @return [void]
+
 @method command_output(command)
   See +:h nvim_command_output()+
   @param [String] command
@@ -210,11 +253,11 @@ module Neovim
   @param [Hash] val
   @return [void]
 
-@method feedkeys(keys, mode, escape_csi)
+@method feedkeys(keys, mode, escape_ks)
   See +:h nvim_feedkeys()+
   @param [String] keys
   @param [String] mode
-  @param [Boolean] escape_csi
+  @param [Boolean] escape_ks
   @return [void]
 
 @method input(keys)
@@ -317,6 +360,19 @@ module Neovim
   See +:h nvim_get_option()+
   @param [String] name
   @return [Object]
+
+@method get_option_value(name, opts)
+  See +:h nvim_get_option_value()+
+  @param [String] name
+  @param [Hash] opts
+  @return [Object]
+
+@method set_option_value(name, value, opts)
+  See +:h nvim_set_option_value()+
+  @param [String] name
+  @param [Object] value
+  @param [Hash] opts
+  @return [void]
 
 @method get_all_options_info
   See +:h nvim_get_all_options_info()+
@@ -543,6 +599,18 @@ module Neovim
   @param [String] str
   @param [Hash] opts
   @return [Hash]
+
+@method create_user_command(name, command, opts)
+  See +:h nvim_create_user_command()+
+  @param [String] name
+  @param [Object] command
+  @param [Hash] opts
+  @return [void]
+
+@method del_user_command(name)
+  See +:h nvim_del_user_command()+
+  @param [String] name
+  @return [void]
 
 @method exec(src, output)
   See +:h nvim_exec()+
