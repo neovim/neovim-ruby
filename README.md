@@ -27,10 +27,10 @@ gem install neovim
 
 ## Usage
 
-You can control a running `nvim` process by connecting to `$NVIM_LISTEN_ADDRESS`. For example, to connect to `nvim` over a UNIX domain socket, start it up like this:
+Neovim supports the `--listen` option for specifying an address to serve its RPC API. To connect to Neovim over a Unix socket, start it up like this:
 
 ```shell
-$ NVIM_LISTEN_ADDRESS=/tmp/nvim.sock nvim
+$ nvim --listen /tmp/nvim.sock
 ```
 
 You can then connect to that socket path to get a `Neovim::Client`:
