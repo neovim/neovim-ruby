@@ -10,11 +10,10 @@ require "neovim/version"
 # running +nvim+ instance programmatically or define a remote plugin to be
 # autoloaded by +nvim+.
 #
-# You can connect to a running +nvim+ instance by setting or inspecting the
-# +NVIM_LISTEN_ADDRESS+ environment variable and connecting via the appropriate
-# +attach_+ method. This is currently supported for both UNIX domain sockets
-# and TCP. You can also spawn and connect to an +nvim+ subprocess via
-# +Neovim.attach_child(argv)+.
+# You can connect to a running +nvim+ process using the appropriate +attach_+
+# method. This is currently supported for both UNIX domain sockets and TCP. You
+# can also spawn and connect to an +nvim+ subprocess using
+# +Neovim.attach_child+.
 #
 # You can define a remote plugin using the +Neovim.plugin+ DSL, which allows
 # you to register commands, functions, and autocmds. Plugins are autoloaded by
