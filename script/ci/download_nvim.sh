@@ -9,7 +9,7 @@ case "$(echo "$RUNNER_OS" | tr "[:upper:]" "[:lower:]")" in
     wget -nv -P /tmp \
       "https://github.com/neovim/neovim/releases/download/stable/nvim-macos.tar.gz"
     tar -C /tmp -xzf /tmp/nvim-macos.tar.gz
-    mv /tmp/nvim-osx64 ./_nvim
+    mv /tmp/nvim-macos ./_nvim
     ;;
   linux)
     mkdir -p _nvim/bin
