@@ -85,7 +85,7 @@ The Neovim gem also acts as a compatibility layer for Ruby plugins written for `
 * CI: <https://github.com/neovim/neovim-ruby/actions>
 * Documentation:
   * Latest Gem: <https://rubydoc.info/gems/neovim>
-  * Main: <https://rubydoc.info/github/neovim/neovim-ruby/main/frames>
+  * Main: <https://rubydoc.info/github/neovim/neovim-ruby/main>
 
 ## Contributing
 
