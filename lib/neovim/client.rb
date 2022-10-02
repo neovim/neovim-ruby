@@ -9,7 +9,7 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
-  # The methods documented here were generated using NVIM v0.7.2
+  # The methods documented here were generated using NVIM v0.8.0-1210-gd367ed9b2
   #
   # @see Buffer
   # @see Window
@@ -160,6 +160,35 @@ module Neovim
   @param [Hash] opts
   @return [void]
 
+@method parse_cmd(str, opts)
+  See +:h nvim_parse_cmd()+
+  @param [String] str
+  @param [Hash] opts
+  @return [Hash]
+
+@method cmd(cmd, opts)
+  See +:h nvim_cmd()+
+  @param [Hash] cmd
+  @param [Hash] opts
+  @return [String]
+
+@method create_user_command(name, command, opts)
+  See +:h nvim_create_user_command()+
+  @param [String] name
+  @param [Object] command
+  @param [Hash] opts
+  @return [void]
+
+@method del_user_command(name)
+  See +:h nvim_del_user_command()+
+  @param [String] name
+  @return [void]
+
+@method get_commands(opts)
+  See +:h nvim_get_commands()+
+  @param [Hash] opts
+  @return [Hash]
+
 @method command_output(command)
   See +:h nvim_command_output()+
   @param [String] command
@@ -185,6 +214,33 @@ module Neovim
   @param [Integer] ns_id
   @param [Hash] opts
   @return [void]
+
+@method get_option_value(name, opts)
+  See +:h nvim_get_option_value()+
+  @param [String] name
+  @param [Hash] opts
+  @return [Object]
+
+@method set_option_value(name, value, opts)
+  See +:h nvim_set_option_value()+
+  @param [String] name
+  @param [Object] value
+  @param [Hash] opts
+  @return [void]
+
+@method get_all_options_info
+  See +:h nvim_get_all_options_info()+
+  @return [Hash]
+
+@method get_option_info(name)
+  See +:h nvim_get_option_info()+
+  @param [String] name
+  @return [Hash]
+
+@method get_option(name)
+  See +:h nvim_get_option()+
+  @param [String] name
+  @return [Object]
 
 @method ui_attach(width, height, options)
   See +:h nvim_ui_attach()+
@@ -251,6 +307,16 @@ module Neovim
   @param [Integer] ns_id
   @param [String] name
   @param [Hash] val
+  @return [void]
+
+@method set_hl_ns(ns_id)
+  See +:h nvim_set_hl_ns()+
+  @param [Integer] ns_id
+  @return [void]
+
+@method set_hl_ns_fast(ns_id)
+  See +:h nvim_set_hl_ns_fast()+
+  @param [Integer] ns_id
   @return [void]
 
 @method feedkeys(keys, mode, escape_ks)
@@ -355,33 +421,6 @@ module Neovim
   @param [String] name
   @param [Object] value
   @return [void]
-
-@method get_option(name)
-  See +:h nvim_get_option()+
-  @param [String] name
-  @return [Object]
-
-@method get_option_value(name, opts)
-  See +:h nvim_get_option_value()+
-  @param [String] name
-  @param [Hash] opts
-  @return [Object]
-
-@method set_option_value(name, value, opts)
-  See +:h nvim_set_option_value()+
-  @param [String] name
-  @param [Object] value
-  @param [Hash] opts
-  @return [void]
-
-@method get_all_options_info
-  See +:h nvim_get_all_options_info()+
-  @return [Hash]
-
-@method get_option_info(name)
-  See +:h nvim_get_option_info()+
-  @param [String] name
-  @return [Hash]
 
 @method echo(chunks, history, opts)
   See +:h nvim_echo()+
@@ -529,11 +568,6 @@ module Neovim
   @param [String] lhs
   @return [void]
 
-@method get_commands(opts)
-  See +:h nvim_get_commands()+
-  @param [Hash] opts
-  @return [Hash]
-
 @method get_api_info
   See +:h nvim_get_api_info()+
   @return [Array]
@@ -599,18 +633,6 @@ module Neovim
   @param [String] str
   @param [Hash] opts
   @return [Hash]
-
-@method create_user_command(name, command, opts)
-  See +:h nvim_create_user_command()+
-  @param [String] name
-  @param [Object] command
-  @param [Hash] opts
-  @return [void]
-
-@method del_user_command(name)
-  See +:h nvim_del_user_command()+
-  @param [String] name
-  @return [void]
 
 @method exec(src, output)
   See +:h nvim_exec()+
