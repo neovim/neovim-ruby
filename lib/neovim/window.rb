@@ -3,7 +3,7 @@ require "neovim/remote_object"
 module Neovim
   # Class representing an +nvim+ window.
   #
-  # The methods documented here were generated using NVIM v0.7.2
+  # The methods documented here were generated using NVIM v0.8.0-1210-gd367ed9b2
   class Window < RemoteObject
     # Get the buffer displayed in the window
     #
@@ -64,6 +64,17 @@ module Neovim
 
 # The following methods are dynamically generated.
 =begin
+@method get_option(name)
+  See +:h nvim_win_get_option()+
+  @param [String] name
+  @return [Object]
+
+@method set_option(name, value)
+  See +:h nvim_win_set_option()+
+  @param [String] name
+  @param [Object] value
+  @return [void]
+
 @method set_config(config)
   See +:h nvim_win_set_config()+
   @param [Hash] config
@@ -125,17 +136,6 @@ module Neovim
   @param [String] name
   @return [void]
 
-@method get_option(name)
-  See +:h nvim_win_get_option()+
-  @param [String] name
-  @return [Object]
-
-@method set_option(name, value)
-  See +:h nvim_win_set_option()+
-  @param [String] name
-  @param [Object] value
-  @return [void]
-
 @method get_position
   See +:h nvim_win_get_position()+
   @return [Array<Integer>]
@@ -165,6 +165,11 @@ module Neovim
   See +:h nvim_win_call()+
   @param [LuaRef] fun
   @return [Object]
+
+@method set_hl_ns(ns_id)
+  See +:h nvim_win_set_hl_ns()+
+  @param [Integer] ns_id
+  @return [void]
 
 =end
   end

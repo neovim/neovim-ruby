@@ -4,7 +4,7 @@ require "neovim/line_range"
 module Neovim
   # Class representing an +nvim+ buffer.
   #
-  # The methods documented here were generated using NVIM v0.7.2
+  # The methods documented here were generated using NVIM v0.8.0-1210-gd367ed9b2
   class Buffer < RemoteObject
     attr_reader :lines
 
@@ -215,11 +215,6 @@ module Neovim
   @param [String] lhs
   @return [void]
 
-@method get_commands(opts)
-  See +:h nvim_buf_get_commands()+
-  @param [Hash] opts
-  @return [Hash]
-
 @method set_var(name, value)
   See +:h nvim_buf_set_var()+
   @param [String] name
@@ -229,17 +224,6 @@ module Neovim
 @method del_var(name)
   See +:h nvim_buf_del_var()+
   @param [String] name
-  @return [void]
-
-@method get_option(name)
-  See +:h nvim_buf_get_option()+
-  @param [String] name
-  @return [Object]
-
-@method set_option(name, value)
-  See +:h nvim_buf_set_option()+
-  @param [String] name
-  @param [Object] value
   @return [void]
 
 @method get_name
@@ -293,6 +277,11 @@ module Neovim
   See +:h nvim_buf_del_user_command()+
   @param [String] name
   @return [void]
+
+@method get_commands(opts)
+  See +:h nvim_buf_get_commands()+
+  @param [Hash] opts
+  @return [Hash]
 
 @method get_number
   See +:h nvim_buf_get_number()+
@@ -356,6 +345,17 @@ module Neovim
   @param [Integer] ns_id
   @param [Integer] line_start
   @param [Integer] line_end
+  @return [void]
+
+@method get_option(name)
+  See +:h nvim_buf_get_option()+
+  @param [String] name
+  @return [Object]
+
+@method set_option(name, value)
+  See +:h nvim_buf_set_option()+
+  @param [String] name
+  @param [Object] value
   @return [void]
 
 =end
