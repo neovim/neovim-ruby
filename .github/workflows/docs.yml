@@ -18,6 +18,8 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: head
+      - name: Install libfuse
+        run: sudo apt install libfuse2
       - name: Bundle install
         run: |
           bundle config set path vendor/bundle
