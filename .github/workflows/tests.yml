@@ -27,7 +27,7 @@ jobs:
           bundler-cache: true
       - name: Install libfuse
         run: sudo apt install libfuse2
-        if: ${{ matrix.os == "ubuntu-latest" }}
+        if: matrix.os == 'ubuntu-latest'
       - name: Install Neovim
         run: bundle exec rake ci:download_nvim
       - name: Run tests
