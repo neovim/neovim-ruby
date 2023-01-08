@@ -13,9 +13,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         ruby: [2.6, 2.7, 3.0, 3.1, head]
-        include:
-          - os: ubuntu-latest
-            linux: true
     runs-on: ${{ matrix.os }}
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
@@ -30,7 +27,7 @@ jobs:
           bundler-cache: true
       - name: Install libfuse
         run: sudo apt install libfuse2
-        if: ${{ matrix.linux }}
+        if: ${{ matrix.os == "ubuntu-latest" }}
       - name: Install Neovim
         run: bundle exec rake ci:download_nvim
       - name: Run tests
