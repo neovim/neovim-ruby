@@ -26,7 +26,7 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
       - name: Install libfuse
-        run: apt install libfuse2
+        run: sudo apt install libfuse2
       - name: Install Neovim
         run: bundle exec rake ci:download_nvim
       - name: Run tests
