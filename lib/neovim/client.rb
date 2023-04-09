@@ -9,7 +9,7 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
-  # The methods documented here were generated using NVIM v0.8.3
+  # The methods documented here were generated using NVIM v0.9.0
   #
   # @see Buffer
   # @see Window
@@ -189,6 +189,12 @@ module Neovim
   @param [Hash] opts
   @return [Hash]
 
+@method exec(src, output)
+  See +:h nvim_exec()+
+  @param [String] src
+  @param [Boolean] output
+  @return [String]
+
 @method command_output(command)
   See +:h nvim_command_output()+
   @param [String] command
@@ -199,6 +205,23 @@ module Neovim
   @param [String] code
   @param [Array] args
   @return [Object]
+
+@method get_hl_by_id(hl_id, rgb)
+  See +:h nvim_get_hl_by_id()+
+  @param [Integer] hl_id
+  @param [Boolean] rgb
+  @return [Hash]
+
+@method get_hl_by_name(name, rgb)
+  See +:h nvim_get_hl_by_name()+
+  @param [String] name
+  @param [Boolean] rgb
+  @return [Hash]
+
+@method get_option_info(name)
+  See +:h nvim_get_option_info()+
+  @param [String] name
+  @return [Hash]
 
 @method create_namespace(name)
   See +:h nvim_create_namespace()+
@@ -232,9 +255,10 @@ module Neovim
   See +:h nvim_get_all_options_info()+
   @return [Hash]
 
-@method get_option_info(name)
-  See +:h nvim_get_option_info()+
+@method get_option_info2(name, opts)
+  See +:h nvim_get_option_info2()+
   @param [String] name
+  @param [Hash] opts
   @return [Hash]
 
 @method get_option(name)
@@ -247,6 +271,11 @@ module Neovim
   @param [Integer] width
   @param [Integer] height
   @param [Hash] options
+  @return [void]
+
+@method ui_set_focus(gained)
+  See +:h nvim_ui_set_focus()+
+  @param [Boolean] gained
   @return [void]
 
 @method ui_detach
@@ -285,22 +314,16 @@ module Neovim
   @param [Float] col
   @return [void]
 
-@method get_hl_by_name(name, rgb)
-  See +:h nvim_get_hl_by_name()+
-  @param [String] name
-  @param [Boolean] rgb
-  @return [Hash]
-
-@method get_hl_by_id(hl_id, rgb)
-  See +:h nvim_get_hl_by_id()+
-  @param [Integer] hl_id
-  @param [Boolean] rgb
-  @return [Hash]
-
 @method get_hl_id_by_name(name)
   See +:h nvim_get_hl_id_by_name()+
   @param [String] name
   @return [Integer]
+
+@method get_hl(ns_id, opts)
+  See +:h nvim_get_hl()+
+  @param [Integer] ns_id
+  @param [Hash] opts
+  @return [Hash]
 
 @method set_hl(ns_id, name, val)
   See +:h nvim_set_hl()+
@@ -634,11 +657,11 @@ module Neovim
   @param [Hash] opts
   @return [Hash]
 
-@method exec(src, output)
-  See +:h nvim_exec()+
+@method exec2(src, opts)
+  See +:h nvim_exec2()+
   @param [String] src
-  @param [Boolean] output
-  @return [String]
+  @param [Hash] opts
+  @return [Hash]
 
 @method command(command)
   See +:h nvim_command()+
