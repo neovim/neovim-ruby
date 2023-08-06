@@ -86,10 +86,6 @@ module Neovim
     # To maintain backwards compatibility with +vim+, the cursor is forced back
     # to its previous position after inserting the line.
     #
-    # To maintain backwards compatibility with +vim+, 0 is a valid index here,
-    # indicating the beginning of the buffer, despite otherwise being
-    # 1-indexed.
-    #
     # @param index [Integer]
     # @param str [String]
     # @return [String]
