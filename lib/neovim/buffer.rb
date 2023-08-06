@@ -54,7 +54,7 @@ module Neovim
     # @param index [Integer]
     # @return [String]
     def [](index)
-      check_index(index)
+      check_index(index, 1)
       @lines[index - 1]
     end
 
@@ -64,7 +64,7 @@ module Neovim
     # @param str [String]
     # @return [String]
     def []=(index, str)
-      check_index(index)
+      check_index(index, 1)
       @lines[index - 1] = str
     end
 
@@ -73,21 +73,28 @@ module Neovim
     # @param index [Integer]
     # @return [void]
     def delete(index)
-      check_index(index)
+      check_index(index, 1)
       @lines.delete(index - 1)
       nil
     end
 
     # Append a line after the given line (1-indexed).
     #
+    # Unlike the other methods, `0` is a valid index argument here, and inserts
+    # into the first line of the buffer.
+    #
     # To maintain backwards compatibility with +vim+, the cursor is forced back
     # to its previous position after inserting the line.
+    #
+    # To maintain backwards compatibility with +vim+, 0 is a valid index here,
+    # indicating the beginning of the buffer, despite otherwise being
+    # 1-indexed.
     #
     # @param index [Integer]
     # @param str [String]
     # @return [String]
     def append(index, str)
-      check_index(index)
+      check_index(index, 0)
       window = @session.request(:nvim_get_current_win)
       cursor = window.cursor
 
@@ -127,8 +134,8 @@ module Neovim
 
     private
 
-    def check_index(index)
-      raise ArgumentError, "Index out of bounds" if index < 0
+    def check_index(index, min)
+      raise ArgumentError, "Index out of bounds" if index < min
     end
 
     public
