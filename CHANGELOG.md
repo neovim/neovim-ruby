@@ -1,3 +1,8 @@
+# 0.9.1
+
+- Fix bug where `Buffer#[]` with `0` returned the last line of the buffer
+  (https://github.com/neovim/neovim-ruby/issues/97)
+
 # 0.9.0
 
 - Add RPC support for `:rubyeval`.
