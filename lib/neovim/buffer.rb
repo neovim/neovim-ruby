@@ -4,7 +4,7 @@ require "neovim/line_range"
 module Neovim
   # Class representing an +nvim+ buffer.
   #
-  # The methods documented here were generated using NVIM v0.9.1
+  # The methods documented here were generated using NVIM v0.9.2
   class Buffer < RemoteObject
     attr_reader :lines
 
