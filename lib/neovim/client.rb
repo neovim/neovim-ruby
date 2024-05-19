@@ -9,7 +9,7 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
-  # The methods documented here were generated using NVIM v0.9.2
+  # The methods documented here were generated using NVIM v0.10.0
   #
   # @see Buffer
   # @see Window
@@ -223,6 +223,16 @@ module Neovim
   @param [String] name
   @return [Hash]
 
+@method get_option(name)
+  See +:h nvim_get_option()+
+  @param [String] name
+  @return [Object]
+
+@method call_atomic(calls)
+  See +:h nvim_call_atomic()+
+  @param [Array] calls
+  @return [Array]
+
 @method create_namespace(name)
   See +:h nvim_create_namespace()+
   @param [String] name
@@ -260,11 +270,6 @@ module Neovim
   @param [String] name
   @param [Hash] opts
   @return [Hash]
-
-@method get_option(name)
-  See +:h nvim_get_option()+
-  @param [String] name
-  @return [Object]
 
 @method ui_attach(width, height, options)
   See +:h nvim_ui_attach()+
@@ -314,6 +319,12 @@ module Neovim
   @param [Float] col
   @return [void]
 
+@method ui_term_event(event, value)
+  See +:h nvim_ui_term_event()+
+  @param [String] event
+  @param [Object] value
+  @return [void]
+
 @method get_hl_id_by_name(name)
   See +:h nvim_get_hl_id_by_name()+
   @param [String] name
@@ -331,6 +342,11 @@ module Neovim
   @param [String] name
   @param [Hash] val
   @return [void]
+
+@method get_hl_ns(opts)
+  See +:h nvim_get_hl_ns()+
+  @param [Hash] opts
+  @return [Integer]
 
 @method set_hl_ns(ns_id)
   See +:h nvim_set_hl_ns()+
@@ -611,11 +627,6 @@ module Neovim
 
 @method list_chans
   See +:h nvim_list_chans()+
-  @return [Array]
-
-@method call_atomic(calls)
-  See +:h nvim_call_atomic()+
-  @param [Array] calls
   @return [Array]
 
 @method list_uis

@@ -3,7 +3,7 @@ require "neovim/remote_object"
 module Neovim
   # Class representing an +nvim+ window.
   #
-  # The methods documented here were generated using NVIM v0.9.2
+  # The methods documented here were generated using NVIM v0.10.0
   class Window < RemoteObject
     # Get the buffer displayed in the window
     #
@@ -170,6 +170,11 @@ module Neovim
   See +:h nvim_win_set_hl_ns()+
   @param [Integer] ns_id
   @return [void]
+
+@method text_height(opts)
+  See +:h nvim_win_text_height()+
+  @param [Hash] opts
+  @return [Hash]
 
 =end
   end

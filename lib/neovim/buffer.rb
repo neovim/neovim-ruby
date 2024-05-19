@@ -4,7 +4,7 @@ require "neovim/line_range"
 module Neovim
   # Class representing an +nvim+ buffer.
   #
-  # The methods documented here were generated using NVIM v0.9.2
+  # The methods documented here were generated using NVIM v0.10.0
   class Buffer < RemoteObject
     attr_reader :lines
 
@@ -305,6 +305,17 @@ module Neovim
   @param [Hash] opts
   @return [Integer]
 
+@method get_option(name)
+  See +:h nvim_buf_get_option()+
+  @param [String] name
+  @return [Object]
+
+@method set_option(name, value)
+  See +:h nvim_buf_set_option()+
+  @param [String] name
+  @param [Object] value
+  @return [void]
+
 @method get_extmark_by_id(ns_id, id, opts)
   See +:h nvim_buf_get_extmark_by_id()+
   @param [Integer] ns_id
@@ -348,17 +359,6 @@ module Neovim
   @param [Integer] ns_id
   @param [Integer] line_start
   @param [Integer] line_end
-  @return [void]
-
-@method get_option(name)
-  See +:h nvim_buf_get_option()+
-  @param [String] name
-  @return [Object]
-
-@method set_option(name, value)
-  See +:h nvim_buf_set_option()+
-  @param [String] name
-  @param [Object] value
   @return [void]
 
 =end
