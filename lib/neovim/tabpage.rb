@@ -3,7 +3,7 @@ require "neovim/remote_object"
 module Neovim
   # Class representing an +nvim+ tabpage.
   #
-  # The methods documented here were generated using NVIM v0.9.2
+  # The methods documented here were generated using NVIM v0.10.0
   class Tabpage < RemoteObject
 # The following methods are dynamically generated.
 =begin
@@ -30,6 +30,11 @@ module Neovim
 @method get_win
   See +:h nvim_tabpage_get_win()+
   @return [Window]
+
+@method set_win(win)
+  See +:h nvim_tabpage_set_win()+
+  @param [Window] win
+  @return [void]
 
 @method get_number
   See +:h nvim_tabpage_get_number()+
