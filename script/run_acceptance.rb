@@ -21,7 +21,7 @@ env = {
   "NVIM_RPLUGIN_MANIFEST" => manifest,
   "THEMIS_VIM" => nvim,
   "THEMIS_HOME" => themis_home,
-  "THEMIS_ARGS" => "-e -s --headless -u #{vimrc}"
+  "THEMIS_ARGS" => "-e --headless -u #{vimrc}"
 }
 
 FileUtils.rm_f(manifest)
@@ -30,7 +30,7 @@ Dir.chdir(root) do
   system(
     env,
     nvim,
-    "-e", "-s", "--headless",
+    "-e", "--headless",
     "-u", vimrc,
     "+UpdateRemotePlugins", "+qa!"
   )
