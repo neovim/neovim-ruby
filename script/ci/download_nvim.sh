@@ -7,7 +7,7 @@ set -eu
 case "$(echo "$RUNNER_OS" | tr "[:upper:]" "[:lower:]")" in
   macos)
     wget -nv -P /tmp \
-      "https://github.com/neovim/neovim/releases/download/stable/nvim-macos.tar.gz"
+      "https://github.com/neovim/neovim/releases/download/stable/nvim-macos-x86_64.tar.gz"
     tar -C /tmp -xzf /tmp/nvim-macos.tar.gz
     mv /tmp/nvim-macos ./_nvim
     ;;
