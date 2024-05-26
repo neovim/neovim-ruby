@@ -1,2 +1,3 @@
+@echo off
 pushd "%~dp0\.." 2>NUL
-ruby -I .\lib .\exe\neovim-ruby-host %*
+ruby -I %CD%\lib %CD%\exe\neovim-ruby-host %*
