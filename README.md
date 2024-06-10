@@ -42,37 +42,21 @@ client = Neovim.attach_unix("/tmp/nvim.sock")
 
 Refer to the [`Neovim` docs](https://www.rubydoc.info/github/neovim/neovim-ruby/main/Neovim) for other ways to connect to `nvim`, and the [`Neovim::Client` docs](https://www.rubydoc.info/github/neovim/neovim-ruby/main/Neovim/Client) for a summary of the client interface.
 
-### Plugins
+### Remote Modules
 
-Plugins are Ruby files loaded from the `$VIMRUNTIME/rplugin/ruby/` directory. Here's an example plugin:
+Remote modules allow users to define custom handlers in Ruby. To implement a remote module:
 
-```ruby
-# ~/.config/nvim/rplugin/ruby/example_plugin.rb
+- Define your handlers in a plain Ruby script that imports `neovim`
+- Spawn the script from lua using `jobstart`
+- Define commands in lua using `nvim_create_user_command` that route to the job's channel ID
 
-Neovim.plugin do |plug|
-  # Define a command called "SetLine" which sets the contents of the current
-  # line. This command is executed asynchronously, so the return value is
-  # ignored.
-  plug.command(:SetLine, nargs: 1) do |nvim, str|
-    nvim.current.line = str
-  end
+For usage examples, see:
 
-  # Define a function called "Sum" which adds two numbers. This function is
-  # executed synchronously, so the result of the block will be returned to nvim.
-  plug.function(:Sum, nargs: 2, sync: true) do |nvim, x, y|
-    x + y
-  end
+- [`example_remote_module.rb`](spec/acceptance/runtime/example_remote_module.rb)
+- [`example_remote_module.lua`](spec/acceptance/runtime/plugin/example_remote_module.lua)
+- [`remote_module_spec.vim`](spec/acceptance/remote_module_spec.vim)
 
-  # Define an autocmd for the BufEnter event on Ruby files.
-  plug.autocmd(:BufEnter, pattern: "*.rb") do |nvim|
-    nvim.command("echom 'Ruby file, eh?'")
-  end
-end
-```
-
-When you add or update a plugin, you will need to call `:UpdateRemotePlugins` to update the remote plugin manifest. See `:help remote-plugin-manifest` for more information.
-
-Refer to the [`Neovim::Plugin::DSL` docs](https://www.rubydoc.info/github/neovim/neovim-ruby/main/Neovim/Plugin/DSL) for a more complete overview of the `Neovim.plugin` DSL.
+*Note*: Remote modules are a replacement for the deprecated "remote plugin" architecture. See https://github.com/neovim/neovim/issues/27949 for details.
 
 ### Vim Plugin Support
 

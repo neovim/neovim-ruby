@@ -4,6 +4,7 @@ require "neovim/session"
 require "neovim/event_loop"
 require "neovim/executable"
 require "neovim/logging"
+require "neovim/remote_module"
 require "neovim/version"
 
 # The main entrypoint to the +Neovim+ gem. It allows you to connect to a
@@ -81,6 +82,14 @@ module Neovim
   # @see EventLoop.child
   def self.attach_child(argv=[executable.path])
     attach(EventLoop.child(argv))
+  end
+
+  # Start a remote module process with handlers defined in the config block.
+  # Blocks indefinitely to handle messages.
+  #
+  # @see RemoteModule::DSL
+  def self.start_remote(&block)
+    RemoteModule.from_config_block(&block).start
   end
 
   # Placeholder method for exposing the remote plugin DSL. This gets
