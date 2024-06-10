@@ -1,3 +1,8 @@
+# 0.10.0
+
+- Add `Neovim.start_remote` helper for remote module support
+  (https://github.com/neovim/neovim-ruby/pull/107)
+
 # 0.9.1
 
 - Fix bug where `Buffer#[]` with `0` returned the last line of the buffer
