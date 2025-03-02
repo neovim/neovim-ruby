@@ -14,7 +14,7 @@ case "$(echo "$RUNNER_OS" | tr "[:upper:]" "[:lower:]")" in
   linux)
     mkdir -p _nvim/bin
     wget -nv -O _nvim/bin/nvim \
-      "https://github.com/neovim/neovim/releases/download/stable/nvim.appimage"
+      "https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.appimage"
     ;;
   *)
     echo "Unrecognized \$RUNNER_OS" >&2
