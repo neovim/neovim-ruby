@@ -9,7 +9,7 @@ module Neovim
   # +RemoteObject+ subclasses (i.e. +Buffer+, +Window+, or +Tabpage+),
   # which similarly have dynamically generated interfaces.
   #
-  # The methods documented here were generated using NVIM v0.10.4
+  # The methods documented here were generated using NVIM v0.11.0
   #
   # @see Buffer
   # @see Window
@@ -119,13 +119,13 @@ module Neovim
 =begin
 @method get_autocmds(opts)
   See +:h nvim_get_autocmds()+
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Array]
 
 @method create_autocmd(event, opts)
   See +:h nvim_create_autocmd()+
   @param [Object] event
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Integer]
 
 @method del_autocmd(id)
@@ -135,13 +135,13 @@ module Neovim
 
 @method clear_autocmds(opts)
   See +:h nvim_clear_autocmds()+
-  @param [Hash] opts
+  @param [Dict] opts
   @return [void]
 
 @method create_augroup(name, opts)
   See +:h nvim_create_augroup()+
   @param [String] name
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Integer]
 
 @method del_augroup_by_id(id)
@@ -157,26 +157,26 @@ module Neovim
 @method exec_autocmds(event, opts)
   See +:h nvim_exec_autocmds()+
   @param [Object] event
-  @param [Hash] opts
+  @param [Dict] opts
   @return [void]
 
 @method parse_cmd(str, opts)
   See +:h nvim_parse_cmd()+
   @param [String] str
-  @param [Hash] opts
-  @return [Hash]
+  @param [Dict] opts
+  @return [Dict]
 
 @method cmd(cmd, opts)
   See +:h nvim_cmd()+
-  @param [Hash] cmd
-  @param [Hash] opts
+  @param [Dict] cmd
+  @param [Dict] opts
   @return [String]
 
 @method create_user_command(name, command, opts)
   See +:h nvim_create_user_command()+
   @param [String] name
   @param [Object] command
-  @param [Hash] opts
+  @param [Dict] opts
   @return [void]
 
 @method del_user_command(name)
@@ -186,8 +186,8 @@ module Neovim
 
 @method get_commands(opts)
   See +:h nvim_get_commands()+
-  @param [Hash] opts
-  @return [Hash]
+  @param [Dict] opts
+  @return [Dict]
 
 @method exec(src, output)
   See +:h nvim_exec()+
@@ -210,18 +210,18 @@ module Neovim
   See +:h nvim_get_hl_by_id()+
   @param [Integer] hl_id
   @param [Boolean] rgb
-  @return [Hash]
+  @return [Dict]
 
 @method get_hl_by_name(name, rgb)
   See +:h nvim_get_hl_by_name()+
   @param [String] name
   @param [Boolean] rgb
-  @return [Hash]
+  @return [Dict]
 
 @method get_option_info(name)
   See +:h nvim_get_option_info()+
   @param [String] name
-  @return [Hash]
+  @return [Dict]
 
 @method get_option(name)
   See +:h nvim_get_option()+
@@ -233,6 +233,38 @@ module Neovim
   @param [Array] calls
   @return [Array]
 
+@method subscribe(event)
+  See +:h nvim_subscribe()+
+  @param [String] event
+  @return [void]
+
+@method unsubscribe(event)
+  See +:h nvim_unsubscribe()+
+  @param [String] event
+  @return [void]
+
+@method out_write(str)
+  See +:h nvim_out_write()+
+  @param [String] str
+  @return [void]
+
+@method err_write(str)
+  See +:h nvim_err_write()+
+  @param [String] str
+  @return [void]
+
+@method err_writeln(str)
+  See +:h nvim_err_writeln()+
+  @param [String] str
+  @return [void]
+
+@method notify(msg, log_level, opts)
+  See +:h nvim_notify()+
+  @param [String] msg
+  @param [Integer] log_level
+  @param [Dict] opts
+  @return [Object]
+
 @method create_namespace(name)
   See +:h nvim_create_namespace()+
   @param [String] name
@@ -240,42 +272,42 @@ module Neovim
 
 @method get_namespaces
   See +:h nvim_get_namespaces()+
-  @return [Hash]
+  @return [Dict]
 
 @method set_decoration_provider(ns_id, opts)
   See +:h nvim_set_decoration_provider()+
   @param [Integer] ns_id
-  @param [Hash] opts
+  @param [Dict] opts
   @return [void]
 
 @method get_option_value(name, opts)
   See +:h nvim_get_option_value()+
   @param [String] name
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Object]
 
 @method set_option_value(name, value, opts)
   See +:h nvim_set_option_value()+
   @param [String] name
   @param [Object] value
-  @param [Hash] opts
+  @param [Dict] opts
   @return [void]
 
 @method get_all_options_info
   See +:h nvim_get_all_options_info()+
-  @return [Hash]
+  @return [Dict]
 
 @method get_option_info2(name, opts)
   See +:h nvim_get_option_info2()+
   @param [String] name
-  @param [Hash] opts
-  @return [Hash]
+  @param [Dict] opts
+  @return [Dict]
 
 @method ui_attach(width, height, options)
   See +:h nvim_ui_attach()+
   @param [Integer] width
   @param [Integer] height
-  @param [Hash] options
+  @param [Dict] options
   @return [void]
 
 @method ui_set_focus(gained)
@@ -333,19 +365,19 @@ module Neovim
 @method get_hl(ns_id, opts)
   See +:h nvim_get_hl()+
   @param [Integer] ns_id
-  @param [Hash] opts
-  @return [Hash]
+  @param [Dict] opts
+  @return [Dict]
 
 @method set_hl(ns_id, name, val)
   See +:h nvim_set_hl()+
   @param [Integer] ns_id
   @param [String] name
-  @param [Hash] val
+  @param [Dict] val
   @return [void]
 
 @method get_hl_ns(opts)
   See +:h nvim_get_hl_ns()+
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Integer]
 
 @method set_hl_ns(ns_id)
@@ -392,13 +424,6 @@ module Neovim
   See +:h nvim_exec_lua()+
   @param [String] code
   @param [Array] args
-  @return [Object]
-
-@method notify(msg, log_level, opts)
-  See +:h nvim_notify()+
-  @param [String] msg
-  @param [Integer] log_level
-  @param [Hash] opts
   @return [Object]
 
 @method strwidth(text)
@@ -465,22 +490,7 @@ module Neovim
   See +:h nvim_echo()+
   @param [Array] chunks
   @param [Boolean] history
-  @param [Hash] opts
-  @return [void]
-
-@method out_write(str)
-  See +:h nvim_out_write()+
-  @param [String] str
-  @return [void]
-
-@method err_write(str)
-  See +:h nvim_err_write()+
-  @param [String] str
-  @return [void]
-
-@method err_writeln(str)
-  See +:h nvim_err_writeln()+
-  @param [String] str
+  @param [Dict] opts
   @return [void]
 
 @method list_bufs
@@ -518,7 +528,7 @@ module Neovim
 @method open_term(buffer, opts)
   See +:h nvim_open_term()+
   @param [Buffer] buffer
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Integer]
 
 @method chan_send(chan, data)
@@ -555,16 +565,6 @@ module Neovim
   @param [Boolean] follow
   @return [void]
 
-@method subscribe(event)
-  See +:h nvim_subscribe()+
-  @param [String] event
-  @return [void]
-
-@method unsubscribe(event)
-  See +:h nvim_unsubscribe()+
-  @param [String] event
-  @return [void]
-
 @method get_color_by_name(name)
   See +:h nvim_get_color_by_name()+
   @param [String] name
@@ -572,33 +572,33 @@ module Neovim
 
 @method get_color_map
   See +:h nvim_get_color_map()+
-  @return [Hash]
+  @return [Dict]
 
 @method get_context(opts)
   See +:h nvim_get_context()+
-  @param [Hash] opts
-  @return [Hash]
+  @param [Dict] opts
+  @return [Dict]
 
 @method load_context(dict)
   See +:h nvim_load_context()+
-  @param [Hash] dict
+  @param [Dict] dict
   @return [Object]
 
 @method get_mode
   See +:h nvim_get_mode()+
-  @return [Hash]
+  @return [Dict]
 
 @method get_keymap(mode)
   See +:h nvim_get_keymap()+
   @param [String] mode
-  @return [Array<Hash>]
+  @return [Array<Dict>]
 
 @method set_keymap(mode, lhs, rhs, opts)
   See +:h nvim_set_keymap()+
   @param [String] mode
   @param [String] lhs
   @param [String] rhs
-  @param [Hash] opts
+  @param [Dict] opts
   @return [void]
 
 @method del_keymap(mode, lhs)
@@ -614,16 +614,16 @@ module Neovim
 @method set_client_info(name, version, type, methods, attributes)
   See +:h nvim_set_client_info()+
   @param [String] name
-  @param [Hash] version
+  @param [Dict] version
   @param [String] type
-  @param [Hash] methods
-  @param [Hash] attributes
+  @param [Dict] methods
+  @param [Dict] attributes
   @return [void]
 
 @method get_chan_info(chan)
   See +:h nvim_get_chan_info()+
   @param [Integer] chan
-  @return [Hash]
+  @return [Dict]
 
 @method list_chans
   See +:h nvim_list_chans()+
@@ -648,7 +648,7 @@ module Neovim
   @param [Integer] item
   @param [Boolean] insert
   @param [Boolean] finish
-  @param [Hash] opts
+  @param [Dict] opts
   @return [void]
 
 @method del_mark(name)
@@ -659,20 +659,20 @@ module Neovim
 @method get_mark(name, opts)
   See +:h nvim_get_mark()+
   @param [String] name
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Array]
 
 @method eval_statusline(str, opts)
   See +:h nvim_eval_statusline()+
   @param [String] str
-  @param [Hash] opts
-  @return [Hash]
+  @param [Dict] opts
+  @return [Dict]
 
 @method exec2(src, opts)
   See +:h nvim_exec2()+
   @param [String] src
-  @param [Hash] opts
-  @return [Hash]
+  @param [Dict] opts
+  @return [Dict]
 
 @method command(command)
   See +:h nvim_command()+
@@ -702,13 +702,13 @@ module Neovim
   @param [String] expr
   @param [String] flags
   @param [Boolean] highlight
-  @return [Hash]
+  @return [Dict]
 
 @method open_win(buffer, enter, config)
   See +:h nvim_open_win()+
   @param [Buffer] buffer
   @param [Boolean] enter
-  @param [Hash] config
+  @param [Dict] config
   @return [Window]
 
 =end
