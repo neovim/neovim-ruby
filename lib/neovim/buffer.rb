@@ -4,7 +4,7 @@ require "neovim/line_range"
 module Neovim
   # Class representing an +nvim+ buffer.
   #
-  # The methods documented here were generated using NVIM v0.10.4
+  # The methods documented here were generated using NVIM v0.11.0
   class Buffer < RemoteObject
     attr_reader :lines
 
@@ -145,7 +145,7 @@ module Neovim
 @method attach(send_buffer, opts)
   See +:h nvim_buf_attach()+
   @param [Boolean] send_buffer
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Boolean]
 
 @method detach
@@ -182,7 +182,7 @@ module Neovim
   @param [Integer] start_col
   @param [Integer] end_row
   @param [Integer] end_col
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Array<String>]
 
 @method get_offset(index)
@@ -202,14 +202,14 @@ module Neovim
 @method get_keymap(mode)
   See +:h nvim_buf_get_keymap()+
   @param [String] mode
-  @return [Array<Hash>]
+  @return [Array<Dict>]
 
 @method set_keymap(mode, lhs, rhs, opts)
   See +:h nvim_buf_set_keymap()+
   @param [String] mode
   @param [String] lhs
   @param [String] rhs
-  @param [Hash] opts
+  @param [Dict] opts
   @return [void]
 
 @method del_keymap(mode, lhs)
@@ -256,7 +256,7 @@ module Neovim
   @param [String] name
   @param [Integer] line
   @param [Integer] col
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Boolean]
 
 @method get_mark(name)
@@ -273,7 +273,7 @@ module Neovim
   See +:h nvim_buf_create_user_command()+
   @param [String] name
   @param [Object] command
-  @param [Hash] opts
+  @param [Dict] opts
   @return [void]
 
 @method del_user_command(name)
@@ -283,8 +283,8 @@ module Neovim
 
 @method get_commands(opts)
   See +:h nvim_buf_get_commands()+
-  @param [Hash] opts
-  @return [Hash]
+  @param [Dict] opts
+  @return [Dict]
 
 @method get_number
   See +:h nvim_buf_get_number()+
@@ -297,12 +297,21 @@ module Neovim
   @param [Integer] line_end
   @return [void]
 
+@method add_highlight(ns_id, hl_group, line, col_start, col_end)
+  See +:h nvim_buf_add_highlight()+
+  @param [Integer] ns_id
+  @param [String] hl_group
+  @param [Integer] line
+  @param [Integer] col_start
+  @param [Integer] col_end
+  @return [Integer]
+
 @method set_virtual_text(src_id, line, chunks, opts)
   See +:h nvim_buf_set_virtual_text()+
   @param [Integer] src_id
   @param [Integer] line
   @param [Array] chunks
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Integer]
 
 @method get_option(name)
@@ -320,7 +329,7 @@ module Neovim
   See +:h nvim_buf_get_extmark_by_id()+
   @param [Integer] ns_id
   @param [Integer] id
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Array<Integer>]
 
 @method get_extmarks(ns_id, start, end, opts)
@@ -328,7 +337,7 @@ module Neovim
   @param [Integer] ns_id
   @param [Object] start
   @param [Object] end
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Array]
 
 @method set_extmark(ns_id, line, col, opts)
@@ -336,7 +345,7 @@ module Neovim
   @param [Integer] ns_id
   @param [Integer] line
   @param [Integer] col
-  @param [Hash] opts
+  @param [Dict] opts
   @return [Integer]
 
 @method del_extmark(ns_id, id)
@@ -344,15 +353,6 @@ module Neovim
   @param [Integer] ns_id
   @param [Integer] id
   @return [Boolean]
-
-@method add_highlight(ns_id, hl_group, line, col_start, col_end)
-  See +:h nvim_buf_add_highlight()+
-  @param [Integer] ns_id
-  @param [String] hl_group
-  @param [Integer] line
-  @param [Integer] col_start
-  @param [Integer] col_end
-  @return [Integer]
 
 @method clear_namespace(ns_id, line_start, line_end)
   See +:h nvim_buf_clear_namespace()+
