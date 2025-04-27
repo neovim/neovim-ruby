@@ -2,8 +2,6 @@ require "neovim/remote_object"
 
 module Neovim
   # Class representing an +nvim+ tabpage.
-  #
-  # The methods documented here were generated using NVIM v0.11.1
   class Tabpage < RemoteObject
 # The following methods are dynamically generated.
 =begin

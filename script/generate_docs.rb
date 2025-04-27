@@ -10,7 +10,6 @@ buffer_docs = []
 window_docs = []
 tabpage_docs = []
 nvim_exe = ENV.fetch("NVIM_EXECUTABLE", "nvim")
-nvim_vrs = %x(#{nvim_exe} --version).split("\n").first
 
 event_loop = Neovim::EventLoop.child([nvim_exe, "-u", "NONE", "-n"])
 session = Neovim::Session.new(event_loop)
@@ -83,10 +82,6 @@ lib_dir = Pathname.new(File.expand_path("../lib/neovim", __dir__))
   doc_str = ["=begin", *docs, "=end"].join("\n")
 
   contents.sub!(/=begin.+=end/m, doc_str)
-  contents.sub!(
-    /# The methods documented here were generated using .+$/,
-    "# The methods documented here were generated using #{nvim_vrs}"
-  )
 
   File.write(path, contents)
 end
