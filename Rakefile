@@ -3,19 +3,21 @@ require "rspec/core/rake_task"
 
 Bundler.setup
 
+THEMIS_DIR = "spec/acceptance/runtime/pack/deps/start/vim-themis"
+
 namespace :spec do
   desc "Run functional specs"
   RSpec::Core::RakeTask.new(:functional)
 
   desc "Run acceptance specs"
-  task acceptance: "acceptance:deps" do
+  task acceptance: THEMIS_DIR do
     run_script("run_acceptance.rb", "--reporter", "dot", "spec/acceptance")
   end
 
   namespace :acceptance do
     desc "Install acceptance spec dependencies"
-    task :deps do
-      sh "vim-flavor update --vimfiles-path=spec/acceptance/runtime"
+    directory THEMIS_DIR do
+      sh "git clone git@github.com:thinca/vim-themis.git #{THEMIS_DIR}"
     end
   end
 end
