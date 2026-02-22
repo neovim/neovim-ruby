@@ -21,6 +21,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: neovim/neovim-ruby
+      - uses: actions/checkout@v2
+        with:
+          repository: thinca/vim-themis
+          path: spec/acceptance/runtime/pack/deps/start/vim-themis
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -47,6 +51,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: neovim/neovim-ruby
+      - uses: actions/checkout@v2
+        with:
+          repository: thinca/vim-themis
+          path: spec/acceptance/runtime/pack/deps/start/vim-themis
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ruby
@@ -57,6 +65,5 @@ jobs:
           args: install neovim -fy --ignore-dependencies --ignore-checksums
       - name: Run tests
         env:
-          VIM_FLAVOR_HOME: 'D:\'
           NVIM_EXECUTABLE: 'C:\tools\neovim\nvim-win64\bin\nvim'
         run: bundle exec rake spec
