@@ -155,14 +155,14 @@ module Neovim
   @param [Integer] start
   @param [Integer] end
   @param [Boolean] strict_indexing
-  @return [Array<String>]
+  @return [Array]
 
 @method set_lines(start, end, strict_indexing, replacement)
   See +:h nvim_buf_set_lines()+
   @param [Integer] start
   @param [Integer] end
   @param [Boolean] strict_indexing
-  @param [Array<String>] replacement
+  @param [Array] replacement
   @return [void]
 
 @method set_text(start_row, start_col, end_row, end_col, replacement)
@@ -171,7 +171,7 @@ module Neovim
   @param [Integer] start_col
   @param [Integer] end_row
   @param [Integer] end_col
-  @param [Array<String>] replacement
+  @param [Array] replacement
   @return [void]
 
 @method get_text(start_row, start_col, end_row, end_col, opts)
@@ -181,7 +181,7 @@ module Neovim
   @param [Integer] end_row
   @param [Integer] end_col
   @param [Dict] opts
-  @return [Array<String>]
+  @return [Array]
 
 @method get_offset(index)
   See +:h nvim_buf_get_offset()+
@@ -200,7 +200,7 @@ module Neovim
 @method get_keymap(mode)
   See +:h nvim_buf_get_keymap()+
   @param [String] mode
-  @return [Array<Dict>]
+  @return [Array]
 
 @method set_keymap(mode, lhs, rhs, opts)
   See +:h nvim_buf_set_keymap()+
@@ -260,7 +260,7 @@ module Neovim
 @method get_mark(name)
   See +:h nvim_buf_get_mark()+
   @param [String] name
-  @return [Array<Integer>]
+  @return [Array]
 
 @method call(fun)
   See +:h nvim_buf_call()+
@@ -328,7 +328,7 @@ module Neovim
   @param [Integer] ns_id
   @param [Integer] id
   @param [Dict] opts
-  @return [Array<Integer>]
+  @return [Array]
 
 @method get_extmarks(ns_id, start, end, opts)
   See +:h nvim_buf_get_extmarks()+

@@ -263,6 +263,12 @@ module Neovim
   @param [Dict] opts
   @return [Object]
 
+@method ui_term_event(event, value)
+  See +:h nvim_ui_term_event()+
+  @param [String] event
+  @param [Object] value
+  @return [void]
+
 @method create_namespace(name)
   See +:h nvim_create_namespace()+
   @param [String] name
@@ -300,6 +306,13 @@ module Neovim
   @param [String] name
   @param [Dict] opts
   @return [Dict]
+
+@method open_tabpage(buffer, enter, config)
+  See +:h nvim_open_tabpage()+
+  @param [Buffer] buffer
+  @param [Boolean] enter
+  @param [Dict] config
+  @return [Tabpage]
 
 @method ui_attach(width, height, options)
   See +:h nvim_ui_attach()+
@@ -349,10 +362,9 @@ module Neovim
   @param [Float] col
   @return [void]
 
-@method ui_term_event(event, value)
-  See +:h nvim_ui_term_event()+
-  @param [String] event
-  @param [Object] value
+@method ui_send(content)
+  See +:h nvim_ui_send()+
+  @param [String] content
   @return [void]
 
 @method get_hl_id_by_name(name)
@@ -431,13 +443,13 @@ module Neovim
 
 @method list_runtime_paths
   See +:h nvim_list_runtime_paths()+
-  @return [Array<String>]
+  @return [Array]
 
 @method get_runtime_file(name, all)
   See +:h nvim_get_runtime_file()+
   @param [String] name
   @param [Boolean] all
-  @return [Array<String>]
+  @return [Array]
 
 @method set_current_dir(dir)
   See +:h nvim_set_current_dir()+
@@ -489,11 +501,11 @@ module Neovim
   @param [Array] chunks
   @param [Boolean] history
   @param [Dict] opts
-  @return [void]
+  @return [Object]
 
 @method list_bufs
   See +:h nvim_list_bufs()+
-  @return [Array<Buffer>]
+  @return [Array]
 
 @method get_current_buf
   See +:h nvim_get_current_buf()+
@@ -506,7 +518,7 @@ module Neovim
 
 @method list_wins
   See +:h nvim_list_wins()+
-  @return [Array<Window>]
+  @return [Array]
 
 @method get_current_win
   See +:h nvim_get_current_win()+
@@ -537,7 +549,7 @@ module Neovim
 
 @method list_tabpages
   See +:h nvim_list_tabpages()+
-  @return [Array<Tabpage>]
+  @return [Array]
 
 @method get_current_tabpage
   See +:h nvim_get_current_tabpage()+
@@ -557,7 +569,7 @@ module Neovim
 
 @method put(lines, type, after, follow)
   See +:h nvim_put()+
-  @param [Array<String>] lines
+  @param [Array] lines
   @param [String] type
   @param [Boolean] after
   @param [Boolean] follow
@@ -589,7 +601,7 @@ module Neovim
 @method get_keymap(mode)
   See +:h nvim_get_keymap()+
   @param [String] mode
-  @return [Array<Dict>]
+  @return [Array]
 
 @method set_keymap(mode, lhs, rhs, opts)
   See +:h nvim_set_keymap()+
