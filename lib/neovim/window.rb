@@ -93,11 +93,11 @@ module Neovim
 
 @method get_cursor
   See +:h nvim_win_get_cursor()+
-  @return [Array<Integer>]
+  @return [Array]
 
 @method set_cursor(pos)
   See +:h nvim_win_set_cursor()+
-  @param [Array<Integer>] pos
+  @param [Array] pos
   @return [void]
 
 @method get_height
@@ -136,7 +136,7 @@ module Neovim
 
 @method get_position
   See +:h nvim_win_get_position()+
-  @return [Array<Integer>]
+  @return [Array]
 
 @method get_tabpage
   See +:h nvim_win_get_tabpage()+

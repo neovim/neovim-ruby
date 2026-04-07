@@ -7,7 +7,7 @@ module Neovim
 =begin
 @method list_wins
   See +:h nvim_tabpage_list_wins()+
-  @return [Array<Window>]
+  @return [Array]
 
 @method get_var(name)
   See +:h nvim_tabpage_get_var()+
