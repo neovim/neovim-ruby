@@ -86,9 +86,9 @@ module Neovim
   See +:h nvim_win_get_buf()+
   @return [Buffer]
 
-@method set_buf(buffer)
+@method set_buf(buf)
   See +:h nvim_win_set_buf()+
-  @param [Buffer] buffer
+  @param [Buffer] buf
   @return [void]
 
 @method get_cursor
