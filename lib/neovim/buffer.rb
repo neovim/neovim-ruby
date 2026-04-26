@@ -267,10 +267,10 @@ module Neovim
   @param [LuaRef] fun
   @return [Object]
 
-@method create_user_command(name, command, opts)
+@method create_user_command(name, cmd, opts)
   See +:h nvim_buf_create_user_command()+
   @param [String] name
-  @param [Object] command
+  @param [Object] cmd
   @param [Dict] opts
   @return [void]
 

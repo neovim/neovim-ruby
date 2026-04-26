@@ -170,10 +170,10 @@ module Neovim
   @param [Dict] opts
   @return [String]
 
-@method create_user_command(name, command, opts)
+@method create_user_command(name, cmd, opts)
   See +:h nvim_create_user_command()+
   @param [String] name
-  @param [Object] command
+  @param [Object] cmd
   @param [Dict] opts
   @return [void]
 
@@ -307,9 +307,9 @@ module Neovim
   @param [Dict] opts
   @return [Dict]
 
-@method open_tabpage(buffer, enter, config)
+@method open_tabpage(buf, enter, config)
   See +:h nvim_open_tabpage()+
-  @param [Buffer] buffer
+  @param [Buffer] buf
   @param [Boolean] enter
   @param [Dict] config
   @return [Tabpage]
@@ -511,9 +511,9 @@ module Neovim
   See +:h nvim_get_current_buf()+
   @return [Buffer]
 
-@method set_current_buf(buffer)
+@method set_current_buf(buf)
   See +:h nvim_set_current_buf()+
-  @param [Buffer] buffer
+  @param [Buffer] buf
   @return [void]
 
 @method list_wins
@@ -524,9 +524,9 @@ module Neovim
   See +:h nvim_get_current_win()+
   @return [Window]
 
-@method set_current_win(window)
+@method set_current_win(win)
   See +:h nvim_set_current_win()+
-  @param [Window] window
+  @param [Window] win
   @return [void]
 
 @method create_buf(listed, scratch)
@@ -535,9 +535,9 @@ module Neovim
   @param [Boolean] scratch
   @return [Buffer]
 
-@method open_term(buffer, opts)
+@method open_term(buf, opts)
   See +:h nvim_open_term()+
-  @param [Buffer] buffer
+  @param [Buffer] buf
   @param [Dict] opts
   @return [Integer]
 
@@ -684,9 +684,9 @@ module Neovim
   @param [Dict] opts
   @return [Dict]
 
-@method command(command)
+@method command(cmd)
   See +:h nvim_command()+
-  @param [String] command
+  @param [String] cmd
   @return [void]
 
 @method eval(expr)
@@ -707,16 +707,16 @@ module Neovim
   @param [Array] args
   @return [Object]
 
-@method parse_expression(expr, flags, highlight)
+@method parse_expression(expr, flags, hl)
   See +:h nvim_parse_expression()+
   @param [String] expr
   @param [String] flags
-  @param [Boolean] highlight
+  @param [Boolean] hl
   @return [Dict]
 
-@method open_win(buffer, enter, config)
+@method open_win(buf, enter, config)
   See +:h nvim_open_win()+
-  @param [Buffer] buffer
+  @param [Buffer] buf
   @param [Boolean] enter
   @param [Dict] config
   @return [Window]
