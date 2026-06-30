@@ -43,9 +43,9 @@ module Neovim
 
     def self.json_formatter
       lambda do |level, time, _, fields|
-        require "multi_json"
+        require "json"
 
-        MultiJson.encode(
+        JSON.generate(
           {
             _level: level,
             _time: time.strftime(TIMESTAMP_FORMAT)
